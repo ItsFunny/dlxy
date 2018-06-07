@@ -18,7 +18,7 @@
 		<dependency>
 			<groupId>com.dlxy</groupId>
 			<artifactId>dlxy-common</artifactId>
-			<version>${dlxy-common.version}</version>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
 
@@ -189,9 +189,28 @@
 			<artifactId>mybatis</artifactId>
 			<version>3.4.1</version>
 		</dependency>
-		<!-- velocity -->
 	</dependencies>
 	<build>
-		<finalName>dlxy-manager</finalName>
+		<!-- 配置插件 -->
+		<plugins>
+			<!-- 配置Tomcat插件 -->
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<configuration>
+					<port>8080</port>
+					<path>/</path>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.7.0</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
 </project>

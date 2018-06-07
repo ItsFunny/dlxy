@@ -29,9 +29,10 @@ public class DlxyPropertyPlaceholderConfigurer extends PropertyPlaceholderConfig
 	@Override
 	protected String convertProperty(String propertyName, String propertyValue)
 	{
+		System.out.println("call my function");
 		if(propertyName.equals("dlxy.db.password"))
 		{
-			
+			System.out.println("the properety-name is password");
 		}
 		return super.convertProperty(propertyName, propertyValue);
 	}

@@ -7,12 +7,15 @@
 package com.dlxy.manager.config.property;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Component;
 
 /**
  * 
  * @author joker
  * @date 创建时间：2018年6月7日 下午12:50:25
  */
+@Component
 public class DlxyProperty
 {
 	@Value("${dlxy.db.username}")
