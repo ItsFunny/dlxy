@@ -1,0 +1,1 @@
+选择以Spring为核心,ORM层采用mybatis,view 层采用Freemarker,并发量没那么大因此不采用分布式,redis也不采用,需要服务中间件rabbitMQ异步处理,尽量让整个系统易维护

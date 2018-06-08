@@ -1,0 +1,5 @@
+com/dlxy/system/management/config/property/DlxyKeyProperty.class
+com/dlxy/system/management/controller/TestController.class
+com/dlxy/system/management/config/ManagementSystemConfiguration.class
+com/dlxy/system/management/config/property/DlxyProperty.class
+com/dlxy/system/management/config/property/DlxyPropertyPlaceholderConfigurer.class
