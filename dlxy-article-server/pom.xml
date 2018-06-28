@@ -12,9 +12,14 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <dlxy-article-server-dao.version>0.0.1-SNAPSHOT</dlxy-article-server-dao.version>
+    <dlxy-article-server-service.version>0.0.1-SNAPSHOT</dlxy-article-server-service.version>
+    <dlxy-common.version>0.0.1-SNAPSHOT</dlxy-common.version>
   </properties>
 
   <dependencies>
+  	
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -22,6 +27,16 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <dependencyManagement>
+  	<dependencies>
+  		<dependency>
+  			<groupId>com.dlxy</groupId>
+  			<artifactId>dlxy-common</artifactId>
+  			<version>${dlxy-common.version}</version>
+  		</dependency>
+  	</dependencies>
+  
+  </dependencyManagement>
   <modules>
     <module>dlxy-article-server-common</module>
     <module>dlxy-article-server-mpi</module>

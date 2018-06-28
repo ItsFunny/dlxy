@@ -6,8 +6,8 @@
 */
 package com.dlxy.system.management.config.property;
 
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 /**
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
  * @date 创建时间：2018年6月7日 下午12:50:25
  */
 @Component
-public class DlxyProperty
+public class DlxyProperty implements InitializingBean
 {
 	@Value("${dlxy.db.username}")
 	private String username;
@@ -25,6 +25,16 @@ public class DlxyProperty
 	private String driverClassName = "com.mysql.jdbc.Driver";
 	@Value("${dlxy.db.url}")
 	private String url;
+
+	/*
+	 * rabbitMQ
+	 */
+	@Value("${dlxy.amqp.amqpHost}")
+	private String amqpHost;
+	@Value("${dlxy.amqp.username}")
+	private String amqpUsername;
+	@Value("${dlxy.amqp.password}")
+	private String amqpPassword;
 
 	public String getUsername()
 	{
@@ -64,6 +74,49 @@ public class DlxyProperty
 	public void setUrl(String url)
 	{
 		this.url = url;
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception
+	{
+		System.out.println(this);
+	}
+
+	@Override
+	public String toString()
+	{
+		return "DlxyProperty [username=" + username + ", password=" + password + ", driverClassName=" + driverClassName
+				+ ", url=" + url + "]";
+	}
+
+	public String getAmqpHost()
+	{
+		return amqpHost;
+	}
+
+	public void setAmqpHost(String amqpHost)
+	{
+		this.amqpHost = amqpHost;
+	}
+
+	public String getAmqpUsername()
+	{
+		return amqpUsername;
+	}
+
+	public void setAmqpUsername(String amqpUsername)
+	{
+		this.amqpUsername = amqpUsername;
+	}
+
+	public String getAmqpPassword()
+	{
+		return amqpPassword;
+	}
+
+	public void setAmqpPassword(String amqpPassword)
+	{
+		this.amqpPassword = amqpPassword;
 	}
 
 }

@@ -9,8 +9,7 @@
  http://www.springframework.org/schema/task/spring-task-3.0.xsd">
  
  	<context:component-scan base-package="com.dlxy.system.management.config" />
- 	<context:property-placeholder location="classpath:*.properties"/>
- 	<mvc:annotation-driven />
+	<mvc:annotation-driven /> 
  	<mvc:default-servlet-handler/>
  
  </beans>

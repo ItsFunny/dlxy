@@ -7,15 +7,19 @@
     <artifactId>dlxy-article-server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <groupId>com.dlxy</groupId>
   <artifactId>dlxy-article-server-common</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
   <name>dlxy-article-server-common</name>
   <url>http://maven.apache.org</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <dependencies>
+  
+  	<dependency>
+  		<groupId>com.dlxy</groupId>
+  		<artifactId>dlxy-common</artifactId>
+  	</dependency>
+  	
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

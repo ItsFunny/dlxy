@@ -7,8 +7,8 @@
 	<name>dlxy-management-system Maven Webapp</name>
 	<url>http://maven.apache.org</url>
 	<properties>
-
 		<dlxy-parent.version>0.0.1-SNAPSHOT</dlxy-parent.version>
+		<article-server-service.version>0.0.1-SNAPSHOT</article-server-service.version>
 	</properties>
 	<parent>
 		<groupId>com.dlxy</groupId>
@@ -16,6 +16,44 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<dependencies>
+
+
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.0.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.dlxy</groupId>
+			<artifactId>dlxy-article-server-service</artifactId>
+			<version>${article-server-service.version}</version>
+		</dependency>
+
+
+
+		<!-- rabbitmq -->
+		<dependency>
+			<groupId>com.rabbitmq</groupId>
+			<artifactId>amqp-client</artifactId>
+			<version>5.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.amqp</groupId>
+			<artifactId>spring-rabbit</artifactId>
+			<version>2.0.1.RELEASE</version>
+		</dependency>
+
+
+		<!-- Test -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>5.0.2.RELEASE</version>
+			<scope>test</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>org.freemarker</groupId>
 			<artifactId>freemarker</artifactId>
@@ -113,11 +151,8 @@
 		</dependency>
 
 		<!--spring -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>5.0.2.RELEASE</version>
-		</dependency>
+		<!-- <dependency> <groupId>org.springframework</groupId> <artifactId>spring-context</artifactId> 
+			<version>5.0.2.RELEASE</version> </dependency> -->
 		<!--spring-jdbc -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -186,6 +221,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>dlxy-portal-system</finalName>
 		<!-- 配置插件 -->
 		<plugins>
 			<!-- 配置Tomcat插件 -->
@@ -195,6 +231,15 @@
 				<configuration>
 					<port>8000</port>
 					<path>/</path>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.7.0</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 		</plugins>

@@ -6,10 +6,17 @@
 */
 package com.dlxy.system.management.controller;
 
+import java.util.Collection;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.dlxy.article.server.service.IArticleService;
+import com.dlxy.common.dto.ArticleDTO;
+import com.dlxy.system.management.config.property.DlxyProperty;
 
 /**
 * 
@@ -19,17 +26,30 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class TestController
 {
+	@Autowired
+	private DlxyProperty dlxyProperty;
+	@Autowired
+	private IArticleService articleService;
 	@RequestMapping("/test1")
 	@ResponseBody
 	public String test1()
 	{
-		return "a";
+		return dlxyProperty.toString();
 	}
 	@RequestMapping("/test2")
 	public ModelAndView test2()
 	{
 		return new ModelAndView("test");
 	}
+//	@RequestMapping("/test3")
+//	public void test3()
+//	{
+//		Collection<ArticleDTO> findAllArticlesExceptRecommend = articleService.findAllArticlesExceptRecommend();
+//		for (ArticleDTO articleDTO : findAllArticlesExceptRecommend)
+//		{
+//			System.out.println(articleDTO);
+//		}
+//	}
 	
 
 }
