@@ -36,4 +36,9 @@ public class ArticleServiceImpl implements IArticleService
 		return collection;
 	}
 
+	public void updateArticleStatus(Long articleId, int status)
+	{
+		articleDao.updateArticleStatus(articleId, status);
+	}
+
 }

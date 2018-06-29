@@ -1,5 +1,4 @@
 com/dlxy/article/server/service/IArticleCountService.class
-com/dlxy/article/server/service/facaded/impl/ArticleFacadedServiceImpl.class
 com/dlxy/article/server/service/facaded/IArticleFacadedService.class
 com/dlxy/article/server/service/impl/ArticleCountServiceImpl.class
 com/dlxy/article/server/service/IArticleService.class

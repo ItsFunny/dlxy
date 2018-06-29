@@ -1,8 +1,12 @@
+com/dlxy/system/management/controller/DlxyManagementRestAPIController.class
 com/dlxy/system/management/controller/IndexController.class
 com/dlxy/system/management/controller/TestController.class
+com/dlxy/system/management/utils/ManagementUtil.class
 com/dlxy/system/management/config/ManagementSystemConfiguration.class
+com/dlxy/system/management/service/IArticleFacadedService.class
 com/dlxy/system/management/config/property/DlxyProperty.class
 com/dlxy/system/management/config/property/DlxyPropertyPlaceholderConfigurer.class
+com/dlxy/system/management/service/impl/ArticleFacadedServiceImpl.class
 com/dlxy/system/management/filter/CharsetFilter.class
 com/dlxy/system/management/controller/ArticleController.class
 com/dlxy/system/management/config/ManagementRabbitMQConfiguration.class

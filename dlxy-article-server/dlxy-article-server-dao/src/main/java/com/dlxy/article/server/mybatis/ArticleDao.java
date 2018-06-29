@@ -12,6 +12,7 @@ import java.util.Collection;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import com.dlxy.common.dto.ArticleDTO;
 
@@ -37,5 +38,7 @@ public interface ArticleDao
 			+ " from dlxy_article a left join dlxy_title b on a.title_id=b.title_id "
 			+ "limit #{start},#{end}")
 	Collection<ArticleDTO> findAllExpectRecommendByPage(@Param("start")int start,@Param("end")int end);
-
+	
+	@Update("update dlxy_article set article_status=#{status} where article_id=#{articleId}")
+	void updateArticleStatus(@Param("articleId")Long articleId,@Param("status")Integer status);
 }

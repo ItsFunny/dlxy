@@ -23,4 +23,6 @@ public interface IArticleService
 { 	
 	//这个方法可以复用的,需要修改
 	Collection<ArticleDTO>findAllArticlesExceptRecommend(int pageSize,int pageNum);
+	
+	void updateArticleStatus(Long articleId,int status);
 }

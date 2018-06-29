@@ -45,8 +45,8 @@
 						</tr>
 					</thead>
 					<tbody class="news_content">
-					<#if articles??>
-						<#list articles as item>
+					<#if pageVO.data??>
+						<#list pageVO.data as item>
 							<tr>
 							<td><input name="checked" lay-skin="primary" lay-filter="choose" type="checkbox">
 								<div class="layui-unselect layui-form-checkbox" lay-skin="primary"><i class="layui-icon"></i></div>
@@ -79,9 +79,10 @@
 					</tbody>
 					
 					</table>
+					 
                      <div class="larry-table-page clearfix">
                           <a href="javascript:;" class="layui-btn layui-btn-small"><i class="iconfont icon-shanchu1"></i>删除</a>
-				          <div id="page" class="page"></div>
+				          <#include "page.html">
 			         </div>
 			    </div>
 			     <!-- 登录日志 -->
@@ -114,7 +115,8 @@
 			          </table>
 			          <div class="larry-table-page clearfix">
                           <a href="javascript:;" class="layui-btn layui-btn-small"><i class="iconfont icon-shanchu1"></i>删除</a>
-				          <div id="page2" class="page"></div>
+                        
+				          
 			         </div>
 			    </div>
 		    </div>
@@ -123,13 +125,11 @@
 </section>
 <#include "wrapper-down.html">
 <script type="text/javascript">
-	layui.use(['jquery','layer','element','laypage'],function(){
+<#-- layui.use(['jquery','layer','element','laypage'],function(){
 	      window.jQuery = window.$ = layui.jquery;
 	      window.layer = layui.layer;
           var element = layui.element(),
               laypage = layui.laypage;
-
-            
           laypage({
 					cont: 'page',
 					pages: 10 //总页数
@@ -159,6 +159,7 @@
 						}
 					}
 				});
-    });
+    }); -->
+	
 </script>
 <#include "footer.html">

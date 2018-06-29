@@ -1,0 +1,47 @@
+{
+  "hints": [],
+  "groups": [
+    {
+      "sourceType": "com.dlxy.system.batch.config.DlxyProperty",
+      "name": "dlxy.config",
+      "type": "com.dlxy.system.batch.config.DlxyProperty"
+    }
+  ],
+  "properties": [
+    {
+      "sourceType": "com.dlxy.system.batch.config.DlxyProperty",
+      "name": "dlxy.config.amqp-host",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "com.dlxy.system.batch.config.DlxyProperty",
+      "name": "dlxy.config.amqp-password",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "com.dlxy.system.batch.config.DlxyProperty",
+      "name": "dlxy.config.amqp-username",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "com.dlxy.system.batch.config.DlxyProperty",
+      "name": "dlxy.config.db-driver-class-name",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "com.dlxy.system.batch.config.DlxyProperty",
+      "name": "dlxy.config.db-password",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "com.dlxy.system.batch.config.DlxyProperty",
+      "name": "dlxy.config.db-url",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "com.dlxy.system.batch.config.DlxyProperty",
+      "name": "dlxy.config.db-username",
+      "type": "java.lang.String"
+    }
+  ]
+}

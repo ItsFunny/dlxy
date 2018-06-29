@@ -1,9 +1,13 @@
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-management-system/src/main/java/com/dlxy/system/management/config/property/DlxyProperty.java
+/Users/joker/Java/oxygen_workspace/dlxy/dlxy-management-system/src/main/java/com/dlxy/system/management/controller/DlxyManagementRestAPIController.java
+/Users/joker/Java/oxygen_workspace/dlxy/dlxy-management-system/src/main/java/com/dlxy/system/management/service/impl/ArticleFacadedServiceImpl.java
+/Users/joker/Java/oxygen_workspace/dlxy/dlxy-management-system/src/main/java/com/dlxy/system/management/config/property/DlxyKeyProperty.java
+/Users/joker/Java/oxygen_workspace/dlxy/dlxy-management-system/src/main/java/com/dlxy/system/management/filter/CharsetFilter.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-management-system/src/main/java/com/dlxy/system/management/controller/IndexController.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-management-system/src/main/java/com/dlxy/system/management/controller/ArticleController.java
-/Users/joker/Java/oxygen_workspace/dlxy/dlxy-management-system/src/main/java/com/dlxy/system/management/config/property/DlxyKeyProperty.java
+/Users/joker/Java/oxygen_workspace/dlxy/dlxy-management-system/src/main/java/com/dlxy/system/management/service/IArticleFacadedService.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-management-system/src/main/java/com/dlxy/system/management/controller/TestController.java
-/Users/joker/Java/oxygen_workspace/dlxy/dlxy-management-system/src/main/java/com/dlxy/system/management/filter/CharsetFilter.java
+/Users/joker/Java/oxygen_workspace/dlxy/dlxy-management-system/src/main/java/com/dlxy/system/management/utils/ManagementUtil.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-management-system/src/main/java/com/dlxy/system/management/config/ManagementRabbitMQConfiguration.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-management-system/src/main/java/com/dlxy/system/management/config/ManagementSystemConfiguration.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-management-system/src/main/java/com/dlxy/system/management/config/property/DlxyPropertyPlaceholderConfigurer.java

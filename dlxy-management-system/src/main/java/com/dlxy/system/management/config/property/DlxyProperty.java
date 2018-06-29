@@ -35,6 +35,10 @@ public class DlxyProperty implements InitializingBean
 	private String amqpUsername;
 	@Value("${dlxy.amqp.password}")
 	private String amqpPassword;
+	@Value("${dlxy.amqp.amqpEnabled}")
+	private boolean amqpEnabled;
+	@Value("${dlxy.amqp.port}")
+	private Integer amqpPort;
 
 	public String getUsername()
 	{
@@ -117,6 +121,26 @@ public class DlxyProperty implements InitializingBean
 	public void setAmqpPassword(String amqpPassword)
 	{
 		this.amqpPassword = amqpPassword;
+	}
+
+	public boolean isAmqpEnabled()
+	{
+		return amqpEnabled;
+	}
+
+	public void setAmqpEnabled(boolean amqpEnabled)
+	{
+		this.amqpEnabled = amqpEnabled;
+	}
+
+	public Integer getAmqpPort()
+	{
+		return amqpPort;
+	}
+
+	public void setAmqpPort(Integer amqpPort)
+	{
+		this.amqpPort = amqpPort;
 	}
 
 }

@@ -16,46 +16,56 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.dlxy.common.event.AppEventLogPubliher;
+import com.dlxy.common.event.AppEventPublisher;
+import com.dlxy.common.event.AppEventRabbitMQPublisher;
 import com.dlxy.system.management.config.property.DlxyProperty;
 
 /**
-* 
-* @When
-* @Description
-* @Detail
-* @author joker 
-* @date 创建时间：2018年6月28日 下午7:02:17
-*/
+ * 
+ * @When
+ * @Description
+ * @Detail
+ * @author joker
+ * @date 创建时间：2018年6月28日 下午7:02:17
+ */
 @Configuration
 public class ManagementRabbitMQConfiguration
 {
 	@Autowired
 	private DlxyProperty dlxyProperty;
-	
+
 	@Bean
 	public ConnectionFactory connectionFactory() throws Exception
 	{
-		RabbitConnectionFactoryBean rabbitConnectionFactoryBean=new RabbitConnectionFactoryBean();
+		RabbitConnectionFactoryBean rabbitConnectionFactoryBean = new RabbitConnectionFactoryBean();
 		rabbitConnectionFactoryBean.setHost(dlxyProperty.getAmqpHost());
-		rabbitConnectionFactoryBean.setUsername(dlxyProperty.getUsername());
-		rabbitConnectionFactoryBean.setPassword(dlxyProperty.getPassword());
+		rabbitConnectionFactoryBean.setUsername(dlxyProperty.getAmqpUsername());
+		rabbitConnectionFactoryBean.setPassword(dlxyProperty.getAmqpPassword());
+		rabbitConnectionFactoryBean.setPort(dlxyProperty.getAmqpPort());
 		rabbitConnectionFactoryBean.afterPropertiesSet();
-		CachingConnectionFactory cachingConnectionFactory=new CachingConnectionFactory(rabbitConnectionFactoryBean.getObject());
+		CachingConnectionFactory cachingConnectionFactory = new CachingConnectionFactory(
+				rabbitConnectionFactoryBean.getObject());
 		return cachingConnectionFactory;
 	}
+
 	@Bean
 	public RabbitTemplate rabbitTemplate() throws Exception
 	{
-		RabbitTemplate rabbitTemplate=new RabbitTemplate(connectionFactory());
+		RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory());
 		rabbitTemplate.setExchange("dlxy");
-//		rabbitTemplate.setMessageConverter(messageConverter);
+		// rabbitTemplate.setMessageConverter(messageConverter);
 		return rabbitTemplate;
 	}
 	@Bean
-	public RabbitAdmin rabbitAdmin() throws Exception
+	public AppEventPublisher eventPublisher()
 	{
-		RabbitAdmin rabbitAdmin=new RabbitAdmin(connectionFactory());
-		return rabbitAdmin;
+		if(dlxyProperty.isAmqpEnabled())
+		{
+			return new AppEventRabbitMQPublisher();
+		}else {
+			return new AppEventLogPubliher();
+		}
 	}
-	
+
 }

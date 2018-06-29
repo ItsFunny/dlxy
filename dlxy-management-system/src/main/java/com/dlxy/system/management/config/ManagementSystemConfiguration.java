@@ -42,9 +42,6 @@ import com.dlxy.system.management.config.property.DlxyPropertyPlaceholderConfigu
 
 @Configuration
 @ComponentScan(basePackages= {
-//		"com.dlxy.article.server.query",
-//		"com.dlxy.article.server.service.facaded",
-//		"com.dlxy.system.management"
 		"com.dlxy"
 })
 @MapperScan(basePackages= {
@@ -112,18 +109,6 @@ public class ManagementSystemConfiguration
 		FreeMarkerConfigurer freeMarkerConfigurer=new FreeMarkerConfigurer();
 		freeMarkerConfigurer.setTemplateLoaderPath("/WEB-INF/templates/");
 		return freeMarkerConfigurer;
-	}
-	@Bean
-	public ConnectionFactory connectionFactory() throws Exception
-	{
-		RabbitConnectionFactoryBean rabbitConnectionFactoryBean=new RabbitConnectionFactoryBean();
-		rabbitConnectionFactoryBean.setHost("localhost");
-		rabbitConnectionFactoryBean.setUsername("guest");
-		rabbitConnectionFactoryBean.setPassword("guest");
-		rabbitConnectionFactoryBean.afterPropertiesSet();
-		CachingConnectionFactory cachingConnectionFactory=new CachingConnectionFactory(rabbitConnectionFactoryBean.getObject());
-		return cachingConnectionFactory;
-		
 	}
 	
 }

@@ -1,46 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.dlxy</groupId>
-  <artifactId>dlxy-article-server</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <packaging>pom</packaging>
+	<groupId>com.dlxy</groupId>
+	<artifactId>dlxy-article-server</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
 
-  <name>dlxy-article-server</name>
-  <url>http://maven.apache.org</url>
+	<name>dlxy-article-server</name>
+	<url>http://maven.apache.org</url>
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <dlxy-article-server-dao.version>0.0.1-SNAPSHOT</dlxy-article-server-dao.version>
-    <dlxy-article-server-service.version>0.0.1-SNAPSHOT</dlxy-article-server-service.version>
-    <dlxy-common.version>0.0.1-SNAPSHOT</dlxy-common.version>
-  </properties>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<dlxy-article-server-dao.version>0.0.1-SNAPSHOT</dlxy-article-server-dao.version>
+		<dlxy-article-server-service.version>0.0.1-SNAPSHOT</dlxy-article-server-service.version>
+		<dlxy-common.version>0.0.1-SNAPSHOT</dlxy-common.version>
+	</properties>
 
-  <dependencies>
-  	
+	<dependencies>
 
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-  <dependencyManagement>
-  	<dependencies>
-  		<dependency>
-  			<groupId>com.dlxy</groupId>
-  			<artifactId>dlxy-common</artifactId>
-  			<version>${dlxy-common.version}</version>
-  		</dependency>
-  	</dependencies>
-  
-  </dependencyManagement>
-  <modules>
-    <module>dlxy-article-server-common</module>
-    <module>dlxy-article-server-mpi</module>
-    <module>dlxy-article-server-dao</module>
-    <module>dlxy-article-server-service</module>
-  </modules>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.dlxy</groupId>
+				<artifactId>dlxy-common</artifactId>
+				<version>${dlxy-common.version}</version>
+			</dependency>
+		</dependencies>
+
+	</dependencyManagement>
+	<modules>
+		<module>dlxy-article-server-common</module>
+		<module>dlxy-article-server-mpi</module>
+		<module>dlxy-article-server-dao</module>
+		<module>dlxy-article-server-service</module>
+	</modules>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.19.1</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.7.0</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+		</plugins>
+
+	</build>
 </project>

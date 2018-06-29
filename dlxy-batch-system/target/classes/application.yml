@@ -1,0 +1,19 @@
+#dlxy.key.property-private-key-path=classpath:keys/property-public.key
+#dlxy.key.property-public-key-path=classpath:keys/property-private.key
+
+
+
+dlxy: 
+  config: 
+    db-url: jdbc:mysql://localhost/JN?characterEncoding=utf-8&useSSL=false
+    db-username: root
+    db-passwrod: 123456
+    amqp-host: localhost
+    amqp-username: guest
+    amqp-password: guest
+    amqp-enabled: true
+
+    
+    
+server:
+  port: 8888
