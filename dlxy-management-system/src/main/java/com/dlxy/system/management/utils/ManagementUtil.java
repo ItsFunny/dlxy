@@ -7,6 +7,11 @@
 */
 package com.dlxy.system.management.utils;
 
+import org.apache.shiro.SecurityUtils;
+
+import com.dlxy.common.dto.UserDTO;
+import com.dlxy.system.management.exception.ManagementException;
+import com.dlxy.system.management.exception.ManagementExceptionEnum;
 
 /**
 * 
@@ -18,4 +23,16 @@ package com.dlxy.system.management.utils;
 */
 public class ManagementUtil
 {
+	public static UserDTO getLoginUser()
+	{
+		UserDTO userDTO=new UserDTO();
+		userDTO.setUserId(1L);
+		return userDTO;
+//		UserDTO userDTO=(UserDTO) SecurityUtils.getSubject().getPrincipal();
+//		if(null==userDTO)
+//		{
+//			throw new ManagementException(ManagementExceptionEnum.USER_NOT_LOGIN);
+//		}
+//		return userDTO;
+	}
 }

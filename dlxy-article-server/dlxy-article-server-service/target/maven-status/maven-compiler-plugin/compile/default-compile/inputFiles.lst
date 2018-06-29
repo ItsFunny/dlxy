@@ -1,5 +1,4 @@
-/Users/joker/Java/oxygen_workspace/dlxy/dlxy-article-server/dlxy-article-server-service/src/main/java/com/dlxy/article/server/service/impl/ArticleServiceImpl.java
-/Users/joker/Java/oxygen_workspace/dlxy/dlxy-article-server/dlxy-article-server-service/src/main/java/com/dlxy/article/server/service/facaded/IArticleFacadedService.java
-/Users/joker/Java/oxygen_workspace/dlxy/dlxy-article-server/dlxy-article-server-service/src/main/java/com/dlxy/article/server/service/IArticleCountService.java
-/Users/joker/Java/oxygen_workspace/dlxy/dlxy-article-server/dlxy-article-server-service/src/main/java/com/dlxy/article/server/service/impl/ArticleCountServiceImpl.java
-/Users/joker/Java/oxygen_workspace/dlxy/dlxy-article-server/dlxy-article-server-service/src/main/java/com/dlxy/article/server/service/IArticleService.java
+/Users/joker/Java/oxygen_workspace/dlxy/dlxy-article-server/dlxy-article-server-service/src/main/java/com/dlxy/server/article/service/impl/ArticleCountServiceImpl.java
+/Users/joker/Java/oxygen_workspace/dlxy/dlxy-article-server/dlxy-article-server-service/src/main/java/com/dlxy/server/article/service/IArticleService.java
+/Users/joker/Java/oxygen_workspace/dlxy/dlxy-article-server/dlxy-article-server-service/src/main/java/com/dlxy/server/article/service/IArticleCountService.java
+/Users/joker/Java/oxygen_workspace/dlxy/dlxy-article-server/dlxy-article-server-service/src/main/java/com/dlxy/server/article/service/impl/ArticleServiceImpl.java

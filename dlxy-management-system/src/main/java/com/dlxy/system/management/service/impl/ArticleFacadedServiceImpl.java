@@ -13,14 +13,18 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.dlxy.article.server.service.IArticleCountService;
-import com.dlxy.article.server.service.IArticleService;
-import com.dlxy.article.server.service.facaded.IArticleFacadedService;
 import com.dlxy.common.dto.ArticleDTO;
 import com.dlxy.common.dto.PageDTO;
-import com.dlxy.common.vo.PageVO;
+import com.dlxy.common.dto.UserRecordDTO;
+import com.dlxy.common.enums.ArticleStatusEnum;
+import com.dlxy.server.article.service.IArticleCountService;
+import com.dlxy.server.article.service.IArticleService;
+import com.dlxy.server.user.service.IUserRecordService;
+import com.dlxy.system.management.service.IArticleFacadedService;
 
 /**
 * 
@@ -37,6 +41,9 @@ public class ArticleFacadedServiceImpl implements IArticleFacadedService
 	private IArticleCountService articleCountService;
 	@Autowired
 	private IArticleService articleService;
+	@Autowired
+	private IUserRecordService userRecordService;
+	
 	public PageDTO<Collection<ArticleDTO>> findArticles(int pageSize, int pageNum, Map<String, String> params) throws SQLException
 	{
 		Long totalCount = articleCountService.countArticlesByDetailParam(params);
@@ -47,6 +54,17 @@ public class ArticleFacadedServiceImpl implements IArticleFacadedService
 		}
 		Collection<ArticleDTO> articles = articleService.findAllArticlesExceptRecommend((pageNum-1)*pageSize, pageSize);
 		return new PageDTO<Collection<ArticleDTO>>(totalCount, articles);
+	}
+
+	@Transactional
+	@Override
+	public void delArticle(Long userId,Long articleId)
+	{
+		articleService.updateArticleStatus(articleId, ArticleStatusEnum.DELETE.ordinal());
+		UserRecordDTO userRecordDTO=new UserRecordDTO();
+		userRecordDTO.setUserId(userId);
+		userRecordDTO.setRecordDetail("delete:article:"+articleId);
+		userRecordService.addRecord(userRecordDTO);
 	}
 
 }

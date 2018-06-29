@@ -20,14 +20,18 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.dlxy.article.server.service.IArticleService;
-import com.dlxy.article.server.service.facaded.IArticleFacadedService;
 import com.dlxy.common.dto.ArticleDTO;
 import com.dlxy.common.dto.PageDTO;
+import com.dlxy.common.dto.ResultDTO;
+import com.dlxy.common.dto.UserDTO;
+import com.dlxy.common.utils.ResultUtil;
 import com.dlxy.common.vo.PageVO;
+import com.dlxy.system.management.service.IArticleFacadedService;
+import com.dlxy.system.management.utils.ManagementUtil;
 
 /**
  * 
@@ -50,6 +54,7 @@ public class ArticleController
 	{
 		ModelAndView modelAndView = null;
 		Map<String, Object> params = new HashMap<String, Object>();
+		String error=request.getParameter("error");
 		String pageSizeStr = request.getParameter("pageSize");
 		String pageNumStr = request.getParameter("pageNum");
 		int pageSize = StringUtils.isEmpty(pageSizeStr) ? 1 : Integer.parseInt(pageSizeStr);
@@ -73,7 +78,28 @@ public class ArticleController
 		PageVO<Collection<ArticleDTO>> pageVO = new PageVO<Collection<ArticleDTO>>(pageDTO.getData(), pageSize, pageNum,
 				pageDTO.getTotalCount());
 		params.put("pageVO", pageVO);
+		params.put("error", error);
 		modelAndView = new ModelAndView("article-all", params);
+		return modelAndView;
+	}
+
+	@RequestMapping("/del/{articleId}")
+	public ModelAndView delArtilce(@PathVariable Long articleId)
+	{
+		ModelAndView modelAndView=null;
+		Map<String, Object>params=new HashMap<>();
+		UserDTO user = ManagementUtil.getLoginUser();
+		try
+		{
+			articleFacadedService.delArticle(user.getUserId(), articleId);
+			params.put("error", "删除成功");
+			modelAndView=new ModelAndView("redirect:/article/all.html",params);
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+			params.put("error", "删除失败");
+			modelAndView=new ModelAndView("error",params);
+		}
 		return modelAndView;
 	}
 

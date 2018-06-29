@@ -1,0 +1,4 @@
+com/dlxy/server/user/service/app.class
+com/dlxy/server/user/service/IUserRecordService.class
+com/dlxy/server/user/service/impl/UserRecordServiceImpl.class
+com/dlxy/server/user/service/IUserService.class

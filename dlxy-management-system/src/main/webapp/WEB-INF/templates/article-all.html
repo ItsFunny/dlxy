@@ -70,16 +70,13 @@
 							</td>
 							<td>
 								<a class="layui-btn layui-btn-mini news_edit"><i class="iconfont icon-edit"></i> 编辑</a>
-								<a class="layui-btn layui-btn-danger layui-btn-mini news_del" data-id="1"><i class="layui-icon"></i> 删除</a>
+								<a class="layui-btn layui-btn-danger layui-btn-mini" id="delHref" href="/article/del/${item.articleId}.html" articleId=${item.articleId}><i class="layui-icon"></i> 删除</a>
 							</td>
 						</tr>
 						</#list>
 					</#if>
-						
 					</tbody>
-					
 					</table>
-					 
                      <div class="larry-table-page clearfix">
                           <a href="javascript:;" class="layui-btn layui-btn-small"><i class="iconfont icon-shanchu1"></i>删除</a>
 				          <#include "page.html">
@@ -125,41 +122,9 @@
 </section>
 <#include "wrapper-down.html">
 <script type="text/javascript">
-<#-- layui.use(['jquery','layer','element','laypage'],function(){
-	      window.jQuery = window.$ = layui.jquery;
-	      window.layer = layui.layer;
-          var element = layui.element(),
-              laypage = layui.laypage;
-          laypage({
-					cont: 'page',
-					pages: 10 //总页数
-						,
-					groups: 5 //连续显示分页数
-						,
-					jump: function(obj, first) {
-						//得到了当前页，用于向服务端请求对应数据
-						var curr = obj.curr;
-						if(!first) {
-							//layer.msg('第 '+ obj.curr +' 页');
-						}
-					}
-				});
-
-          laypage({
-					cont: 'page2',
-					pages: 10 //总页数
-						,
-					groups: 5 //连续显示分页数
-						,
-					jump: function(obj, first) {
-						//得到了当前页，用于向服务端请求对应数据
-						var curr = obj.curr;
-						if(!first) {
-							//layer.msg('第 '+ obj.curr +' 页');
-						}
-					}
-				});
-    }); -->
 	
+	$("#delHref").click(function(){
+		alert('1');
+	})
 </script>
 <#include "footer.html">

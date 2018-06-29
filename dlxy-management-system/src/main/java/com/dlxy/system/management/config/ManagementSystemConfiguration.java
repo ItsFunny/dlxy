@@ -9,24 +9,16 @@ package com.dlxy.system.management.config;
 import java.io.IOException;
 import java.util.Properties;
 
-import javax.servlet.FilterRegistration;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
-import org.mybatis.spring.mapper.MapperScannerConfigurer;
-import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
-import org.springframework.amqp.rabbit.connection.ConnectionFactory;
-import org.springframework.amqp.rabbit.connection.RabbitConnectionFactoryBean;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.web.servlet.ViewResolver;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 
@@ -45,7 +37,8 @@ import com.dlxy.system.management.config.property.DlxyPropertyPlaceholderConfigu
 		"com.dlxy"
 })
 @MapperScan(basePackages= {
-		"com.dlxy.article.server.mybatis"
+	"com.dlxy.server.user.dao.mybatis",
+	"com.dlxy.server.article.dao.mybatis"
 })
 public class ManagementSystemConfiguration
 {

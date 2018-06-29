@@ -1,4 +1,4 @@
-com/dlxy/article/server/query/impl/ArticleCountQueryDaoImpl.class
-com/dlxy/article/server/query/ArticleCountQueryDao.class
-com/dlxy/article/server/mybatis/ArticleDao.class
-com/dlxy/article/server/mybatis/count/ArticleCountDao.class
+com/dlxy/server/article/dao/query/ArticleCountQueryDao.class
+com/dlxy/server/article/dao/mybatis/ArticleDao.class
+com/dlxy/server/article/dao/mybatis/count/ArticleCountDao.class
+com/dlxy/server/article/dao/query/impl/ArticleCountQueryDaoImpl.class

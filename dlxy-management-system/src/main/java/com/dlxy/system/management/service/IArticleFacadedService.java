@@ -11,7 +11,6 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Map;
 
-
 import com.dlxy.common.dto.ArticleDTO;
 import com.dlxy.common.dto.PageDTO;
 
@@ -26,4 +25,6 @@ import com.dlxy.common.dto.PageDTO;
 public interface IArticleFacadedService
 {
 	PageDTO<Collection<ArticleDTO>>findArticles(int pageSize,int pageNum,Map<String, String>params) throws SQLException;
+	
+	void delArticle(Long userId,Long articleId);
 }

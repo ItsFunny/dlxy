@@ -23,12 +23,12 @@
     </dependency>
   </dependencies>
   <modules>
-    <module>dlxy-server-login-common</module>
-    <module>dlxy-login-dao</module>
+    
+    
     <module>dlxy-login-server-common</module>
     <module>dlxy-login-server-dao</module>
     <module>dlxy-login-server-service</module>
-    <module>dlxy-login-server-client</module>
-    <module>dlxy-login-server-mpi</module>
+    
+    
   </modules>
 </project>

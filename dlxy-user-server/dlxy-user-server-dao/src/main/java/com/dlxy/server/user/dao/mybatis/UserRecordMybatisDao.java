@@ -25,5 +25,8 @@ public interface UserRecordMybatisDao
 {
 	@Insert("insert into dlxy_record (user_id,record_detail,create_date) values (#{userId},#{recordDetail},#{createDate})")
 	void addRecord(UserRecordDTO userRecordDTO);
-
+	
+	
+	
+	
 }
