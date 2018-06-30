@@ -31,7 +31,7 @@ public class ArticleCountServiceImpl implements IArticleCountService
 	@Autowired
 	private ArticleCountQueryDao articleCountQueryDao;
 	
-	public Long countArticlesByDetailParam(Map<String, String> params) throws SQLException
+	public Long countArticlesByDetailParam(Map<String, Object> params) throws SQLException
 	{
 		return articleCountQueryDao.coutArticles(params);
 	}

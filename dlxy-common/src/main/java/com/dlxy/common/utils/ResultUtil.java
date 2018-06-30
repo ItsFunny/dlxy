@@ -28,6 +28,10 @@ public class ResultUtil
 		resultDTO.setCode(RestAPIStatus.SUCESS.ordinal());
 		return resultDTO;
 	}
+	public static<T> ResultDTO<T>sucess(T data)
+	{
+		return sucess(data, "sucess");
+	}
 	public static <T> ResultDTO<T> sucess(String msg)
 	{
 		return sucess(null,msg);

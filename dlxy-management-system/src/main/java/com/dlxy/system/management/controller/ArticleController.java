@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.dlxy.common.dto.ArticleDTO;
@@ -50,21 +51,26 @@ public class ArticleController
 	private IArticleFacadedService articleFacadedService;
 
 	@RequestMapping("/all")
-	public ModelAndView showAll(HttpServletRequest request, HttpServletResponse response)
+	public ModelAndView showAll(@RequestParam Map<String, Object>params,HttpServletRequest request, HttpServletResponse response)
 	{
 		ModelAndView modelAndView = null;
-		Map<String, Object> params = new HashMap<String, Object>();
 		String error=request.getParameter("error");
 		String pageSizeStr = request.getParameter("pageSize");
 		String pageNumStr = request.getParameter("pageNum");
-		int pageSize = StringUtils.isEmpty(pageSizeStr) ? 1 : Integer.parseInt(pageSizeStr);
+		int pageSize = StringUtils.isEmpty(pageSizeStr) ? 2 : Integer.parseInt(pageSizeStr);
 		int pageNum = StringUtils.isEmpty(pageNumStr) ? 1 : Integer.parseInt(pageNumStr);
-		Map<String, String> p = new HashMap<>();
-		p.put("articleIsRecommend", "0");
+		Map<String, Object> p = new HashMap<>();
+		if(params.containsKey("q"))
+		{
+			if(!StringUtils.isEmpty(params.get("q").toString()))
+			{
+				p.put("searchParam", params.get("q"));
+			}
+		}
 		PageDTO<Collection<ArticleDTO>> pageDTO = null;
 		try
 		{
-			pageDTO = articleFacadedService.findArticles(pageSize, pageNum, p);
+			pageDTO=articleFacadedService.serarchByParams((pageNum-1)*pageSize, pageSize, p);
 		} catch (SQLException e)
 		{
 			e.printStackTrace();

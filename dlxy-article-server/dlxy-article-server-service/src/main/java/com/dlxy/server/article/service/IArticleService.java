@@ -7,7 +7,9 @@
 */
 package com.dlxy.server.article.service;
 
+import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Map;
 
 import com.dlxy.common.dto.ArticleDTO;
 
@@ -22,7 +24,14 @@ import com.dlxy.common.dto.ArticleDTO;
 public interface IArticleService
 { 	
 	//这个方法可以复用的,需要修改
-	Collection<ArticleDTO>findAllArticlesExceptRecommend(int pageSize,int pageNum);
+	Collection<ArticleDTO>findAllArticlesExceptRecommend(int start,int end);
 	
 	void updateArticleStatus(Long articleId,int status);
+	
+	void updateArticleStatusInBatch(Long[] articleIds,int status);
+	
+	
+	Collection<ArticleDTO>findByParam(Map<String, Object>params,int start,int end) throws SQLException;
+	
+	Collection<ArticleDTO>findByArticleId(Long articleId) throws SQLException;
 }

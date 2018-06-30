@@ -34,7 +34,8 @@ public class ManagementRabbitMQConfiguration
 {
 	@Autowired
 	private DlxyProperty dlxyProperty;
-
+	
+	
 	@Bean
 	public ConnectionFactory connectionFactory() throws Exception
 	{

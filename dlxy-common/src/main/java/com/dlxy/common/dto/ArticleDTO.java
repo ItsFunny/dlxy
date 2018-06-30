@@ -9,6 +9,8 @@ package com.dlxy.common.dto;
 
 import java.util.Date;
 
+import com.joker.library.utils.CommonUtils;
+
 /**
  * 
  * @When
@@ -30,6 +32,11 @@ public class ArticleDTO
 	private Date updateDate;
 	private String createDateStr;
 	private String updateDateStr;
+	//2018-06-30 11:30 add
+	private Long userId;
+	private String username;
+	
+	
 
 	public Long getArticleId()
 	{
@@ -108,6 +115,7 @@ public class ArticleDTO
 
 	public void setCreateDate(Date createDate)
 	{
+		this.createDateStr=CommonUtils.simpleDate2String(createDate);
 		this.createDate = createDate;
 	}
 
@@ -118,6 +126,7 @@ public class ArticleDTO
 
 	public void setUpdateDate(Date updateDate)
 	{
+		this.updateDateStr=CommonUtils.simpleDate2String(updateDate);
 		this.updateDate = updateDate;
 	}
 
@@ -149,6 +158,26 @@ public class ArticleDTO
 				+ articleIsRecommend + ", articleStatus=" + articleStatus + ", createDate=" + createDate
 				+ ", updateDate=" + updateDate + ", createDateStr=" + createDateStr + ", updateDateStr=" + updateDateStr
 				+ "]";
+	}
+
+	public Long getUserId()
+	{
+		return userId;
+	}
+
+	public void setUserId(Long userId)
+	{
+		this.userId = userId;
+	}
+
+	public String getUsername()
+	{
+		return username;
+	}
+
+	public void setUsername(String username)
+	{
+		this.username = username;
 	}
 
 }

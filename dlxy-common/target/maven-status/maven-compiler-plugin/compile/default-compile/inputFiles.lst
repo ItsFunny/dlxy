@@ -14,5 +14,6 @@
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/vo/PageVO.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/enums/ArticleStatusEnum.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/event/AppEventPublisher.java
+/Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/utils/PageResultUtil.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/utils/RSAUtils.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/dto/PageDTO.java

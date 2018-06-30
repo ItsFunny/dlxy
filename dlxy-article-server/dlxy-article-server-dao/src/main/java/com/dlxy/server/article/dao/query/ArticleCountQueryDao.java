@@ -20,5 +20,5 @@ import java.util.Map;
 */
 public interface ArticleCountQueryDao
 {
-	Long coutArticles(Map<String, String>params) throws SQLException;
+	Long coutArticles(Map<String, Object>params) throws SQLException;
 }

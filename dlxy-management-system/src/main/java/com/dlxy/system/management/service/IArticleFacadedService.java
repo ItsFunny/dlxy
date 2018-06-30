@@ -24,7 +24,13 @@ import com.dlxy.common.dto.PageDTO;
 */
 public interface IArticleFacadedService
 {
-	PageDTO<Collection<ArticleDTO>>findArticles(int pageSize,int pageNum,Map<String, String>params) throws SQLException;
+	PageDTO<Collection<ArticleDTO>>findArticles(int start,int end,Map<String, Object>params) throws SQLException;
+	
+	PageDTO<Collection<ArticleDTO>>serarchByParams(int start,int end,Map<String, Object>params) throws SQLException;
 	
 	void delArticle(Long userId,Long articleId);
+	
+	void updateArticlesInBatch(Long userId,Long[] articleIds,int status);
+	
+	
 }

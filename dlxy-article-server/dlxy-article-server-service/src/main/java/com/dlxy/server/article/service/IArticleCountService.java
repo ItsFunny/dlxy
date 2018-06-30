@@ -20,5 +20,5 @@ import java.util.Map;
 */
 public interface IArticleCountService
 {
-	Long countArticlesByDetailParam(Map<String, String>params) throws SQLException;
+	Long countArticlesByDetailParam(Map<String, Object>params) throws SQLException;
 }	

@@ -16,9 +16,15 @@
 
 	<context:component-scan
 		base-package="com.dlxy.system.management.config" />
-		
-	<mvc:annotation-driven />
+
+	<!-- <mvc:annotation-driven /> -->
 	<mvc:default-servlet-handler />
+<!-- 	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/api/**"/>
+			<bean class="com.dlxy.system.management.interceptor.ResponseInterceptor" />
+		</mvc:interceptor>
+	</mvc:interceptors> -->
 	<!-- aspect support -->
-<!-- 	<aop:aspectj-autoproxy  />-->
+	<!-- <aop:aspectj-autoproxy /> -->
 </beans>

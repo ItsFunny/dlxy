@@ -20,4 +20,5 @@ import com.dlxy.common.dto.UserRecordDTO;
 public interface IUserRecordService
 {
 	void addRecord(UserRecordDTO userRecordDTO);
+	
 }

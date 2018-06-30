@@ -21,6 +21,10 @@ public class PageDTO<T>
 	private T data;
 		
 	
+	
+	public PageDTO()
+	{
+	}
 	public PageDTO(Long totalCount, T data)
 	{
 		super();

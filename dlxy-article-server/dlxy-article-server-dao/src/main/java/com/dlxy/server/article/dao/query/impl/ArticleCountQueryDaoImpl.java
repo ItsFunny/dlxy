@@ -36,20 +36,49 @@ public class ArticleCountQueryDaoImpl implements ArticleCountQueryDao
 	@Autowired
 	private QueryRunner queryRunner;
 
-	public Long coutArticles(Map<String, String> params) throws SQLException
+	public Long coutArticles(Map<String, Object> params) throws SQLException
 	{
 		String sql = "select count(1) from dlxy_article where 1 =1 ";
 		List<Object> p = new LinkedList<Object>();
-		if (!StringUtils.isEmpty(params.get("articleStatus")))
+		if(params.containsKey("articleStatus"))
 		{
-			sql += "and article_status=? ";
-			p.add(params.get("articleStatus"));
-		}
-		if (!StringUtils.isEmpty(params.get("articleIsRecommend")))
+			if (!StringUtils.isEmpty(params.get("articleStatus").toString()))
+			{
+				sql += "and article_status=? ";
+				p.add(params.get("articleStatus"));
+			}
+		}else
 		{
-			sql += "and article_is_recommend=? ";
-			p.add(params.get("articleIsRecommend"));
+			sql += " and article_status <> 2 ";
 		}
+		if(params.containsKey("articleIsRecommend"))
+		{
+			if (!StringUtils.isEmpty(params.get("articleIsRecommend").toString()))
+			{
+				sql += " and article_is_recommend=? ";
+				p.add(params.get("articleIsRecommend"));
+			}
+		}
+		
+		if(params.containsKey("searchParam"))
+		{
+			if(!StringUtils.isEmpty(params.get("searchParam").toString()))
+			{
+				sql+=" and (article_name like ? or article_id in (select b.article_id from dlxy_user_article b where b.username like ? ) )";
+				String tParam="%" +params.get("searchParam")+"%";
+				p.add(tParam);
+				p.add(tParam);
+			}
+		}
+//		if(params.containsKey("username"))
+//		{
+//			if (!StringUtils.isEmpty(params.get("username").toString()))
+//			{
+//				sql += " or article_id in ( select article_id from dlxy_user_article b where b.user_name like ? )";
+//				p.add("%" + params.get("username") + "%");
+//			}
+//		}
+	
 		Object count = queryRunner.query(sql, new ScalarHandler<Object>(), p.toArray());
 		if (null == count)
 		{
