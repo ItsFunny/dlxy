@@ -18,5 +18,6 @@ package com.dlxy.common.enums;
 public enum RestAPIStatus
 {
 	FAIL,
-	SUCESS
+	SUCESS,
+	NEEDOP,
 }

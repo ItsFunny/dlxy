@@ -39,6 +39,21 @@ public class DlxyProperty implements InitializingBean
 	private boolean amqpEnabled;
 	@Value("${dlxy.amqp.port}")
 	private Integer amqpPort;
+	/*
+	 * redis
+	 */
+	@Value("${dlxy.redis.host}")
+	private String redisHost;
+	@Value("${dlxy.redis.port}")
+	private Integer redisPort;
+	@Value("${dlxy.redis.password}")
+	private String redisPassword;
+	
+	@Value("${dlxy.workerId}")
+	private long workerId;
+	@Value("${dlxy.datacenterId}")
+	private long datacenterId;
+	
 
 	public String getUsername()
 	{
@@ -141,6 +156,56 @@ public class DlxyProperty implements InitializingBean
 	public void setAmqpPort(Integer amqpPort)
 	{
 		this.amqpPort = amqpPort;
+	}
+
+	public String getRedisHost()
+	{
+		return redisHost;
+	}
+
+	public void setRedisHost(String redisHost)
+	{
+		this.redisHost = redisHost;
+	}
+
+	public Integer getRedisPort()
+	{
+		return redisPort;
+	}
+
+	public void setRedisPort(Integer redisPort)
+	{
+		this.redisPort = redisPort;
+	}
+
+	public String getRedisPassword()
+	{
+		return redisPassword;
+	}
+
+	public void setRedisPassword(String redisPassword)
+	{
+		this.redisPassword = redisPassword;
+	}
+
+	public long getWorkerId()
+	{
+		return workerId;
+	}
+
+	public void setWorkerId(long workerId)
+	{
+		this.workerId = workerId;
+	}
+
+	public long getDatacenterId()
+	{
+		return datacenterId;
+	}
+
+	public void setDatacenterId(long datacenterId)
+	{
+		this.datacenterId = datacenterId;
 	}
 
 }

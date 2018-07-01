@@ -1,0 +1,143 @@
+<#include "header.html">
+<script type="text/javascript">
+ initkindEditor();
+ function initkindEditor() {
+     KindEditor.ready(function (K) {
+         var editor = K.create('#demo', {
+             themeType: "simple",
+             uploadJson: '/api/file/upload.html?articleId=${articleId}',
+             resizeType: 1,
+             pasteType: 2,
+             syncType: "",
+             filterMode: true,
+             allowPreviewEmoticons: false,
+             items: [
+                    'source', 'undo', 'redo', 'plainpaste', 'wordpaste', 'clearhtml', 'quickformat',
+                    'selectall', 'fullscreen', 'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor',
+                    'bold', 'italic', 'underline', 'hr', 'removeformat', '|', 'justifyleft', 'justifycenter',
+                    'justifyright', 'insertorderedlist', 'insertunorderedlist', '|', 'link', 'image','multiimage',
+                    'unlink', 'baidumap', 'emoticons' 
+                ],
+             afterCreate: function () {
+                 this.sync();
+             },
+             afterBlur: function () {
+                 this.sync();
+             },
+             afterChange: function () {
+                  K('.word_count1').html("最多20000个字符,已输入" + this.count() + "个字符");
+             },
+             afterUpload:function(url){
+             },
+             allowFileManager: false,
+             allowFlashUpload: false,
+             allowMediaUpload: false,
+             allowFileUpload: false
+         });
+     });
+ }
+ </script>
+<script>
+	$(document).ready(function(){
+		var index=0;
+		jQuery.post('/api/titles.html',{"parentId":0},function(data,textStatus,jqXHR){
+			if(data.code==1 && null!=data.data){
+				index++;
+				$("#title").append('<div class="layui-input-inline" child='+index+'><select name="browseLook" class="title0" lay-filter="browseLook" onchange="showDetail(this)"></select></div>')
+				for(var i=0;i<data.data.length;i++){
+					var p=data.data[i];
+					$(".title0").append('<option value="'+p.titleId+'">'+p.titleName+'</option>')
+				}
+			}else{
+			}
+		},'json');
+	});
+</script>
+	
+
+<body class="childrenBody">
+	<#include "left-menu.html">
+	<!-- 左侧侧边导航结束 -->
+	<!-- 右侧主体内容 -->
+	<div class="layui-body" id="larry-body" style="bottom: 0;border-left: solid 2px #2299ee;">
+		<div class="layui-tab layui-tab-card larry-tab-box" id="larry-tab" lay-filter="demo" lay-allowclose="true">
+			<div class="go-left key-press pressKey" id="titleLeft" title="滚动至最右侧"><i class="larry-icon larry-weibiaoti6-copy"></i> </div>
+			<ul class="layui-tab-title">
+				<li class="layui-this" id="admin-home"><i class="iconfont icon-diannao1"></i><em>后台首页</em></li>
+			</ul>
+			<div class="go-right key-press pressKey" id="titleRight" title="滚动至最左侧"><i class="larry-icon larry-right"></i></div> 
+			<ul class="layui-nav closeBox">
+				  <li class="layui-nav-item">
+				    <a href="javascript:;"><i class="iconfont icon-caozuo"></i> 页面操作</a>
+				    <dl class="layui-nav-child">
+					  <dd><a href="javascript:;" class="refresh refreshThis"><i class="layui-icon">&#x1002;</i> 刷新当前</a></dd>
+				      <dd><a href="javascript:;" class="closePageOther"><i class="iconfont icon-prohibit"></i> 关闭其他</a></dd>
+				      <dd><a href="javascript:;" class="closePageAll"><i class="iconfont icon-guanbi"></i> 关闭全部</a></dd>
+				    </dl>
+				  </li>
+				</ul>
+			<div class="layui-tab-content" style="min-height: 150px; ">
+				<div class="layui-tab-item layui-show">
+	<form class="layui-form" name="articleForm" action="/article/doAddArticle.html">
+		<div class="layui-form-item">
+			<label class="layui-form-label">文章标题</label>
+			<div class="layui-input-block">
+				<input class="layui-input newsName" lay-verify="required" name="articleName" placeholder="请输入文章标题" type="text">
+			</div>
+		</div>
+		<div class="layui-inline"  id="title">
+				<label class="layui-form-label">文章类目选择</label>
+		</div>
+		
+		<div class="layui-form-item">
+			<div class="layui-inline">
+			
+			</div>
+			<div class="layui-inline">		
+				<label class="layui-form-label">文章作者</label>
+				<div class="layui-input-inline">
+					<input class="layui-input newsAuthor" lay-verify="required" name="articleAuthor" placeholder="请输入文章作者" type="text">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">是否上线</label>
+				<div class="layui-input-inline">
+					<select name="articleStatus" class="newsLook" lay-filter="browseLook">
+				        <option value="0">是</option>
+				        <option value="1">否</option>
+				    </select><div class="layui-unselect layui-form-select"><div class="layui-select-title"><input placeholder="开放浏览" value="开放浏览" readonly="" class="layui-input layui-unselect" type="text"><i class="layui-edge"></i></div><dl class="layui-anim layui-anim-upbit"><dd lay-value="0" class="layui-this">开放浏览</dd><dd lay-value="1" class="">会员浏览</dd></dl></div>
+				</div>
+			</div>
+		</div>
+	<!-- 	<div class="layui-form-item">
+			<label class="layui-form-label">内容摘要</label>
+			<div class="layui-input-block">
+				<textarea placeholder="请输入内容摘要" class="layui-textarea"></textarea>
+			</div>
+		</div> -->
+		<div class="layui-form-item">
+			<label class="layui-form-label">文章内容</label>
+			<div class="layui-input-block">
+				<textarea cols="0" rows="5" name="articleContent" class="form-control" id="demo" style="margin: 0px -0.5px 0px 0px; height: 250px; width: 100%;">
+    </textarea>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+				<input type="hidden" name="articleId" id="articleId" value="${articleId}">
+				<input type="hidden" name="titleId" value="15">
+				<button class="layui-btn" lay-submit="" lay-filter="addNews" onclick='javascript:$("#articleId").val($("#articleId").val().replace(/[,]+/g, ""));document.articleForm.submit();'>立即提交</button> 
+			
+				<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+		    </div>
+		</div>
+	</form>
+	<script type="text/javascript" src="/common/layui/layui.js"></script>
+	<script type="text/javascript" src="/js/newsadd.js"></script>
+	<script>
+		$(".layui-input layui-unselect").onclick(function(){
+			alert('1');
+		})
+	</script>
+	
+<#include "wrapper-down.html">

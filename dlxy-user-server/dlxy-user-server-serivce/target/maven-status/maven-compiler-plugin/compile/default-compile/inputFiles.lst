@@ -1,4 +1,6 @@
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-user-server/dlxy-user-server-serivce/src/main/java/com/dlxy/server/user/service/app.java
+/Users/joker/Java/oxygen_workspace/dlxy/dlxy-user-server/dlxy-user-server-serivce/src/main/java/com/dlxy/server/user/service/IUserIllegalLogService.java
+/Users/joker/Java/oxygen_workspace/dlxy/dlxy-user-server/dlxy-user-server-serivce/src/main/java/com/dlxy/server/user/service/impl/UserIllegalLogServiceImpl.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-user-server/dlxy-user-server-serivce/src/main/java/com/dlxy/server/user/service/impl/UserRecordServiceImpl.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-user-server/dlxy-user-server-serivce/src/main/java/com/dlxy/server/user/service/IUserService.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-user-server/dlxy-user-server-serivce/src/main/java/com/dlxy/server/user/service/IUserRecordService.java

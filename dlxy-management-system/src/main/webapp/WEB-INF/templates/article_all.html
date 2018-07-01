@@ -1,0 +1,198 @@
+<#include "wrapper-up.html">
+<#setting datetime_format="yyyy-MM-dd HH:mm:ss"/>
+<section class="layui-larry-box">
+	<div class="larry-personal">
+	    <div class="layui-tab">
+            <blockquote class="layui-elem-quote news_search">
+		
+		<div class="layui-inline">
+		    <div class="layui-input-inline">
+		    	<input value="" id="searchText" placeholder="请输入关键字" class="layui-input search_input" type="text">
+		    </div>
+		    <input type="button" id="searchButton" class="layui-btn search_btn"  value="查询">
+		    <input type="button" class="layui-btn search_btn" value="显示所有,非查询" onclick="javascript:window.location.href = 'http://localhost:8000/article/all.html'">
+		    
+		</div>
+	</blockquote>
+		         <!-- 操作日志 -->
+                <div class="layui-form news_list">
+                    <table class="layui-table">
+					    <colgroup>
+						<col width="50">
+						<col>
+						<col width="9%">
+						<col width="9%">
+						<col width="9%">
+						<col width="9%">
+						<col width="9%">
+						<col width="15%">
+					</colgroup>
+					<thead>
+						<tr>
+							<th>
+								<input name="" lay-skin="primary" lay-filter="allChoose" id="allChoose" type="checkbox">
+								<div class="layui-unselect layui-form-checkbox" lay-skin="primary"><i class="layui-icon"></i></div>
+							</th>
+							<th>文章编号</th>
+							<th style="text-align:left;">文章标题</th>
+							<th>作者</th>
+							<th>处理人</th>
+							<th>是否上架</th>
+							<th>发布时间</th>
+							<th>更新时间</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody class="news_content" id="contentBody">
+					<#if pageVO.data??>
+						<#list pageVO.data as item>
+							<tr>
+							<td>
+								<input name="checked" lay-skin="primary" lay-filter="choose" type="checkbox" value="${item.articleId}">
+								<div class="layui-unselect layui-form-checkbox" lay-skin="primary">
+								<i class="layui-icon"></i>
+								</div>
+							</td>
+							<td>${item.articleId}</td>
+							<td align="left">${item.articleName}</td>
+							<td>${item.articleAuthor}</td>
+							<td>${item.username}</td>
+							<td>
+								<#if item.articleStatus==0>
+									<input name="show" lay-skin="switch" lay-text="是|否" lay-filter="isShow" type="checkbox">
+									<div class="layui-unselect layui-form-switch"><i></i></div>
+								<#else>			
+									<input name="show" lay-skin="switch" lay-text="是|否" lay-filter="isShow" type="checkbox">		
+									<div class="layui-unselect layui-form-switch layui-form-onswitch"><i></i></div>
+								</#if>
+							</td>
+							<td>
+								${item.createDate?string('yyyy-MM-dd HH:mm:ss')}
+							</td>
+							<td>
+								<#if item.updateDate??>
+									${item.updateDate?string('yyyy-MM-dd HH:mm:ss')}
+								</#if>
+							</td>
+							<td>
+								<input type="button" class="layui-btn layui-btn-mini news_edit"value="编辑">
+								</br>
+								<input class="layui-btn layui-btn-danger layui-btn-mini" onclick="singeleDelButton(this)" value="删除" articleId="${item.articleId}">
+							</td>
+						</tr>
+						</#list>
+					</#if>
+					</tbody>
+					</table>
+                     <div class="larry-table-page clearfix">
+                          <input type="button" id="batchDelButton" class="layui-btn layui-btn-small" value="删除">
+                           <#if pageVO??>
+						      <form name="pageForm" action="/article/all.html" method="get">
+							      	<input type="hidden" name="pageNum" value="${pageVO.pageNum}">
+							      	<input type="hidden" name="q" value="${q!""}">
+							      	<div id="page2" class="page">
+										<div class="layui-box layui-laypage layui-laypage-default" id="layui-laypage-0">
+											<span class="layui-laypage-curr">
+								      			<em class="layui-laypage-em"></em>
+								      			<em id="pageEm">当前第 ${pageVO.pageNum}页 总共有${pageVO.maxPage} </em>
+							      			</span>
+											<#if pageVO.pageNum==1><a href="javascript:void(0)">首页</a>	<#else><a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=1;document.pageForm.submit();">首页</a>   </#if>
+											<#if pageVO.pageNum<=1> <a href="javascript:void(0)">上一页</a><#else><a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=(${pageVO.pageNum}-1);document.pageForm.submit();"> 上一页</a>  </#if>
+											<#if (pageVO.pageNum>=pageVO.maxPage)> <a href="javascript:void(0)">下一页</a>  <#else><a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=${pageVO.pageNum}+1;document.pageForm.submit();">下一页</a> </#if>		
+											<#if (pageVO.pageNum>=pageVO.maxPage)> <a href="javascript:void(0)">最后一页</a> <#else> <a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=${pageVO.maxPage};document.pageForm.submit();">最后一页</a> </#if>>
+										</div>				          
+							      </div>
+						      </form>
+						 </#if>
+			         </div>
+			    </div>
+			    </div>
+		    </div>
+		</div>
+	
+</section>
+<#include "wrapper-down.html">
+<script type="text/javascript">
+	var ids="";
+	$("#batchDelButton").click(function batchDel(){
+		$("input:checkbox[name=checked]:checked").each(function(){
+			ids+=$(this).val()+",";
+		})
+		alert(ids);
+		var params={"ids":ids};
+		jQuery.post('/api/article/del/batch.html',params,function(data,textStatus,jqXHR){
+			if(data.code==1){
+				alert('删除成功');
+				window.location.href="http://localhost:8000/article/all.html";
+			}else{
+				alert('fail');
+			}
+		},'json');
+	});
+	function singeleDelButton(obj){
+		var articleId=$(obj).attr("articleId");
+		var params={"ids":articleId};
+		jQuery.post('/api/article/del/batch.html',params,function(data,textStatus,jqXHR){
+			if(data.code==1){
+				alert('删除成功');
+				window.location.href="http://localhost:8000/article/all.html";
+			}else{
+				alert('fail');
+			}
+		},'json');
+	}
+	$("#searchButton").click(function(){
+		var q=$("#searchText").val();
+		$.ajax({
+			type:'get',
+			url:'/api/search/article.html',
+			data:{"q":q,"pageNum":1},
+			success:function(data,str){
+				if(data.code==1){
+					var pageVO=data.data;
+					document.pageForm.q.value=q;
+					var contentBody=$("#contentBody");
+					contentBody.empty();
+					for(var i=0;i<data.data.data.length;i++){
+						var p=data.data.data[i];
+						contentBody.append('<tr><td><input name="checked" lay-skin="primary" lay-filter="choose" type="checkbox" value=""><div class="layui-unselect layui-form-checkbox" lay-skin="primary"><i class="layui-icon"></i></div></td><td>'+p.articleId+'</td><td align="left">'+p.articleName+'</td><td>'+p.articleAuthor+'</td>	<td>'+p.username+'</td><td><input name="show" lay-skin="switch" lay-text="是|否" lay-filter="isShow" type="checkbox"><div class="layui-unselect layui-form-switch"><i></i></div></td><td>'+p.createDateStr+'</td><td>'+p.updateDateStr+'</td><td><a class="layui-btn layui-btn-mini news_edit"><i class="iconfont icon-edit"></i> 编辑</a><a class="layui-btn layui-btn-danger layui-btn-mini" id="delHref" href="/article/del/'+p.articleId+'.html" articleId='+p.articleId+'><i class="layui-icon"></i> 删除</a></td></tr>');
+					}
+					var o=$("#layui-laypage-0");
+					if(data.data.data.length==0){
+						o.empty();
+						o.append('<span class="layui-laypage-curr"><em class="layui-laypage-em"></em><em id="pageEm">暂无数据</em></span>')
+					}else{
+						o.empty();
+						var s='<span class="layui-laypage-curr"><em class="layui-laypage-em"></em><em id="pageEm">当前第'+pageVO.pageNum+'页 总共有'+pageVO.maxPage+'页</em></span>';
+						o.append(s);
+						s="";
+						if(pageVO.pageNum==1)
+						{
+							s+='<a href="javascript:void(0)">首页</a>';						
+						}else{
+							s+='<a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=1;document.pageForm.submit();">首页</a>';
+						}
+						if(pageVO.pageNum<=1){
+							s+=' <a href="javascript:void(0)">上一页</a>';
+						}else{
+							s+='<a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=('+pageVO.pageNum-1+');document.pageForm.submit();"> 上一页</a>';
+						}
+						if(pageVO.pageNum>=pageVO.maxPage){
+							s+='<a href="javascript:void(0)">下一页</a>';
+							s+='<a href="javascript:void(0)">最后一页</a>';
+						}else{
+							s+='<a href="javascript:void(0)" onclick="document.pageForm.pageNum.value='+(pageVO.pageNum+1)+';document.pageForm.submit();">下一页</a> ';
+							s+='<a href="javascript:void(0)" onclick="document.pageForm.pageNum.value='+pageVO.maxPage+';document.pageForm.submit();">最后一页</a>';
+						}
+						o.append(s);
+					}
+				}
+			},
+			error:function(data){
+				alert('fail');
+			}
+		});
+	})
+	
+</script>
+<#include "footer.html">

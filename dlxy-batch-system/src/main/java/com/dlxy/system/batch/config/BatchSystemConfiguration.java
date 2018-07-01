@@ -7,7 +7,6 @@
 */
 package com.dlxy.system.batch.config;
 
-import static org.hamcrest.CoreMatchers.sameInstance;
 
 import java.util.HashSet;
 import java.util.List;
@@ -16,6 +15,9 @@ import java.util.Set;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.SqlSessionFactoryBean;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
@@ -31,12 +33,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.dlxy.common.event.Events;
 import com.dlxy.system.batch.consumer.AmqpListener;
 import com.dlxy.system.batch.consumer.FacadedAmqpListener;
+import com.dlxy.system.batch.consumer.detail.UserIllegalLogListener;
 import com.dlxy.system.batch.consumer.detail.UserRecordListener;
 
 /**
@@ -50,6 +54,12 @@ import com.dlxy.system.batch.consumer.detail.UserRecordListener;
 @Configuration
 @EnableConfigurationProperties(value =
 { DlxyProperty.class })
+@ComponentScan(basePackages= {
+		"com.dlxy.server.user.service"
+})
+@MapperScan(basePackages= {
+		"com.dlxy.server.user.dao"
+})
 public class BatchSystemConfiguration
 {
 	@Autowired
@@ -59,7 +69,7 @@ public class BatchSystemConfiguration
 	public DataSource dataSource()
 	{
 		DruidDataSource dataSource=new DruidDataSource();
-		dataSource.setUsername(dataSource.getUsername());
+		dataSource.setUsername(dlxyProperty.getDbUsername());
 		dataSource.setPassword(dlxyProperty.getDbPassword());
 		dataSource.setUrl(dlxyProperty.getDbUrl());
 		dataSource.setDriverClassName(dlxyProperty.getDbDriverClassName());
@@ -69,6 +79,17 @@ public class BatchSystemConfiguration
 	public QueryRunner queryRunner()
 	{
 		return new QueryRunner(dataSource());
+	}
+	@Bean
+	public SqlSessionFactoryBean sqlSessionFactory()
+	{
+		SqlSessionFactoryBean sqlSessionFactoryBean=new SqlSessionFactoryBean();
+		sqlSessionFactoryBean.setDataSource(dataSource());
+		org.apache.ibatis.session.Configuration configuration=new org.apache.ibatis.session.Configuration();
+		configuration.setMapUnderscoreToCamelCase(true);
+		sqlSessionFactoryBean.setConfiguration(configuration);
+//		sqlSessionFactoryBean.setMapperLocations(mapperLocations);
+		return sqlSessionFactoryBean;
 	}
 	@ConditionalOnProperty(prefix="dlxy.config",name="amqp-enabled",matchIfMissing=false)
 	@Bean
@@ -123,9 +144,28 @@ public class BatchSystemConfiguration
 	}
 	@ConditionalOnProperty(prefix="dlxy.config",name="amqp-enabled",matchIfMissing=false)
 	@Bean
+	public Queue userIllegalQueue()
+	{
+		return new Queue(Events.UserIllegalLog.name());
+	}
+	@ConditionalOnProperty(prefix="dlxy.config",name="amqp-enabled",matchIfMissing=false)
+	@Bean
+	public Binding userIllegalBinding()
+	{
+		Queue queue=userIllegalQueue();
+		return BindingBuilder.bind(queue).to(dlxyExchange()).with(Events.UserIllegalLog.name().toUpperCase());
+	}
+	@ConditionalOnProperty(prefix="dlxy.config",name="amqp-enabled",matchIfMissing=false)
+	@Bean
 	public AmqpListener userRecordListener()
 	{
 		return new UserRecordListener();
+	}
+	@ConditionalOnProperty(prefix="dlxy.config",name="amqp-enabled",matchIfMissing=false)
+	@Bean
+	public UserIllegalLogListener userIllegalLogListener()
+	{
+		return new UserIllegalLogListener();
 	}
 	
 	@ConditionalOnProperty(prefix="dlxy.config",name="amqp-enabled",matchIfMissing=false)

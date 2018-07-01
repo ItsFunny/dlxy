@@ -18,4 +18,6 @@ package com.dlxy.common.event;
 public enum Events
 {
 	UserRecordLog,
+	
+	UserIllegalLog,
 }

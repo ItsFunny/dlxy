@@ -44,23 +44,27 @@ public class ArticleQueryDaoImpl implements ArticleQueryDao
 
 		public ArticleDTO handle(ResultSet rs) throws SQLException
 		{
-			ArticleDTO articleDTO = new ArticleDTO();
 			if (rs.next())
 			{
-				articleDTO.setArticleId(rs.getLong(0));
-				articleDTO.setTitleId(rs.getInt(1));
-				articleDTO.setArticleName(rs.getString(2));
-				articleDTO.setArticleAuthor(rs.getString(3));
-				articleDTO.setArticleIsRecommend(rs.getInt(4));
-				articleDTO.setCreateDate(rs.getDate(5));
-				articleDTO.setUpdateDate(rs.getDate(6));
-				articleDTO.setArticleStatus(rs.getInt(7));
-				articleDTO.setUsername(rs.getString(8));
+				ArticleDTO articleDTO = new ArticleDTO();
+//				select a.article_id,a.title_id,a.article_name,a.article_author,
+//				a.article_is_recommend,a.create_date,a.update_date ,a.article_status ,c.username ,a.delete_date "
+				articleDTO.setArticleId(rs.getLong(1));
+				articleDTO.setTitleId(rs.getInt(2));
+				articleDTO.setArticleName(rs.getString(3));
+				articleDTO.setArticleAuthor(rs.getString(4));
+				articleDTO.setArticleIsRecommend(rs.getInt(5));
+				articleDTO.setCreateDate(rs.getDate(6));
+				articleDTO.setUpdateDate(rs.getDate(7));
+				articleDTO.setArticleStatus(rs.getInt(8));
+				articleDTO.setUsername(rs.getString(9));
+				articleDTO.setDeleteDate(rs.getDate(10));
+				return articleDTO;
+			}else {
+				return null;
 			}
-			return articleDTO;
 		}
 	}
-
 	@Autowired
 	private QueryRunner queryRunner;
 
@@ -68,7 +72,7 @@ public class ArticleQueryDaoImpl implements ArticleQueryDao
 	{
 		StringBuilder sql = new StringBuilder(
 				"select a.article_id,a.title_id,a.article_name,a.article_author,a.article_is_recommend,a.create_date,a.update_date,a.article_status ,(select c.username from dlxy_user_article c where c.article_id=a.article_id)username,"
-						+ " b.title_name from dlxy_article  a,dlxy_title b "
+						+ " a.delete_date  from dlxy_article  a,dlxy_title b "
 						+ "where a.title_id=b.title_id ");
 
 		List<Object> set = new LinkedList<Object>();
@@ -109,10 +113,10 @@ public class ArticleQueryDaoImpl implements ArticleQueryDao
 				List<ArticleDTO> articleDTOs = new LinkedList<ArticleDTO>();
 				while (rs.next())
 				{
-					// select
-					// a.article_id,a.title_id,a.article_name,a.article_author,a.article_is_recommend,a.create_date,a.update_date
-					// "
-					// + ",a.article_status ,c.username
+//					select a.article_id,a.title_id,
+//					a.article_name,a.article_author,a.article_is_recommend,a.create_date,
+//					a.update_date,a.article_status ,(select c.username from dlxy_user_article c where c.article_id=a.article_id)username,"
+//							+ " a.delete_date  
 					ArticleDTO articleDTO = new ArticleDTO();
 					articleDTO.setArticleId(rs.getLong(1));
 					articleDTO.setTitleId(rs.getInt(2));
@@ -121,8 +125,10 @@ public class ArticleQueryDaoImpl implements ArticleQueryDao
 					articleDTO.setArticleIsRecommend(rs.getInt(5));
 					articleDTO.setCreateDate(rs.getDate(6));
 					articleDTO.setUpdateDate(rs.getDate(7));
+					System.out.println(rs.getObject(7));
 					articleDTO.setArticleStatus(rs.getInt(8));
 					articleDTO.setUsername(rs.getString(9));
+					articleDTO.setDeleteDate(rs.getDate(10));
 					articleDTOs.add(articleDTO);
 				}
 				return articleDTOs;
@@ -133,10 +139,18 @@ public class ArticleQueryDaoImpl implements ArticleQueryDao
 
 	public Collection<ArticleDTO> findByArticleId(Long articleId) throws SQLException
 	{
-		String sql = "select a.article_id,a.title_id,a.article_name,a.article_author,a.article_is_recommend,a.create_date,a.update_date ,a.article_status ,b.title_id,b.title_name,c.username "
+		String sql = "select a.article_id,a.title_id,a.article_name,a.article_author,a.article_is_recommend,a.create_date,a.update_date ,a.article_status ,c.username ,a.delete_date "
 				+ "from dlxy_article  a,dlxy_title b ,dlxy_user_article c where a.title_id=b.title_id and a.article_id= c.article_id and a.article_id=?";
 		ArticleDTO articleDTO = queryRunner.query(sql, new ArticleResultSetHandler(), articleId);
 		return Arrays.asList(articleDTO);
 	}
+
+	@Override
+	public int rollBackArticle(int status,Long articleId,Integer titleId) throws SQLException
+	{
+		String sql="update dlxy_article set article_status=? where article_id=? and exists(select 1 from dlxy_title b where b.title_id = ? )";
+		return queryRunner.update(sql,status,articleId,titleId);
+	}
+
 
 }

@@ -15,6 +15,7 @@ import javax.sql.DataSource;
 import org.apache.commons.dbutils.QueryRunner;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +26,8 @@ import org.springframework.format.FormatterRegistry;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -34,9 +37,14 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.dlxy.common.service.IdWorkerService;
+import com.dlxy.common.service.IdWorkerServiceTwitter;
 import com.dlxy.system.management.config.property.DlxyProperty;
 import com.dlxy.system.management.config.property.DlxyPropertyPlaceholderConfigurer;
 import com.dlxy.system.management.interceptor.ResponseInterceptor;
+
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 
 /**
 * 
@@ -55,10 +63,11 @@ import com.dlxy.system.management.interceptor.ResponseInterceptor;
 @ImportResource(locations= {
 		"classpath:/spring/applicationContext.xml"
 })
-@Import(DlxyProperty.class)
 @EnableWebMvc
 public class ManagementSystemConfiguration implements WebMvcConfigurer
 {
+	@Autowired
+	private DlxyProperty dlxyProperty;
 		
 	@Bean
 	public DlxyPropertyPlaceholderConfigurer dlxyPropertyPlaceholderConfigurer() throws IOException
@@ -66,6 +75,31 @@ public class ManagementSystemConfiguration implements WebMvcConfigurer
 		DlxyPropertyPlaceholderConfigurer propertyPlaceholderConfigurer=new DlxyPropertyPlaceholderConfigurer();
 		propertyPlaceholderConfigurer.setLocations(new PathMatchingResourcePatternResolver().getResources("classpath:*.properties"));
 		return propertyPlaceholderConfigurer;
+	}
+	@Bean
+	public IdWorkerService IdWorkerService()
+	{
+		return new IdWorkerServiceTwitter(0,1);
+	}
+	
+	@Bean
+	public MultipartResolver multipartResolver()
+	{
+		CommonsMultipartResolver commonsMultipartResolver=new CommonsMultipartResolver();
+		commonsMultipartResolver.setMaxInMemorySize(1000000);
+		return commonsMultipartResolver;
+	}
+	@Bean
+	public JedisPool jedisPool()
+	{
+		JedisPoolConfig jedisPoolConfig=new JedisPoolConfig();
+		jedisPoolConfig.setMaxIdle(5);
+		jedisPoolConfig.setMaxTotal(1024);
+		jedisPoolConfig.setMaxWaitMillis(10000);
+		jedisPoolConfig.setTestOnBorrow(true);
+//		JedisPool jedisPool=new JedisPool(jedisPoolConfig,dlxyProperty.getRedisHost(),dlxyProperty.getRedisPort(),10000,dlxyProperty.getRedisPassword());
+		JedisPool jedisPool=new JedisPool("localhost", 6379);
+		return jedisPool;
 	}
 	@Bean
 	public DataSource dataSource(DlxyProperty dlxyProperty)
@@ -84,7 +118,7 @@ public class ManagementSystemConfiguration implements WebMvcConfigurer
 		return new QueryRunner(dataSource(dlxyProperty));
 	}
 
-	@Bean("sqlSession")
+	@Bean
 	public SqlSessionFactoryBean sqlSessionFactoryBean(DlxyProperty dlxyProperty) throws IOException
 	{
 		SqlSessionFactoryBean sessionFactoryBean=new SqlSessionFactoryBean();

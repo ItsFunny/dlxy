@@ -26,17 +26,18 @@ public class ArticleDTO
 	private String articleName;
 	private String articleAuthor;
 	private String articleContent;
-	private Integer articleIsRecommend;
+	private Integer articleIsRecommend=0;
 	private Integer articleStatus;
 	private Date createDate;
 	private Date updateDate;
 	private String createDateStr;
 	private String updateDateStr;
-	//2018-06-30 11:30 add
+	// 2018-06-30 11:30 add
 	private Long userId;
 	private String username;
-	
-	
+	// 2018-06-30 22:02 add
+	private Date deleteDate;
+	private String deleteDateStr;
 
 	public Long getArticleId()
 	{
@@ -115,7 +116,10 @@ public class ArticleDTO
 
 	public void setCreateDate(Date createDate)
 	{
-		this.createDateStr=CommonUtils.simpleDate2String(createDate);
+		if(null!=createDate)
+		{
+			this.createDateStr = CommonUtils.simpleDate2String(createDate);
+		}
 		this.createDate = createDate;
 	}
 
@@ -126,7 +130,10 @@ public class ArticleDTO
 
 	public void setUpdateDate(Date updateDate)
 	{
-		this.updateDateStr=CommonUtils.simpleDate2String(updateDate);
+		if(null!=updateDate)
+		{
+			this.updateDateStr = CommonUtils.simpleDate2String(updateDate);
+		}
 		this.updateDate = updateDate;
 	}
 
@@ -178,6 +185,30 @@ public class ArticleDTO
 	public void setUsername(String username)
 	{
 		this.username = username;
+	}
+
+	public Date getDeleteDate()
+	{
+		return deleteDate;
+	}
+
+	public void setDeleteDate(Date deleteDate)
+	{
+		this.deleteDate = deleteDate;
+		if(null!=deleteDate)
+		{
+			this.deleteDateStr=CommonUtils.simpleDate2String(deleteDate);
+		}
+	}
+
+	public String getDeleteDateStr()
+	{
+		return deleteDateStr;
+	}
+
+	public void setDeleteDateStr(String deleteDateStr)
+	{
+		this.deleteDateStr = deleteDateStr;
 	}
 
 }

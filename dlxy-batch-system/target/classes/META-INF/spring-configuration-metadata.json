@@ -10,6 +10,11 @@
   "properties": [
     {
       "sourceType": "com.dlxy.system.batch.config.DlxyProperty",
+      "name": "dlxy.config.amqp-enabled",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "sourceType": "com.dlxy.system.batch.config.DlxyProperty",
       "name": "dlxy.config.amqp-host",
       "type": "java.lang.String"
     },

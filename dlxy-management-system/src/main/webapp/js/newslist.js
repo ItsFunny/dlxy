@@ -8,33 +8,6 @@ layui.config({
 
 	//加载页面数据
 	var newsData = '';
-	$.get("../../json/newsList.json", function(data){
-		var newArray = [];
-		//单击首页“待审核文章”加载的信息
-		if($(".top_tab li.layui-this cite",parent.document).text() == "待审核文章"){
-			if(window.sessionStorage.getItem("addNews")){
-				var addNews = window.sessionStorage.getItem("addNews");
-				newsData = JSON.parse(addNews).concat(data);
-			}else{
-				newsData = data;
-			}
-			for(var i=0;i<newsData.length;i++){
-        		if(newsData[i].newsStatus == "待审核"){
-					newArray.push(newsData[i]);
-        		}
-        	}
-        	newsData = newArray;
-        	newsList(newsData);
-		}else{    //正常加载信息
-			newsData = data;
-			if(window.sessionStorage.getItem("addNews")){
-				var addNews = window.sessionStorage.getItem("addNews");
-				newsData = JSON.parse(addNews).concat(newsData);
-			}
-			//执行加载数据的方法
-			newsList();
-		}
-	})
 
 	//查询
 	$(".search_btn").click(function(){
@@ -224,10 +197,6 @@ layui.config({
         },2000);
 	})
  
-	//操作
-	$("body").on("click",".news_edit",function(){  //编辑
-		layer.alert('您点击了文章编辑按钮，由于是纯静态页面，所以暂时不存在编辑内容，后期会添加，敬请谅解。。。',{icon:6, title:'文章编辑'});
-	})
 
 	$("body").on("click",".news_collect",function(){  //收藏.
 		if($(this).text().indexOf("已收藏") > 0){

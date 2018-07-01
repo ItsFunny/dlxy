@@ -26,5 +26,5 @@
 		</mvc:interceptor>
 	</mvc:interceptors> -->
 	<!-- aspect support -->
-	<!-- <aop:aspectj-autoproxy /> -->
+	<aop:aspectj-autoproxy /> 
 </beans>

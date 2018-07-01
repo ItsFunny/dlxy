@@ -3,13 +3,14 @@
 
 
 <mapper namespace="com.dlxy.server.article.dao.mybatis.ArticleDao">
-	
 	<update id="updateInBatch" parameterType="java.util.Map">
 		update dlxy_article set article_status=#{status}
+		<if test="status==2">
+			,delete_date =#{deleteDate}
+		</if>
 		where article_id in 
 		<foreach collection="ids" index="index" open="(" separator="," close=")" item="id">
 			#{id}
 		</foreach>
 	</update>
-	
 </mapper>

@@ -24,7 +24,7 @@ import com.dlxy.common.dto.ArticleDTO;
 public interface IArticleService
 { 	
 	//这个方法可以复用的,需要修改
-	Collection<ArticleDTO>findAllArticlesExceptRecommend(int start,int end);
+//	Collection<ArticleDTO>findAllArticlesExceptRecommend(int start,int end);
 	
 	void updateArticleStatus(Long articleId,int status);
 	
@@ -34,4 +34,10 @@ public interface IArticleService
 	Collection<ArticleDTO>findByParam(Map<String, Object>params,int start,int end) throws SQLException;
 	
 	Collection<ArticleDTO>findByArticleId(Long articleId) throws SQLException;
+	
+	
+	int rollBackArticle(int status,Long articleId,int titleId) throws SQLException;
+	
+	
+	void insertOrUpdate(ArticleDTO articleDTO);
 }

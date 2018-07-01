@@ -28,6 +28,9 @@ public class DlxyProperty
 	private String amqpHost;
 	private String amqpUsername;
 	private String amqpPassword;
+	
+	private boolean amqpEnabled;
+	
 
 	public String getAmqpHost()
 	{
@@ -98,6 +101,16 @@ public class DlxyProperty
 	public void setDbDriverClassName(String dbDriverClassName)
 	{
 		this.dbDriverClassName = dbDriverClassName;
+	}
+
+	public boolean isAmqpEnabled()
+	{
+		return amqpEnabled;
+	}
+
+	public void setAmqpEnabled(boolean amqpEnabled)
+	{
+		this.amqpEnabled = amqpEnabled;
 	}
 
 

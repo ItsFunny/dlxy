@@ -7,7 +7,7 @@ dlxy:
   config: 
     db-url: jdbc:mysql://localhost/JN?characterEncoding=utf-8&useSSL=false
     db-username: root
-    db-passwrod: 123456
+    db-password: 123456
     amqp-host: localhost
     amqp-username: guest
     amqp-password: guest

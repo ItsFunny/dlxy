@@ -31,7 +31,11 @@ public class UserRecordDTO implements Serializable
 	private Long userId;
 	private String recordDetail;
 	private Date createDate;
-
+	
+	public UserRecordDTO()
+	{
+		this.createDate=new Date();
+	}
 	public Long getRecordId()
 	{
 		return recordId;

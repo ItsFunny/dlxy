@@ -20,6 +20,22 @@ import com.dlxy.common.enums.RestAPIStatus;
  */
 public class ResultUtil
 {
+	public static <T> ResultDTO<T> needMoreOp(T data,String msg)
+	{
+		ResultDTO<T> resultDTO = new ResultDTO<T>();
+		resultDTO.setData(data);
+		resultDTO.setMsg(msg);
+		resultDTO.setCode(RestAPIStatus.NEEDOP.ordinal());
+		return resultDTO;
+	}
+	public static <T> ResultDTO<T> needMoreOp(String msg)
+	{
+		return needMoreOp(null, msg);
+	}
+	public static <T> ResultDTO<T> needMoreOp()
+	{
+		return needMoreOp("needMoreOperation");
+	}
 	public static <T> ResultDTO<T> sucess(T data, String msg)
 	{
 		ResultDTO<T> resultDTO = new ResultDTO<T>();
