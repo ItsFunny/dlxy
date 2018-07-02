@@ -96,6 +96,12 @@ public class ArticleQueryDaoImpl implements ArticleQueryDao
 				set.add("%" + params.get("searchParam") + "%");
 			}
 		}
+		if(params.containsKey("userId"))
+		{
+			sql.append(" and a.article_id in ( select e.article_id from dlxy_user_article e where exists(select 1 from dlxy_user f where f.user_id = ? ) and e.user_id = ? )");
+			set.add(params.get("userId"));
+			set.add(params.get("userId"));
+		}
 		// if(!StringUtils.isEmpty(params.get("articleName").toString()))
 		// {
 		// sql.append(" or a.article_name like ? ");

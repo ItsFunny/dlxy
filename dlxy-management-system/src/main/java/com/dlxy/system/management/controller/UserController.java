@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.dlxy.common.dto.ArticleDTO;
 import com.dlxy.common.dto.PageDTO;
 import com.dlxy.common.dto.UserDTO;
 import com.dlxy.common.vo.PageVO;
@@ -50,7 +51,7 @@ public class UserController
 			@RequestParam(name = "pageNum", defaultValue = "1") Integer pageNum)
 	{
 		UserDTO user = ManagementUtil.getLoginUser();
-		ModelAndView modelAndView = new ModelAndView("my_releases");
+		ModelAndView modelAndView = null;
 		Map<String, Object> params = new HashMap<>();
 		params.put("userId", user.getUserId());
 		String articleStatusStr = request.getParameter("articleStatus");
@@ -78,9 +79,10 @@ public class UserController
 		{
 			modelAndView = new ModelAndView("error", params);
 		}else {
-			PageVO<Collection<Map<String, Object>>> pageVO = new PageVO<Collection<Map<String, Object>>>(pageDTO.getData(),
+			PageVO<Collection<Map<String, Object>>> pageVO = new PageVO<>(pageDTO.getData(),
 					pageSize, pageNum, pageDTO.getTotalCount());
-			modelAndView.addObject("pageVO", pageVO);
+			params.put("pageVO", pageVO);
+			modelAndView=new ModelAndView("my_releases",params);
 		}
 		return modelAndView;
 	}

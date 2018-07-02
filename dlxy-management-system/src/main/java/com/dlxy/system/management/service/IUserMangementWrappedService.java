@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Map;
 
+import com.dlxy.common.dto.ArticleDTO;
 import com.dlxy.common.dto.PageDTO;
 
 /**
@@ -23,5 +24,5 @@ import com.dlxy.common.dto.PageDTO;
 */
 public interface IUserMangementWrappedService
 {
-	PageDTO<Collection<Map<String,Object>>>findByPage(int pageSize,int pageNum,Map<String, Object>p) throws SQLException;
+	PageDTO<Collection<Map<String, Object>>>findByPage(int pageSize,int pageNum,Map<String, Object>p) throws SQLException;
 }

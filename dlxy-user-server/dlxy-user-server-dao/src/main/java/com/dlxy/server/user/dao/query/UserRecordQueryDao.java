@@ -8,8 +8,11 @@
 package com.dlxy.server.user.dao.query;
 
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
+import com.dlxy.common.dto.ArticleDTO;
 
 
 /**
@@ -23,6 +26,7 @@ import java.util.Map;
 public interface UserRecordQueryDao
 {
 	Long countByParam(Map<String, Object>params) throws SQLException;
-	List<Map<String, Object>>findByPage(Map<String, Object>params) throws SQLException;
+	Collection<Map<String, Object>>findByPage(Map<String, Object>params) throws SQLException;
+//	Collection<ArticleDTO>findByPage(Map<String, Object>params) throws SQLException;
 
 }

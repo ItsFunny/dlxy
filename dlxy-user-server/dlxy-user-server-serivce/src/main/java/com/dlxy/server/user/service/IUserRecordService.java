@@ -28,4 +28,5 @@ public interface IUserRecordService
 	Long countByParam(Map<String, Object>params) throws SQLException;
 	
 	Collection<Map<String, Object>>findByPage(int pageSize,int pageNum,Map<String, Object>params) throws SQLException;
+	
 }

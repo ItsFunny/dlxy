@@ -7,15 +7,21 @@
 */
 package com.dlxy.server.user.dao.query.impl;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.MapListHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
+import org.apache.ibatis.javassist.expr.NewArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -58,24 +64,27 @@ public class UserRecordQueryDaoImpl implements UserRecordQueryDao
 		}
 	}
 
+
 	@Override
 	public List<Map<String, Object>> findByPage(Map<String, Object> params) throws SQLException
 	{
 		List<Object>l=new LinkedList<>();
-		String sql = "select a.username, b.article_id,b.article_name,b.article_author,b.create_date "
-				+ "from dlxy_user_article a left join  dlxy_article b "
-				+ "on a.article_id=b.article_id  and b.article_id in (select c.article_id from dlxy_user_article c where c.user_id =?)";
+		String sql = "select a.username, b.article_id,b.article_name ,b.article_author,b.create_date "
+				+ "from dlxy_user_article a , dlxy_article b "
+				+ "where a.article_id=b.article_id  and b.article_id in (select c.article_id from dlxy_user_article c where c.user_id =?)";
 		l.add(params.get("userId"));
 		if(params.containsKey("articleStatus"))
 		{
-			sql+="and a.article_status = ?";
+			sql+="and b.article_status = ?";
 			int status=Integer.parseInt(params.get("articleStatus").toString());
 			l.add(status);
 		}
 		sql+=" order by b.create_date desc limit ?,?";
 		int start = Integer.parseInt(params.get("start").toString());
 		int end=Integer.parseInt(params.get("end").toString());
-		List<Map<String, Object>> res = queryRunner.query(sql, new MapListHandler(),l.toArray(),start,end);
+		l.add(start);
+		l.add(end);
+		List<Map<String, Object>> res = queryRunner.query(sql, new MapListHandler() ,l.toArray());
 		return res;
 	}
 

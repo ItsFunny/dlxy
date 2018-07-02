@@ -70,6 +70,15 @@ public class ArticleCountQueryDaoImpl implements ArticleCountQueryDao
 				p.add(tParam);
 			}
 		}
+		if(params.containsKey("userId"))
+		{
+			if(!StringUtils.isEmpty(params.get("userId").toString()))
+			{
+				sql+="and article_id in (select b.article_id from dlxy_user_article b where exists(select 1 from dlxy_user where user_id = ? ) and b.user_id= ? ) ";
+				p.add(params.get("userId"));
+				p.add(params.get("userId"));
+			}
+		}
 //		if(params.containsKey("username"))
 //		{
 //			if (!StringUtils.isEmpty(params.get("username").toString()))

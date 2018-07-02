@@ -21,6 +21,7 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.text.html.HTMLDocument.HTMLReader.ParagraphAction;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -127,6 +128,7 @@ public class RestAPIController
 	public ResultDTO<PageVO<Collection<ArticleDTO>>> searchArticle(HttpServletRequest request,
 			HttpServletResponse response) throws UnsupportedEncodingException
 	{
+		Map<String, Object> params = new HashMap<>();
 		String q =new String( request.getParameter("q").getBytes("iso-8859-1"),"utf-8");
 		String pageSizeStr = StringUtils.defaultString(request.getParameter("pageSize"), "2");
 		String pageNumStr = StringUtils.defaultString(request.getParameter("pageNum"), "1");
@@ -137,13 +139,20 @@ public class RestAPIController
 			return ResultUtil.fail("参数不可为空");
 		}
 		String searchQuery = CommonUtils.validStringException(q.trim());
+		String userIdStr=request.getParameter("userId");
+		if(!StringUtils.isEmpty(userIdStr))
+		{
+			//查找用户,与登录着的用户进行匹配,判断是否是同一个用户.或者是admin
+//			if()
+			params.put("userId", userIdStr);
+		}
 		try
 		{
 			Collection<ArticleDTO> findByArticleId = articleManagementWrappedService.findByArticleId(Long.parseLong(searchQuery));
 			return ResultUtil.sucess(new PageVO<Collection<ArticleDTO>>(findByArticleId, pageSize, pageNum, 1L));
 		} catch (NumberFormatException e)
 		{
-			Map<String, Object> params = new HashMap<>();
+			
 			params.put("searchParam", searchQuery);
 			try
 			{
