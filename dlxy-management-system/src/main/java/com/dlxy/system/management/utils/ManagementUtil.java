@@ -7,11 +7,8 @@
 */
 package com.dlxy.system.management.utils;
 
-import org.apache.shiro.SecurityUtils;
 
 import com.dlxy.common.dto.UserDTO;
-import com.dlxy.system.management.exception.ManagementException;
-import com.dlxy.system.management.exception.ManagementExceptionEnum;
 
 /**
 * 
@@ -27,6 +24,7 @@ public class ManagementUtil
 	{
 		UserDTO userDTO=new UserDTO();
 		userDTO.setUserId(1L);
+		userDTO.setUsername("joker");
 		return userDTO;
 //		UserDTO userDTO=(UserDTO) SecurityUtils.getSubject().getPrincipal();
 //		if(null==userDTO)

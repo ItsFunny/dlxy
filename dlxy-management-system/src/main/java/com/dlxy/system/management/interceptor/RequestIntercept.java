@@ -21,30 +21,26 @@ import org.springframework.web.servlet.ModelAndView;
 * @author joker 
 * @date 创建时间：2018年6月30日 上午10:34:30
 */
-public class ResponseInterceptor implements HandlerInterceptor
+public class RequestIntercept implements HandlerInterceptor
 {
 
 	@Override
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
 			throws Exception
 	{
-		response.setContentType("application/json");
 	}
 
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception
 	{
-		System.out.println("post handler");
-		response.setContentType("application/json");
-		HandlerInterceptor.super.postHandle(request, response, handler, modelAndView);
 	}
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception
 	{
-		System.out.println("pre handler");
-		return HandlerInterceptor.super.preHandle(request, response, handler);
+		request.setCharacterEncoding("utf-8");
+		return true;
 	}
 	
 

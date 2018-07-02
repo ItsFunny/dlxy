@@ -10,6 +10,7 @@ package com.dlxy.server.article.service;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Observer;
 
 import com.dlxy.common.dto.ArticleDTO;
 
@@ -21,7 +22,7 @@ import com.dlxy.common.dto.ArticleDTO;
 * @author joker 
 * @date 创建时间：2018年6月28日 下午2:59:22
 */
-public interface IArticleService
+public interface IArticleService 
 { 	
 	//这个方法可以复用的,需要修改
 //	Collection<ArticleDTO>findAllArticlesExceptRecommend(int start,int end);

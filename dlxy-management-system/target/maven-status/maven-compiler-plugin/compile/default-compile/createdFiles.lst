@@ -1,7 +1,5 @@
 com/dlxy/system/management/controller/IndexController.class
-com/dlxy/system/management/service/IArticleFacadedService.class
 com/dlxy/system/management/config/property/DlxyPropertyPlaceholderConfigurer.class
-com/dlxy/system/management/service/impl/ArticleFacadedServiceImpl.class
 com/dlxy/system/management/filter/CharsetFilter.class
 com/dlxy/system/management/exception/ManagementException.class
 com/dlxy/system/management/config/ManagementRabbitMQConfiguration.class

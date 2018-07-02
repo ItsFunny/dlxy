@@ -7,4 +7,5 @@
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-article-server/dlxy-article-server-dao/src/main/java/com/dlxy/server/article/dao/mybatis/TitleDao.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-article-server/dlxy-article-server-dao/src/main/java/com/dlxy/server/article/dao/query/impl/TitleQueryDaoImpl.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-article-server/dlxy-article-server-dao/src/main/java/com/dlxy/server/article/dao/query/impl/ArticleCountQueryDaoImpl.java
+/Users/joker/Java/oxygen_workspace/dlxy/dlxy-article-server/dlxy-article-server-dao/src/main/java/com/dlxy/server/article/dao/mybatis/count/UserArticleDao.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-article-server/dlxy-article-server-dao/src/main/java/com/dlxy/server/article/dao/query/ArticleQueryDao.java

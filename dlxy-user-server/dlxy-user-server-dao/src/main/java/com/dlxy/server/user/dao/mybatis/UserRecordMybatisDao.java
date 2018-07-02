@@ -7,9 +7,9 @@
 */
 package com.dlxy.server.user.dao.mybatis;
 
+
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
-
 import com.dlxy.common.dto.UserRecordDTO;
 
 /**
@@ -25,6 +25,10 @@ public interface UserRecordMybatisDao
 {
 	@Insert("insert into dlxy_record (user_id,record_detail,create_date) values (#{userId},#{recordDetail},#{createDate})")
 	void addRecord(UserRecordDTO userRecordDTO);
+	
+	
+	
+	
 	
 	
 	

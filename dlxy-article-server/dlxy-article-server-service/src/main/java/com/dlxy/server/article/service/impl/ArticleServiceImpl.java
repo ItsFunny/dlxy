@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Observable;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,8 +21,10 @@ import com.dlxy.common.annotation.UserRecordAnnotation;
 import com.dlxy.common.dto.ArticleDTO;
 import com.dlxy.common.enums.ArticleStatusEnum;
 import com.dlxy.server.article.dao.mybatis.ArticleDao;
+import com.dlxy.server.article.dao.mybatis.count.UserArticleDao;
 import com.dlxy.server.article.dao.query.ArticleQueryDao;
 import com.dlxy.server.article.service.IArticleService;
+import com.dlxy.server.article.service.IUserArticleService;
 
 /**
 * 
@@ -32,11 +35,12 @@ import com.dlxy.server.article.service.IArticleService;
 * @date 创建时间：2018年6月28日 下午3:03:45
 */
 @Service
-public class ArticleServiceImpl implements IArticleService
+public class ArticleServiceImpl implements IArticleService ,IUserArticleService
 {
 	@Autowired
 	private ArticleDao articleDao;
-	
+	@Autowired
+	private UserArticleDao userArticleDao;
 	@Autowired
 	private ArticleQueryDao articleQueryDao;
 
@@ -52,7 +56,7 @@ public class ArticleServiceImpl implements IArticleService
 		articleDao.updateArticleStatus(articleId, status);
 	}
 
-	@UserRecordAnnotation(dealWay="update(delete):article")
+//	@UserRecordAnnotation(dealWay="update(delete):article")
 	@Override
 	public void updateArticleStatusInBatch(Long[] articleIds, int status)
 	{
@@ -84,13 +88,17 @@ public class ArticleServiceImpl implements IArticleService
 		return articleQueryDao.rollBackArticle(status, articleId, titleId);
 	}
 
-	/*
-	 * need annotation here
-	 */
 	@Override
 	public void insertOrUpdate(ArticleDTO articleDTO)
 	{
 		articleDao.insertOrUpdate(articleDTO);
 	}
+
+	@Override
+	public void addUserArticle(Long userId, Long articleId, String username)
+	{
+		userArticleDao.addUserArticle(userId, articleId, username);
+	}
+
 
 }

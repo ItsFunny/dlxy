@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Date;
@@ -53,7 +54,8 @@ import com.dlxy.common.vo.PageVO;
 import com.dlxy.server.article.service.IArticleService;
 import com.dlxy.server.article.service.ITitleService;
 import com.dlxy.server.picture.service.IPictureService;
-import com.dlxy.system.management.service.IArticleFacadedService;
+import com.dlxy.system.management.service.IArticleManagementWrappedService;
+import com.dlxy.system.management.service.IPictureManagementWrappedService;
 import com.dlxy.system.management.utils.ManagementUtil;
 import com.joker.library.utils.CommonUtils;
 import com.sun.xml.internal.rngom.util.Uri;
@@ -73,10 +75,12 @@ public class RestAPIController
 	private static Logger logger = LoggerFactory.getLogger(RestAPIController.class);
 
 	@Autowired
-	private IArticleFacadedService articleFacadedService;
-
+	private IArticleManagementWrappedService articleManagementWrappedService;
 	@Autowired
-	private IArticleService articleService;
+	private IPictureManagementWrappedService pictureManagementWrappedService;
+
+//	@Autowired
+//	private IArticleService articleService;
 
 	@Autowired
 	private ITitleService titleService;
@@ -92,7 +96,9 @@ public class RestAPIController
 	@ResponseBody
 	public ResultDTO<String> delArticles(HttpServletRequest request, HttpServletResponse response)
 	{
+		UserDTO user = ManagementUtil.getLoginUser();
 		String ids = request.getParameter("ids");
+		ids=ids.replaceAll(",", "");
 		if (StringUtils.isEmpty(ids))
 		{
 			return ResultUtil.fail("missing argument");
@@ -105,7 +111,7 @@ public class RestAPIController
 			{
 				idA[i] = Long.valueOf(idArr[i]);
 			}
-			articleService.updateArticleStatusInBatch(idA, ArticleStatusEnum.DELETE.ordinal());
+			articleManagementWrappedService.updateArticlesInBatch(user.getUserId(),idA, ArticleStatusEnum.DELETE.ordinal());
 			return ResultUtil.sucess();
 		} catch (Exception e)
 		{
@@ -119,9 +125,9 @@ public class RestAPIController
 	 */
 	@RequestMapping("/search/article")
 	public ResultDTO<PageVO<Collection<ArticleDTO>>> searchArticle(HttpServletRequest request,
-			HttpServletResponse response)
+			HttpServletResponse response) throws UnsupportedEncodingException
 	{
-		String q = request.getParameter("q");
+		String q =new String( request.getParameter("q").getBytes("iso-8859-1"),"utf-8");
 		String pageSizeStr = StringUtils.defaultString(request.getParameter("pageSize"), "2");
 		String pageNumStr = StringUtils.defaultString(request.getParameter("pageNum"), "1");
 		Integer pageSize = Integer.parseInt(pageSizeStr);
@@ -133,7 +139,7 @@ public class RestAPIController
 		String searchQuery = CommonUtils.validStringException(q.trim());
 		try
 		{
-			Collection<ArticleDTO> findByArticleId = articleService.findByArticleId(Long.parseLong(searchQuery));
+			Collection<ArticleDTO> findByArticleId = articleManagementWrappedService.findByArticleId(Long.parseLong(searchQuery));
 			return ResultUtil.sucess(new PageVO<Collection<ArticleDTO>>(findByArticleId, pageSize, pageNum, 1L));
 		} catch (NumberFormatException e)
 		{
@@ -141,7 +147,7 @@ public class RestAPIController
 			params.put("searchParam", searchQuery);
 			try
 			{
-				PageDTO<Collection<ArticleDTO>> pageRes = articleFacadedService.findByParams((pageNum - 1) * pageSize,
+				PageDTO<Collection<ArticleDTO>> pageRes = articleManagementWrappedService.findByParams((pageNum - 1) * pageSize,
 						pageSize, params);
 				return ResultUtil.sucess(new PageVO<Collection<ArticleDTO>>(pageRes.getData(), pageSize, pageNum,
 						pageRes.getTotalCount()), "sucess");
@@ -164,6 +170,7 @@ public class RestAPIController
 	public ResultDTO<String> rollBackArticle(@PathVariable("articleId") Long articleId, HttpServletRequest request,
 			HttpServletResponse response)
 	{
+		UserDTO user = ManagementUtil.getLoginUser();
 		UserDTO loginUser = ManagementUtil.getLoginUser();
 		String statusStr = StringUtils.defaultString(request.getParameter("status"), "0");
 		/*
@@ -173,7 +180,7 @@ public class RestAPIController
 		HashMap<String, Object> data = new HashMap<>();
 		try
 		{
-			Collection<ArticleDTO> collection = articleService.findByArticleId(articleId);
+			Collection<ArticleDTO> collection = articleManagementWrappedService.findByArticleId(articleId);
 			ArticleDTO articleDTO = collection.iterator().next();
 			if (null == articleDTO || !articleDTO.getArticleStatus().equals(ArticleStatusEnum.DELETE.ordinal()))
 			{
@@ -185,7 +192,7 @@ public class RestAPIController
 				eventPublisher.publish(new AppEvent(data, Events.UserIllegalLog.name()));
 				return ResultUtil.fail("文章处于正常状态,现已记录您的信息");
 			}
-			int i = articleService.rollBackArticle(Integer.parseInt(statusStr), articleDTO.getArticleId(),
+			int i = articleManagementWrappedService.rollBackArticle(user.getUserId(),Integer.parseInt(statusStr), articleDTO.getArticleId(),
 					articleDTO.getTitleId());
 			if (i < 1)
 			{
@@ -265,7 +272,10 @@ public class RestAPIController
 		pictureDTO.setPictureStatus(PictureStatusEnum.Invalid.ordinal());
 		try
 		{
-			pictureService.addPicture(new PictureDTO[] {pictureDTO});
+			//这里上面需要进行设置,使之成为一个集合,至于保存采用多线程的方式
+//			pictureService.addPicture(new PictureDTO[] {pictureDTO});
+//			pictureService.addPictureWithArticleId(Long.parseLong(articleId), new PictureDTO[] {pictureDTO});
+			pictureManagementWrappedService.addPciture(ManagementUtil.getLoginUser().getUserId(), Long.parseLong(articleId), new PictureDTO[] {pictureDTO});
 			pictureUploadResponseDTO.setError(0);
 			pictureUploadResponseDTO.setUrl(url);
 		} catch (SQLException e)

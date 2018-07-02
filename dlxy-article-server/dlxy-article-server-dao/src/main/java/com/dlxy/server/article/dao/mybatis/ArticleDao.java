@@ -47,8 +47,8 @@ public interface ArticleDao
 	
 	void updateInBatch(Map<String, Object>params);
 	
-	@Insert("insert into dlxy_article (title_id,article_name,article_author,article_content,article_is_recommend,article_status ) "
-			+ "values (#{titleId},#{articleName},#{articleAuthor},#{articleContent},#{articleIsRecommend},#{articleStatus}) "
+	@Insert("insert into dlxy_article (article_id,title_id,article_name,article_author,article_content,article_is_recommend,article_status ) "
+			+ "values (#{articleId},#{titleId},#{articleName},#{articleAuthor},#{articleContent},#{articleIsRecommend},#{articleStatus}) "
 			+ "on duplicate key update article_status= values(article_status),article_content=values(article_content),article_author=values(article_author)")
 	void insertOrUpdate(ArticleDTO articleDTO);
 	

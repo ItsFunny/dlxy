@@ -8,6 +8,7 @@
 package com.dlxy.system.management.controller;
 
 
+
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Date;
@@ -21,26 +22,23 @@ import javax.validation.Valid;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.AbstractDeclarable;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.dlxy.common.dto.ArticleDTO;
 import com.dlxy.common.dto.PageDTO;
-import com.dlxy.common.dto.ResultDTO;
-import com.dlxy.common.dto.UserDTO;
-import com.dlxy.common.enums.ArticleStatusEnum;
+import com.dlxy.common.dto.PictureDTO;
+import com.dlxy.common.enums.PictureStatusEnum;
 import com.dlxy.common.service.IdWorkerService;
-import com.dlxy.common.utils.ResultUtil;
 import com.dlxy.common.vo.PageVO;
-import com.dlxy.server.article.service.IArticleService;
 import com.dlxy.system.management.model.FormArticle;
-import com.dlxy.system.management.service.IArticleFacadedService;
+import com.dlxy.system.management.service.IArticleManagementWrappedService;
+import com.dlxy.system.management.service.command.AddArtilceCommand;
 import com.dlxy.system.management.utils.ManagementUtil;
 
 /**
@@ -57,11 +55,12 @@ public class ArticleController
 {
 	private Logger logger = LoggerFactory.getLogger(ArticleController.class);
 	@Autowired
-	@Qualifier("articleFacadedServiceImpl")
-	private IArticleFacadedService articleFacadedService;
-
+	private IArticleManagementWrappedService articleManagementWrappedService;
+	
 	@Autowired
-	private IArticleService articleService;
+	private AddArtilceCommand articleCommand;
+//	@Autowired
+//	private IArticleService articleService;
 
 	@Autowired
 	private IdWorkerService idWorkerService;
@@ -87,7 +86,7 @@ public class ArticleController
 		PageDTO<Collection<ArticleDTO>> pageDTO = null;
 		try
 		{
-			pageDTO = articleFacadedService.findByParams((pageNum - 1) * pageSize, pageSize, p);
+			pageDTO = articleManagementWrappedService.findByParams((pageNum - 1) * pageSize, pageSize, p);
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
@@ -118,7 +117,7 @@ public class ArticleController
 		params.put("articleStatus", "2");
 		try
 		{
-			PageDTO<Collection<ArticleDTO>> pageDTO = articleFacadedService.findByParams((pageNum - 1) * pageSize,
+			PageDTO<Collection<ArticleDTO>> pageDTO = articleManagementWrappedService.findByParams((pageNum - 1) * pageSize,
 					pageSize, params);
 			PageVO<Collection<ArticleDTO>> pageVO = new PageVO<Collection<ArticleDTO>>(pageDTO.getData(), pageSize,
 					pageNum, pageDTO.getTotalCount());
@@ -195,9 +194,28 @@ public class ArticleController
 		}
 		ArticleDTO articleDTO=new ArticleDTO();
 		formArticle.to(articleDTO);
-		articleService.insertOrUpdate(articleDTO);
+		articleDTO.setUserId(ManagementUtil.getLoginUser().getUserId());
+		articleDTO.setUsername(ManagementUtil.getLoginUser().getUsername());
+		PictureDTO pictureDTO=new PictureDTO();
+		pictureDTO.setArticleId(articleDTO.getArticleId());
+		pictureDTO.setPictureStatus(PictureStatusEnum.Effective.ordinal());
+		params.put("articleDTO", articleDTO);
+		params.put("pictureDTO", pictureDTO);
+		try
+		{
+			articleCommand.execute(params);
+			modelAndView=new ModelAndView("redirect:/article/all.html");
+			modelAndView.addObject("error","添加成功");
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+			params.put("error", "插入失败,请刷新重试");
+			modelAndView=new ModelAndView("error",params);
+		}
+//		articleManagementWrappedService.insertOrUpdate(articleDTO);
+		
 		//还需要修改图片的状态  今天先直接增加再说
-		modelAndView=new ModelAndView("redirect:/article/all.html");
+	
 		return modelAndView;
 	}
 

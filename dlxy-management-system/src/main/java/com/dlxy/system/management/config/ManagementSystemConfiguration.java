@@ -8,6 +8,7 @@ package com.dlxy.system.management.config;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Observer;
 import java.util.Properties;
 
 import javax.sql.DataSource;
@@ -26,6 +27,9 @@ import org.springframework.format.FormatterRegistry;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.TransactionManagementConfigurer;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.ViewResolver;
@@ -41,7 +45,16 @@ import com.dlxy.common.service.IdWorkerService;
 import com.dlxy.common.service.IdWorkerServiceTwitter;
 import com.dlxy.system.management.config.property.DlxyProperty;
 import com.dlxy.system.management.config.property.DlxyPropertyPlaceholderConfigurer;
-import com.dlxy.system.management.interceptor.ResponseInterceptor;
+import com.dlxy.system.management.interceptor.RequestIntercept;
+import com.dlxy.system.management.service.IArticleManagementWrappedService;
+import com.dlxy.system.management.service.IPictureManagementWrappedService;
+import com.dlxy.system.management.service.ManagementUserRecordObserver;
+import com.dlxy.system.management.service.command.AddArtilceCommand;
+import com.dlxy.system.management.service.command.ArticleGroup;
+import com.dlxy.system.management.service.command.PictureGroup;
+import com.dlxy.system.management.service.command.UserArticleGroup;
+import com.dlxy.system.management.service.impl.ManagementArticleServiceObservableImpl;
+import com.dlxy.system.management.service.impl.ManagementPictureServiceObservableImpl;
 
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -58,17 +71,62 @@ import redis.clients.jedis.JedisPoolConfig;
 })
 @MapperScan(basePackages= {
 	"com.dlxy.server.user.dao.mybatis",
-	"com.dlxy.server.article.dao.mybatis"
+	"com.dlxy.server.article.dao.mybatis",
+	"com.dlxy.server.picture.dao.mybatis"
 })
 @ImportResource(locations= {
 		"classpath:/spring/applicationContext.xml"
 })
 @EnableWebMvc
+@EnableTransactionManagement
 public class ManagementSystemConfiguration implements WebMvcConfigurer
 {
-	@Autowired
-	private DlxyProperty dlxyProperty;
-		
+
+	@Bean
+	public DataSourceTransactionManager dataSourceTransactionManager(DlxyProperty dlxyProperty)
+	{
+		DataSourceTransactionManager dataSourceTransactionManager=new DataSourceTransactionManager();
+		dataSourceTransactionManager.setDataSource(dataSource(dlxyProperty));
+		return dataSourceTransactionManager;
+	}
+	/*
+	 * 后期更换为工厂模式,太烦了,总是一样的步骤
+	 */
+	@Bean
+	public AddArtilceCommand addArtilceCommand(List<Observer>observers)
+	{
+		AddArtilceCommand addArtilceCommand=new AddArtilceCommand();
+		for (Observer observer : observers)
+		{
+			addArtilceCommand.addObserver(observer);
+		}
+		return addArtilceCommand;
+	}
+	@Bean
+	public IArticleManagementWrappedService articleManagementWrappedservice(List<Observer>observers)
+	{
+		ManagementArticleServiceObservableImpl managementArticleServiceObservableImpl=new ManagementArticleServiceObservableImpl();
+		for (Observer observer : observers)
+		{
+			managementArticleServiceObservableImpl.addObserver(observer);
+		}
+		return managementArticleServiceObservableImpl;
+	}
+	@Bean
+	public IPictureManagementWrappedService pictureManagementWrappedService(List<Observer>observers)
+	{
+		ManagementPictureServiceObservableImpl pictureManagementWrappedService=new ManagementPictureServiceObservableImpl();
+		for (Observer observer : observers)
+		{
+			pictureManagementWrappedService.addObserver(observer);
+		}
+		return pictureManagementWrappedService;
+	}
+	@Bean
+	public ManagementUserRecordObserver managementUserRecordObserver()
+	{
+		return new ManagementUserRecordObserver();
+	}
 	@Bean
 	public DlxyPropertyPlaceholderConfigurer dlxyPropertyPlaceholderConfigurer() throws IOException
 	{
@@ -158,7 +216,7 @@ public class ManagementSystemConfiguration implements WebMvcConfigurer
 	@Override
 	public void addInterceptors(InterceptorRegistry registry)
 	{
-		registry.addInterceptor(new ResponseInterceptor()).addPathPatterns("/api/**");
+		registry.addInterceptor(new RequestIntercept()).addPathPatterns("/**");
 	}
 	@Override
 	public void configureMessageConverters(List<HttpMessageConverter<?>> converters)
@@ -180,7 +238,21 @@ public class ManagementSystemConfiguration implements WebMvcConfigurer
 	{
 		return new MappingJackson2HttpMessageConverter();
 	}
-	
+	@Bean
+	public PictureGroup pictureGroup()
+	{
+		return new PictureGroup();
+	}
+	@Bean
+	public ArticleGroup articleGroup()
+	{
+		return new ArticleGroup();
+	}
+	@Bean
+	public UserArticleGroup userArticleGroup()
+	{
+		return new UserArticleGroup();
+	}
 	
 	
 	

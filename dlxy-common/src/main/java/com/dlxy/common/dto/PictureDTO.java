@@ -26,6 +26,7 @@ public class PictureDTO
 	private Integer pictureStatus;
 	private Date createDate;
 	
+	
 
 	public String getPictureId()
 	{
@@ -86,5 +87,6 @@ public class PictureDTO
 	{
 		this.pictureUrl = pictureUrl;
 	}
+
 
 }
