@@ -31,9 +31,12 @@ public class UserRecordDTO implements Serializable
 	private Long userId;
 	private String recordDetail;
 	private Date createDate;
+	//2018-07-03 13:59 add
+	private String username;
 	
 	
-	private UserRecordDTO()
+	
+	public UserRecordDTO()
 	{
 		this.createDate=new Date();
 	}
@@ -84,5 +87,13 @@ public class UserRecordDTO implements Serializable
 	{
 		this.createDate = createDate;
 	}
-
+	public String getUsername()
+	{
+		return username;
+	}
+	public void setUsername(String username)
+	{
+		this.username = username;
+	}
+	
 }

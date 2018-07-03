@@ -66,6 +66,13 @@ public class UserRecordServiceImpl implements IUserRecordService
 		return userRecordQueryDao.countByParam(params);
 	}
 
+	@Override
+	public Collection<Map<String, Object>> findRecordByPage(int pageSize, int pageNum, Map<String, Object> params)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 //	@Override
 //	public Collection<ArticleDTO> findByPage(int pageSize, int pageNum, Map<String, Object> params) throws SQLException
 //	{

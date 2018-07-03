@@ -7,7 +7,10 @@
 */
 package com.dlxy.server.user.dao.mybatis;
 
+
 import org.apache.ibatis.annotations.Mapper;
+
+import com.dlxy.common.dto.UserDTO;
 
 /**
 * 
@@ -20,6 +23,5 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface UserMybatisDao
 {
-	
-
+	UserDTO findByNameOrId(String key);
 }

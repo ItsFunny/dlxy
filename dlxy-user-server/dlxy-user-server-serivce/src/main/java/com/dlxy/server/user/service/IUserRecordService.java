@@ -27,6 +27,15 @@ public interface IUserRecordService
 	
 	Long countByParam(Map<String, Object>params) throws SQLException;
 	
+	/*
+	 * 查询用户发表了什么文章
+	 */
 	Collection<Map<String, Object>>findByPage(int pageSize,int pageNum,Map<String, Object>params) throws SQLException;
+	
+	
+	/*
+	 * 查询用户的操作记录
+	 */
+	Collection<Map<String, Object>>findRecordByPage(int pageSize,int pageNum,Map<String, Object>params);
 	
 }

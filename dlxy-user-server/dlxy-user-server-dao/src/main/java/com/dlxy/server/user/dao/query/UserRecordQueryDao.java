@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.dlxy.common.dto.ArticleDTO;
+import com.dlxy.common.dto.UserRecordDTO;
 
 
 /**
@@ -26,7 +27,12 @@ import com.dlxy.common.dto.ArticleDTO;
 public interface UserRecordQueryDao
 {
 	Long countByParam(Map<String, Object>params) throws SQLException;
+	//seems to wrong place here
 	Collection<Map<String, Object>>findByPage(Map<String, Object>params) throws SQLException;
-//	Collection<ArticleDTO>findByPage(Map<String, Object>params) throws SQLException;
+	
+	/*
+	 * find user all records
+	 */
+	Collection<UserRecordDTO> findRecordsByPage(int start, int end, Map<String, Object> params) throws SQLException;
 
 }
