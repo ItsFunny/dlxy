@@ -7,6 +7,10 @@
 */
 package com.dlxy.server.user.service;
 
+import java.sql.SQLException;
+
+import com.dlxy.common.dto.UserDTO;
+
 /**
 * 
 * @When
@@ -17,5 +21,7 @@ package com.dlxy.server.user.service;
 */
 public interface IUserService
 {
-
+	UserDTO findUserByNameOrId(String key) throws SQLException;
+	
+	UserDTO findByUserId(Long userId) throws SQLException;
 }

@@ -20,4 +20,7 @@ public enum Events
 	UserRecordLog,
 	
 	UserIllegalLog,
+	
+	//用于白名单,黑名单的设置
+	IpCheck,
 }

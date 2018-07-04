@@ -49,74 +49,87 @@ public class UserRecordQueryDaoImpl implements UserRecordQueryDao
 	public static class UserRecordResultSetHandler implements ResultSetHandler<Collection<UserRecordDTO>>
 	{
 
+		
+//		select a.record_id,a.user_id,b.username,a.record_detail,a.record_detail,a.create_date from dlxy_record a ,dlxy_user b where a.user_id = b.user_id
 		@Override
 		public Collection<UserRecordDTO> handle(ResultSet rs) throws SQLException
 		{
-			List<UserRecordDTO>userRecordDTOs=new ArrayList<>();
-			while(rs.next())
+			List<UserRecordDTO> userRecordDTOs = new ArrayList<>();
+			while (rs.next())
 			{
-				UserRecordDTO userRecordDTO=new UserRecordDTO();
+				UserRecordDTO userRecordDTO = new UserRecordDTO();
 				userRecordDTO.setRecordId(rs.getLong(1));
 				userRecordDTO.setUserId(rs.getLong(2));
+				System.out.println(rs.getString(3));
 				userRecordDTO.setUsername(rs.getString(3));
+				System.out.println(rs.getString(4));
 				userRecordDTO.setRecordDetail(rs.getString(4));
+				System.out.println(rs.getDate(5));
 				userRecordDTO.setCreateDate(rs.getDate(5));
 				userRecordDTOs.add(userRecordDTO);
 			}
 			return userRecordDTOs;
 		}
 	}
-	@Override
-	public Long countByParam(Map<String, Object> params) throws SQLException
-	{
-		String sql = "select count(1) from dlxy_article where 1=1 and article_id in (select article_id from dlxy_user_article where user_id = ? ) ";
-		List<Object> l = new LinkedList<Object>();
-		l.add(params.get("userId"));
-		if (params.containsKey("articleStatus"))
-		{
-			sql += "and article_status=? ";
-			l.add(params.get("articleStatus"));
-		}
-		Object count = queryRunner.query(sql, new ScalarHandler<Object>(), l.toArray());
-		if (null == count)
-		{
-			return 0l;
-		} else
-		{
-			return ((Number) count).longValue();
-		}
-	}
+	// @Override
+	// public Long countByParam(Map<String, Object> params) throws SQLException
+	// {
+	// String sql = "select count(1) from dlxy_article where 1=1 and article_id in
+	// (select article_id from dlxy_user_article where user_id = ? ) ";
+	// List<Object> l = new LinkedList<Object>();
+	// l.add(params.get("userId"));
+	// if (params.containsKey("articleStatus"))
+	// {
+	// sql += "and article_status=? ";
+	// l.add(params.get("articleStatus"));
+	// }
+	// Object count = queryRunner.query(sql, new ScalarHandler<Object>(),
+	// l.toArray());
+	// if (null == count)
+	// {
+	// return 0l;
+	// } else
+	// {
+	// return ((Number) count).longValue();
+	// }
+	// }
+	//
+	// @Override
+	// public List<Map<String, Object>> findByPage(Map<String, Object> params)
+	// throws SQLException
+	// {
+	// List<Object> l = new LinkedList<>();
+	// String sql = "select a.username, a,user_id, b.article_id,b.article_name
+	// ,b.article_author,b.create_date "
+	// + "from dlxy_user_article a , dlxy_article b " + "where 1=1 and
+	// a.article_id=b.article_id ";
+	// if (params.containsKey("userId"))
+	// {
+	// sql += " and b.article_id in (select c.article_id from dlxy_user_article c
+	// where c.user_id =?) ";
+	// l.add(Long.parseLong(params.get("userId").toString()));
+	// }
+	// if (params.containsKey("articleStatus"))
+	// {
+	// sql += "and b.article_status = ?";
+	// int status = Integer.parseInt(params.get("articleStatus").toString());
+	// l.add(status);
+	// }
+	// sql += " order by b.create_date desc limit ?,?";
+	// int start = Integer.parseInt(params.get("start").toString());
+	// int end = Integer.parseInt(params.get("end").toString());
+	// l.add(start);
+	// l.add(end);
+	// List<Map<String, Object>> res = queryRunner.query(sql, new MapListHandler(),
+	// l.toArray());
+	// return res;
+	// }
 
 	@Override
-	public List<Map<String, Object>> findByPage(Map<String, Object> params) throws SQLException
+	public Collection<UserRecordDTO> findRecordsByPage(int start, int end, Map<String, Object> params)
+			throws SQLException
 	{
-		List<Object> l = new LinkedList<>();
-		String sql = "select a.username, a,user_id, b.article_id,b.article_name ,b.article_author,b.create_date "
-				+ "from dlxy_user_article a , dlxy_article b " + "where 1=1 and a.article_id=b.article_id ";
-		if (params.containsKey("userId"))
-		{
-			sql += " and b.article_id in (select c.article_id from dlxy_user_article c where c.user_id =?) ";
-			l.add(Long.parseLong(params.get("userId").toString()));
-		}
-		if (params.containsKey("articleStatus"))
-		{
-			sql += "and b.article_status = ?";
-			int status = Integer.parseInt(params.get("articleStatus").toString());
-			l.add(status);
-		}
-		sql += " order by b.create_date desc limit ?,?";
-		int start = Integer.parseInt(params.get("start").toString());
-		int end = Integer.parseInt(params.get("end").toString());
-		l.add(start);
-		l.add(end);
-		List<Map<String, Object>> res = queryRunner.query(sql, new MapListHandler(), l.toArray());
-		return res;
-	}
-
-	@Override
-	public Collection<UserRecordDTO> findRecordsByPage(int start, int end, Map<String, Object> params) throws SQLException
-	{
-		String sql = "select a.record_id,a.user_id,b.username,a.record_detail,a.record_detail,a.create_date from dlxy_record a ,dlxy_user b where a.user_id = b.user_id ";
+		String sql = "select a.record_id,a.user_id,b.username,a.record_detail,a.create_date from dlxy_record a ,dlxy_user b where a.user_id = b.user_id ";
 		List<Object> l = new LinkedList<Object>();
 		String key = null;
 		try
@@ -142,6 +155,26 @@ public class UserRecordQueryDaoImpl implements UserRecordQueryDao
 			return Collections.emptyList();
 		}
 		return collection;
+	}
+
+	@Override
+	public Long coutRecords(Map<String, Object> params) throws SQLException
+	{
+		String sql = "select count(1) from dlxy_record where 1=1 ";
+		List<Object> l = new LinkedList<>();
+		if (params.containsKey("userId"))
+		{
+			sql += " and user_id = ? ";
+			l.add(params.get("userId"));
+		}
+		Object count = queryRunner.query(sql, new ScalarHandler<Object>(), l.toArray());
+		if (null == count)
+		{
+			return 0l;
+		} else
+		{
+			return ((Number) count).longValue();
+		}
 	}
 
 }

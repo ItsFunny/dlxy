@@ -57,9 +57,20 @@ public class UserQueryDaoImpl implements UserQueryDao
 			while(rs.next())
 			{
 				UserDTO userDTO=new UserDTO();
-				
+				userDTO.setUserId(rs.getLong(1));
+				userDTO.setUsername(rs.getString(2));
+				userDTO.setRealname(rs.getString(3));
+				if(needPwd)
+				{
+					userDTO.setPassword(rs.getString(4));
+				}
+				userDTO.setRoleId(rs.getInt(5));
+				userDTO.setLastLoginIp(rs.getString(6));
+				userDTO.setCreateDate(rs.getDate(7));
+				userDTO.setUpdateDate(rs.getDate(8));
+				userDTOs.add(userDTO);
 			}
-			return null;
+			return userDTOs;
 		}
 		
 	}
@@ -87,6 +98,21 @@ public class UserQueryDaoImpl implements UserQueryDao
 			return query.iterator().next();
 		}else {
 			 throw new RuntimeException("find multipart users ");
+		}
+	}
+	@Override
+	public UserDTO findByUserId(Long userId) throws SQLException
+	{
+		String sql="select a.user_id,a.username,a.realname,a.passwrod,a.role_id,a.last_login_ip,a.crete_date,a.update_date from dlxy_user a where 1=1 and a.user_id=? ";
+		Collection<UserDTO> query = queryRunner.query(sql, new UserResultSetHandler(true), userId);
+		if(null==query)
+		{
+			return null;
+		}else if(query.size()==1)
+		{
+			return query.iterator().next();
+		}else {
+			 throw new RuntimeException("find multipart users");
 		}
 	}
 

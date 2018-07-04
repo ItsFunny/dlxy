@@ -69,7 +69,7 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 	}
 
 	@Override
-	public Collection<ArticleDTO> findByArticleId(Long articleId) throws SQLException
+	public ArticleDTO findByArticleId(Long articleId) throws SQLException
 	{
 		
 		return articleService.findByArticleId(articleId);

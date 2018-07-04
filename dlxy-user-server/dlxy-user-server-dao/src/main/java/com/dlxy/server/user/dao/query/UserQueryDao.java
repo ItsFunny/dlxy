@@ -23,4 +23,6 @@ import com.dlxy.common.dto.UserDTO;
 public interface UserQueryDao
 {
 	UserDTO findByNameOrId(String key) throws SQLException;
+	
+	UserDTO findByUserId(Long userId) throws SQLException;
 }

@@ -25,6 +25,7 @@ public class ManagementUtil
 		UserDTO userDTO=new UserDTO();
 		userDTO.setUserId(1L);
 		userDTO.setUsername("joker");
+		userDTO.setRoleId(0);
 		return userDTO;
 //		UserDTO userDTO=(UserDTO) SecurityUtils.getSubject().getPrincipal();
 //		if(null==userDTO)

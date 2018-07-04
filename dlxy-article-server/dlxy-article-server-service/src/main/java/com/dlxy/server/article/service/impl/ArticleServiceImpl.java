@@ -77,7 +77,7 @@ public class ArticleServiceImpl implements IArticleService ,IUserArticleService
 	}
 
 	@Override
-	public Collection<ArticleDTO> findByArticleId(Long articleId) throws SQLException
+	public ArticleDTO findByArticleId(Long articleId) throws SQLException
 	{
 		return articleQueryDao.findByArticleId(articleId);
 	}

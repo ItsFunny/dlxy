@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AbstractDeclarable;
@@ -65,6 +66,9 @@ public class ArticleController
 	@Autowired
 	private IdWorkerService idWorkerService;
 
+	/*
+	 * 只有admin角色才能访问
+	 */
 	@RequestMapping("/all")
 	public ModelAndView showAll(@RequestParam Map<String, Object> params, HttpServletRequest request,
 			HttpServletResponse response)

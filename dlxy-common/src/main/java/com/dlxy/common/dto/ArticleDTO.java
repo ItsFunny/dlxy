@@ -38,6 +38,7 @@ public class ArticleDTO
 	// 2018-06-30 22:02 add
 	private Date deleteDate;
 	private String deleteDateStr;
+	
 
 	public Long getArticleId()
 	{

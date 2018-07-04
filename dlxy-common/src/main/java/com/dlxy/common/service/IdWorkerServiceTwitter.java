@@ -98,7 +98,11 @@ public class IdWorkerServiceTwitter implements IdWorkerService
 //	public static void main(String[] args)
 //	{
 //		IdWorkerServiceTwitter idWorkerServiceTwitter=new IdWorkerServiceTwitter(0	,1);
-//		long nextId = idWorkerServiceTwitter.nextId();
+//		Collection<Long> nextId = idWorkerServiceTwitter.nextIds(5);
+//		for (Long long1 : nextId)
+//		{
+//			System.out.println(long1);
+//		}
 //		System.out.println(nextId);
 //	}
 	protected long tilNextMillis(long lastTimestamp)

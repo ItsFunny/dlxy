@@ -31,6 +31,4 @@ public interface UserRecordMybatisDao
 	
 	
 	
-	
-	
 }

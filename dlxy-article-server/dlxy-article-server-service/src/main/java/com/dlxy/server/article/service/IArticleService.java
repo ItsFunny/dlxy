@@ -34,7 +34,7 @@ public interface IArticleService
 	
 	Collection<ArticleDTO>findByParam(Map<String, Object>params,int start,int end) throws SQLException;
 	
-	Collection<ArticleDTO>findByArticleId(Long articleId) throws SQLException;
+	ArticleDTO findByArticleId(Long articleId) throws SQLException;
 	
 	
 	int rollBackArticle(int status,Long articleId,int titleId) throws SQLException;

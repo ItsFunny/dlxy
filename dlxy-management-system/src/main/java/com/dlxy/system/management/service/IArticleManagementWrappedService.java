@@ -29,7 +29,7 @@ public interface IArticleManagementWrappedService
 
 	PageDTO<Collection<ArticleDTO>> findByParams(int start, int end, Map<String, Object> params) throws SQLException;
 
-	Collection<ArticleDTO> findByArticleId(Long articleId) throws SQLException;
+	ArticleDTO findByArticleId(Long articleId) throws SQLException;
 //	void updateArticleStatusInBatch(Long[] articleIds, int status);
 //	void delArticle(Long userId,Long articleId);
 

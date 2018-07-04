@@ -13,6 +13,7 @@ import java.util.Map;
 
 import com.dlxy.common.dto.ArticleDTO;
 import com.dlxy.common.dto.PageDTO;
+import com.dlxy.common.dto.UserRecordDTO;
 
 /**
 * 
@@ -25,4 +26,7 @@ import com.dlxy.common.dto.PageDTO;
 public interface IUserMangementWrappedService
 {
 	PageDTO<Collection<Map<String, Object>>>findByPage(int pageSize,int pageNum,Map<String, Object>p) throws SQLException;
+	
+	
+	PageDTO<Collection<UserRecordDTO>>findUserRecords(int pageSize,int pageNum,Map<String, Object>params) throws SQLException;
 }

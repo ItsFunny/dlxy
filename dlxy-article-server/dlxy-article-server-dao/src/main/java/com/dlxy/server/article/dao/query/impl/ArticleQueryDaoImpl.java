@@ -39,16 +39,16 @@ import com.dlxy.server.article.dao.query.ArticleQueryDao;
 @Repository
 public class ArticleQueryDaoImpl implements ArticleQueryDao
 {
-	public static class ArticleResultSetHandler implements ResultSetHandler<ArticleDTO>
+	public static class ArticleResultSetHandler implements ResultSetHandler<Collection<ArticleDTO>>
 	{
 
-		public ArticleDTO handle(ResultSet rs) throws SQLException
+		public Collection<ArticleDTO> handle(ResultSet rs) throws SQLException
 		{
-			if (rs.next())
+			List<ArticleDTO> articleDTOs = new ArrayList<>();
+			while (rs.next())
 			{
+
 				ArticleDTO articleDTO = new ArticleDTO();
-//				select a.article_id,a.title_id,a.article_name,a.article_author,
-//				a.article_is_recommend,a.create_date,a.update_date ,a.article_status ,c.username ,a.delete_date "
 				articleDTO.setArticleId(rs.getLong(1));
 				articleDTO.setTitleId(rs.getInt(2));
 				articleDTO.setArticleName(rs.getString(3));
@@ -56,25 +56,26 @@ public class ArticleQueryDaoImpl implements ArticleQueryDao
 				articleDTO.setArticleIsRecommend(rs.getInt(5));
 				articleDTO.setCreateDate(rs.getDate(6));
 				articleDTO.setUpdateDate(rs.getDate(7));
+				System.out.println(rs.getObject(7));
 				articleDTO.setArticleStatus(rs.getInt(8));
 				articleDTO.setUsername(rs.getString(9));
-				articleDTO.setDeleteDate(rs.getDate(10));
-				return articleDTO;
-			}else {
-				return null;
+				articleDTO.setUserId(rs.getLong(10));
+				articleDTO.setDeleteDate(rs.getDate(11));
+				articleDTOs.add(articleDTO);
 			}
+			return articleDTOs;
 		}
 	}
+
 	@Autowired
 	private QueryRunner queryRunner;
 
 	public Collection<ArticleDTO> findByParam(Map<String, Object> params, int start, int end) throws SQLException
 	{
 		StringBuilder sql = new StringBuilder(
-				"select a.article_id,a.title_id,a.article_name,a.article_author,a.article_is_recommend,a.create_date,a.update_date,a.article_status ,(select c.username from dlxy_user_article c where c.article_id=a.article_id)username,"
-						+ " a.delete_date  from dlxy_article  a,dlxy_title b "
-						+ "where a.title_id=b.title_id ");
-
+				"select a.article_id,a.title_id,a.article_name,a.article_author,a.article_is_recommend,a.create_date,a.update_date,a.article_status ,c.username,c.user_id,"
+						+ " a.delete_date  from dlxy_article  a,dlxy_title b,dlxy_user_article c  "
+						+ "where a.title_id=b.title_id and  c.article_id=a.article_id");
 		List<Object> set = new LinkedList<Object>();
 		if (params.containsKey("articleStatus"))
 		{
@@ -91,14 +92,17 @@ public class ArticleQueryDaoImpl implements ArticleQueryDao
 		{
 			if (!StringUtils.isEmpty(params.get("searchParam").toString()))
 			{
-				sql.append("and ( a.article_name like ? or a.article_id in (select d.article_id from dlxy_user_article d where d.username like ? ))");
+				// 这里好像有问题,这样写好像如果知道userId 对应的username 照样能获取到某个user的文章信息
+				sql.append(
+						"and ( a.article_name like ? or a.article_id in (select d.article_id from dlxy_user_article d where d.username like ? ))");
 				set.add("%" + params.get("searchParam") + "%");
 				set.add("%" + params.get("searchParam") + "%");
 			}
 		}
-		if(params.containsKey("userId"))
+		if (params.containsKey("userId"))
 		{
-			sql.append(" and a.article_id in ( select e.article_id from dlxy_user_article e where exists(select 1 from dlxy_user f where f.user_id = ? ) and e.user_id = ? )");
+			sql.append(
+					" and a.article_id in ( select e.article_id from dlxy_user_article e where exists(select 1 from dlxy_user f where f.user_id = ? ) and e.user_id = ? )");
 			set.add(params.get("userId"));
 			set.add(params.get("userId"));
 		}
@@ -119,10 +123,11 @@ public class ArticleQueryDaoImpl implements ArticleQueryDao
 				List<ArticleDTO> articleDTOs = new LinkedList<ArticleDTO>();
 				while (rs.next())
 				{
-//					select a.article_id,a.title_id,
-//					a.article_name,a.article_author,a.article_is_recommend,a.create_date,
-//					a.update_date,a.article_status ,(select c.username from dlxy_user_article c where c.article_id=a.article_id)username,"
-//							+ " a.delete_date  
+					// select a.article_id,a.title_id,
+					// a.article_name,a.article_author,a.article_is_recommend,a.create_date,
+					// a.update_date,a.article_status ,(select c.username from dlxy_user_article c
+					// where c.article_id=a.article_id)username,"
+					// + " a.delete_date
 					ArticleDTO articleDTO = new ArticleDTO();
 					articleDTO.setArticleId(rs.getLong(1));
 					articleDTO.setTitleId(rs.getInt(2));
@@ -134,7 +139,8 @@ public class ArticleQueryDaoImpl implements ArticleQueryDao
 					System.out.println(rs.getObject(7));
 					articleDTO.setArticleStatus(rs.getInt(8));
 					articleDTO.setUsername(rs.getString(9));
-					articleDTO.setDeleteDate(rs.getDate(10));
+					articleDTO.setUserId(rs.getLong(10));
+					articleDTO.setDeleteDate(rs.getDate(11));
 					articleDTOs.add(articleDTO);
 				}
 				return articleDTOs;
@@ -143,20 +149,28 @@ public class ArticleQueryDaoImpl implements ArticleQueryDao
 		return res;
 	}
 
-	public Collection<ArticleDTO> findByArticleId(Long articleId) throws SQLException
+	public ArticleDTO findByArticleId(Long articleId) throws SQLException
 	{
-		String sql = "select a.article_id,a.title_id,a.article_name,a.article_author,a.article_is_recommend,a.create_date,a.update_date ,a.article_status ,c.username ,a.delete_date "
+		String sql = "select a.article_id,a.title_id,a.article_name,a.article_author,a.article_is_recommend,a.create_date,a.update_date ,a.article_status ,c.username ,c.user_id,a.delete_date "
 				+ "from dlxy_article  a,dlxy_title b ,dlxy_user_article c where a.title_id=b.title_id and a.article_id= c.article_id and a.article_id=?";
-		ArticleDTO articleDTO = queryRunner.query(sql, new ArticleResultSetHandler(), articleId);
-		return Arrays.asList(articleDTO);
+		Collection<ArticleDTO> query = queryRunner.query(sql, new ArticleResultSetHandler(), articleId);
+		if (null == query)
+		{
+			return null;
+		} else if (query.size() == 1)
+		{
+			return query.iterator().next();
+		} else
+		{
+			throw new RuntimeException("find multipart article");
+		}
 	}
 
 	@Override
-	public int rollBackArticle(int status,Long articleId,Integer titleId) throws SQLException
+	public int rollBackArticle(int status, Long articleId, Integer titleId) throws SQLException
 	{
-		String sql="update dlxy_article set article_status=? where article_id=? and exists(select 1 from dlxy_title b where b.title_id = ? )";
-		return queryRunner.update(sql,status,articleId,titleId);
+		String sql = "update dlxy_article set article_status=? where article_id=? and exists(select 1 from dlxy_title b where b.title_id = ? )";
+		return queryRunner.update(sql, status, articleId, titleId);
 	}
-
 
 }

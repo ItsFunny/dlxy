@@ -1,3 +1,2 @@
-com/dlxy/server/user/dao/App.class
-com/dlxy/server/user/dao/mybatis/UserMybatisDao.class
 com/dlxy/server/user/dao/mybatis/UserRecordMybatisDao.class
+com/dlxy/server/user/dao/App.class

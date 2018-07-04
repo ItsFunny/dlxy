@@ -56,7 +56,7 @@
 							<td>${item.articleId}</td>
 							<td align="left">${item.articleName}</td>
 							<td>${item.articleAuthor}</td>
-							<td>${item.username}</td>
+							<td><a href="/user/releases.html?userId=${item.userId}">${item.username}</a></td>
 							<td>
 								<#if item.articleStatus==0>
 									<input name="show" lay-skin="switch" lay-text="是|否" lay-filter="isShow" type="checkbox">

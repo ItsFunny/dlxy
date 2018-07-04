@@ -108,10 +108,17 @@
 				var obj=$("#dataDetail");
 			if(data.code==1){
 				alert(data.data.data.length);
+				if(data.data.data.length<1){
+				
+				}else{
 				obj.empty();
-			
+				for(var i=0;i<data.data.data.length;i++){
+					var d=data.data.data[i];
+					obj.append('<tr><td><input name="checked" lay-skin="primary" lay-filter="choose" type="checkbox"><div class="layui-unselect layui-form-checkbox" lay-skin="primary"><i class="layui-icon"></i></div></td><td align="left">'+d.articleName+'</td><td>'+d.articleAuthor+'</td><td>'+d.createDate+'</td><td><a class="layui-btn layui-btn-mini news_edit"><i class="iconfont icon-edit"></i> 恢复</a><a class="layui-btn layui-btn-danger layui-btn-mini news_del" data-id="1"><i class="layui-icon"></i> 彻底删除</a></td></tr>')
+					}
+				}
 			}else{
-			
+				alert(data.msg);
 			}			
 		},'json');
 	});

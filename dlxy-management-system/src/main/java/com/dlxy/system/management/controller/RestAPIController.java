@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -55,6 +56,7 @@ import com.dlxy.common.vo.PageVO;
 import com.dlxy.server.article.service.IArticleService;
 import com.dlxy.server.article.service.ITitleService;
 import com.dlxy.server.picture.service.IPictureService;
+import com.dlxy.server.user.service.IUserService;
 import com.dlxy.system.management.service.IArticleManagementWrappedService;
 import com.dlxy.system.management.service.IPictureManagementWrappedService;
 import com.dlxy.system.management.utils.ManagementUtil;
@@ -91,6 +93,9 @@ public class RestAPIController
 	
 	@Autowired
 	private IPictureService pictureService;
+	
+	@Autowired
+	private IUserService userService;
 	
 
 	@RequestMapping(value = "/article/del/batch")
@@ -129,6 +134,7 @@ public class RestAPIController
 			HttpServletResponse response) throws UnsupportedEncodingException
 	{
 		Map<String, Object> params = new HashMap<>();
+		UserDTO user=ManagementUtil.getLoginUser();
 		String q =new String( request.getParameter("q").getBytes("iso-8859-1"),"utf-8");
 		String pageSizeStr = StringUtils.defaultString(request.getParameter("pageSize"), "2");
 		String pageNumStr = StringUtils.defaultString(request.getParameter("pageNum"), "1");
@@ -142,14 +148,39 @@ public class RestAPIController
 		String userIdStr=request.getParameter("userId");
 		if(!StringUtils.isEmpty(userIdStr))
 		{
+			Long userId=Long.parseLong(userIdStr);
+			
 			//查找用户,与登录着的用户进行匹配,判断是否是同一个用户.或者是admin
-//			if()
+			if(!user.getUserId().equals(userId) && !user.isAdmin())
+			{
+				//发布消息,记录ip ,额外创建一个对象更加合适,用于安全检测
+				HashMap<String, Object>p=new HashMap<>();
+				p.put("ip", CommonUtils.getRemortIP(request));
+				p.put("reason", "try over access to get data");
+				eventPublisher.publish(new AppEvent(p, Events.IpCheck.name()));
+				//返回无权
+				return ResultUtil.fail("sorry u dont have the permission");
+			}
+//			UserDTO sUser=null;
+//			try
+//			{
+//				sUser=userService.findByUserId(userId);
+//			}catch (NumberFormatException e) {
+//				logger.error("[rest api:搜索] string userId 转为 long 的userId 出现错误");
+//				return ResultUtil.fail(e.getMessage());
+//			} 
+//			catch (SQLException e)
+//			{
+////				e.printStackTrace();
+//				logger.error("[rest api :search] occur sql exception ,{}",e.getMessage());
+//				return ResultUtil.fail("服务器异常,请稍后再试");
+//			}
 			params.put("userId", userIdStr);
 		}
 		try
 		{
-			Collection<ArticleDTO> findByArticleId = articleManagementWrappedService.findByArticleId(Long.parseLong(searchQuery));
-			return ResultUtil.sucess(new PageVO<Collection<ArticleDTO>>(findByArticleId, pageSize, pageNum, 1L));
+			ArticleDTO findByArticleId = articleManagementWrappedService.findByArticleId(Long.parseLong(searchQuery));
+			return ResultUtil.sucess(new PageVO<Collection<ArticleDTO>>(Arrays.asList(findByArticleId), pageSize, pageNum, 1L));
 		} catch (NumberFormatException e)
 		{
 			
@@ -162,13 +193,13 @@ public class RestAPIController
 						pageRes.getTotalCount()), "sucess");
 			} catch (SQLException e1)
 			{
-				logger.error("[查询文章]发生sql错误");
+				logger.error("[rest api :search 查询文章] find articleByParam occur sql exception");
 				e1.printStackTrace();
 				return ResultUtil.fail(e1.getMessage());
 			}
 		} catch (SQLException e)
 		{
-			logger.error("[查询文章]发生sql错误");
+			logger.error("[rest api :search 查询文章] find articleById occur sql exception");
 			e.printStackTrace();
 			return ResultUtil.fail(e.getMessage());
 		}
@@ -189,8 +220,7 @@ public class RestAPIController
 		HashMap<String, Object> data = new HashMap<>();
 		try
 		{
-			Collection<ArticleDTO> collection = articleManagementWrappedService.findByArticleId(articleId);
-			ArticleDTO articleDTO = collection.iterator().next();
+			ArticleDTO articleDTO = articleManagementWrappedService.findByArticleId(articleId);
 			if (null == articleDTO || !articleDTO.getArticleStatus().equals(ArticleStatusEnum.DELETE.ordinal()))
 			{
 				// 发布消息,记录到illegal_log 中,然后后台线程自动更新redis(达到一定次数) 中的黑名单记录
