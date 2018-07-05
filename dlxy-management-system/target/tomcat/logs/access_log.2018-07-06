@@ -1,0 +1,4 @@
+0:0:0:0:0:0:0:1 - - [06/Jul/2018:00:03:29 +0800] "GET /user/all.html?pageNum=1&q= HTTP/1.1" 200 384 http-bio-8000-exec-1 4866
+0:0:0:0:0:0:0:1 - - [06/Jul/2018:00:04:21 +0800] "GET /user/all.html?pageNum=1&q= HTTP/1.1" 200 18601 http-bio-8000-exec-1 4675
+0:0:0:0:0:0:0:1 - - [06/Jul/2018:00:04:21 +0800] "GET /user/images/userimg.jpg HTTP/1.1" 404 997 http-bio-8000-exec-2 3
+0:0:0:0:0:0:0:1 - - [06/Jul/2018:00:04:21 +0800] "GET /user/js/navtab.js HTTP/1.1" 404 985 http-bio-8000-exec-3 1

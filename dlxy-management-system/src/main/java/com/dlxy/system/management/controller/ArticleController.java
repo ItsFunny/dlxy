@@ -169,7 +169,6 @@ public class ArticleController
 		ModelAndView modelAndView = new ModelAndView("article_add", params);
 		return modelAndView;
 	}
-	
 	/*
 	 * 需要修改,需要test
 	 */

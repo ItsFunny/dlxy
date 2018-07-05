@@ -16,10 +16,12 @@ import org.springframework.stereotype.Service;
 
 import com.dlxy.common.dto.ArticleDTO;
 import com.dlxy.common.dto.PageDTO;
+import com.dlxy.common.dto.UserDTO;
 import com.dlxy.common.dto.UserRecordDTO;
 import com.dlxy.common.utils.PageResultUtil;
 import com.dlxy.server.user.service.IUserArticleService;
 import com.dlxy.server.user.service.IUserRecordService;
+import com.dlxy.server.user.service.IUserService;
 import com.dlxy.system.management.service.IUserMangementWrappedService;
 
 /**
@@ -39,8 +41,11 @@ public class ManagementUserServiceImpl implements IUserMangementWrappedService
 	@Autowired
 	private IUserArticleService userArticleService;
 	
+	@Autowired
+	private IUserService userService;
+	
 	@Override
-	public PageDTO<Collection<Map<String, Object>>> findByPage(int pageSize, int pageNum, Map<String, Object> p) throws SQLException
+	public PageDTO<Collection<Map<String, Object>>> findUserArticlesByPage(int pageSize, int pageNum, Map<String, Object> p) throws SQLException
 	{
 		Long count = userArticleService.countByParam(p);
 		if (count >= 1)
@@ -67,6 +72,27 @@ public class ManagementUserServiceImpl implements IUserMangementWrappedService
 		Collection<UserRecordDTO> collection = userRecordService.findRecordByPage(pageSize, pageNum, params);
 		PageDTO<Collection<UserRecordDTO>>pageDTO=new PageDTO<Collection<UserRecordDTO>>(count, collection);
 		return pageDTO;
+	}
+	@Override
+	public PageDTO<Collection<UserDTO>> findUsersByPage(int pageSize, int pageNum, Map<String, Object> params)
+			throws SQLException
+	{
+		Long count = userService.countUsersByParam(params);
+		if(count<1)
+		{
+			return PageResultUtil.emptyPage();
+		}
+		if(pageSize<1)
+		{
+			pageSize=1;
+		}
+		if(pageNum<=0)
+		{
+			pageNum=1;
+		}
+		Collection<UserDTO> users = userService.findUsersByPage((pageNum-1)*pageSize, pageSize, params);
+		PageDTO<Collection<UserDTO>>p=new PageDTO<Collection<UserDTO>>(count, users);
+		return p;
 	}
 
 }

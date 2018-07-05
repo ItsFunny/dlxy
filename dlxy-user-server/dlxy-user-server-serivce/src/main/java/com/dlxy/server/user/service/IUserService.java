@@ -8,6 +8,8 @@
 package com.dlxy.server.user.service;
 
 import java.sql.SQLException;
+import java.util.Collection;
+import java.util.Map;
 
 import com.dlxy.common.dto.UserDTO;
 
@@ -24,4 +26,9 @@ public interface IUserService
 	UserDTO findUserByNameOrId(String key) throws SQLException;
 	
 	UserDTO findByUserId(Long userId) throws SQLException;
+	
+	
+	Long countUsersByParam(Map<String, Object>params) throws SQLException;
+	
+	Collection<UserDTO>findUsersByPage(int start,int end ,Map<String, Object>params) throws SQLException;
 }

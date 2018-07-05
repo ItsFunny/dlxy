@@ -108,4 +108,16 @@ public class UserServiceImpl implements IUserArticleService,IUserService,IUserRe
 		return userRecordQueryDao.coutRecords(params);
 	}
 
+	@Override
+	public Collection<UserDTO> findUsersByPage(int start,int end ,Map<String, Object>params) throws SQLException
+	{
+		return userQueryDao.findUsersByPage(start, end, params);
+	}
+
+	@Override
+	public Long countUsersByParam(Map<String, Object> params) throws SQLException
+	{
+		return userQueryDao.countUserByParam(params);
+	}
+
 }

@@ -1,63 +1,6 @@
 <#include "wrapper-up.html">
 <#setting datetime_format="yyyy-MM-dd HH:mm:ss"/>
 <script type="text/javascript">
-	initkindEditor();
-	var editor;
- 	function initkindEditor() {
-     KindEditor.ready(function (K) {
-          editor = K.create('#edit_articleContent', {
-             themeType: "simple",
-             uploadJson: '/api/file/upload.html?articleId='+$("#edit_articleId").val(),
-             resizeType: 1,
-             pasteType: 2,
-             syncType: "",
-             filterMode: true,
-             allowPreviewEmoticons: false,
-             items: [
-                    'source', 'undo', 'redo', 'plainpaste', 'wordpaste', 'clearhtml', 'quickformat',
-                    'selectall', 'fullscreen', 'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor',
-                    'bold', 'italic', 'underline', 'hr', 'removeformat', '|', 'justifyleft', 'justifycenter',
-                    'justifyright', 'insertorderedlist', 'insertunorderedlist', '|', 'link', 'image','multiimage',
-                    'unlink', 'baidumap', 'emoticons' 
-                ],
-             afterCreate: function () {
-                 this.sync();
-             },
-             afterBlur: function () {
-                 this.sync();
-             },
-             afterChange: function () {
-                  K('.word_count1').html("最多20000个字符,已输入" + this.count() + "个字符");
-             },
-             afterUpload:function(url){
-             	
-             },
-             allowFileManager: false,
-             allowFlashUpload: false,
-             allowMediaUpload: false,
-             allowFileUpload: false,
-             formatUploadUrl: false,
-             
-         });
-     });
- }
- 
-	function loadArticle(obj){
-		var articleId=$(obj).attr("articleId");
-		$("#edit_articleId").val(articleId);
-		editor.uploadJson='/api/file/upload.html?articleId='+$("#edit_articleId").val();
-		jQuery.get('/api/article/detail/'+articleId+'.html',function(data,textStatus,jqXHR){
-			if(data.code==1){
-				var article=data.data;
-				$("#edit_articleName").val(article.articleName);
-				$("#edit_articleAuthor").val(article.articleAuthor);
-				KindEditor.html("#edit_articleContent", article.articleContent);
-			}else{
-				alert(data.msg);
-			}
-		},'json')
-	}
-	
 </script>
 <section class="layui-larry-box">
 	<div class="larry-personal">
@@ -92,13 +35,11 @@
 								<input name="" lay-skin="primary" lay-filter="allChoose" id="allChoose" type="checkbox">
 								<div class="layui-unselect layui-form-checkbox" lay-skin="primary"><i class="layui-icon"></i></div>
 							</th>
-							<th>文章编号</th>
-							<th style="text-align:left;">文章标题</th>
-							<th>作者</th>
-							<th>处理人</th>
-							<th>是否上架</th>
-							<th>发布时间</th>
-							<th>更新时间</th>
+							<th>用户编号</th>
+							<th style="text-align:left;">用户姓名</th>
+							<th>用户真实姓名</th>
+							<th>创建时间</th>
+							<th>上次登录时间</th>
 							<th>操作</th>
 						</tr>
 					</thead>
@@ -107,37 +48,26 @@
 						<#list pageVO.data as item>
 							<tr>
 							<td>
-								<input name="checked" lay-skin="primary" lay-filter="choose" type="checkbox" value="${item.articleId}">
+								<input name="checked" lay-skin="primary" lay-filter="choose" type="checkbox" value="${item.userId}">
 								<div class="layui-unselect layui-form-checkbox" lay-skin="primary">
 								<i class="layui-icon"></i>
 								</div>
 							</td>
-							<td>${item.articleId?c}</td>
-							<td align="left">${item.articleName}</td>
-							<td>${item.articleAuthor}</td>
-							<td><a href="/user/releases.html?userId=${item.userId}">${item.username}</a></td>
-							<td>
-								<#if item.articleStatus==0>
-									<input name="show" lay-skin="switch" lay-text="是|否" lay-filter="isShow" type="checkbox">
-									<div class="layui-unselect layui-form-switch"><i></i></div>
-								<#else>			
-									<input name="show" lay-skin="switch" lay-text="是|否" lay-filter="isShow" type="checkbox">		
-									<div class="layui-unselect layui-form-switch layui-form-onswitch"><i></i></div>
-								</#if>
-							</td>
+							<td>${item.username}</td>
+							<td align="left">${item.realname}</td>
 							<td>
 								${item.createDate?string('yyyy-MM-dd HH:mm:ss')}
 							</td>
 							<td>
-								<#if item.updateDate??>
-									${item.updateDate?string('yyyy-MM-dd HH:mm:ss')}
+								<#if item.lastLoginDate??>
+									${item.lastLoginDate?string('yyyy-MM-dd HH:mm:ss')}
 								</#if>
 							</td>
 							<td>
-								<a class="layui-btn layui-btn-mini " data-toggle="modal" data-target="#changeSource" onclick="loadArticle(this);" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i> 编辑</a>
+								<a class="layui-btn layui-btn-mini " data-toggle="modal" data-target="#changeSource" onclick="loadArticle(this);" articleId="${item.userId}"><i class="iconfont icon-edit"></i> 编辑</a>
 								<a class="layui-btn layui-btn-mini "  onclick="javascript:alert(editor.uploadJson);"><i class="iconfont icon-edit"></i> 编辑22</a>
 								</br>
-								<input class="layui-btn layui-btn-danger layui-btn-mini" onclick="singleDelButton(this)" value="删除" articleId="${item.articleId?c}">
+								<input class="layui-btn layui-btn-danger layui-btn-mini" onclick="singleDelButton(this)" value="删除" articleId="${item.userId?c}">
 							</td>
 						</tr>
 						</#list>
@@ -147,7 +77,7 @@
                      <div class="larry-table-page clearfix">
                           <input type="button" id="batchDelButton" class="layui-btn layui-btn-small" value="删除">
                            <#if pageVO??>
-						      <form name="pageForm" action="/article/all.html" method="get">
+						      <form name="pageForm" action="/user/all.html" method="get">
 							      	<input type="hidden" name="pageNum" value="${pageVO.pageNum}">
 							      	<input type="hidden" name="q" value="${q!""}">
 							      	<div id="page2" class="page">
@@ -220,37 +150,6 @@
 </section>
 <#include "wrapper-down.html">
 <script type="text/javascript">
-
-	function editSaveUpdate(){
-		var d=$("#editForm").serialize();
-		alert(d);
-		jQuery.post('/api/article/update.html',d,function(data,textStatus,jqXHR){
-			
-			if(data.code==1){
-				alert('sucess');
-			}else{
-				alert(data.msg);
-			}
-		},'json');
-	}
-
-
-	var ids="";
-	$("#batchDelButton").click(function batchDel(){
-		$("input:checkbox[name=checked]:checked").each(function(){
-			ids+=$(this).val()+",";
-		})
-		alert(ids);
-		var params={"ids":ids};
-		jQuery.post('/api/article/del/batch.html',params,function(data,textStatus,jqXHR){
-			if(data.code==1){
-				alert('删除成功');
-				window.location.href="http://localhost:8000/article/all.html";
-			}else{
-				alert('fail');
-			}
-		},'json');
-	});
 	$("#searchButton").click(function(){
 		var q=$("#searchText").val();
 		$.ajax({
@@ -303,19 +202,5 @@
 			}
 		});
 	});
-	function singleDelButton(obj){
-		var articleId=$(obj).attr("articleId");
-		var params={"ids":articleId};
-		jQuery.post('/api/article/del/batch.html',params,function(data,textStatus,jqXHR){
-			if(data.code==1){
-				alert('删除成功');
-				window.location.href="http://localhost:8000/article/all.html";
-			}else{
-				alert('fail');
-			}
-		},'json');
-	}
-
-	
 </script>
 <#include "footer.html">

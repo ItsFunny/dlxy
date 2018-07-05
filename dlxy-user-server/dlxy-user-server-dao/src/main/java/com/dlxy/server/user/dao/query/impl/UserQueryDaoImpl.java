@@ -11,18 +11,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
+import org.apache.commons.dbutils.handlers.ScalarHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.dlxy.common.dto.UserDTO;
-import com.dlxy.common.dto.UserRecordDTO;
 import com.dlxy.server.user.dao.query.UserQueryDao;
 
 /**
@@ -53,6 +52,7 @@ public class UserQueryDaoImpl implements UserQueryDao
 		@Override
 		public Collection<UserDTO> handle(ResultSet rs) throws SQLException
 		{
+//			select user_id,username,realname,password,role_id,last_login_ip,last_login_date,create_date, update_date 
 			List<UserDTO>userDTOs=new ArrayList<UserDTO>();
 			while(rs.next())
 			{
@@ -66,8 +66,9 @@ public class UserQueryDaoImpl implements UserQueryDao
 				}
 				userDTO.setRoleId(rs.getInt(5));
 				userDTO.setLastLoginIp(rs.getString(6));
-				userDTO.setCreateDate(rs.getDate(7));
-				userDTO.setUpdateDate(rs.getDate(8));
+				userDTO.setLastLoginDate(rs.getDate(7));
+				userDTO.setCreateDate(rs.getDate(8));
+				userDTO.setUpdateDate(rs.getDate(9));
 				userDTOs.add(userDTO);
 			}
 			return userDTOs;
@@ -114,6 +115,35 @@ public class UserQueryDaoImpl implements UserQueryDao
 		}else {
 			 throw new RuntimeException("find multipart users");
 		}
+	}
+	@Override
+	public Long countUserByParam(Map<String, Object> params) throws SQLException
+	{
+		String sql="select count(1) from dlxy_user where 1=1 ";
+		
+		
+		
+		
+		Object count = queryRunner.query(sql, new ScalarHandler<Object>());
+		if(null==count)
+		{
+			return 0l;
+		}else {
+			return ((Number)count).longValue();
+		}
+	}
+	@Override
+	public Collection<UserDTO> findUsersByPage(int start, int end, Map<String, Object> params) throws SQLException
+	{
+		List<Object>l=new LinkedList<>();
+		String sql="select user_id,username,realname,password,role_id,last_login_ip,last_login_date,create_date, update_date from dlxy_user where 1=1 ";
+		
+		sql+="order by create_date desc limit ?,?";
+		l.add(start);
+		l.add(end);
+		Collection<UserDTO> query = queryRunner.query(sql, new UserResultSetHandler(), l.toArray());
+		
+		return query;
 	}
 
 }

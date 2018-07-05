@@ -7,6 +7,7 @@
 */
 package com.dlxy.system.management.controller;
 
+
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Date;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +66,38 @@ public class UserController
 
 	@Autowired
 	private IUserRecordService userRecordService;
-
+	
+//	@RequiresRoles
+	@RequestMapping(value="/all")
+	public ModelAndView showAllUser(HttpServletRequest request,HttpServletResponse response)
+	{
+		ModelAndView modelAndView=null;
+		Map<String, Object>params=new HashMap<>();
+		UserDTO user=ManagementUtil.getLoginUser();
+		params.put("user", user);
+		Map<String, Object>p=new HashMap<>();
+		String pageSizeStr=request.getParameter("pageSize");
+		String pageNumStr=request.getParameter("pageNum");
+		Integer pageSize=StringUtils.isEmpty(pageSizeStr)?1:Integer.parseInt(pageSizeStr);
+		Integer pageNum=StringUtils.isEmpty(pageNumStr)?1:Integer.parseInt(pageNumStr);
+		
+//		String userIdStr=request.getParameter("userId");
+		try
+		{
+			PageDTO<Collection<UserDTO>> pageDTO = userManagementWrappedService.findUsersByPage(pageSize, pageNum, params);
+			PageVO<Collection<UserDTO>>pageVO=new PageVO<Collection<UserDTO>>(pageDTO.getData(), pageSize, pageNum, pageDTO.getTotalCount());
+			params.put("pageVO", pageVO);
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+			logger.error("[find users] error {} ",e.getMessage());
+			params.put("error", e.getMessage());
+			modelAndView=new ModelAndView("error",params);
+			return modelAndView;
+		}
+		modelAndView=new ModelAndView("users",params);
+		return modelAndView;
+	}
 	/*
 	 * 只允许让admin或者是本人访问,其他人不可访问,若访问则会记录信息
 	 */
@@ -117,7 +150,7 @@ public class UserController
 		PageDTO<Collection<Map<String, Object>>> pageDTO = null;
 		try
 		{
-			pageDTO = userManagementWrappedService.findByPage(pageSize, pageNum, params);
+			pageDTO = userManagementWrappedService.findUserArticlesByPage(pageSize, pageNum, params);
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
