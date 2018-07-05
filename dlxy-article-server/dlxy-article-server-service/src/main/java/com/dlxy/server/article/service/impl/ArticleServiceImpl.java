@@ -100,5 +100,11 @@ public class ArticleServiceImpl implements IArticleService ,IUserArticleService
 		userArticleDao.addUserArticle(userId, articleId, username);
 	}
 
+	@Override
+	public void update(ArticleDTO articleDTO) throws SQLException
+	{
+		articleQueryDao.update(articleDTO);
+	}
+
 
 }

@@ -40,8 +40,8 @@ public class ArticleGroup implements IGroup
 	@Override
 	public void update(Map<String, Object> params) throws SQLException
 	{
-		// TODO Auto-generated method stub
-		
+		ArticleDTO articleDTO=(ArticleDTO) params.get("articleDTO");
+		articleServiceImpl.update(articleDTO);
 	}
 
 }

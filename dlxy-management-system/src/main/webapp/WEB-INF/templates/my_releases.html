@@ -13,13 +13,13 @@
 		
 
 		<div class="layui-inline">
-			<a class="layui-btn layui-btn-danger batchDel" href="/user/my/releases.html">显示所有</a>
+			<a class="layui-btn layui-btn-danger batchDel" href="/user/releases.html">显示所有</a>
 		</div>
 		<div class="layui-inline">
-			<a class="layui-btn layui-btn-danger batchDel" href="/user/my/releases.html?articleStatus=2">显示暂时删除的文章</a>
+			<a class="layui-btn layui-btn-danger batchDel" href="javascript:void(0);" onclick="document.pageForm.pageNum=1;document.pageForm.articleStatus.value=2;document.pageForm.submit();">显示暂时删除的文章</a>
 		</div>
 		<div class="layui-inline">
-			<a class="layui-btn layui-btn-danger batchDel" href="/user/my/releases.html?articleStatus=0">显示下线的文章</a>
+			<a class="layui-btn layui-btn-danger batchDel" href="javascript:void(0);" onclick="document.pageForm.pageNum=1;document.pageForm.articleStatus.value=0;document.pageForm.submit();">显示下线的文章</a>
 		</div>
 		<div class="layui-inline">
 			注意,已经删除的文章,当超过删除时间10天之后将会自动删除,不可恢复
@@ -44,6 +44,7 @@
 							<th><input name="" lay-skin="primary" lay-filter="allChoose" id="allChoose" type="checkbox">
 								<div class="layui-unselect layui-form-checkbox" lay-skin="primary"><i class="layui-icon"></i></div>
 							</th>
+							<th>文章ID</th>
 							<th style="text-align:left;">文章标题</th>
 							<th>作者 </th>
 							<th>发布时间</th>
@@ -57,6 +58,7 @@
 							<td><input name="checked" lay-skin="primary" lay-filter="choose" type="checkbox">
 								<div class="layui-unselect layui-form-checkbox" lay-skin="primary"><i class="layui-icon"></i></div>
 							</td>
+							<td>${item.article_id ?c}</td>
 							<td align="left">${item.article_name}</td>
 							<td>${item.article_author}</td>
 							<td>${item.create_date?string('yyyy-MM-dd HH:mm:ss')}</td>
@@ -72,17 +74,17 @@
                      <div class="larry-table-page clearfix">
                           <a href="javascript:;" class="layui-btn layui-btn-small"><i class="iconfont icon-shanchu1"></i>彻底删除</a>
 						<#if pageVO??>
-					      <form name="pageForm" action="/user/my/releases.html" method="get">
+					      <form name="pageForm" action="/user/releases.html" method="get">
 						      	<input type="hidden" name="pageNum" value="${pageVO.pageNum}">
 						      	<input type="hidden" name="q" value="${q!""}">
 						      	<input type="hidden" name="articleStatus" value="${articleStatus!""}">
-						      	<input type="hidden" name="userId" value="${userId}">
+						      	<input type="hidden" name="userId" value="${userId!""}">
 						      	<div id="page2" class="page">
 									<div class="layui-box layui-laypage layui-laypage-default" id="layui-laypage-0">
 										<span class="layui-laypage-curr">
-						      			<em class="layui-laypage-em"></em>
-						      			<em>当前第 ${pageVO.pageNum}页 总共有${pageVO.maxPage}页,总计${pageVO.totalCount}条记录 </em>
-						      		</span>
+							      			<em class="layui-laypage-em"></em>
+							      			<em>当前第 ${pageVO.pageNum}页 总共有${pageVO.maxPage}页,总计${pageVO.totalCount}条记录 </em>
+						      			</span>
 										<#if pageVO.pageNum==1><a href="javascript:void(0)">首页</a>	<#else><a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=1;document.pageForm.submit();">首页</a>   </#if>
 										<#if pageVO.pageNum<=1> <a href="javascript:void(0)">上一页</a><#else><a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=(${pageVO.pageNum}-1);document.pageForm.submit();"> 上一页</a>  </#if>
 										<#if (pageVO.pageNum>=pageVO.maxPage)> <a href="javascript:void(0)">下一页</a>  <#else><a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=${pageVO.pageNum}+1;document.pageForm.submit();">下一页</a> </#if>		
@@ -114,8 +116,28 @@
 				obj.empty();
 				for(var i=0;i<data.data.data.length;i++){
 					var d=data.data.data[i];
-					obj.append('<tr><td><input name="checked" lay-skin="primary" lay-filter="choose" type="checkbox"><div class="layui-unselect layui-form-checkbox" lay-skin="primary"><i class="layui-icon"></i></div></td><td align="left">'+d.articleName+'</td><td>'+d.articleAuthor+'</td><td>'+d.createDate+'</td><td><a class="layui-btn layui-btn-mini news_edit"><i class="iconfont icon-edit"></i> 恢复</a><a class="layui-btn layui-btn-danger layui-btn-mini news_del" data-id="1"><i class="layui-icon"></i> 彻底删除</a></td></tr>')
+					obj.append('<tr><td><input name="checked" lay-skin="primary" lay-filter="choose" type="checkbox"><div class="layui-unselect layui-form-checkbox" lay-skin="primary"><i class="layui-icon"></i></div></td><td>'+d.articleId+'</td><td align="left">'+d.articleName+'</td><td>'+d.articleAuthor+'</td><td>'+d.createDate+'</td><td><a class="layui-btn layui-btn-mini news_edit"><i class="iconfont icon-edit"></i> 恢复</a><a class="layui-btn layui-btn-danger layui-btn-mini news_del" data-id="1"><i class="layui-icon"></i> 彻底删除</a></td></tr>')
 					}
+					var pageVO=data.data;
+					var page=$("#layui-laypage-0");
+					page.empty();
+					page.append('<span class="layui-laypage-curr"><em class="layui-laypage-em"></em><em>当前第 '+pageVO.pageNum+'页 总共有'+pageVO.maxPage+'页,总计'+pageVO.totalCount+'条记录 </em></span>')
+					var str="";
+					if(pageVO.pageNum<=1){
+						str+='<a href="javascript:void(0);">首页</a>';
+						str+='<a href="javascript:void(0);">上一页</a>';
+					}else{
+						str='<a href="javascript:void(0);" onclick="document.pageForm.pageNum.value=1;document.pageForm.submit()"';
+						str+='<a href="javscript:void(0);" onclick="document.pageForm.pageNum.value='+(pageVO.pageNum-1)+';document.pageForm.submit();"';
+					}
+					if(pageVO.pageNum>=pageVO.maxPage){
+						str+='<a href="javascript:void(0);">下一页</a>'	
+						str+='<a href="javascript:void(0);">最后一页</a>'
+					}else{
+						str+='<a href="javascript:void(0);" onclick="document.pageForm.pageNum.value='+(pageVO.pageNum+1)+';document.pageForm.submit()">下一页</a>'
+						str+='<a href="javascript:void(0)" onclick="document.pageForm.pageNum.value='+(pageVO.maxPage)+';document.pageForm.submit();">最后一页</a>'
+					}
+					page.append(str);
 				}
 			}else{
 				alert(data.msg);

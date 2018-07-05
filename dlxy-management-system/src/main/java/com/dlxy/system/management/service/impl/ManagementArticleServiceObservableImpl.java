@@ -109,6 +109,13 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 		
 	}
 
+
+	@Override
+	public void updateArticleByArticleId(ArticleDTO articleDTO) throws SQLException
+	{
+		articleService.update(articleDTO);
+	}
+
 	
 
 }

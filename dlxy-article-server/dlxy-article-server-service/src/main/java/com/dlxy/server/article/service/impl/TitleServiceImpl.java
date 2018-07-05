@@ -31,9 +31,15 @@ public class TitleServiceImpl implements ITitleService
 	private TitleDao titleDao;
 
 	@Override
-	public Collection<DlxyTitleDTO> findByParentId(int titleParentId)
+	public Collection<DlxyTitleDTO> findChildsByParentId(int titleParentId)
 	{
-		return titleDao.findAllParent(titleParentId);
+		return titleDao.findParentAllChilds(titleParentId);
+	}
+
+	@Override
+	public Collection<DlxyTitleDTO> findAllParent()
+	{
+		return titleDao.findAllParents();
 	}
 
 }

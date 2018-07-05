@@ -35,8 +35,13 @@ public interface IArticleManagementWrappedService
 
 	void updateArticlesInBatch(Long userId, Long[] articleIds, int status);
 	
+	void updateArticleByArticleId(ArticleDTO articleId) throws SQLException;
+	
 	int rollBackArticle(Long userId,int status,Long articleId,int titleId) ;
 	
 	void insertOrUpdate(ArticleDTO articleDTO);
+	
+	
+	
 
 }

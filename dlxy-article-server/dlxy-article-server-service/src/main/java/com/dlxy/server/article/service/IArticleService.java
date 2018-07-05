@@ -41,4 +41,6 @@ public interface IArticleService
 	
 	
 	void insertOrUpdate(ArticleDTO articleDTO);
+	
+	void update(ArticleDTO articleDTO) throws SQLException;
 }

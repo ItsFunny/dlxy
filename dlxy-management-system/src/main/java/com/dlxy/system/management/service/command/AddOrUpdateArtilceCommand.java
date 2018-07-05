@@ -25,7 +25,7 @@ import com.dlxy.common.dto.UserRecordDTO;
  * @author joker
  * @date 创建时间：2018年7月2日 上午11:55:43
  */
-public class AddArtilceCommand extends Command
+public class AddOrUpdateArtilceCommand extends Command
 {
 
 	
@@ -33,22 +33,30 @@ public class AddArtilceCommand extends Command
 	@Override
 	public void execute(Map<String, Object> param)
 	{
+		String detail=null;
 		if (!param.containsKey("articleDTO"))
 		{
 			throw new RuntimeException("missing argument articleDTO");
 		}
-		if (!param.containsKey("pictureDTO"))
-		{
-			throw new RuntimeException("missing argument pictureDTO");
-		}
-		this.articleGroup.add(param);
-		this.userArticleGroup.add(param);
+		ArticleDTO a = (ArticleDTO) param.get("articleDTO");
 		try
 		{
-			this.pictureGroup.update(param);
+			
+			if(param.containsKey("update"))
+			{
+				this.articleGroup.update(param);
+				detail="update:article:"+a.getArticleAuthor();
+			}else {
+				this.articleGroup.add(param);
+				this.userArticleGroup.add(param);
+				detail="add:article:"+a.getArticleId();
+			}
+			if(param.containsKey("pictureStatus"))
+			{
+				this.pictureGroup.update(param);
+			}
 			setChanged();
-			ArticleDTO a = (ArticleDTO) param.get("articleDTO");
-			UserRecordDTO userRecordDTO = UserRecordDTO.getUserRecordDTO(a.getUserId(), "add:article:"+a.getArticleId());
+			 UserRecordDTO userRecordDTO = UserRecordDTO.getUserRecordDTO(a.getUserId(), detail);
 			notifyObservers(userRecordDTO);
 		} catch (SQLException e)
 		{

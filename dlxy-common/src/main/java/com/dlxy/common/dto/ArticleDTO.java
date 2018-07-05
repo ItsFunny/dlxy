@@ -38,6 +38,9 @@ public class ArticleDTO
 	// 2018-06-30 22:02 add
 	private Date deleteDate;
 	private String deleteDateStr;
+	//2018-07-05 17:33 add
+	private String[] pictureIds;
+	
 	
 
 	public Long getArticleId()
@@ -210,6 +213,16 @@ public class ArticleDTO
 	public void setDeleteDateStr(String deleteDateStr)
 	{
 		this.deleteDateStr = deleteDateStr;
+	}
+
+	public String[] getPictureIds()
+	{
+		return pictureIds;
+	}
+
+	public void setPictureIds(String[] pictureIds)
+	{
+		this.pictureIds = pictureIds;
 	}
 
 }

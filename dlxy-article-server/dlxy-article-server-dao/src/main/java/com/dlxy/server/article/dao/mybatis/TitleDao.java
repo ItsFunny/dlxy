@@ -30,6 +30,8 @@ public interface TitleDao
 	 * 可做缓存
 	 */
 	@Select("select title_id,title_name,title_parent_id,title_display_seq,create_date from dlxy_title where title_parent_id=#{titleParentId}")
-	Collection<DlxyTitleDTO> findAllParent(int titleParentId);
-
+	Collection<DlxyTitleDTO> findParentAllChilds(int titleParentId);
+	
+	@Select("select title_id,title_name,title_parent_id,title_display_seq,create_date from dlxy_title where title_parent_id= 0")
+	Collection<DlxyTitleDTO>findAllParents();
 }

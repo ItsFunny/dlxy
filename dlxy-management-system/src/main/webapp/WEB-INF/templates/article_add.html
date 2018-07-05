@@ -28,6 +28,8 @@
                   K('.word_count1').html("最多20000个字符,已输入" + this.count() + "个字符");
              },
              afterUpload:function(url){
+             	var t=url.substring(url.lastIndexOf("/")+1,url.indexOf("."));
+             	$("#hiddenBlock").append('<input type="hidden" name="pictureId" value='+t+'>');
              },
              allowFileManager: false,
              allowFlashUpload: false,
@@ -49,6 +51,7 @@
 					$(".title0").append('<option value="'+p.titleId+'">'+p.titleName+'</option>')
 				}
 			}else{
+				
 			}
 		},'json');
 	});
@@ -123,7 +126,7 @@
 			</div>
 		</div>
 		<div class="layui-form-item">
-			<div class="layui-input-block">
+			<div class="layui-input-block" id="hiddenBlock">
 				<input type="hidden" name="articleId" id="articleId" value="${articleId}">
 				<input type="hidden" name="titleId" value="15">
 				<button class="layui-btn" lay-submit="" lay-filter="addNews" onclick='javascript:$("#articleId").val($("#articleId").val().replace(/[,]+/g, ""));document.articleForm.submit();'>立即提交</button> 

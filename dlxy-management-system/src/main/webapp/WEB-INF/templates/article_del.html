@@ -56,7 +56,7 @@
 								<td>${item.username}</td>
 								<td>${item.deleteDateStr!"unknow"}</td>
 								<td>
-									<input type="button" class="layui-btn layui-btn-mini news_edit" value="恢复" id="rollBackButton" onclick="rollBack(this)" articleId="${item.articleId}">
+									<input type="button" class="layui-btn layui-btn-mini news_edit" value="恢复" id="rollBackButton" onclick="rollBack(this)" articleId="${item.articleId?c}">
 									<input type="button" class="layui-btn layui-btn-danger layui-btn-mini news_del"  value="彻底删除">
 								</td>
 							</tr>

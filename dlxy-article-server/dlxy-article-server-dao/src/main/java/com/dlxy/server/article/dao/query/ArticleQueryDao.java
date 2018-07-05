@@ -29,4 +29,7 @@ public interface ArticleQueryDao
 	
 	int rollBackArticle(int status,Long articleId,Integer titleId) throws SQLException;
 	
+	
+	void update(ArticleDTO articleDTO) throws SQLException;
+	
 }

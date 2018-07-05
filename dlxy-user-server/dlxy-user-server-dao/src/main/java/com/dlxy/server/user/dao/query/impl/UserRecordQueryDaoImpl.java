@@ -132,20 +132,28 @@ public class UserRecordQueryDaoImpl implements UserRecordQueryDao
 		String sql = "select a.record_id,a.user_id,b.username,a.record_detail,a.create_date from dlxy_record a ,dlxy_user b where a.user_id = b.user_id ";
 		List<Object> l = new LinkedList<Object>();
 		String key = null;
-		try
-		{
-			if (params.containsKey("q"))
-			{
-				key = params.get("q").toString();
-				Long userId = Long.parseLong(key);
-				sql += " and a.user_id = ? ";
-				l.add(userId);
-			}
-		} catch (NumberFormatException e)
+//		try
+//		{   
+//			if (params.containsKey("q"))
+//			{
+//				key = params.get("q").toString();
+//				Long userId = Long.parseLong(key);
+//				sql += " and a.user_id = ? ";
+//				l.add(userId);
+//			}
+//		} catch (NumberFormatException e)
+//		{
+		if(params.containsKey("q"))
 		{
 			sql += " and b.username like ? ";
+			key=params.get("q").toString();
 			l.add("%" + key + "%");
+		}else if(params.containsKey("userId"))
+		{
+			sql+=" and a.user_id= ? ";
+			l.add(params.get("userId"));
 		}
+//		}
 		sql += "order by a.create_date limit ?,?";
 		l.add(start);
 		l.add(end);
@@ -162,7 +170,11 @@ public class UserRecordQueryDaoImpl implements UserRecordQueryDao
 	{
 		String sql = "select count(1) from dlxy_record where 1=1 ";
 		List<Object> l = new LinkedList<>();
-		if (params.containsKey("userId"))
+		if(params.containsKey("q"))
+		{
+			sql+=" and  user_id in (select b.user_id from dlxy_user b where b.username like ? ) ";
+			l.add("%"+params.get("q").toString()+"%");
+		}else if (params.containsKey("userId"))
 		{
 			sql += " and user_id = ? ";
 			l.add(params.get("userId"));

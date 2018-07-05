@@ -28,7 +28,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -57,8 +59,10 @@ import com.dlxy.server.article.service.IArticleService;
 import com.dlxy.server.article.service.ITitleService;
 import com.dlxy.server.picture.service.IPictureService;
 import com.dlxy.server.user.service.IUserService;
+import com.dlxy.system.management.model.FormArticle;
 import com.dlxy.system.management.service.IArticleManagementWrappedService;
 import com.dlxy.system.management.service.IPictureManagementWrappedService;
+import com.dlxy.system.management.service.command.AddOrUpdateArtilceCommand;
 import com.dlxy.system.management.utils.ManagementUtil;
 import com.joker.library.utils.CommonUtils;
 import com.sun.xml.internal.rngom.util.Uri;
@@ -81,6 +85,8 @@ public class RestAPIController
 	private IArticleManagementWrappedService articleManagementWrappedService;
 	@Autowired
 	private IPictureManagementWrappedService pictureManagementWrappedService;
+	@Autowired
+	private AddOrUpdateArtilceCommand addOrUpdateArtilceCommand;
 
 //	@Autowired
 //	private IArticleService articleService;
@@ -96,6 +102,8 @@ public class RestAPIController
 	
 	@Autowired
 	private IUserService userService;
+	@Autowired
+	private IArticleService articleService;
 	
 
 	@RequestMapping(value = "/article/del/batch")
@@ -123,6 +131,62 @@ public class RestAPIController
 		{
 			e.printStackTrace();
 			return ResultUtil.fail("error:" + e.getMessage());
+		}
+	}
+	@RequestMapping(value="/article/detail/{articleId}",method=RequestMethod.GET,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResultDTO<ArticleDTO>showArticleDetail(@PathVariable Long articleId,HttpServletRequest request,HttpServletResponse response)
+	{
+		try
+		{
+			ArticleDTO articleDTO = articleService.findByArticleId(articleId);
+			return ResultUtil.sucess(articleDTO);
+		} catch (Exception e)
+		{
+			logger.error("[find article] occur error {}",e.getMessage());
+			e.printStackTrace();
+			return ResultUtil.fail(e.getMessage());
+		}
+	}
+	@RequestMapping(value="/article/update",produces=MediaType.APPLICATION_JSON_UTF8_VALUE,method=RequestMethod.POST)
+	public ResultDTO<String>updateArticle( FormArticle formArticle,BindingResult result,HttpServletRequest request,HttpServletResponse response)
+	{
+		ArticleDTO articleDTO=new ArticleDTO();
+		articleDTO.setUserId(ManagementUtil.getLoginUser().getUserId());
+		Map<String, Object>params=new HashMap<>();
+		String[] pictureIds=request.getParameterValues("pictureId");
+		String error=null;
+		if(result.hasErrors())
+		{
+			error=result.getAllErrors().toString();
+		}
+		try
+		{
+			formArticle.isInvalid();
+		} catch (Exception e)
+		{
+			error=e.getMessage();
+		}
+		if(!StringUtils.isEmpty(error))
+		{
+			return ResultUtil.fail(error);
+		}
+		formArticle.to(articleDTO);
+		if(null!=pictureIds && pictureIds.length>0)
+		{
+			articleDTO.setPictureIds(pictureIds);
+			params.put("pictureStatus", PictureStatusEnum.Effective.ordinal());
+		}
+		params.put("articleDTO", articleDTO);
+	
+		params.put("update", true);
+		try
+		{
+			addOrUpdateArtilceCommand.execute(params);
+			return ResultUtil.sucess();
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+			return ResultUtil.fail(e.getMessage());
 		}
 	}
 
@@ -248,25 +312,45 @@ public class RestAPIController
 			return ResultUtil.fail(e.getMessage());
 		}
 	}
-
-	@RequestMapping(value = "/titles", method =
-	{ RequestMethod.POST, RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResultDTO<Collection<DlxyTitleDTO>> findTitles(HttpServletRequest request, HttpServletResponse response)
+	@RequestMapping(value="/article/update/{articleId}",method=RequestMethod.POST,produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResultDTO<?> updateArticle(@PathVariable Long articleId,HttpServletRequest request,HttpServletResponse response)
 	{
-		String parentIdStr = request.getParameter("parentId");
-		if (StringUtils.isEmpty(parentIdStr))
-		{
-			return ResultUtil.fail("错误的参数:titleId");
-		}
-		Collection<DlxyTitleDTO> collection = titleService.findByParentId(Integer.parseInt(parentIdStr));
+		
+		
+		
+		
+		
+		
+		return null;
+		
+	}
+
+	@RequestMapping(value = "/title/{parentId}", method =
+	{ RequestMethod.POST, RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResultDTO<Collection<DlxyTitleDTO>> findTitles(@PathVariable Integer parentId,HttpServletRequest request, HttpServletResponse response)
+	{
+		Collection<DlxyTitleDTO> collection = titleService.findChildsByParentId(parentId);
 		return ResultUtil.sucess(collection);
+	}
+	@RequestMapping(value="/titles", method =
+	{ RequestMethod.POST, RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResultDTO<Collection<DlxyTitleDTO>>findParentAllChilds(HttpServletRequest request,HttpServletResponse response)
+	{
+		try
+		{
+			Collection<DlxyTitleDTO> collection = titleService.findAllParent();
+			return ResultUtil.sucess(collection);
+		} catch (Exception e)
+		{
+			return ResultUtil.fail(e.getMessage());
+		}
 	}
 
 	@RequestMapping(value = "/file/upload")
 	public PictureUploadResponseDTO uploadFile(@RequestParam("imgFile") MultipartFile file, HttpServletRequest request,
 			HttpServletResponse response)
 	{
-		MultipartRequest req=(MultipartRequest) request;
+//		MultipartRequest req=(MultipartRequest) request;
 		PictureUploadResponseDTO pictureUploadResponseDTO = new PictureUploadResponseDTO();
 		String articleId=request.getParameter("articleId");
 		articleId=articleId.replaceAll(",", "");
@@ -324,6 +408,5 @@ public class RestAPIController
 			pictureUploadResponseDTO.setMessage(e.getMessage());
 		}
 		return pictureUploadResponseDTO;
-	
 	}
 }

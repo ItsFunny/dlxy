@@ -46,6 +46,11 @@ public class UserArticleQueryDaoImpl implements UserArticleQueryDao
 			sql += "and article_status=? ";
 			l.add(params.get("articleStatus"));
 		}
+		if(params.containsKey(""))
+		{
+			sql+="";
+			l.add(params.get(""));
+		}
 		Object count = queryRunner.query(sql, new ScalarHandler<Object>(), l.toArray());
 		if (null == count)
 		{

@@ -134,31 +134,58 @@ public class UserController
 	@RequestMapping("/record")
 	public ModelAndView showMyRecord(HttpServletRequest request, HttpServletResponse response)
 	{
+		UserDTO user = ManagementUtil.getLoginUser();
+		Long cuserId=user.getUserId();
 		ModelAndView modelAndView = null;
 		String pageSizeStr = request.getParameter("pageSize");
 		String pageNumStr = request.getParameter("pageNum");
 		Integer pageSize = StringUtils.isEmpty(pageSizeStr) ? 1 : Integer.parseInt(pageSizeStr);
 		Integer pageNum = StringUtils.isEmpty(pageNumStr) ? 1 : Integer.parseInt(pageNumStr);
 		Map<String, Object> params = new HashMap<>();
-		UserDTO user = ManagementUtil.getLoginUser();
+		
+		String q=request.getParameter("q");
+		
 		String userIdStr = request.getParameter("userId");
+		/*
+		 * search
+		 */
+		if(!StringUtils.isEmpty(q))
+		{
+			try
+			{
+				cuserId = Long.parseLong(q);
+				if(user.isAdmin() || user.getUserId().equals(cuserId))
+				{
+					params.put("userId", cuserId);
+				}
+			} catch (NumberFormatException e)
+			{
+				params.put("q", q);
+			}
+		}
+		
 		if (!StringUtils.isEmpty(userIdStr))
 		{
 			try
 			{
-				long userId = Long.parseLong(userIdStr);
-				if (user.isAdmin() || user.getUserId().equals(userId))
+				 cuserId = Long.parseLong(userIdStr);
+				if(!user.getUserId().equals(cuserId)&&!user.isAdmin())
 				{
-					params.put("q", userId);
-				} else
-				{
-					// 记录日志
-					// HashMap<String, Object>data=new HashMap<>();
-					// data.put("ip",ip);
-					// data.put("detail", "try over access to get user records info ");
-					// eventPublisher.publish(new AppEvent(data, Events.IpCheck.name()));
-					params.put("q", user.getUserId());
+					String ip = CommonUtils.getRemortIP(request);
+					logger.warn("[show user records] someone try get the data over access : userId: {}  desition {} from ip :{}", user.getUserId(),userIdStr, ip);
+					// 记录日志  
+					HashMap<String, Object>data=new HashMap<>();
+					data.put("ip", ip);
+					data.put("userId", user.getUserId());
+					data.put("illegalDetail", "试图越权获取用户操作记录:"+user.getUserId()+":"+cuserId);
+					data.put("illegalLevel", IllegalLevelEnum.Suspicious.ordinal());
+					eventPublisher.publish(new AppEvent(data, Events.UserIllegalLog.name()));
+					params.put("error", "sorry u dont have the authorizty");
+					return new ModelAndView("error",params);
 				}
+				params.put("userId", cuserId);
+			}catch (NumberFormatException e) {
+				
 			} catch (Exception e)
 			{
 				String ip = CommonUtils.getRemortIP(request);
@@ -167,8 +194,13 @@ public class UserController
 				modelAndView = new ModelAndView("error", params);
 				return modelAndView;
 			}
+		}else {
+			if(!user.isAdmin())
+			{
+				params.put("userId", cuserId);
+			}
 		}
-
+		
 		try
 		{
 			PageDTO<Collection<UserRecordDTO>> pageDTO = userManagementWrappedService.findUserRecords(pageSize, pageNum,

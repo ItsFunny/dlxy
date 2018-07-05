@@ -13,6 +13,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.dlxy.common.dto.ArticleDTO;
 import com.dlxy.common.dto.PictureDTO;
 import com.dlxy.server.picture.service.IPictureService;
 
@@ -38,8 +39,10 @@ public class PictureGroup implements IGroup
 	@Override
 	public void update(Map<String, Object> params) throws SQLException
 	{
-		PictureDTO pictureDTO=(PictureDTO) params.get("pictureDTO");
-		pictureService.updateArticlePictureStatus(pictureDTO.getArticleId(), pictureDTO.getPictureStatus());
+		ArticleDTO articleDTO=(ArticleDTO) params.get("articleDTO");
+		Object status = params.get("pictureStatus");
+//		pictureService.updateArticlePictureStatus(pictureDTO.getArticleId(), pictureDTO.getPictureStatus());
+		pictureService.updateArticlePictureStatus(Integer.parseInt(status.toString()), articleDTO.getArticleId(),articleDTO.getPictureIds());
 	}
 
 	

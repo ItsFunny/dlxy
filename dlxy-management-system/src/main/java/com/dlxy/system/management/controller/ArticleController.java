@@ -39,7 +39,7 @@ import com.dlxy.common.service.IdWorkerService;
 import com.dlxy.common.vo.PageVO;
 import com.dlxy.system.management.model.FormArticle;
 import com.dlxy.system.management.service.IArticleManagementWrappedService;
-import com.dlxy.system.management.service.command.AddArtilceCommand;
+import com.dlxy.system.management.service.command.AddOrUpdateArtilceCommand;
 import com.dlxy.system.management.utils.ManagementUtil;
 
 /**
@@ -59,7 +59,7 @@ public class ArticleController
 	private IArticleManagementWrappedService articleManagementWrappedService;
 	
 	@Autowired
-	private AddArtilceCommand articleCommand;
+	private AddOrUpdateArtilceCommand articleCommand;
 //	@Autowired
 //	private IArticleService articleService;
 
@@ -178,6 +178,7 @@ public class ArticleController
 			HttpServletRequest request, HttpServletResponse response)
 	{
 		ModelAndView modelAndView = null;
+		String[] pictureIds=request.getParameterValues("pictureId");
 		Map<String, Object>params=new HashMap<>();
 		if(bindingResult.hasErrors())
 		{
@@ -198,13 +199,16 @@ public class ArticleController
 		}
 		ArticleDTO articleDTO=new ArticleDTO();
 		formArticle.to(articleDTO);
+		
 		articleDTO.setUserId(ManagementUtil.getLoginUser().getUserId());
 		articleDTO.setUsername(ManagementUtil.getLoginUser().getUsername());
-		PictureDTO pictureDTO=new PictureDTO();
-		pictureDTO.setArticleId(articleDTO.getArticleId());
-		pictureDTO.setPictureStatus(PictureStatusEnum.Effective.ordinal());
+		articleDTO.setPictureIds(pictureIds);
+//		PictureDTO pictureDTO=new PictureDTO();
+//		pictureDTO.setArticleId(articleDTO.getArticleId());
+//		pictureDTO.setPictureStatus(PictureStatusEnum.Effective.ordinal());
 		params.put("articleDTO", articleDTO);
-		params.put("pictureDTO", pictureDTO);
+//		params.put("pictureDTO", pictureDTO);
+		params.put("pictureStatus", PictureStatusEnum.Effective.ordinal());
 		try
 		{
 			articleCommand.execute(params);

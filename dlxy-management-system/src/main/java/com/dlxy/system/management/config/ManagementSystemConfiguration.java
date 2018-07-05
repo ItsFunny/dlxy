@@ -49,7 +49,7 @@ import com.dlxy.system.management.interceptor.RequestIntercept;
 import com.dlxy.system.management.service.IArticleManagementWrappedService;
 import com.dlxy.system.management.service.IPictureManagementWrappedService;
 import com.dlxy.system.management.service.ManagementUserRecordObserver;
-import com.dlxy.system.management.service.command.AddArtilceCommand;
+import com.dlxy.system.management.service.command.AddOrUpdateArtilceCommand;
 import com.dlxy.system.management.service.command.ArticleGroup;
 import com.dlxy.system.management.service.command.PictureGroup;
 import com.dlxy.system.management.service.command.UserArticleGroup;
@@ -93,9 +93,9 @@ public class ManagementSystemConfiguration implements WebMvcConfigurer
 	 * 后期更换为工厂模式,太烦了,总是一样的步骤
 	 */
 	@Bean
-	public AddArtilceCommand addArtilceCommand(List<Observer>observers)
+	public AddOrUpdateArtilceCommand addArtilceCommand(List<Observer>observers)
 	{
-		AddArtilceCommand addArtilceCommand=new AddArtilceCommand();
+		AddOrUpdateArtilceCommand addArtilceCommand=new AddOrUpdateArtilceCommand();
 		for (Observer observer : observers)
 		{
 			addArtilceCommand.addObserver(observer);
@@ -210,6 +210,9 @@ public class ManagementSystemConfiguration implements WebMvcConfigurer
 	public FreeMarkerConfigurer freeMarkerConfigurer()
 	{
 		FreeMarkerConfigurer freeMarkerConfigurer=new FreeMarkerConfigurer();
+//		freemarker.template.Configuration configuration=new freemarker.template.Configuration();
+//		configuration.setNumberFormat("0.##");
+//		freeMarkerConfigurer.setConfiguration(configuration);
 		freeMarkerConfigurer.setTemplateLoaderPath("/WEB-INF/templates/");
 		return freeMarkerConfigurer;
 	}

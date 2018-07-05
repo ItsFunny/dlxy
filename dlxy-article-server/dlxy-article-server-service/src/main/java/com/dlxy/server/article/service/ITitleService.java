@@ -21,5 +21,7 @@ import com.dlxy.common.dto.DlxyTitleDTO;
 */
 public interface ITitleService
 {
-	Collection<DlxyTitleDTO>findByParentId(int titleParentId);
+	Collection<DlxyTitleDTO>findChildsByParentId(int titleParentId);
+	
+	Collection<DlxyTitleDTO>findAllParent();
 }
