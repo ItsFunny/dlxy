@@ -40,6 +40,9 @@ public class ArticleDTO
 	private String deleteDateStr;
 	//2018-07-05 17:33 add
 	private String[] pictureIds;
+	//2018-07-06 17:27 add
+	private String titleName;
+	
 	
 	
 
@@ -223,6 +226,16 @@ public class ArticleDTO
 	public void setPictureIds(String[] pictureIds)
 	{
 		this.pictureIds = pictureIds;
+	}
+
+	public String getTitleName()
+	{
+		return titleName;
+	}
+
+	public void setTitleName(String titleName)
+	{
+		this.titleName = titleName;
 	}
 
 }

@@ -25,9 +25,9 @@ public interface ArticleQueryDao
 {
 	Collection<ArticleDTO> findByParam(Map<String, Object>params,int pageSize,int pageNum) throws SQLException;
 	
-	ArticleDTO findByArticleId(Long articleId) throws SQLException;
+//	ArticleDTO findByArticleId(Long articleId) throws SQLException;
 	
-	int rollBackArticle(int status,Long articleId,Integer titleId) throws SQLException;
+//	int rollBackArticle(int status,Long articleId,Integer titleId) throws SQLException;
 	
 	
 	void update(ArticleDTO articleDTO) throws SQLException;

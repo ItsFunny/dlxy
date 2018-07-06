@@ -26,6 +26,9 @@ public interface IArticleManagementWrappedService
 {
 	// PageDTO<Collection<ArticleDTO>>findArticles(int start,int end,Map<String,
 	// Object>params) throws SQLException;
+	
+	//显示所有的,包括异常的那些文章
+	PageDTO<Collection<ArticleDTO>>findAllArticles(int start,int end);
 
 	PageDTO<Collection<ArticleDTO>> findByParams(int start, int end, Map<String, Object> params) throws SQLException;
 

@@ -48,6 +48,7 @@ import com.dlxy.system.management.config.property.DlxyPropertyPlaceholderConfigu
 import com.dlxy.system.management.interceptor.RequestIntercept;
 import com.dlxy.system.management.service.IArticleManagementWrappedService;
 import com.dlxy.system.management.service.IPictureManagementWrappedService;
+import com.dlxy.system.management.service.IUserMangementWrappedService;
 import com.dlxy.system.management.service.ManagementUserRecordObserver;
 import com.dlxy.system.management.service.command.AddOrUpdateArtilceCommand;
 import com.dlxy.system.management.service.command.ArticleGroup;
@@ -55,6 +56,7 @@ import com.dlxy.system.management.service.command.PictureGroup;
 import com.dlxy.system.management.service.command.UserArticleGroup;
 import com.dlxy.system.management.service.impl.ManagementArticleServiceObservableImpl;
 import com.dlxy.system.management.service.impl.ManagementPictureServiceObservableImpl;
+import com.dlxy.system.management.service.impl.ManagementUserServiceImpl;
 
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -101,6 +103,16 @@ public class ManagementSystemConfiguration implements WebMvcConfigurer
 			addArtilceCommand.addObserver(observer);
 		}
 		return addArtilceCommand;
+	}
+	@Bean
+	public IUserMangementWrappedService userManagementWrappedservice(List<Observer>observers)
+	{
+		ManagementUserServiceImpl userServiceImpl=new ManagementUserServiceImpl();
+		for (Observer observer : observers)
+		{
+			userServiceImpl.addObserver(observer);
+		}
+		return userServiceImpl;
 	}
 	@Bean
 	public IArticleManagementWrappedService articleManagementWrappedservice(List<Observer>observers)

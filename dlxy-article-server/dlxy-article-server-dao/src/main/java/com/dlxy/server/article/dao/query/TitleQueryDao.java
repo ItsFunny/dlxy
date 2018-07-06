@@ -25,5 +25,5 @@ public interface TitleQueryDao
 {
 	Collection<DlxyTitleDTO>findByPage(Map<String, Object>params) throws SQLException;
 	
-	Long countTilte(Map<String, Object>params) throws SQLException;
+//	Long countTilte(Map<String, Object>params) throws SQLException;
 }

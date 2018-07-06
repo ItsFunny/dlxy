@@ -48,6 +48,7 @@
 							<th style="text-align:left;">文章标题</th>
 							<th>作者 </th>
 							<th>发布时间</th>
+							<th>文章状态</th>
 							<th>操作</th>
 						</tr>
 					</thead>
@@ -62,10 +63,33 @@
 							<td align="left">${item.article_name}</td>
 							<td>${item.article_author}</td>
 							<td>${item.create_date?string('yyyy-MM-dd HH:mm:ss')}</td>
+							
+							<#if item.article_status == 0>
+							<td>下线</td>
 							<td>
-								<a class="layui-btn layui-btn-mini news_edit"><i class="iconfont icon-edit"></i> 恢复</a>
-								<a class="layui-btn layui-btn-danger layui-btn-mini news_del" data-id="1"><i class="layui-icon"></i> 彻底删除</a>
+									<a class="layui-btn layui-btn-mini news_edit"><i class="iconfont icon-edit"></i> 上线</a>
+									<a class="layui-btn layui-btn-mini " data-toggle="modal" data-target="#changeSource" onclick="loadArticle(this);" articleId="${item.article_id?c}"><i class="iconfont icon-edit"></i> 编辑</a>
+									<a class="layui-btn layui-btn-mini "  onclick="javascript:alert(editor.uploadJson);"><i class="iconfont icon-edit"></i> 设为推荐新闻</a>
+									<a class="layui-btn layui-btn-danger layui-btn-mini news_del" data-id="1"><i class="layui-icon"></i> 彻底删除</a>
 							</td>
+							<#elseif item.article_status ==1 >
+							<td>上线</td>
+							<td>
+									<a class="layui-btn layui-btn-mini news_edit"><i class="iconfont icon-edit"></i> 下线</a>
+									<a class="layui-btn layui-btn-mini " data-toggle="modal" data-target="#changeSource" onclick="loadArticle(this);" articleId="${item.article_id?c}"><i class="iconfont icon-edit"></i> 编辑</a>
+									<a class="layui-btn layui-btn-mini "  onclick="javascript:alert(editor.uploadJson);"><i class="iconfont icon-edit"></i> 设为推荐新闻</a>
+									<a class="layui-btn layui-btn-danger layui-btn-mini news_del" data-id="1"><i class="layui-icon"></i> 彻底删除</a>
+							</td>
+							<#else>
+							<td>回收站</td>
+							<td>
+									<a class="layui-btn layui-btn-mini news_edit"><i class="iconfont icon-edit"></i> 恢复</a>
+									<a class="layui-btn layui-btn-mini " data-toggle="modal" data-target="#changeSource" onclick="loadArticle(this);" articleId="${item.article_id?c}"><i class="iconfont icon-edit"></i> 编辑</a>
+									<a class="layui-btn layui-btn-mini "  onclick="javascript:alert(editor.uploadJson);"><i class="iconfont icon-edit"></i> 设为推荐新闻</a>
+									<a class="layui-btn layui-btn-danger layui-btn-mini news_del" data-id="1"><i class="layui-icon"></i> 彻底删除</a>
+							</td>
+							</#if>>
+							
 						</tr>
 						</#list>
 					</#if>

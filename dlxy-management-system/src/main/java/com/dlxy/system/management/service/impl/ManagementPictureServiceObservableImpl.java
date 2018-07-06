@@ -38,11 +38,12 @@ public class ManagementPictureServiceObservableImpl extends Observable implement
 	public void addPciture(Long userId,Long articleId, PictureDTO[] pictureDTOs) throws SQLException
 	{
 		pictureService.addPicture(pictureDTOs);
-		pictureService.addPictureWithArticleId(articleId, pictureDTOs);
+		pictureService.addPictureWithArticleId(pictureDTOs);
 		setChanged();
 		String string ="";
 		for (PictureDTO pictureDTO : pictureDTOs)
 		{
+			pictureDTO.setArticleId(articleId);
 			string+=pictureDTO.getPictureId();
 		}
 		UserRecordDTO userRecordDTO=UserRecordDTO.getUserRecordDTO(userId, "add:picture:"+string);

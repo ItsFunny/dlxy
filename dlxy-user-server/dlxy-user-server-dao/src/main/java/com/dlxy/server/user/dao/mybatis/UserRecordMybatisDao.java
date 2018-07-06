@@ -8,6 +8,9 @@
 package com.dlxy.server.user.dao.mybatis;
 
 
+import java.util.Collection;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import com.dlxy.common.dto.UserRecordDTO;
@@ -27,6 +30,8 @@ public interface UserRecordMybatisDao
 	void addRecord(UserRecordDTO userRecordDTO);
 	
 	
+	
+	Collection<UserRecordDTO> findRecordsByPage(int start, int end, Map<String, Object> params);
 	
 	
 	

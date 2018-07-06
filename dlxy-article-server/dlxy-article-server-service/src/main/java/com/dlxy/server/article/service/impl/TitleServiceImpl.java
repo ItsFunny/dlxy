@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dlxy.common.dto.DlxyTitleDTO;
-import com.dlxy.server.article.dao.mybatis.TitleDao;
+import com.dlxy.server.article.dao.mybatis.TitleMybatisDao;
 import com.dlxy.server.article.service.ITitleService;
 
 /**
@@ -28,7 +28,7 @@ import com.dlxy.server.article.service.ITitleService;
 public class TitleServiceImpl implements ITitleService
 {
 	@Autowired
-	private TitleDao titleDao;
+	private TitleMybatisDao titleDao;
 
 	@Override
 	public Collection<DlxyTitleDTO> findChildsByParentId(int titleParentId)
@@ -40,6 +40,12 @@ public class TitleServiceImpl implements ITitleService
 	public Collection<DlxyTitleDTO> findAllParent()
 	{
 		return titleDao.findAllParents();
+	}
+
+	@Override
+	public DlxyTitleDTO findById(int titleId)
+	{
+		return titleDao.findById(titleId);
 	}
 
 }

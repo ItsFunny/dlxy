@@ -38,6 +38,7 @@
 							<th>用户编号</th>
 							<th style="text-align:left;">用户姓名</th>
 							<th>用户真实姓名</th>
+							<th>用户角色</th>
 							<th>创建时间</th>
 							<th>上次登录时间</th>
 							<th>操作</th>
@@ -49,12 +50,23 @@
 							<tr>
 							<td>
 								<input name="checked" lay-skin="primary" lay-filter="choose" type="checkbox" value="${item.userId}">
+								
 								<div class="layui-unselect layui-form-checkbox" lay-skin="primary">
 								<i class="layui-icon"></i>
 								</div>
 							</td>
-							<td>${item.username}</td>
-							<td align="left">${item.realname}</td>
+							<td><a href="/user/releases.html?userId=${item.userId}" >${item.userId}</a></td>
+							<td align="left">${item.username}</td>
+							<td>
+								${item.realname}
+							</td>
+							<td>
+								<#if item.isAdmin()>
+									超级管理员
+								<#else>
+									管理员
+								</#if>
+							</td>
 							<td>
 								${item.createDate?string('yyyy-MM-dd HH:mm:ss')}
 							</td>

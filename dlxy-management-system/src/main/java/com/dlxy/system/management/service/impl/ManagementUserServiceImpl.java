@@ -10,6 +10,7 @@ package com.dlxy.system.management.service.impl;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Observable;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,8 +33,7 @@ import com.dlxy.system.management.service.IUserMangementWrappedService;
  * @author joker
  * @date 创建时间：2018年7月2日 下午5:21:08
  */
-@Service
-public class ManagementUserServiceImpl implements IUserMangementWrappedService
+public class ManagementUserServiceImpl extends Observable implements IUserMangementWrappedService
 {
 	@Autowired
 	private IUserRecordService userRecordService;
@@ -93,6 +93,17 @@ public class ManagementUserServiceImpl implements IUserMangementWrappedService
 		Collection<UserDTO> users = userService.findUsersByPage((pageNum-1)*pageSize, pageSize, params);
 		PageDTO<Collection<UserDTO>>p=new PageDTO<Collection<UserDTO>>(count, users);
 		return p;
+	}
+	
+	@Override
+	public void addUser(Long userId, UserDTO userDTO) throws SQLException
+	{
+		String detail="";
+		Long dbUserId = userService.addUser(userDTO);
+		detail="add:user:"+dbUserId;
+		setChanged();
+		UserRecordDTO userRecordDTO=UserRecordDTO.getUserRecordDTO(userId, detail);
+		notifyObservers(userRecordDTO);
 	}
 
 }

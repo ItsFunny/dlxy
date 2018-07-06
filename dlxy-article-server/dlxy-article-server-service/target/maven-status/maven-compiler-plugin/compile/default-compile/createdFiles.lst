@@ -1,3 +1,6 @@
+com/dlxy/server/article/service/impl/TitleServiceImpl.class
+com/dlxy/server/article/service/ITitleService.class
+com/dlxy/server/article/service/IUserArticleService.class
 com/dlxy/server/article/service/IArticleCountService.class
 com/dlxy/server/article/service/IArticleService.class
 com/dlxy/server/article/service/impl/ArticleCountServiceImpl.class

@@ -53,7 +53,7 @@
 								</td>
 								<td align="left">${item.articleName}</td>
 								<td>${item.articleAuthor}</td>
-								<td>${item.username}</td>
+								<td>${item.username!"unknown"}</td>
 								<td>${item.deleteDateStr!"unknow"}</td>
 								<td>
 									<input type="button" class="layui-btn layui-btn-mini news_edit" value="恢复" id="rollBackButton" onclick="rollBack(this)" articleId="${item.articleId?c}">
@@ -95,7 +95,7 @@
 	function rollBack(obj){
 		var t=$(obj);
 		var articleId=$(obj).attr("articleId");
-		jQuery.post('/api/article/rollback/'+articleId+'.html',function(data,textStatus,jqXHR){
+		jQuery.post('/api/article/update/status.html',{"articleId":articleId,"articleStatus":0},function(data,textStatus,jqXHR){
 			if(data.code==1){
 				alert('恢复成功');
 			}else{

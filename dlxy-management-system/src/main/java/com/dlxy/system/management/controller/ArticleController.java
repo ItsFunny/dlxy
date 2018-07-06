@@ -34,6 +34,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.dlxy.common.dto.ArticleDTO;
 import com.dlxy.common.dto.PageDTO;
 import com.dlxy.common.dto.PictureDTO;
+import com.dlxy.common.dto.UserDTO;
 import com.dlxy.common.enums.PictureStatusEnum;
 import com.dlxy.common.service.IdWorkerService;
 import com.dlxy.common.vo.PageVO;
@@ -73,6 +74,7 @@ public class ArticleController
 	public ModelAndView showAll(@RequestParam Map<String, Object> params, HttpServletRequest request,
 			HttpServletResponse response)
 	{
+		UserDTO user = ManagementUtil.getLoginUser();
 		ModelAndView modelAndView = null;
 		String error = request.getParameter("error");
 		String pageSizeStr = request.getParameter("pageSize");
@@ -80,22 +82,35 @@ public class ArticleController
 		int pageSize = StringUtils.isEmpty(pageSizeStr) ? 2 : Integer.parseInt(pageSizeStr);
 		int pageNum = StringUtils.isEmpty(pageNumStr) ? 1 : Integer.parseInt(pageNumStr);
 		Map<String, Object> p = new HashMap<>();
-		if (params.containsKey("q"))
-		{
-			if (!StringUtils.isEmpty(params.get("q").toString()))
-			{
-				p.put("searchParam", params.get("q"));
-			}
-		}
 		PageDTO<Collection<ArticleDTO>> pageDTO = null;
 		try
 		{
-			pageDTO = articleManagementWrappedService.findByParams((pageNum - 1) * pageSize, pageSize, p);
-		} catch (SQLException e)
+			if (params.containsKey("q"))
+			{
+				if (!StringUtils.isEmpty(params.get("q").toString()))
+				{
+					p.put("searchParam", params.get("q"));
+				}else {
+					pageDTO=articleManagementWrappedService.findAllArticles(pageSize,pageNum);
+				}
+				pageDTO = articleManagementWrappedService.findByParams(pageSize,pageNum, p);
+			}else {
+				pageDTO=articleManagementWrappedService.findAllArticles(pageSize,pageNum);
+			}
+
+		} catch (Exception e)
 		{
 			e.printStackTrace();
 			params.put("error", e.getMessage());
 		}
+//		try
+//		{
+//			pageDTO = articleManagementWrappedService.findByParams((pageNum - 1) * pageSize, pageSize, p);
+//		} catch (SQLException e)
+//		{
+//			e.printStackTrace();
+//			params.put("error", e.getMessage());
+//		}
 		if (params.containsKey("error"))
 		{
 			modelAndView = new ModelAndView("error", params);
@@ -105,6 +120,7 @@ public class ArticleController
 				pageDTO.getTotalCount());
 		params.put("pageVO", pageVO);
 		params.put("error", error);
+		params.put("user", user);
 		modelAndView = new ModelAndView("article_all", params);
 		return modelAndView;
 	}
@@ -114,6 +130,7 @@ public class ArticleController
 			@RequestParam(name = "pageSize", defaultValue = "2") String pageSizeStr,
 			@RequestParam(name = "pageNum", defaultValue = "1") String pageNumStr)
 	{
+		UserDTO user = ManagementUtil.getLoginUser();
 		ModelAndView modelAndView = null;
 		int pageSize = Integer.parseInt(pageSizeStr);
 		int pageNum = Integer.parseInt(pageNumStr);
@@ -126,6 +143,7 @@ public class ArticleController
 			PageVO<Collection<ArticleDTO>> pageVO = new PageVO<Collection<ArticleDTO>>(pageDTO.getData(), pageSize,
 					pageNum, pageDTO.getTotalCount());
 			params.put("pageVO", pageVO);
+			params.put("user", user);
 			modelAndView = new ModelAndView("article_del", params);
 		} catch (SQLException e)
 		{
@@ -164,8 +182,10 @@ public class ArticleController
 	public ModelAndView addArticle(@RequestParam Map<String, Object> params, HttpServletRequest request,
 			HttpServletResponse response)
 	{
+		UserDTO user = ManagementUtil.getLoginUser();
 		long articleId = idWorkerService.nextId();
 		params.put("articleId", articleId);
+		params.put("user", user);
 		ModelAndView modelAndView = new ModelAndView("article_add", params);
 		return modelAndView;
 	}

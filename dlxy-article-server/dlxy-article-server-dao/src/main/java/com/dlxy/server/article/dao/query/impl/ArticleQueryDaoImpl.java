@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.dlxy.common.dto.ArticleDTO;
+import com.dlxy.server.article.dao.mybatis.ArticleMybatisDao;
 import com.dlxy.server.article.dao.query.ArticleQueryDao;
 
 /**
@@ -37,14 +38,17 @@ import com.dlxy.server.article.dao.query.ArticleQueryDao;
  */
 @Repository
 public class ArticleQueryDaoImpl implements ArticleQueryDao
-{	
+{
+	@Autowired
+	private ArticleMybatisDao articleDao;
+
 	public static class ArticleSingleResultSetHandler implements ResultSetHandler<ArticleDTO>
 	{
 
 		@Override
 		public ArticleDTO handle(ResultSet rs) throws SQLException
 		{
-			if(rs.next())
+			if (rs.next())
 			{
 				ArticleDTO articleDTO = new ArticleDTO();
 				articleDTO.setArticleId(rs.getLong(1));
@@ -61,12 +65,14 @@ public class ArticleQueryDaoImpl implements ArticleQueryDao
 				articleDTO.setDeleteDate(rs.getDate(11));
 				articleDTO.setArticleContent(rs.getString(12));
 				return articleDTO;
-			}else {
+			} else
+			{
 				return null;
 			}
 		}
-		
+
 	}
+
 	public static class ArticleResultSetHandler implements ResultSetHandler<Collection<ArticleDTO>>
 	{
 
@@ -100,10 +106,13 @@ public class ArticleQueryDaoImpl implements ArticleQueryDao
 
 	public Collection<ArticleDTO> findByParam(Map<String, Object> params, int start, int end) throws SQLException
 	{
-		StringBuilder sql = new StringBuilder(
-				"select a.article_id,a.title_id,a.article_name,a.article_author,a.article_is_recommend,a.create_date,a.update_date,a.article_status ,c.username,c.user_id,"
-						+ " a.delete_date from dlxy_article  a,dlxy_title b,dlxy_user_article c  "
-						+ "where a.title_id=b.title_id and  c.article_id=a.article_id");
+		 StringBuilder sql = new StringBuilder(
+		 "select a.article_id,a.title_id,a.article_name,a.article_author,a.article_is_recommend,a.create_date,a.update_date,a.article_status,c.username,c.user_id,"
+		 + " a.delete_date,b.title_name from dlxy_article a,dlxy_title b,dlxy_user_article c "
+		 + "where a.title_id=b.title_id and c.article_id=a.article_id");
+//		StringBuilder sql = new StringBuilder(
+//				"select a.article_id,a.title_id,a.article_name,a.article_author,a.article_is_recommend,a.create_date,a.update_date,a.article_status ,c.username,c.user_id,a.delete_date,b.title_name from dlxy_article  a left join dlxy_title b on a.title_id=b.title_id "
+//						+ "left join dlxy_user_article c on a.article_id=c.article_id ");
 		List<Object> set = new LinkedList<Object>();
 		if (params.containsKey("articleStatus"))
 		{
@@ -169,6 +178,7 @@ public class ArticleQueryDaoImpl implements ArticleQueryDao
 					articleDTO.setUsername(rs.getString(9));
 					articleDTO.setUserId(rs.getLong(10));
 					articleDTO.setDeleteDate(rs.getDate(11));
+					articleDTO.setTitleName(rs.getString(12));
 					articleDTOs.add(articleDTO);
 				}
 				return articleDTOs;
@@ -177,66 +187,76 @@ public class ArticleQueryDaoImpl implements ArticleQueryDao
 		return res;
 	}
 
-	public ArticleDTO findByArticleId(Long articleId) throws SQLException
-	{
-		String sql = "select a.article_id,a.title_id,a.article_name,a.article_author,a.article_is_recommend,a.create_date,a.update_date ,a.article_status ,c.username ,c.user_id,a.delete_date,a.article_content "
-				+ " from dlxy_article a,dlxy_title b ,dlxy_user_article c where a.title_id=b.title_id and a.article_id= c.article_id and a.article_id=?";
-		ArticleDTO query = queryRunner.query(sql, new ArticleSingleResultSetHandler(), articleId);
-		return query;
-	}
+	// public ArticleDTO findByArticleId(Long articleId) throws SQLException
+	// {
+	// String sql = "select
+	// a.article_id,a.title_id,a.article_name,a.article_author,a.article_is_recommend,a.create_date,a.update_date
+	// ,a.article_status ,c.username ,c.user_id,a.delete_date,a.article_content "
+	// + " from dlxy_article a,dlxy_title b ,dlxy_user_article c where
+	// a.title_id=b.title_id and a.article_id= c.article_id and a.article_id=?";
+	// ArticleDTO query = queryRunner.query(sql, new
+	// ArticleSingleResultSetHandler(), articleId);
+	// return query;
+	// }
 
-	@Override
-	public int rollBackArticle(int status, Long articleId, Integer titleId) throws SQLException
-	{
-		String sql = "update dlxy_article set article_status=? where article_id=? and exists(select 1 from dlxy_title b where b.title_id = ? )";
-		return queryRunner.update(sql, status, articleId, titleId);
-	}
+	// @Override
+	// public int rollBackArticle(int status, Long articleId, Integer titleId)
+	// throws SQLException
+	// {
+	// String sql = "update dlxy_article set article_status=? where article_id=? and
+	// exists(select 1 from dlxy_title b where b.title_id = ? )";
+	// return queryRunner.update(sql, status, articleId, titleId);
+	// }
 
 	@Override
 	public void update(ArticleDTO articleDTO) throws SQLException
 	{
-		if(null==articleDTO.getArticleId() || articleDTO.getArticleId()<=0)
+		if (null == articleDTO.getArticleId() || articleDTO.getArticleId() <= 0)
 		{
 			throw new RuntimeException("article id is required ");
 		}
-		ArticleDTO dbArticleDTO = findByArticleId(articleDTO.getArticleId());
-		StringBuilder sb=new StringBuilder();
-		List<Object>l=new LinkedList<>();
+		ArticleDTO dbArticleDTO = articleDao.findByArticleId(articleDTO.getArticleId());
+		StringBuilder sb = new StringBuilder();
+		List<Object> l = new LinkedList<>();
 		sb.append("update dlxy_article set update_date=?");
 		l.add(new Date());
-		if(null!=articleDTO.getArticleName() && !articleDTO.getArticleName().equals(dbArticleDTO.getArticleName()))
+		if (null != articleDTO.getArticleName() && !articleDTO.getArticleName().equals(dbArticleDTO.getArticleName()))
 		{
 			sb.append(" , article_name = ? ");
 			l.add(articleDTO.getArticleName());
 		}
-		if(null!=articleDTO.getArticleId() && !articleDTO.getArticleId().equals(dbArticleDTO.getArticleId()))
+		if (null != articleDTO.getArticleId() && !articleDTO.getArticleId().equals(dbArticleDTO.getArticleId()))
 		{
 			sb.append(" ,title_id=? ");
 			l.add(articleDTO.getTitleId());
 		}
-		if(!StringUtils.isEmpty(articleDTO.getArticleAuthor())&& !articleDTO.getArticleAuthor().equals(dbArticleDTO.getArticleAuthor()))
+		if (!StringUtils.isEmpty(articleDTO.getArticleAuthor())
+				&& !articleDTO.getArticleAuthor().equals(dbArticleDTO.getArticleAuthor()))
 		{
 			sb.append(" , article_author= ? ");
 			l.add(articleDTO.getArticleAuthor());
 		}
-		if(!StringUtils.isEmpty(articleDTO.getArticleContent())&&!articleDTO.getArticleContent().equals(dbArticleDTO.getArticleContent()))
+		if (!StringUtils.isEmpty(articleDTO.getArticleContent())
+				&& !articleDTO.getArticleContent().equals(dbArticleDTO.getArticleContent()))
 		{
 			sb.append(" , article_content= ? ");
 			l.add(articleDTO.getArticleContent());
 		}
-		if(null!=articleDTO.getArticleIsRecommend() && !articleDTO.getArticleIsRecommend().equals(dbArticleDTO.getArticleIsRecommend()))
+		if (null != articleDTO.getArticleIsRecommend()
+				&& !articleDTO.getArticleIsRecommend().equals(dbArticleDTO.getArticleIsRecommend()))
 		{
 			sb.append(" , article_is_recommend = ? ");
 			l.add(articleDTO.getArticleIsRecommend());
 		}
-		if(null!=articleDTO.getArticleStatus() && !articleDTO.getArticleStatus().equals(dbArticleDTO.getArticleStatus()))
+		if (null != articleDTO.getArticleStatus()
+				&& !articleDTO.getArticleStatus().equals(dbArticleDTO.getArticleStatus()))
 		{
 			sb.append(" , article_status = ? ");
 			l.add(articleDTO.getArticleStatus());
 		}
 		sb.append(" where article_id = ? ");
 		l.add(articleDTO.getArticleId());
-		queryRunner.update(sb.toString(),l.toArray());
+		queryRunner.update(sb.toString(), l.toArray());
 	}
 
 }

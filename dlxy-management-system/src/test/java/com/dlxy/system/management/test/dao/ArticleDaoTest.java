@@ -18,7 +18,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.dlxy.server.article.dao.mybatis.ArticleDao;
+import com.dlxy.server.article.dao.mybatis.ArticleMybatisDao;
 import com.dlxy.system.management.config.ManagementRabbitMQConfiguration;
 import com.dlxy.system.management.config.ManagementSystemConfiguration;
 import com.dlxy.system.management.config.property.DlxyProperty;
@@ -43,7 +43,7 @@ public class ArticleDaoTest
 	public void testUpdateInBatch()
 	{
 		ApplicationContext context=new AnnotationConfigApplicationContext(ManagementSystemConfiguration.class,DlxyProperty.class);
-		ArticleDao articleDao = context.getBean(ArticleDao.class);
+		ArticleMybatisDao articleDao = context.getBean(ArticleMybatisDao.class);
 		Map<String, Object>params=new HashMap<String, Object>();
 		params.put("ids", new Long[] {1l,2l});
 		params.put("status", 3);

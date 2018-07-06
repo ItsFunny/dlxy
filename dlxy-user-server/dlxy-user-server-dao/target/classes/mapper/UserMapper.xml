@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+
+<mapper
+	namespace="com.dlxy.server.user.dao.mybatis.UserMybatisDao">
+	<insert id="addUser" parameterType="com.dlxy.common.dto.UserDTO" useGeneratedKeys="true" keyProperty="userId">
+		insert into dlxy_user
+		(username,realname,password,role_id,last_login_ip,create_date,update_date)
+		values
+		(#{username},#{realname},#{password},#{roleId},#{lastLoginIp},#{createDate},#{updateDate})
+	</insert>
+	
+	<select id="findUsersByPage" resultType="com.dlxy.common.dto.UserDTO">
+		select user_id,username,realname,password,role_id,last_login_ip,last_login_date,create_date, update_date from dlxy_user where 1=1
+		order by create_date desc limit #{start},#{end}
+	</select>
+
+</mapper>

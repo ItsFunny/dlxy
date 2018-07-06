@@ -31,8 +31,13 @@ public interface IArticleService
 	
 	void updateArticleStatusInBatch(Long[] articleIds,int status);
 	
+//	void updateArticleStatusInBatch(Long[] articleIds,int status);
+	
 	
 	Collection<ArticleDTO>findByParam(Map<String, Object>params,int start,int end) throws SQLException;
+	
+	Long countAllArticles();
+	Collection<ArticleDTO>findAllArticlesByPage(int start,int end);
 	
 	ArticleDTO findByArticleId(Long articleId) throws SQLException;
 	

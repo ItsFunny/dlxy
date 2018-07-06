@@ -8,6 +8,7 @@
 package com.dlxy.server.article.service.impl;
 
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -20,7 +21,8 @@ import org.springframework.stereotype.Service;
 import com.dlxy.common.annotation.UserRecordAnnotation;
 import com.dlxy.common.dto.ArticleDTO;
 import com.dlxy.common.enums.ArticleStatusEnum;
-import com.dlxy.server.article.dao.mybatis.ArticleDao;
+import com.dlxy.server.article.dao.mybatis.ArticleMybatisDao;
+import com.dlxy.server.article.dao.mybatis.TitleMybatisDao;
 import com.dlxy.server.article.dao.mybatis.count.UserArticleDao;
 import com.dlxy.server.article.dao.query.ArticleQueryDao;
 import com.dlxy.server.article.service.IArticleService;
@@ -38,11 +40,13 @@ import com.dlxy.server.article.service.IUserArticleService;
 public class ArticleServiceImpl implements IArticleService ,IUserArticleService
 {
 	@Autowired
-	private ArticleDao articleDao;
+	private ArticleMybatisDao articleDao;
 	@Autowired
 	private UserArticleDao userArticleDao;
 	@Autowired
 	private ArticleQueryDao articleQueryDao;
+	@Autowired
+	private TitleMybatisDao titleMybatisDao;
 
 //	public Collection<ArticleDTO> findAllArticlesExceptRecommend(int start,int end)
 //	{
@@ -66,7 +70,7 @@ public class ArticleServiceImpl implements IArticleService ,IUserArticleService
 			params.put("deleteDate", new Date());
 		}
 		params.put("status", status);
-		params.put("ids", articleIds);
+		params.put("list", Arrays.asList(articleIds));
 		articleDao.updateInBatch(params);
 	}
 
@@ -79,13 +83,13 @@ public class ArticleServiceImpl implements IArticleService ,IUserArticleService
 	@Override
 	public ArticleDTO findByArticleId(Long articleId) throws SQLException
 	{
-		return articleQueryDao.findByArticleId(articleId);
+		return articleDao.findByArticleId(articleId);
 	}
 
 	@Override
 	public int rollBackArticle(int status,Long articleId,int titleId) throws SQLException
 	{
-		return articleQueryDao.rollBackArticle(status, articleId, titleId);
+		return articleDao.rollBackArticle(status, articleId, titleId);
 	}
 
 	@Override
@@ -104,6 +108,18 @@ public class ArticleServiceImpl implements IArticleService ,IUserArticleService
 	public void update(ArticleDTO articleDTO) throws SQLException
 	{
 		articleQueryDao.update(articleDTO);
+	}
+
+	@Override
+	public Collection<ArticleDTO> findAllArticlesByPage(int start, int end)
+	{
+		return articleDao.findAllArtilcesByPage(start, end);
+	}
+
+	@Override
+	public Long countAllArticles()
+	{
+		return articleDao.countAllArticles();
 	}
 
 

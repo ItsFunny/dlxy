@@ -46,11 +46,11 @@ public class UserArticleQueryDaoImpl implements UserArticleQueryDao
 			sql += "and article_status=? ";
 			l.add(params.get("articleStatus"));
 		}
-		if(params.containsKey(""))
-		{
-			sql+="";
-			l.add(params.get(""));
-		}
+//		if(params.containsKey(""))
+//		{
+//			sql+="";
+//			l.add(params.get(""));
+//		}
 		Object count = queryRunner.query(sql, new ScalarHandler<Object>(), l.toArray());
 		if (null == count)
 		{
@@ -60,12 +60,11 @@ public class UserArticleQueryDaoImpl implements UserArticleQueryDao
 			return ((Number) count).longValue();
 		}
 	}
-
 	@Override
 	public List<Map<String, Object>> findByPage(Map<String, Object> params) throws SQLException
 	{
 		List<Object> l = new LinkedList<>();
-		String sql = "select a.username, a.user_id, b.article_id,b.article_name ,b.article_author,b.create_date "
+		String sql = "select a.username, b.article_status, a.user_id, b.article_id,b.article_name ,b.article_author,b.create_date "
 				+ "from dlxy_user_article a , dlxy_article b " + "where 1=1 and a.article_id=b.article_id ";
 		if (params.containsKey("userId"))
 		{

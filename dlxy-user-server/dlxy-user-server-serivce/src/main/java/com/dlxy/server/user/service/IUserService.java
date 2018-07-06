@@ -31,4 +31,6 @@ public interface IUserService
 	Long countUsersByParam(Map<String, Object>params) throws SQLException;
 	
 	Collection<UserDTO>findUsersByPage(int start,int end ,Map<String, Object>params) throws SQLException;
+	
+	Long addUser(UserDTO userDTO) throws SQLException;
 }

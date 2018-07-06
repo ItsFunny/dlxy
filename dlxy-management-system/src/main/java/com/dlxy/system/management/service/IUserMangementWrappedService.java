@@ -27,8 +27,9 @@ public interface IUserMangementWrappedService
 {
 	PageDTO<Collection<Map<String, Object>>>findUserArticlesByPage(int pageSize,int pageNum,Map<String, Object>p) throws SQLException;
 	
-	
 	PageDTO<Collection<UserRecordDTO>>findUserRecords(int pageSize,int pageNum,Map<String, Object>params) throws SQLException;
 	
 	PageDTO<Collection<UserDTO>> findUsersByPage(int pageSize,int pageNum,Map<String, Object>params) throws SQLException;
+	
+	void addUser(Long userId,UserDTO userDTO) throws SQLException;
 }

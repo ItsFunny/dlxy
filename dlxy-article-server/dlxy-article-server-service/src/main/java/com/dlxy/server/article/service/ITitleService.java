@@ -24,4 +24,6 @@ public interface ITitleService
 	Collection<DlxyTitleDTO>findChildsByParentId(int titleParentId);
 	
 	Collection<DlxyTitleDTO>findAllParent();
+	
+	DlxyTitleDTO findById(int titleId);
 }

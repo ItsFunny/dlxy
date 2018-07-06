@@ -88,13 +88,13 @@
 					</a>
 					<dl class="layui-nav-child">
                           <dd>
-                           	   <a href="javascript:;" data-url="user_record.html">
+                           	   <a href="/user/record.html">
 					              <i class="iconfont icon-zhuti"  data-icon='icon-zhuti'></i>
 					              <span>所有用户操作日志</span>
 					           </a>
                            </dd>
                              <dd>
-                           	   <a href="javascript:;" data-url="user_record.html">
+                           	   <a href="/user/record.html?userId=${user.userId}">
 					              <i class="iconfont icon-zhuti"  data-icon='icon-zhuti'></i>
 					              <span>我的操作日志</span>
 					           </a>
@@ -132,34 +132,36 @@
 					    		   <i class="iconfont icon-qingchuhuancun" data-icon='icon-qingchuhuancun'></i>
 					    		   <span>更新缓存</span>
 					    		</a>
-					    	</dd>
-					    	
-					   </dl>
-				</li>
-				 -->
-			
-				<!-- 友链设置 -->
+					    	</dd>   </dl></li>  -->
 				<li class="layui-nav-item">
+					<a href="javascript:;">
+					   <i class="iconfont icon-wenzhang1" ></i>
+					   <span>用户管理</span>
+					   <em class="layui-nav-more"></em>
+					</a>
+					   <dl class="layui-nav-child">
+					    	<dd>
+					    		<a href="/user/all.html">
+					    		   <i class="iconfont icon-pinglun1" data-icon='icon-pinglun1'></i>
+					    		   <span>所有用户</span>
+					    		</a>
+					    	</dd>
+					    	<dd>
+					    		<a href="/user/add.html">
+					    		   <i class="iconfont icon-pinglun1" data-icon='icon-pinglun1'></i>
+					    		   <span>添加用户</span>
+					    		</a>
+					    	</dd>
+					   </dl>
+			 	</li>				
+				<!-- 友链设置 -->
+				<#-- 	<li class="layui-nav-item">
 					<a href="javascript:;">
 					   <i class="iconfont icon-youqinglianjie"  data-icon='icon-youqinglianjie'></i>
 					   <span>友情链接</span>
 					</a>
-				</li>
-					<li class="layui-nav-item">
-					<a href="javascript:;">
-					   <i class="iconfont icon-youqinglianjie"  data-icon='icon-youqinglianjie'></i>
-					   <span>首页轮播图管理</span>
-					</a>
-				</li>
-				</li>
-					<li class="layui-nav-item" >
-					<a href="javascript:;" data-url="user_management.html"
-					   <i class="iconfont icon-youqinglianjie"  data-icon='icon-youqinglianjie'></i>
-					   <span>用户管理</span>
-					</a>
-				</li>
-					</li>
-					<li class="layui-nav-item">
+				</li>  -->
+				<li class="layui-nav-item">
 					<a href="javascript:;" data-url="news_management.html" >
 					   <i class="iconfont icon-youqinglianjie"  data-icon='icon-youqinglianjie'></i>
 					   <span>新闻公告管理</span>

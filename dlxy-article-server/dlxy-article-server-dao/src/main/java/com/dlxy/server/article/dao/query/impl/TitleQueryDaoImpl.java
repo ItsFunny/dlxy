@@ -66,22 +66,22 @@ public class TitleQueryDaoImpl implements TitleQueryDao
 			return lists;
 		}, p.toArray());
 	}
-	@Override
-	public Long countTilte(Map<String, Object> params) throws SQLException
-	{
-		String sql="select count(1) from dlxy_title  where 1=1";
-		List<Object>p=new LinkedList<>();
-		if(params.containsKey("parentTitleId"))
-		{
-			sql+=" and title_parent_id = ? " ;
-			p.add(params.get("parentTitleId"));
-		}
-		Object count = queryRunner.query(sql, new ScalarHandler<Object>(),p.toArray());
-		if(null!=count)
-		{
-			return ((Number)count).longValue();
-		}
-		return 0L;
-	}
+//	@Override
+//	public Long countTilte(Map<String, Object> params) throws SQLException
+//	{
+//		String sql="select count(1) from dlxy_title  where 1=1";
+//		List<Object>p=new LinkedList<>();
+//		if(params.containsKey("parentTitleId"))
+//		{
+//			sql+=" and title_parent_id = ? " ;
+//			p.add(params.get("parentTitleId"));
+//		}
+//		Object count = queryRunner.query(sql, new ScalarHandler<Object>(),p.toArray());
+//		if(null!=count)
+//		{
+//			return ((Number)count).longValue();
+//		}
+//		return 0L;
+//	}
 
 }

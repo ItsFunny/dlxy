@@ -9,6 +9,7 @@ package com.dlxy.server.user.service.impl;
 
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import com.dlxy.common.dto.UserDTO;
 import com.dlxy.common.dto.UserRecordDTO;
+import com.dlxy.server.user.dao.mybatis.UserMybatisDao;
 import com.dlxy.server.user.dao.mybatis.UserRecordMybatisDao;
 import com.dlxy.server.user.dao.query.UserArticleQueryDao;
 import com.dlxy.server.user.dao.query.UserQueryDao;
@@ -43,6 +45,8 @@ public class UserServiceImpl implements IUserArticleService,IUserService,IUserRe
 	private UserRecordQueryDao userRecordQueryDao;
 	@Autowired
 	private UserQueryDao userQueryDao;
+	@Autowired
+	private UserMybatisDao userMybatisDao;
 	
 	
 	@Autowired
@@ -85,7 +89,7 @@ public class UserServiceImpl implements IUserArticleService,IUserService,IUserRe
 	@Override
 	public UserDTO findByUserId(Long userId) throws SQLException
 	{
-		return userQueryDao.findByUserId(userId);
+		return userMybatisDao.findByUserId(userId);
 	}
 
 	@Override
@@ -111,13 +115,21 @@ public class UserServiceImpl implements IUserArticleService,IUserService,IUserRe
 	@Override
 	public Collection<UserDTO> findUsersByPage(int start,int end ,Map<String, Object>params) throws SQLException
 	{
-		return userQueryDao.findUsersByPage(start, end, params);
+		return userMybatisDao.findUsersByPage(start, end, params);
 	}
 
 	@Override
 	public Long countUsersByParam(Map<String, Object> params) throws SQLException
 	{
 		return userQueryDao.countUserByParam(params);
+	}
+
+	@Override
+	public Long addUser(UserDTO userDTO) throws SQLException
+	{
+		userDTO.setCreateDate(new Date());
+		userMybatisDao.addUser(userDTO);
+		return userDTO.getUserId();
 	}
 
 }

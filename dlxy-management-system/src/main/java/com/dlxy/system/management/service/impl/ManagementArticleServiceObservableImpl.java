@@ -41,7 +41,7 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 	
 
 	@Override
-	public PageDTO<Collection<ArticleDTO>> findByParams(int start, int end, Map<String, Object> params)
+	public PageDTO<Collection<ArticleDTO>> findByParams(int pageSize, int pageNum, Map<String, Object> params)
 			throws SQLException
 	{
 		Long totalCount = articleCountService.countArticlesByDetailParam(params);
@@ -49,7 +49,15 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 		{
 			return PageResultUtil.emptyPage();
 		}
-		Collection<ArticleDTO> datas = articleService.findByParam(params, start, end);
+		if(pageSize<1)
+		{
+			pageSize=1;
+		}
+		if(pageNum<1)
+		{
+			pageNum=1;
+		}
+		Collection<ArticleDTO> datas = articleService.findByParam(params, (pageNum-1)*pageSize, pageSize);
 		return new PageDTO<Collection<ArticleDTO>>(totalCount, datas);
 	}
 
@@ -114,6 +122,27 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 	public void updateArticleByArticleId(ArticleDTO articleDTO) throws SQLException
 	{
 		articleService.update(articleDTO);
+	}
+
+
+	@Override
+	public PageDTO<Collection<ArticleDTO>> findAllArticles(int pageSize, int pageNum)
+	{
+		Long count = articleService.countAllArticles();
+		if(count<0)
+		{
+			return PageResultUtil.emptyPage();
+		}
+		if(pageSize<1)
+		{
+			pageSize=1;
+		}
+		if(pageNum<1)
+		{
+			pageNum=1;
+		}
+		Collection<ArticleDTO> collection = articleService.findAllArticlesByPage((pageNum-1)*pageSize, pageSize);
+		return new PageDTO<Collection<ArticleDTO>>(count, collection);
 	}
 
 	
