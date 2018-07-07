@@ -41,12 +41,14 @@
 					    		   <span>我发布的文章</span>
 					    		</a>
 					    	</dd>
+					    	<#if user.isAdmin()>
 					    	<dd>
 					    		<a href="/article/all.html">
 					    		   <i class="iconfont icon-yonghu1" data-icon='icon-yonghu1'></i>
 					    		   <span>所有文章</span>
 					    		</a>
 					    	</dd>
+					    	</#if>
 					    	<dd>
 					    		<a href="/article/deleted.html">
 					    			<i class="iconfont icon-yonghu1" data-icon='icon-yonghu1'></i>
@@ -70,7 +72,7 @@
 					</a>
 					   <dl class="layui-nav-child">
 					    	<dd>
-					    		<a href="javascript:;">
+					    		<a href="javascript:alert('不一定做');">
 					    		   <i class="iconfont icon-pinglun1" data-icon='icon-pinglun1'></i>
 					    		   <span>评论管理</span>
 					    		</a>
@@ -153,7 +155,13 @@
 					    		</a>
 					    	</dd>
 					   </dl>
-			 	</li>				
+			 	</li>
+			 	<li class="layui-nav-item">
+					<a href="/picture/edit.html" data-url="news_management.html" >
+					   <i class="iconfont icon-youqinglianjie"  data-icon='icon-youqinglianjie'></i>
+					   <span>首页轮播图管理</span>
+					</a>
+				</li>
 				<!-- 友链设置 -->
 				<#-- 	<li class="layui-nav-item">
 					<a href="javascript:;">

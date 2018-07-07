@@ -19,23 +19,17 @@ import java.util.Date;
  */
 public class PictureDTO
 {
-	private String pictureId;
+//	private String pictureId;
+	private Long pictureId;
 	private Long articleId;
 	private String pictureUrl;
 	private Integer pictureType;
 	private Integer pictureStatus;
 	private Date createDate;
+	//2018-07-07 13:12 add
+	private Integer pictureDisplaySeq;
 	
 
-	public String getPictureId()
-	{
-		return pictureId;
-	}
-
-	public void setPictureId(String pictureId)
-	{
-		this.pictureId = pictureId;
-	}
 
 	public Long getArticleId()
 	{
@@ -85,6 +79,26 @@ public class PictureDTO
 	public void setPictureUrl(String pictureUrl)
 	{
 		this.pictureUrl = pictureUrl;
+	}
+
+	public Integer getPictureDisplaySeq()
+	{
+		return pictureDisplaySeq;
+	}
+
+	public void setPictureDisplaySeq(Integer pictureDisplaySeq)
+	{
+		this.pictureDisplaySeq = pictureDisplaySeq;
+	}
+
+	public void setPictureId(Long pictureId)
+	{
+		this.pictureId = pictureId;
+	}
+
+	public Long getPictureId()
+	{
+		return pictureId;
 	}
 
 

@@ -8,7 +8,11 @@
 package com.dlxy.system.management.service.impl;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Observable;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -35,9 +39,13 @@ public class ManagementPictureServiceObservableImpl extends Observable implement
 	
 	@Transactional
 	@Override
-	public void addPciture(Long userId,Long articleId, PictureDTO[] pictureDTOs) throws SQLException
+	public Collection<Long> addPciture(Long userId,Long articleId, PictureDTO[] pictureDTOs) throws SQLException
 	{
 		pictureService.addPicture(pictureDTOs);
+		List<Long>idList=new ArrayList<Long>();
+		Stream.of(pictureDTOs).forEach(p->{
+			idList.add(p.getPictureId());
+		});
 		pictureService.addPictureWithArticleId(pictureDTOs);
 		setChanged();
 		String string ="";
@@ -48,6 +56,31 @@ public class ManagementPictureServiceObservableImpl extends Observable implement
 		}
 		UserRecordDTO userRecordDTO=UserRecordDTO.getUserRecordDTO(userId, "add:picture:"+string);
 		notifyObservers(userRecordDTO);
+		return idList;
+	}
+
+	@Override
+	public void deletePicture(Long userId, String pictureId, int pictureType)
+	{
+		int count = pictureService.deleteByPictureIdAndStatus(pictureId, pictureType);
+		if(count<1)
+		{
+			throw new RuntimeException("wrong argument");
+		}
+		String detail="delete:portal-picture:"+pictureId;
+		UserRecordDTO userRecordDTO = UserRecordDTO.getUserRecordDTO(userId, detail);
+		setChanged();
+		notifyObservers(userRecordDTO);
+	}
+
+	@Override
+	public void addPortalPicture(Long userId, PictureDTO pictureDTO) throws SQLException
+	{
+		pictureService.addPicture(new PictureDTO[] {pictureDTO});
+		setChanged();
+		String detail="add:portal-picture:"+pictureDTO.getPictureId();
+		UserRecordDTO recordDTO=UserRecordDTO.getUserRecordDTO(userId, detail);
+		notifyObservers(recordDTO);
 	}
 
 }

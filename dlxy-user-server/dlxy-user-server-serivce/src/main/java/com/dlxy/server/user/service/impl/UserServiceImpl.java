@@ -83,7 +83,20 @@ public class UserServiceImpl implements IUserArticleService,IUserService,IUserRe
 	@Override
 	public UserDTO findUserByNameOrId(String key) throws SQLException
 	{
-		return userQueryDao.findByNameOrId(key);
+		Long userId=null;
+		try
+		{
+			userId=Long.parseLong(key);
+			return findByUserId(userId);
+		} catch (Exception e)
+		{
+			return findByUsername(key);
+		}
+	}
+	@Override
+	public UserDTO findByUsername(String username)
+	{
+		return userMybatisDao.findByUsername(username);
 	}
 
 	@Override
@@ -131,5 +144,7 @@ public class UserServiceImpl implements IUserArticleService,IUserService,IUserRe
 		userMybatisDao.addUser(userDTO);
 		return userDTO.getUserId();
 	}
+
+	
 
 }

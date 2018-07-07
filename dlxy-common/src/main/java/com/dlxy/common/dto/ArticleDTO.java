@@ -42,6 +42,9 @@ public class ArticleDTO
 	private String[] pictureIds;
 	//2018-07-06 17:27 add
 	private String titleName;
+	//2018-07-07 15:02 add
+	private Integer titleParentId=0;
+	
 	
 	
 	
@@ -236,6 +239,16 @@ public class ArticleDTO
 	public void setTitleName(String titleName)
 	{
 		this.titleName = titleName;
+	}
+
+	public Integer getTitleParentId()
+	{
+		return titleParentId;
+	}
+
+	public void setTitleParentId(Integer titleParentId)
+	{
+		this.titleParentId = titleParentId;
 	}
 
 }

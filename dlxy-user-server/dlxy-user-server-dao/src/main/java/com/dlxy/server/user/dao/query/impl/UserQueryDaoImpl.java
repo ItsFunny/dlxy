@@ -93,8 +93,9 @@ public class UserQueryDaoImpl implements UserQueryDao
 			l.add(userId);
 		} catch (NumberFormatException e)
 		{
-			sql += " and a.username like ? ";
-			l.add("%" + key + "%");
+			sql += " and a.username = ? ";
+//			l.add("%" + key + "%");
+			l.add(key);
 		}
 		Collection<UserDTO> query = queryRunner.query(sql, new UserResultSetHandler(true), l.toArray());
 		if (null == query)

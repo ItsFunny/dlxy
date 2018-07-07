@@ -40,24 +40,7 @@
              
          });
      });
- }
- 
-	function loadArticle(obj){
-		var articleId=$(obj).attr("articleId");
-		$("#edit_articleId").val(articleId);
-		editor.uploadJson='/api/file/upload.html?articleId='+$("#edit_articleId").val();
-		jQuery.get('/api/article/detail/'+articleId+'.html',function(data,textStatus,jqXHR){
-			if(data.code==1){
-				var article=data.data;
-				$("#edit_articleName").val(article.articleName);
-				$("#edit_articleAuthor").val(article.articleAuthor);
-				KindEditor.html("#edit_articleContent", article.articleContent);
-			}else{
-				alert(data.msg);
-			}
-		},'json')
-	}
-	
+ }	
 </script>
 <section class="layui-larry-box">
 	<div class="larry-personal">
@@ -66,11 +49,11 @@
 		
 		<div class="layui-inline">
 		    <div class="layui-input-inline">
-		    	<input value="" id="searchText" placeholder="请输入关键字" class="layui-input search_input" type="text">
+		    	<input value="" id="searchText" placeholder="可通过文章id,文章标题,文章作者搜索" class="layui-input search_input" type="text">
 		    </div>
 		    <input type="button" id="searchButton" class="layui-btn search_btn"  value="查询">
 		    <input type="button" class="layui-btn search_btn" value="显示所有,非查询" onclick="javascript:window.location.href = 'http://localhost:8000/article/all.html'">
-		    
+		    若出现unknown ,则对应的类目或者操作人已被删除
 		</div>
 	</blockquote>
 		         <!-- 操作日志 -->
@@ -97,7 +80,6 @@
 							<th style="text-align:left;">文章标题</th>
 							<th>作者</th>
 							<th>处理人</th>
-							<th>是否上架</th>
 							<th>发布时间</th>
 							<th>更新时间</th>
 							<th>文章状态</th>
@@ -119,15 +101,6 @@
 							<td align="left">${item.articleName}</td>
 							<td>${item.articleAuthor}</td>
 							<td><a href="/user/releases.html?userId=${item.userId}">${item.username!"unknow"}</a></td>
-							<td>
-								<#if item.articleStatus==0>
-									<input name="show" lay-skin="switch" lay-text="是|否" lay-filter="isShow" type="checkbox">
-									<div class="layui-unselect layui-form-switch"><i></i></div>
-								<#else>			
-									<input name="show" lay-skin="switch" lay-text="是|否" lay-filter="isShow" type="checkbox">		
-									<div class="layui-unselect layui-form-switch layui-form-onswitch"><i></i></div>
-								</#if>
-							</td>
 							<td>
 								${item.createDate?string('yyyy-MM-dd HH:mm:ss')}
 							</td>
@@ -168,7 +141,7 @@
 									<a class="layui-btn layui-btn-mini "  onclick="changeStatus(this,3);" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i> 设为推荐新闻</a>
 									<a class="layui-btn layui-btn-danger layui-btn-mini news_del" data-id="1" articleId="${item.articleId?c}"><i class="layui-icon"></i> 彻底删除</a>
 							</td>
-							</#if>>
+							</#if>
 						</tr>
 						</#list>
 					</#if>
@@ -199,6 +172,8 @@
 			    </div>
 		    </div>
 		</div>
+		
+	<#-- 
 	<form method="post" action="/api/article/update.html" id="editForm">
 		<div class="modal fade" id="changeSource" role="dialog" aria-labelledby="gridSystemModalLabel">
 		<div class="modal-dialog" role="document">
@@ -245,7 +220,61 @@
 			</div>
 		</div>
 	</div>
-	</form>
+	</form> -->
+	
+	<div class="modal fade" id="changeSource" role="dialog" aria-labelledby="gridSystemModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="gridSystemModalLabel">修改标题</h4>
+				</div>
+				<div class="modal-body">
+					<div class="container-fluid">
+						<form class="form-horizontal">
+								<label class="col-xs-3 control-label">文章标题：</label>
+								<div class="col-xs-8 ">
+									<input type="text" class="form-control input-sm duiqi" id="edit_articleName" placeholder="" name="articleName">
+								</div>
+								<label class="col-xs-3 control-label">作者：</label>
+								<div class="col-xs-3 ">
+									<input type="text" name="articleAuthor" class="form-control input-sm duiqi" id="edit_articleAuthor" placeholder="">
+								</div>
+								<label class="col-xs-2 control-label">类目：</label>
+								<div class="col-xs-3 ">
+									<select name="articleStatus"  style="width:100px;height: 30px">
+										<option value ="0">下线</option>
+										<option value="1">上线</option>
+									</select>
+								</div>
+								<label class="col-xs-2 control-label">类目：</label>
+								<div class="col-xs-3 ">
+									<select id="leimu" style="width:100px;height: 30px">
+
+									</select>
+								</div>
+								<div class="col-xs-3 ">
+									<select id="leimu2" style="width:100px;height: 30px">
+
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<textarea cols="0" rows="5" name="articleContent" class="form-control" id="edit_articleContent" style="margin: 0px -0.5px 0px 0px; height: 250px; width: 100%;">
+    							</textarea>
+							</div>
+						</form>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-xs btn-white" data-dismiss="modal">取 消</button>
+					<button type="button" class="btn btn-xs btn-green" data-dismiss="modal">保 存</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
 </section>
 <#include "wrapper-down.html">
@@ -253,7 +282,6 @@
 
 	function editSaveUpdate(){
 		var d=$("#editForm").serialize();
-		alert(d);
 		jQuery.post('/api/article/update.html',d,function(data,textStatus,jqXHR){
 			
 			if(data.code==1){
@@ -283,10 +311,10 @@
 	});
 	function changeStatus(obj,status){
 		var articleId=$(obj).attr("articleId");
-		
 		jQuery.get('/api/article/update/status.html',{"articleId":articleId,"articleStatus":status},function(data,textStatus,jqXHR){
 			if(data.code==1){
 				alert('sucess');
+				window.location.reload();
 			}else{
 				alert(data.msg);
 			}
@@ -356,7 +384,61 @@
 			}
 		},'json');
 	}
-
 	
+    $("#leimu").change(function () {
+        $("#leimu2").empty();
+        var obj=$("#leimu").get(0).selectedIndex;
+        var parentId=$("#leimu").val();
+            $.ajax({
+                url:'/api/title/'+parentId+'.html',
+                type:'post',
+                dataType:'json',
+                success:function (data) {
+					var son2=data.data;
+                    var str="";
+                    for(i=0;i<son2.length;i++){
+                        str+="<option>"+son2[i].titleName+"</option>";
+                    }
+                    $("#leimu2").append(str);
+                }
+            })
+	})	
+	function loadArticle(obj){
+		var articleId=$(obj).attr("articleId");
+		$("#edit_articleId").val(articleId);
+		jQuery.get('/api/article/detail/'+articleId+'.html',function(data,textStatus,jqXHR){
+			if(data.code==1){
+				var article=data.data;
+				$("#edit_articleName").val(article.articleName);
+				$("#edit_articleAuthor").val(article.articleAuthor);
+				KindEditor.html("#edit_articleContent", article.articleContent);
+				if(artilce.titleParentId==0){
+				
+					loadTitle()	
+				}else{
+					
+				}
+			}else{
+				alert(data.msg);
+			}
+		},'json')
+	}
+	function loadTitle(obj){
+	 	$.ajax({
+	        url:'/api/title/'+obj+'.html',
+	        type:'post',
+	        dataType:'json',
+	        success:succFunction
+	
+	    })
+ 	}
+	function succFunction(father) {
+		var obj=father.data;
+		var str="";
+		for(i=0;i<obj.length;i++){
+		    str+='<option value="'+obj[i].titleId+'">'+obj[i].titleName+'</option>';
+		}
+		$("#leimu").append(str);
+    }
 </script>
 <#include "footer.html">

@@ -29,7 +29,9 @@
              },
              afterUpload:function(url){
              	var t=url.substring(url.lastIndexOf("/")+1,url.indexOf("."));
-             	$("#hiddenBlock").append('<input type="hidden" name="pictureId" value='+t+'>');
+             	var pictureId=url.substring(url.lastIndexOf("=")+1);
+             	alert(pictureId);
+             	$("#hiddenBlock").append('<input type="hidden" name="pictureId" value='+pictureId+'>');
              },
              allowFileManager: false,
              allowFlashUpload: false,

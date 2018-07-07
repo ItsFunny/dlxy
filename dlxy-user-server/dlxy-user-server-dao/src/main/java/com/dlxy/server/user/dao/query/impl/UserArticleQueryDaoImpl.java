@@ -38,9 +38,34 @@ public class UserArticleQueryDaoImpl implements UserArticleQueryDao
 	@Override
 	public Long countByParam(Map<String, Object> params) throws SQLException
 	{
-		String sql = "select count(1) from dlxy_article where 1=1 and article_id in (select article_id from dlxy_user_article where user_id = ? ) ";
+		String sql = "select count(1) from dlxy_article where 1=1 ";
 		List<Object> l = new LinkedList<Object>();
-		l.add(params.get("userId"));
+	
+//		if(params.containsKey("searchParam"))
+//		{
+//			String q=params.get("searchParam").toString();
+//			try
+//			{
+//				long userId=Long.parseLong(q);
+//				sql+=" and user_id = ?";
+//				l.add(params.get("searchParam"));
+//			} catch (NumberFormatException e)
+//			{
+//				sql+=" and username like ? ";
+//				l.add("%"+params.get("searchParam")+"%");
+//			}
+//		}
+		if(params.containsKey("userId"))
+		{
+			sql+=" and article_id in (select article_id from dlxy_user_article where 1=1   and user_id = ? ) ";
+			l.add(params.get("userId"));
+		}
+		
+		if(params.containsKey("nameLike"))
+		{
+			sql+=" and article_id in (select article_id from dlxy_user_article where 1=1   and username like ? )o9  ";
+			l.add("%"+params.get("nameLike")+"%");
+		}
 		if (params.containsKey("articleStatus"))
 		{
 			sql += "and article_status=? ";
@@ -69,7 +94,12 @@ public class UserArticleQueryDaoImpl implements UserArticleQueryDao
 		if (params.containsKey("userId"))
 		{
 			sql += " and b.article_id in (select c.article_id from dlxy_user_article c where c.user_id =?) ";
-			l.add(Long.parseLong(params.get("userId").toString()));
+			l.add(params.get("userId"));
+		}
+		if(params.containsKey("username"))
+		{
+			sql+="and b.article_id in (select c.article_id from dlxy_user_article c where c.username like ?) ";
+			l.add(params.get("username"));
 		}
 		if (params.containsKey("articleStatus"))
 		{

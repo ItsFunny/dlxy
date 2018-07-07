@@ -38,6 +38,7 @@ import com.dlxy.common.dto.UserDTO;
 import com.dlxy.common.enums.PictureStatusEnum;
 import com.dlxy.common.service.IdWorkerService;
 import com.dlxy.common.vo.PageVO;
+import com.dlxy.server.article.service.IArticleService;
 import com.dlxy.system.management.model.FormArticle;
 import com.dlxy.system.management.service.IArticleManagementWrappedService;
 import com.dlxy.system.management.service.command.AddOrUpdateArtilceCommand;
@@ -61,8 +62,10 @@ public class ArticleController
 	
 	@Autowired
 	private AddOrUpdateArtilceCommand articleCommand;
-//	@Autowired
-//	private IArticleService articleService;
+	
+	
+	@Autowired
+	private IArticleService articleService;
 
 	@Autowired
 	private IdWorkerService idWorkerService;
@@ -70,6 +73,9 @@ public class ArticleController
 	/*
 	 * 只有admin角色才能访问
 	 */
+	@RequiresRoles(value= {
+			"admin"
+	})
 	@RequestMapping("/all")
 	public ModelAndView showAll(@RequestParam Map<String, Object> params, HttpServletRequest request,
 			HttpServletResponse response)
@@ -81,28 +87,40 @@ public class ArticleController
 		String pageNumStr = request.getParameter("pageNum");
 		int pageSize = StringUtils.isEmpty(pageSizeStr) ? 2 : Integer.parseInt(pageSizeStr);
 		int pageNum = StringUtils.isEmpty(pageNumStr) ? 1 : Integer.parseInt(pageNumStr);
-		Map<String, Object> p = new HashMap<>();
 		PageDTO<Collection<ArticleDTO>> pageDTO = null;
 		try
 		{
-			if (params.containsKey("q"))
-			{
-				if (!StringUtils.isEmpty(params.get("q").toString()))
-				{
-					p.put("searchParam", params.get("q"));
-				}else {
-					pageDTO=articleManagementWrappedService.findAllArticles(pageSize,pageNum);
-				}
-				pageDTO = articleManagementWrappedService.findByParams(pageSize,pageNum, p);
-			}else {
-				pageDTO=articleManagementWrappedService.findAllArticles(pageSize,pageNum);
-			}
-
+//			if (params.containsKey("q"))
+//			{
+//				if (!StringUtils.isEmpty(params.get("q").toString()))
+//				{
+//					p.put("searchParam", params.get("q"));
+//				}
+//			}
+//			if(params.containsKey("userId"))
+//			{
+//				try
+//				{
+//					cuserId=Long.parseLong(params.get("userId").toString());
+//					if(!user.isAdmin() || !user.getUserId().equals(cuserId))
+//					{
+//						params.put("error", "无权直接访问他人记录");
+//						modelAndView = new ModelAndView("error", params);
+//						return modelAndView;
+//					}
+//				} catch (NumberFormatException e)
+//				{
+//					params.remove("userId");
+//				}
+//				
+//			}
+			pageDTO = articleManagementWrappedService.findByParams(pageSize,pageNum, params);
 		} catch (Exception e)
 		{
 			e.printStackTrace();
 			params.put("error", e.getMessage());
 		}
+	
 //		try
 //		{
 //			pageDTO = articleManagementWrappedService.findByParams((pageNum - 1) * pageSize, pageSize, p);
@@ -124,6 +142,12 @@ public class ArticleController
 		modelAndView = new ModelAndView("article_all", params);
 		return modelAndView;
 	}
+	@RequestMapping("/news")
+	public ModelAndView showAllNewsArticles(HttpServletRequest request,HttpServletResponse response)
+	{
+		ModelAndView modelAndView=null;
+		return modelAndView;
+	}
 
 	@RequestMapping("/deleted")
 	public ModelAndView showAllDeletedArticles(HttpServletRequest request, HttpServletResponse response,
@@ -138,8 +162,8 @@ public class ArticleController
 		params.put("articleStatus", "2");
 		try
 		{
-			PageDTO<Collection<ArticleDTO>> pageDTO = articleManagementWrappedService.findByParams((pageNum - 1) * pageSize,
-					pageSize, params);
+			PageDTO<Collection<ArticleDTO>> pageDTO = articleManagementWrappedService.findByParams( pageSize,
+					pageNum, params);
 			PageVO<Collection<ArticleDTO>> pageVO = new PageVO<Collection<ArticleDTO>>(pageDTO.getData(), pageSize,
 					pageNum, pageDTO.getTotalCount());
 			params.put("pageVO", pageVO);

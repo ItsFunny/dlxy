@@ -72,7 +72,9 @@ public class UserController
 
 	Pattern realNamePattern = Pattern.compile("^([\u4e00-\u9fa5]{1,20}|[a-zA-Z]+ [a-zA-Z]+)$");
 
-	// @RequiresRoles
+	@RequiresRoles(value= {
+			"admin"
+	})
 	@RequestMapping(value = "/all")
 	public ModelAndView showAllUser(HttpServletRequest request, HttpServletResponse response)
 	{
@@ -83,7 +85,7 @@ public class UserController
 		Map<String, Object> p = new HashMap<>();
 		String pageSizeStr = request.getParameter("pageSize");
 		String pageNumStr = request.getParameter("pageNum");
-		Integer pageSize = StringUtils.isEmpty(pageSizeStr) ? 1 : Integer.parseInt(pageSizeStr);
+		Integer pageSize = StringUtils.isEmpty(pageSizeStr) ? 5 : Integer.parseInt(pageSizeStr);
 		Integer pageNum = StringUtils.isEmpty(pageNumStr) ? 1 : Integer.parseInt(pageNumStr);
 
 		// String userIdStr=request.getParameter("userId");
@@ -106,7 +108,7 @@ public class UserController
 		return modelAndView;
 	}
 
-	// @RequiresRoles
+	 @RequiresRoles(value="admin")
 	@RequestMapping(value = "/add")
 	public ModelAndView addUser(HttpServletRequest request, HttpServletResponse response)
 	{
@@ -115,7 +117,7 @@ public class UserController
 		return modelAndView;
 	}
 
-	// @RequiresRoles
+	 @RequiresRoles(value="admin")
 	@RequestMapping(value = "/doAddUser")
 	public ModelAndView doAddUser(FormUser formUser, BindingResult result, Model model, HttpServletRequest request,
 			HttpServletResponse response) throws UnsupportedEncodingException
@@ -174,6 +176,11 @@ public class UserController
 		ModelAndView modelAndView = null;
 		Map<String, Object> params = new HashMap<>();
 		String cuserIdStr = request.getParameter("userId");
+		String q=request.getParameter("q");
+		if(!StringUtils.isEmpty(q))
+		{
+			params.put("searchParam", q);
+		}
 		if (!StringUtils.isEmpty(cuserIdStr))
 		{
 			cuserId = Long.parseLong(cuserIdStr);

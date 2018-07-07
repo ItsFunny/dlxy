@@ -8,6 +8,7 @@
 package com.dlxy.system.management.service;
 
 import java.sql.SQLException;
+import java.util.Collection;
 
 import com.dlxy.common.dto.PictureDTO;
 
@@ -21,5 +22,9 @@ import com.dlxy.common.dto.PictureDTO;
 */
 public interface IPictureManagementWrappedService
 {
-	void addPciture(Long userId,Long articleId,PictureDTO[] pictureDTOs) throws SQLException;
+	Collection<Long> addPciture(Long userId,Long articleId,PictureDTO[] pictureDTOs) throws SQLException;
+	
+	void addPortalPicture(Long userId,PictureDTO pictureDTO) throws SQLException;
+	
+	void deletePicture(Long userId,String pictureId,int pictureType);
 }

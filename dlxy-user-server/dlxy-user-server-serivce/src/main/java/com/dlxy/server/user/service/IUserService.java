@@ -23,10 +23,14 @@ import com.dlxy.common.dto.UserDTO;
 */
 public interface IUserService
 {
+	/*
+	 * 第一个方法可以cancel 了
+	 */
 	UserDTO findUserByNameOrId(String key) throws SQLException;
 	
 	UserDTO findByUserId(Long userId) throws SQLException;
 	
+	UserDTO findByUsername(String username);
 	
 	Long countUsersByParam(Map<String, Object>params) throws SQLException;
 	

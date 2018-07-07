@@ -57,6 +57,10 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 		{
 			pageNum=1;
 		}
+		if(params.containsKey("q"))
+		{
+			params.put("searchParam", params.get("q"));
+		}
 		Collection<ArticleDTO> datas = articleService.findByParam(params, (pageNum-1)*pageSize, pageSize);
 		return new PageDTO<Collection<ArticleDTO>>(totalCount, datas);
 	}

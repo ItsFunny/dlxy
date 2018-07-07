@@ -64,7 +64,8 @@ public class ArticleCountQueryDaoImpl implements ArticleCountQueryDao
 		{
 			if(!StringUtils.isEmpty(params.get("searchParam").toString()))
 			{
-				sql+=" and (article_name like ? or article_id in (select b.article_id from dlxy_user_article b where b.username like ? ) )";
+//				article_id in (select b.article_id from dlxy_user_article b where b.username like ? ) 
+				sql+=" and (article_name like ? or article_author like ? )";
 				String tParam="%" +params.get("searchParam")+"%";
 				p.add(tParam);
 				p.add(tParam);

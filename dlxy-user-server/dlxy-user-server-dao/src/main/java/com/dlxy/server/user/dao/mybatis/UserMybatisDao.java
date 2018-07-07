@@ -33,7 +33,10 @@ public interface UserMybatisDao
 	
 	Collection<UserDTO>findUsersByPage(@Param("start")int start,@Param("end")int end ,Map<String, Object>params);
 	
-	@Select("select a.user_id,a.username,a.realname,a.passwrod,a.role_id,a.last_login_ip,a.crete_date,a.update_date from dlxy_user a where 1=1 and a.user_id=#{userId}")
+	@Select("select a.user_id,a.username,a.realname,a.password,a.role_id,a.last_login_ip,a.create_date,a.update_date from dlxy_user a where 1=1 and a.user_id=#{userId}")
 	UserDTO findByUserId(Long userId);
+	
+	@Select("select a.user_id,a.username,a.realname,a.password,a.role_id,a.last_login_ip,a.create_date,a.update_date from dlxy_user a where 1=1 and a.username=#{username}")
+	UserDTO findByUsername(String username);
 	
 }

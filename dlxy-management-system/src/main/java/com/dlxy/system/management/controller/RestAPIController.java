@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -279,7 +280,7 @@ public class RestAPIController
 	public ResultDTO<String> updateArticleStatus(HttpServletRequest request, HttpServletResponse response)
 	{
 		String[] articleIds = request.getParameterValues("articleId");
-		if(null==articleIds || articleIds.length<1)
+		if (null == articleIds || articleIds.length < 1)
 		{
 			return ResultUtil.fail("missing argument:articleId");
 		}
@@ -374,6 +375,15 @@ public class RestAPIController
 
 	}
 
+	/**
+	 * @param parentId
+	 *            父类的id
+	 * @param request
+	 * @param response
+	 * @return 返回这个父类下的所有子类
+	 * @author joker
+	 * @date 创建时间：2018年7月7日 下午2:24:52
+	 */
 	@RequestMapping(value = "/title/{parentId}", method =
 	{ RequestMethod.POST, RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResultDTO<Collection<DlxyTitleDTO>> findTitles(@PathVariable Integer parentId, HttpServletRequest request,
@@ -396,6 +406,28 @@ public class RestAPIController
 		{
 			return ResultUtil.fail(e.getMessage());
 		}
+	}
+
+	@RequestMapping(value = "/picture/delete", method =
+	{ RequestMethod.POST,
+			RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResultDTO<String>deletePic(HttpServletRequest request,HttpServletResponse httpServletResponse)
+	{
+		String pictureId = request.getParameter("pictureId");
+		String pictureType=request.getParameter("pictureType");
+		if(StringUtils.isEmpty(pictureId)|| StringUtils.isEmpty(pictureType))
+		{
+			return ResultUtil.fail("missing argument:pictureId or pictureType");
+		}
+		try
+		{
+			pictureManagementWrappedService.deletePicture(ManagementUtil.getLoginUser().getUserId(), pictureId, Integer.parseInt(pictureType));
+			return ResultUtil.sucess("删除成功");
+		} catch (Exception e)
+		{
+			return ResultUtil.fail("error:"+e.getMessage());
+		}
+		
 	}
 
 	@RequestMapping(value = "/file/upload")
@@ -439,7 +471,7 @@ public class RestAPIController
 		// System.out.println(string+File.separator+"imgs"+File.separator+articleId+File.separator+fileName);
 		String url = string + File.separator + "imgs" + File.separator + articleId + File.separator + fileName + suffix;
 		PictureDTO pictureDTO = new PictureDTO();
-		pictureDTO.setPictureId(fileName);
+//		pictureDTO.setPictureId(fileName);
 		pictureDTO.setPictureUrl(url);
 		pictureDTO.setArticleId(Long.parseLong(articleId));
 		pictureDTO.setCreateDate(new Date());
@@ -454,8 +486,9 @@ public class RestAPIController
 			pictureManagementWrappedService.addPciture(ManagementUtil.getLoginUser().getUserId(),
 					Long.parseLong(articleId), new PictureDTO[]
 					{ pictureDTO });
+			System.out.println(pictureDTO.getPictureId());
 			pictureUploadResponseDTO.setError(0);
-			pictureUploadResponseDTO.setUrl(url);
+			pictureUploadResponseDTO.setUrl(url+"?pictureId="+pictureDTO.getPictureId());
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
