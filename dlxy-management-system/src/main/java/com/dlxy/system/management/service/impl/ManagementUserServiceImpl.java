@@ -47,17 +47,17 @@ public class ManagementUserServiceImpl extends Observable implements IUserMangem
 	@Override
 	public PageDTO<Collection<Map<String, Object>>> findUserArticlesByPage(int pageSize, int pageNum, Map<String, Object> p) throws SQLException
 	{
-		if(p.containsKey("searchParam"))
-		{
-			try
-			{
-				Long userId=Long.parseLong(p.get("searchParam").toString());
-				p.put("userId", userId);
-			} catch (NumberFormatException e)
-			{
-				p.put("username", p.get("searchParam"));
-			}
-		}
+//		if(p.containsKey("searchParam"))
+//		{
+//			try
+//			{
+//				Long userId=Long.parseLong(p.get("searchParam").toString());
+//				p.put("userId", userId);
+//			} catch (NumberFormatException e)
+//			{
+//				p.put("username", p.get("searchParam"));
+//			}
+//		}
 		Long count = userArticleService.countByParam(p);
 		if (count >= 1)
 		{

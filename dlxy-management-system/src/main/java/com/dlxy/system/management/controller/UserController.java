@@ -40,6 +40,7 @@ import com.dlxy.common.event.Events;
 import com.dlxy.common.vo.PageVO;
 import com.dlxy.server.user.service.IUserRecordService;
 import com.dlxy.server.user.service.IUserService;
+import com.dlxy.system.management.exception.ManagementIllegalException;
 import com.dlxy.system.management.model.FormUser;
 import com.dlxy.system.management.service.IUserMangementWrappedService;
 import com.dlxy.system.management.utils.ManagementUtil;
@@ -176,11 +177,7 @@ public class UserController
 		ModelAndView modelAndView = null;
 		Map<String, Object> params = new HashMap<>();
 		String cuserIdStr = request.getParameter("userId");
-		String q=request.getParameter("q");
-		if(!StringUtils.isEmpty(q))
-		{
-			params.put("searchParam", q);
-		}
+		
 		if (!StringUtils.isEmpty(cuserIdStr))
 		{
 			cuserId = Long.parseLong(cuserIdStr);
@@ -198,9 +195,11 @@ public class UserController
 				// p.put("illegalDetail", "试图恢复正常状态下的文章或者试图恢复不存在的文章");
 				// p.put("illegalLevel", IllegalLevelEnum.Suspicious.ordinal());
 				// eventPublisher.publish(new AppEvent(data, Events.UserIllegalLog.name()));
-				// //返回无权
-				params.put("error", "u dont have the authority");
-				return new ModelAndView("error", params);
+				// //返回无权  
+				//直接抛出违法异常进行处理
+				throw new ManagementIllegalException();
+//				params.put("error", "u dont have the authority");
+//				return new ModelAndView("error", params);
 			}
 		}
 		params.put("userId", cuserId);

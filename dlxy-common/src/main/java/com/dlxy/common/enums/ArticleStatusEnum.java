@@ -17,5 +17,5 @@ package com.dlxy.common.enums;
 */
 public enum ArticleStatusEnum
 {
-	DOWN,UP,DELETE
+	DOWN,UP,DELETE,INTRODUCE,
 }

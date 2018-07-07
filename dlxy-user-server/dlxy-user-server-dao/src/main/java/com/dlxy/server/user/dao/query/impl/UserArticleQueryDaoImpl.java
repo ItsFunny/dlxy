@@ -63,7 +63,7 @@ public class UserArticleQueryDaoImpl implements UserArticleQueryDao
 		
 		if(params.containsKey("nameLike"))
 		{
-			sql+=" and article_id in (select article_id from dlxy_user_article where 1=1   and username like ? )o9  ";
+			sql+=" and article_id in (select article_id from dlxy_user_article where 1=1   and username like ? ) ";
 			l.add("%"+params.get("nameLike")+"%");
 		}
 		if (params.containsKey("articleStatus"))
@@ -99,7 +99,7 @@ public class UserArticleQueryDaoImpl implements UserArticleQueryDao
 		if(params.containsKey("username"))
 		{
 			sql+="and b.article_id in (select c.article_id from dlxy_user_article c where c.username like ?) ";
-			l.add(params.get("username"));
+			l.add("%"+params.get("username")+"%");
 		}
 		if (params.containsKey("articleStatus"))
 		{

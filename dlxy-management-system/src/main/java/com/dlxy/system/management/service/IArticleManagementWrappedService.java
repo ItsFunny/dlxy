@@ -30,7 +30,7 @@ public interface IArticleManagementWrappedService
 	//显示所有的,包括异常的那些文章
 	PageDTO<Collection<ArticleDTO>>findAllArticles(int start,int end);
 
-	PageDTO<Collection<ArticleDTO>> findByParams(int start, int end, Map<String, Object> params) throws SQLException;
+	PageDTO<Collection<ArticleDTO>> findByParams(int pageSize, int pageNum, Map<String, Object> params) throws SQLException;
 
 	ArticleDTO findByArticleId(Long articleId) throws SQLException;
 //	void updateArticleStatusInBatch(Long[] articleIds, int status);

@@ -34,9 +34,9 @@ import com.dlxy.server.user.service.IUserService;
  * @author joker
  * @date 创建时间：2018年7月4日 下午5:41:39
  */
-//感觉是强聚合的,所以直接合并到同个实现类中,避免内存中类太多太杂
+// 感觉是强聚合的,所以直接合并到同个实现类中,避免内存中类太多太杂
 @Service
-public class UserServiceImpl implements IUserArticleService,IUserService,IUserRecordService
+public class UserServiceImpl implements IUserArticleService, IUserService, IUserRecordService
 {
 	@Autowired
 	private UserRecordMybatisDao userRecordMybatisDao;
@@ -47,8 +47,7 @@ public class UserServiceImpl implements IUserArticleService,IUserService,IUserRe
 	private UserQueryDao userQueryDao;
 	@Autowired
 	private UserMybatisDao userMybatisDao;
-	
-	
+
 	@Autowired
 	private UserArticleQueryDao userArticleQueryDao;
 
@@ -77,22 +76,35 @@ public class UserServiceImpl implements IUserArticleService,IUserService,IUserRe
 	@Override
 	public Long countByParam(Map<String, Object> params) throws SQLException
 	{
+		if (params.containsKey("searchParam"))
+		{
+			String q = params.get("searchParam").toString();
+			try
+			{
+				long userId = Long.parseLong(q);
+				params.put("userId", userId);
+			} catch (NumberFormatException e)
+			{
+				params.put("username",q);
+			}
+		}
 		return userArticleQueryDao.countByParam(params);
 	}
 
 	@Override
 	public UserDTO findUserByNameOrId(String key) throws SQLException
 	{
-		Long userId=null;
+		Long userId = null;
 		try
 		{
-			userId=Long.parseLong(key);
+			userId = Long.parseLong(key);
 			return findByUserId(userId);
 		} catch (Exception e)
 		{
 			return findByUsername(key);
 		}
 	}
+
 	@Override
 	public UserDTO findByUsername(String username)
 	{
@@ -106,7 +118,8 @@ public class UserServiceImpl implements IUserArticleService,IUserService,IUserRe
 	}
 
 	@Override
-	public Collection<UserRecordDTO> findRecordByPage(int pageSize, int pageNum, Map<String, Object> params) throws SQLException
+	public Collection<UserRecordDTO> findRecordByPage(int pageSize, int pageNum, Map<String, Object> params)
+			throws SQLException
 	{
 		if (pageNum <= 0)
 		{
@@ -116,7 +129,7 @@ public class UserServiceImpl implements IUserArticleService,IUserService,IUserRe
 		{
 			pageSize = 10;
 		}
-		return userRecordQueryDao.findRecordsByPage((pageNum-1)*pageSize, pageSize, params);
+		return userRecordQueryDao.findRecordsByPage((pageNum - 1) * pageSize, pageSize, params);
 	}
 
 	@Override
@@ -126,7 +139,7 @@ public class UserServiceImpl implements IUserArticleService,IUserService,IUserRe
 	}
 
 	@Override
-	public Collection<UserDTO> findUsersByPage(int start,int end ,Map<String, Object>params) throws SQLException
+	public Collection<UserDTO> findUsersByPage(int start, int end, Map<String, Object> params) throws SQLException
 	{
 		return userMybatisDao.findUsersByPage(start, end, params);
 	}
@@ -144,7 +157,5 @@ public class UserServiceImpl implements IUserArticleService,IUserService,IUserRe
 		userMybatisDao.addUser(userDTO);
 		return userDTO.getUserId();
 	}
-
-	
 
 }
