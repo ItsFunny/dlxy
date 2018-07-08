@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -64,8 +65,8 @@ public class UserRecordQueryDaoImpl implements UserRecordQueryDao
 				userRecordDTO.setUsername(rs.getString(3));
 				System.out.println(rs.getString(4));
 				userRecordDTO.setRecordDetail(rs.getString(4));
-				System.out.println(rs.getDate(5));
-				userRecordDTO.setCreateDate(rs.getDate(5));
+				System.out.println(rs.getObject(5));
+				userRecordDTO.setCreateDate((Date)rs.getObject(5));
 				userRecordDTOs.add(userRecordDTO);
 			}
 			return userRecordDTOs;

@@ -2,9 +2,36 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 
-<mapper namespace="com.dlxy.server.article.dao.mybatis.TitleMybatisDao">
+<mapper
+	namespace="com.dlxy.server.article.dao.mybatis.TitleMybatisDao">
 	<select id="countTilte" parameterType="java.util.Map">
-		select count(1) from dlxy_title  where 1=1
-		<if test="null!=parentTitleId" > and title_parent_id=#{parentTitleId}</if>	
+		select count(1) from dlxy_title where 1=1
+		<if test="null!=parentTitleId"> and
+			title_parent_id=#{parentTitleId}
+		</if>
 	</select>
+
+
+	<insert id="insertOrUpdate" 
+		parameterType="com.dlxy.common.dto.DlxyTitleDTO" useGeneratedKeys="true" keyProperty="titleId">
+		insert into dlxy_title (
+		<if test="null!=titleId and titleId >0 ">title_id,</if>
+		title_name,
+		<if test="null!=titleParentId and titleParentId >=0 ">title_parent_id,</if>
+		title_display_seq
+		)
+		values
+		(
+		<if test="null!=titleId and titleId >0 ">#{titleId},</if>
+		#{titleName},
+		<if test="null!=titleParentId and titleParentId >=0 "> #{titleParentId},</if>
+		 #{titleDisplaySeq}  )
+		on duplicate key update title_name=values(title_name),
+		<if test="null!=titleParentId and titleParentId >=0 ">title_parent_id= values(title_parent_id),
+		</if>
+		title_display_seq =values(title_display_seq)
+
+
+
+	</insert>
 </mapper>

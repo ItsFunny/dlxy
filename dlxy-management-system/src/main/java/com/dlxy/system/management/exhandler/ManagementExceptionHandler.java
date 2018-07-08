@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.dlxy.common.dto.ResultDTO;
 import com.dlxy.system.management.exception.ManagementException;
 import com.dlxy.system.management.exception.ManagementExceptionEnum;
+import com.dlxy.system.management.exception.ManagementIllegalException;
 
 /**
 * 
@@ -43,5 +45,15 @@ public class ManagementExceptionHandler
 		ModelAndView modelAndView=new ModelAndView("unauth");
 		modelAndView.addObject("error","无权访问");
 		return modelAndView;
+	}
+	@ExceptionHandler(ManagementIllegalException.class)
+	public ResultDTO<?>recordIllegalInfo(ManagementIllegalException exception)
+	{
+		String ip=exception.getIp();
+		String detail=exception.getDetail();
+		Long userId=exception.getUserId();
+		//发布消息
+		
+		return null;
 	}
 }

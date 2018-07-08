@@ -23,6 +23,7 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.swing.text.html.HTMLDocument.HTMLReader.ParagraphAction;
+import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -61,6 +62,7 @@ import com.dlxy.server.article.service.ITitleService;
 import com.dlxy.server.picture.service.IPictureService;
 import com.dlxy.server.user.service.IUserService;
 import com.dlxy.system.management.model.FormArticle;
+import com.dlxy.system.management.model.FormTitle;
 import com.dlxy.system.management.service.IArticleManagementWrappedService;
 import com.dlxy.system.management.service.IPictureManagementWrappedService;
 import com.dlxy.system.management.service.command.AddOrUpdateArtilceCommand;
@@ -112,7 +114,6 @@ public class RestAPIController
 	{
 		UserDTO user = ManagementUtil.getLoginUser();
 		String ids = request.getParameter("ids");
-		ids = ids.replaceAll(",", "");
 		if (StringUtils.isEmpty(ids))
 		{
 			return ResultUtil.fail("missing argument");
@@ -149,6 +150,45 @@ public class RestAPIController
 			e.printStackTrace();
 			return ResultUtil.fail(e.getMessage());
 		}
+	}
+	@RequestMapping(value="/article/delete",method= {RequestMethod.POST,RequestMethod.GET} ,produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResultDTO<String> deleteArticleInBatch(HttpServletRequest request,HttpServletResponse response)
+	{
+		String articleIds=request.getParameter("articleId");
+		Map<String, String>params=new HashMap<>();
+		if(StringUtils.isEmpty(articleIds))
+		{
+			params.put("erro", "missing argument:articleId");
+		}
+		String[] ids = articleIds.split(",");
+		Long[] idArr=new Long[ids.length];
+		try
+		{
+			for(int i=0;i<ids.length;i++)
+			{
+				idArr[i]=Long.parseLong(ids[i]);
+			}
+		} catch (Exception e)
+		{
+			params.put("error", "illegal argument");
+		}
+	
+		if(params.containsKey("error"))
+		{
+			return ResultUtil.fail(params.get("error"));
+		}
+		try
+		{
+			articleManagementWrappedService.deleteInBatch(ManagementUtil.getLoginUser().getUserId(), idArr);
+			return ResultUtil.sucess();
+		} catch (Exception e)
+		{
+			logger.error("[delete article] error {}",e.getMessage());
+			e.printStackTrace();
+			return ResultUtil.fail(e.getMessage());
+		}
+		
+		
 	}
 
 	@RequestMapping(value = "/article/update", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, method = RequestMethod.POST)
@@ -390,6 +430,11 @@ public class RestAPIController
 			HttpServletResponse response)
 	{
 		Collection<DlxyTitleDTO> collection = titleService.findChildsByParentId(parentId);
+		if(null==collection || collection.isEmpty())
+		{
+			collection=titleService.findAllParent();
+			return ResultUtil.needMoreOp(collection,"原类目不存在");
+		}
 		return ResultUtil.sucess(collection);
 	}
 
@@ -406,6 +451,49 @@ public class RestAPIController
 		{
 			return ResultUtil.fail(e.getMessage());
 		}
+	}
+	@RequestMapping(value="/title/addOrUpdate",produces=MediaType.APPLICATION_JSON_UTF8_VALUE,consumes=MediaType.APPLICATION_FORM_URLENCODED_VALUE,method=RequestMethod.POST)
+	public ResultDTO<String>addOrUpdateTitle(FormTitle formTitle,BindingResult result,HttpServletRequest request,HttpServletResponse response)
+	{
+		
+//		if(result.hasErrors())
+//		{
+//			return ResultUtil.fail(result.getAllErrors().toString());
+//		}
+		try
+		{
+			CommonUtils.validStringException(formTitle.getTitleName());
+			DlxyTitleDTO dlxyTitleDTO=new DlxyTitleDTO();
+			formTitle.to(dlxyTitleDTO);
+			articleManagementWrappedService.addTitleOrUpdate(ManagementUtil.getLoginUser().getUserId(), dlxyTitleDTO);
+			return ResultUtil.sucess();
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+			return ResultUtil.fail(e.getMessage());
+		}
+	}
+	@RequestMapping(value="/title/delete",produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResultDTO<String>deleteTitle(HttpServletRequest request,HttpServletResponse response)
+	{
+		String titleIdStr = request.getParameter("titleId");
+		Integer titleId=null;
+		if(StringUtils.isEmpty(titleIdStr))
+		{
+			return ResultUtil.fail("missing argument:titleId");
+		}
+		try
+		{
+			titleId=Integer.parseInt(titleIdStr);
+			articleManagementWrappedService.deleteByTitleId(ManagementUtil.getLoginUser().getUserId(), titleId);
+			return ResultUtil.sucess();
+		} catch (Exception e)
+		{
+			logger.error("[delete title] error: {}",e.getMessage());
+			e.printStackTrace();
+			return ResultUtil.fail("error:"+e.getMessage());
+		}
+	
 	}
 
 	@RequestMapping(value = "/picture/delete", method =

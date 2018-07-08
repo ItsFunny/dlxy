@@ -194,10 +194,20 @@ public class ManagementSystemConfiguration implements WebMvcConfigurer
 //		Map<String, Filter> filters = shiroFilterFactoryBean.getFilters();
 //		filters.put("authc", new TFilter());
 		Map<String, String> filterChainDefinitionMap = shiroFilterFactoryBean.getFilterChainDefinitionMap();
-		
+		filterChainDefinitionMap.put("/css/**", "anon");
+		filterChainDefinitionMap.put("/fonts/**", "anon");
 		filterChainDefinitionMap.put("/js/**", "anon");
+		filterChainDefinitionMap.put("/common/**", "anon");
 		filterChainDefinitionMap.put("/imgs/**", "anon");
+		filterChainDefinitionMap.put("/images/**", "anon");
+		filterChainDefinitionMap.put("/jsplug/**", "anon");
+		filterChainDefinitionMap.put("/lang/**", "anon");
 		filterChainDefinitionMap.put("/public/**", "anon");
+		filterChainDefinitionMap.put("/plugins/**", "anon");
+		filterChainDefinitionMap.put("/portal/**", "anon");
+		filterChainDefinitionMap.put("/themes", "anon");
+		filterChainDefinitionMap.put("/kindeditor-all.js", "anon");
+		filterChainDefinitionMap.put("/kindeditor-all-min.js", "anon");
 //		filterChainDefinitionMap.put("/api/**", "authc");
 //		filterChainDefinitionMap.put("/user/**","authc");
 		filterChainDefinitionMap.put("/**", "authc");

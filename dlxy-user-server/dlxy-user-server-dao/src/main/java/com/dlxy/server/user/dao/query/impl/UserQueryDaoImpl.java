@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -72,8 +73,8 @@ public class UserQueryDaoImpl implements UserQueryDao
 				userDTO.setRoleId(rs.getInt(5));
 				userDTO.setLastLoginIp(rs.getString(6));
 				userDTO.setLastLoginDate(rs.getDate(7));
-				userDTO.setCreateDate(rs.getDate(8));
-				userDTO.setUpdateDate(rs.getDate(9));
+				userDTO.setCreateDate((Date)rs.getObject(8));
+				userDTO.setUpdateDate((Date)rs.getObject(9));
 				userDTOs.add(userDTO);
 			}
 			return userDTOs;

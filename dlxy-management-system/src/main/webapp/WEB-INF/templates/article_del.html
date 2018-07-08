@@ -48,7 +48,7 @@
 					<#if pageVO??>
 						<#list pageVO.data as item>
 							<tr>
-								<td><input name="checked" lay-skin="primary" lay-filter="choose" type="checkbox">
+								<td><input name="checked" lay-skin="primary" lay-filter="choose" type="checkbox" value="${item.articleId?c}">
 									<div class="layui-unselect layui-form-checkbox" lay-skin="primary"><i class="layui-icon"></i></div>
 								</td>
 								<td align="left">${item.articleName}</td>
@@ -57,7 +57,7 @@
 								<td>${item.deleteDateStr!"unknow"}</td>
 								<td>
 									<input type="button" class="layui-btn layui-btn-mini news_edit" value="恢复" id="rollBackButton" onclick="rollBack(this)" articleId="${item.articleId?c}">
-									<input type="button" class="layui-btn layui-btn-danger layui-btn-mini news_del"  value="彻底删除">
+									<a class="layui-btn layui-btn-danger layui-btn-mini news_del" data-id="1" articleId="${item.articleId?c}" onclick="singleDelIndeed(this)"><i class="layui-icon"></i> 彻底删除</a>
 								</td>
 							</tr>
 						</#list>
@@ -65,7 +65,7 @@
 					</tbody>
 					</table>
                      <div class="larry-table-page clearfix">
-                          <a href="javascript:;" class="layui-btn layui-btn-small"><i class="iconfont icon-shanchu1"></i>删除</a>
+                     		<input type="buttdon" class="layui-btn layui-btn-small" id="batchDelButton" value="批量彻底删除"> 
 				          <div id="page" class="page">
 							<#if pageVO??>
 							      <form name="pageForm" action="/article/deleted.html" method="get">
@@ -103,6 +103,22 @@
 			}
 		},'json');	
 	}
+	$("#batchDelButton").click(function(){
+		var ids="";
+		$("input:checkbox[name=checked]:checked").each(function(){
+			ids+=$(this).val()+",";
+		})
+		alert(ids);
+		jQuery.get('/api/article/delete.html',{"articleId":ids},function(data,textStatus,jqXHR){
+ 			alert(data.msg);
+ 		},'json');
+	})
+	 function singleDelIndeed(obj){
+ 		var articleId=$(obj).attr("articleId");
+ 		jQuery.get('/api/article/delete.html',{"articleId":articleId},function(data,textStatus,jqXHR){
+ 			alert(data.msg);
+ 		},'json');
+ 	}
 </script>
 <#include "wrapper-down.html">
 </body>

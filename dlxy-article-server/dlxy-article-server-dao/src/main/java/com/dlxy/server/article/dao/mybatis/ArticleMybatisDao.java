@@ -83,5 +83,8 @@ public interface ArticleMybatisDao
 	@Update("update dlxy_article set article_status=#{status} where article_id=#{articleId} and exists(select 1 from dlxy_title b where b.title_id = #{titleId})")
 	int rollBackArticle(@Param("status") int status, @Param("articleId") Long articleId,
 			@Param("titleId") Integer titleId);
+	
+	
+	void deleteInBatch(Long[] articleIds);
 
 }

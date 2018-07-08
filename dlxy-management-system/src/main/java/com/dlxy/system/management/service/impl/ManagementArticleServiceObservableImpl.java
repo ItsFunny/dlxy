@@ -11,16 +11,25 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Observable;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.dlxy.common.dto.ArticleDTO;
+import com.dlxy.common.dto.DlxyTitleDTO;
 import com.dlxy.common.dto.PageDTO;
 import com.dlxy.common.dto.UserRecordDTO;
 import com.dlxy.common.utils.PageResultUtil;
 import com.dlxy.server.article.service.IArticleCountService;
 import com.dlxy.server.article.service.IArticleService;
+import com.dlxy.server.article.service.ITitleService;
+import com.dlxy.system.management.exception.ManagementIllegalException;
 import com.dlxy.system.management.service.IArticleManagementWrappedService;
+import com.joker.library.utils.CommonUtils;
 
 
 /**
@@ -39,6 +48,8 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 	@Autowired
 	private IArticleCountService articleCountService;
 	
+	@Autowired
+	private ITitleService titleService;
 
 	@Override
 	public PageDTO<Collection<ArticleDTO>> findByParams(int pageSize, int pageNum, Map<String, Object> params)
@@ -70,14 +81,12 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 	public void updateArticlesInBatch(Long userId,Long[] articleIds, int status)
 	{
 		articleService.updateArticleStatusInBatch(articleIds,status);
-		setChanged();
 		StringBuilder sBuilder=new StringBuilder();
 		for (Long long1 : articleIds)
 		{
 			sBuilder.append(long1+",");
 		}
-		UserRecordDTO userRecordDTO=UserRecordDTO.getUserRecordDTO(userId, "update:article:"+sBuilder+":status to "+status);
-		notifyObservers(userRecordDTO);
+		execute(userId, "update:article:"+sBuilder+":status to "+status);
 	}
 
 	@Override
@@ -95,9 +104,8 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 		try
 		{
 			count = articleService.rollBackArticle(status, articleId, titleId);
-			setChanged();
 			String detail="rollback:article:"+articleId+":status to "+status;
-			notifyObservers(UserRecordDTO.getUserRecordDTO(userId,detail));
+			execute(userId, detail);
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
@@ -149,6 +157,48 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 		return new PageDTO<Collection<ArticleDTO>>(count, collection);
 	}
 
+
+	@Override
+	public void addTitleOrUpdate(Long userId,DlxyTitleDTO dlxyTitleDTO)
+	{
+		titleService.insertOrUpdate(dlxyTitleDTO);
+		execute(userId, "addOrUpdate:title:"+dlxyTitleDTO.getTitleId());
+	}
+
+
+	@Override
+	public void deleteByTitleId(Long userId, Integer titleId)
+	{
+		DlxyTitleDTO dlxyTitleDTO = titleService.findById(titleId);
+		if(null==dlxyTitleDTO)
+		{
+			ServletRequestAttributes attributes=(ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+			HttpServletRequest request = attributes.getRequest();
+			throw new ManagementIllegalException(CommonUtils.getRemortIP(request),userId,"试图删除不存在的标题:"+titleId);
+		}
+		titleService.deleteByTitleId(dlxyTitleDTO.getTitleId());
+		String detail="delete:title:"+titleId+dlxyTitleDTO.getTitleName();
+		execute(userId, detail);
+	}
+
+
+	@Override
+	public void deleteInBatch(Long userId, Long[] articleIds)
+	{
+		articleService.deleteArticlesInBatch(articleIds);
+		String detail="delete:article:";
+		for (Long long1 : articleIds)
+		{
+			detail+=long1+",";
+		}
+		execute(userId, detail);
+	}
+
+	private void execute(Long userId,String detail)
+	{
+		setChanged();
+		notifyObservers(UserRecordDTO.getUserRecordDTO(userId, detail));
+	}
 	
 
 }

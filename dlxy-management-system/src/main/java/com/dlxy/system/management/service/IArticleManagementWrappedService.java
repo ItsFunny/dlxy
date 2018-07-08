@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import com.dlxy.common.dto.ArticleDTO;
+import com.dlxy.common.dto.DlxyTitleDTO;
 import com.dlxy.common.dto.PageDTO;
 
 /**
@@ -45,6 +46,12 @@ public interface IArticleManagementWrappedService
 	void insertOrUpdate(ArticleDTO articleDTO);
 	
 	
+	
+	void addTitleOrUpdate(Long userId,DlxyTitleDTO dlxyTitleDTO);
+	
+	void deleteByTitleId(Long userId,Integer titleId);	
+	
+	void deleteInBatch(Long userId,Long[] articleIds);
 	
 
 }

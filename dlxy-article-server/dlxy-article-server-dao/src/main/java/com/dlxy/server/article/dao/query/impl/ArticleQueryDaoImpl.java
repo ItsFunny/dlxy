@@ -88,6 +88,7 @@ public class ArticleQueryDaoImpl implements ArticleQueryDao
 				articleDTO.setArticleName(rs.getString(3));
 				articleDTO.setArticleAuthor(rs.getString(4));
 				articleDTO.setArticleIsRecommend(rs.getInt(5));
+				System.out.println(rs.getDate(6));
 				articleDTO.setCreateDate(rs.getDate(6));
 				articleDTO.setUpdateDate(rs.getDate(7));
 				System.out.println(rs.getObject(7));
@@ -175,9 +176,8 @@ public class ArticleQueryDaoImpl implements ArticleQueryDao
 					articleDTO.setArticleName(rs.getString(3));
 					articleDTO.setArticleAuthor(rs.getString(4));
 					articleDTO.setArticleIsRecommend(rs.getInt(5));
-					articleDTO.setCreateDate(rs.getDate(6));
-					articleDTO.setUpdateDate(rs.getDate(7));
-					System.out.println(rs.getObject(7));
+					articleDTO.setCreateDate((Date)rs.getObject(6));
+					articleDTO.setUpdateDate((Date)rs.getObject(7));
 					articleDTO.setArticleStatus(rs.getInt(8));
 					articleDTO.setUsername(rs.getString(9));
 					articleDTO.setUserId(rs.getLong(10));

@@ -108,62 +108,6 @@ public class UserController
 		modelAndView = new ModelAndView("users", params);
 		return modelAndView;
 	}
-
-	 @RequiresRoles(value="admin")
-	@RequestMapping(value = "/add")
-	public ModelAndView addUser(HttpServletRequest request, HttpServletResponse response)
-	{
-		ModelAndView modelAndView = new ModelAndView("user_add");
-		modelAndView.addObject("user",ManagementUtil.getLoginUser());
-		return modelAndView;
-	}
-
-	 @RequiresRoles(value="admin")
-	@RequestMapping(value = "/doAddUser")
-	public ModelAndView doAddUser(FormUser formUser, BindingResult result, Model model, HttpServletRequest request,
-			HttpServletResponse response) throws UnsupportedEncodingException
-	{
-		request.setCharacterEncoding("UTF-8");
-		ModelAndView modelAndView = null;
-		Map<String, Object> params = model.asMap();
-		if (result.hasErrors())
-		{
-			params.put("error", result.getAllErrors());
-		}
-		UserDTO userDTO = new UserDTO();
-		if (StringUtils.isEmpty(formUser.getRealname()))
-		{
-			params.put("error", "姓名不可为空");
-		} else if ( !CommonUtils.validString(formUser.getRealname()))
-		{
-			params.put("error", "姓名格式错误,正确格式为: 王小二或者Justin Bieber");
-		}
-		if (!params.containsKey("error"))
-		{
-			formUser.to(userDTO);
-			String ip = CommonUtils.getRemortIP(request);
-			userDTO.setLastLoginIp(ip);
-
-			try
-			{
-				userManagementWrappedService.addUser(ManagementUtil.getLoginUser().getUserId(), userDTO);
-			} catch (Exception e)
-			{
-				e.printStackTrace();
-				logger.error("[add user]error {}", e.getMessage());
-				params.put("error", "姓名冲突,请更换姓名");
-			}
-			if (!params.containsKey("error"))
-			{
-				params.put("error", "添加成功");
-				modelAndView=new ModelAndView("redirect:/user/all.html",params);
-				return modelAndView;
-			}
-		}
-		modelAndView = new ModelAndView("error", params);
-		return modelAndView;
-	}
-
 	/*
 	 * 只允许让admin或者是本人访问,其他人不可访问,若访问则会记录信息
 	 */
@@ -233,6 +177,63 @@ public class UserController
 		modelAndView = new ModelAndView("my_releases", params);
 		return modelAndView;
 	}
+
+	 @RequiresRoles(value="admin")
+	@RequestMapping(value = "/add")
+	public ModelAndView addUser(HttpServletRequest request, HttpServletResponse response)
+	{
+		ModelAndView modelAndView = new ModelAndView("user_add");
+		modelAndView.addObject("user",ManagementUtil.getLoginUser());
+		return modelAndView;
+	}
+
+	 @RequiresRoles(value="admin")
+	@RequestMapping(value = "/doAddUser")
+	public ModelAndView doAddUser(FormUser formUser, BindingResult result, Model model, HttpServletRequest request,
+			HttpServletResponse response) throws UnsupportedEncodingException
+	{
+		request.setCharacterEncoding("UTF-8");
+		ModelAndView modelAndView = null;
+		Map<String, Object> params = model.asMap();
+		if (result.hasErrors())
+		{
+			params.put("error", result.getAllErrors());
+		}
+		UserDTO userDTO = new UserDTO();
+		if (StringUtils.isEmpty(formUser.getRealname()))
+		{
+			params.put("error", "姓名不可为空");
+		} else if ( !CommonUtils.validString(formUser.getRealname()))
+		{
+			params.put("error", "姓名格式错误,正确格式为: 王小二或者Justin Bieber");
+		}
+		if (!params.containsKey("error"))
+		{
+			formUser.to(userDTO);
+			String ip = CommonUtils.getRemortIP(request);
+			userDTO.setLastLoginIp(ip);
+
+			try
+			{
+				userManagementWrappedService.addUser(ManagementUtil.getLoginUser().getUserId(), userDTO);
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+				logger.error("[add user]error {}", e.getMessage());
+				params.put("error", "姓名冲突,请更换姓名");
+			}
+			if (!params.containsKey("error"))
+			{
+				params.put("error", "添加成功");
+				modelAndView=new ModelAndView("redirect:/user/all.html",params);
+				return modelAndView;
+			}
+		}
+		modelAndView = new ModelAndView("error", params);
+		return modelAndView;
+	}
+
+	
 	/*
 	 * q和userId 以q 为主,如果q存在并且
 	 */

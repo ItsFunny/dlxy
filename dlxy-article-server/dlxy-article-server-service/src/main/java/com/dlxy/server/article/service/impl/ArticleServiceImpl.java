@@ -122,5 +122,11 @@ public class ArticleServiceImpl implements IArticleService ,IUserArticleService
 		return articleDao.countAllArticles();
 	}
 
+	@Override
+	public void deleteArticlesInBatch(Long[] articleIds)
+	{
+		articleDao.deleteInBatch(articleIds);
+	}
+
 
 }

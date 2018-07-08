@@ -48,4 +48,16 @@ public class TitleServiceImpl implements ITitleService
 		return titleDao.findById(titleId);
 	}
 
+	@Override
+	public void insertOrUpdate(DlxyTitleDTO dlxyTitleDTO)
+	{
+		titleDao.insertOrUpdate(dlxyTitleDTO);
+	}
+
+	@Override
+	public void deleteByTitleId(Integer titleId)
+	{
+		titleDao.deleteByTitleId(titleId);
+	}
+
 }

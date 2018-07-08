@@ -89,7 +89,7 @@ public class UserArticleQueryDaoImpl implements UserArticleQueryDao
 	public List<Map<String, Object>> findByPage(Map<String, Object> params) throws SQLException
 	{
 		List<Object> l = new LinkedList<>();
-		String sql = "select a.username, b.article_status, a.user_id, b.article_id,b.article_name ,b.article_author,b.create_date "
+		String sql = "select a.username, b.article_status, a.user_id, b.article_id,b.article_name ,b.article_author,b.create_date ,b.title_id ,b.title_name,b.update_date,b.delete_date"
 				+ "from dlxy_user_article a , dlxy_article b " + "where 1=1 and a.article_id=b.article_id ";
 		if (params.containsKey("userId"))
 		{

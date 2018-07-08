@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="ch">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="左右结构项目，属于大人员的社交工具">
+    <meta name="keywords" content="左右结构项目 社交 占座 ">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <title>Bootstrap左右结构响应式后台管理模板</title>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/common.css"/>
+    <link rel="stylesheet" type="text/css" href="css/flat-ui.min.css"/>
+    <link rel="stylesheet" type="text/css" href="css/01style.css">
+</head>
+<body>
+<div id="wrap">
+
+    <!-- 右侧具体内容栏目 -->
+    <div id="leftContent">
+        <a class="toggle-btn" id="nimei">
+            <i class="glyphicon glyphicon-align-justify"></i>
+        </a>
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <!-- 资源管理模块 -->
+            <div role="tabpanel" class="tab-pane active" id="sour">
+                <div class="check-div form-inline">
+                    <button class="btn btn-yellow btn-xs" data-toggle="modal" data-target="#addSource2">添加标题</button>
+                </div>
+                <div class="data-div">
+                    <div class="row tableHeader">
+                        <div class="col-lg-11 col-md-11 col-sm-11 col-xs-11">
+                            名称
+                        </div>
+                        <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1">
+                            操作
+                        </div>
+                    </div>
+                    <div class="tablebody">
+                        <div class="accordion" id="accordion-38202">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--页码块-->
+
+        <!--弹出窗口 添加资源-->
+        <div class="modal fade" id="addSource" role="dialog" aria-labelledby="gridSystemModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="gridSystemModalLabel">添加子标题</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <form class="form-horizontal">
+                            <div class="form-group ">
+                                <label for="sName" class="col-xs-3 control-label">名称：</label>
+                                <div class="col-xs-8 ">
+                                    <input type="email" class="form-control input-sm duiqi" id="sName"
+                                           placeholder="">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-xs btn-xs btn-white" data-dismiss="modal">取 消</button>
+                    <button type="button" class="btn btn-xs btn-xs btn-green" onclick="addson1()" data-dismiss="modal">保 存</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+        <!-- /.modal -->
+        <div class="modal fade" id="addSource2" role="dialog" aria-labelledby="gridSystemModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="gridSystemModalLabel">添加标题</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <form class="form-horizontal">
+                                <div class="form-group ">
+                                    <label for="sName" class="col-xs-3 control-label">名称：</label>
+                                    <div class="col-xs-8 ">
+                                        <input type="email" class="form-control input-sm duiqi" id="fName"
+                                               placeholder="">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-xs btn-xs btn-white" data-dismiss="modal">取 消</button>
+                        <button type="button" class="btn btn-xs btn-xs btn-green" onClick="addson()" data-dismiss="modal">保 存</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+
+        <!--修改资源弹出窗口-->
+        <div class="modal fade" id="changeSource" role="dialog" aria-labelledby="gridSystemModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="gridSystemModalLabel">修改标题</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <form class="form-horizontal">
+                                <div class="form-group ">
+                                    <label for="sName" class="col-xs-3 control-label">名称：</label>
+                                    <div class="col-xs-8 ">
+                                        <input type="email" class="form-control input-sm duiqi" id="xName"
+                                               placeholder="">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-xs btn-white" data-dismiss="modal">取 消</button>
+                        <button type="button" class="btn btn-xs btn-green" data-dismiss="modal" onclick="changeson()">保 存</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+        <!--弹出删除资源警告窗口-->
+        <div class="modal fade" id="deleteSource2" role="dialog" aria-labelledby="gridSystemModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="gridSystemModalLabel">提示</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        确定要删除该标题？删除后不可恢复！
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-xs btn-white" data-dismiss="modal">取 消</button>
+                    <button type="button" class="btn btn-xs btn-danger" data-dismiss="modal" onclick="deleteson1()">确 定</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+        <div class="modal fade" id="deleteSource" role="dialog" aria-labelledby="gridSystemModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="gridSystemModalLabel">提示</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            确定要删除该标题？删除后不可恢复！
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-xs btn-white" data-dismiss="modal">取 消</button>
+                        <button type="button" class="btn btn-xs btn-danger" data-dismiss="modal" onclick="deleteson()">确 定</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+    </div>
+</div>
+<script>
+    var bele;
+
+    //according-group
+    var accgroup=document.createElement("div");
+
+    //according-heading
+    var accheading=document.createElement("div");
+
+    //accordion-toggle block
+    var acctoggle=document.createElement("a");
+
+
+    //btg
+    var btg=document.createElement("div");
+
+
+    //delete
+    var detele=document.createElement("button");
+    var detele2=document.createElement("button");
+    //change
+    var change=document.createElement("button");
+
+    //add
+    var add=document.createElement("add");
+
+    var add2=document.createElement("add");
+
+
+    var accbody=document.createElement("div");
+
+
+    var accinner=document.createElement("div");
+
+
+    var title=document.createElement("div");
+
+
+    var btg1=document.createElement("div");
+
+
+    function init() {
+        accgroup=document.createElement("div");
+        accgroup.setAttribute("class","accordion-group");
+
+//according-heading
+        accheading=document.createElement("div");
+        accheading.setAttribute("class","accordion-heading");
+
+//accordion-toggle block
+        acctoggle=document.createElement("a");
+        acctoggle.setAttribute("class","accordion-toggle block");
+        acctoggle.setAttribute("data-parent","accordion-38202");
+        acctoggle.setAttribute("data-toggle","collapse");
+        acctoggle.setAttribute("href","");
+
+//btg
+        btg=document.createElement("div");
+        btg.setAttribute("class","btg");
+
+//delete
+        detele=document.createElement("button");
+        detele.innerHTML="删除";
+        detele.setAttribute("class","btn btn-danger btn-xs right");
+        detele.setAttribute("data-toggle","modal");
+        detele.setAttribute("data-target","#deleteSource");
+        detele.setAttribute("onclick","toas1(this)");
+
+        detele2=document.createElement("button");
+        detele2.innerHTML="删除";
+        detele2.setAttribute("class","btn btn-danger btn-xs right");
+        detele2.setAttribute("data-toggle","modal");
+        detele2.setAttribute("data-target","#deleteSource2");
+        detele2.setAttribute("onclick","toas1(this)");
+//change
+        change=document.createElement("button");
+        change.innerHTML="修改";
+        change.setAttribute("class","btn btn-success btn-xs right");
+        change.setAttribute("data-toggle","modal");
+        change.setAttribute("data-target","#changeSource");
+        change.setAttribute("onclick","toas1(this)");
+
+//add
+        add=document.createElement("add");
+        add.innerHTML="添加";
+        add.setAttribute("class","btn btn-add btn-xs right");
+        add.setAttribute("data-toggle","modal");
+        add.setAttribute("data-target","#addSource");
+        add.setAttribute("onclick","toas1(this)");
+
+        add2=document.createElement("add");
+        add2.innerHTML="添加";
+        add2.setAttribute("class","btn btn-add btn-xs right");
+        add2.setAttribute("data-toggle","modal");
+        add2.setAttribute("data-target","#addSource2");
+        add2.setAttribute("onclick","toas1(this)");
+
+
+        accbody=document.createElement("div");
+        accbody.setAttribute("class","accordion-body collapse");
+        accbody.setAttribute("id","");
+
+        accinner=document.createElement("div");
+        accinner.setAttribute("class","accordion-inner");
+
+        title=document.createElement("div");
+        title.setAttribute("class","title");
+
+
+        btg1=document.createElement("div");
+        btg1.setAttribute("class","btg1");
+    }
+    function toas1(ele) {
+        bele=ele;
+    }
+    function addson() {
+        init();
+        var num=document.getElementsByTagName("div").length;
+        var value=document.getElementsByClassName("accordion-body").length;
+        var oarr=document.getElementById("accordion-38202");
+        var oname=document.getElementById("fName").value;
+        accgroup.appendChild(accheading);
+        accheading.appendChild(acctoggle);
+        accheading.appendChild(btg);
+        btg.appendChild(detele);
+        btg.appendChild(change);
+        btg.appendChild(add);
+        accgroup.appendChild(accbody);
+        acctoggle.setAttribute("href","#accordion-element-"+num);
+        acctoggle.innerHTML=oname;
+        accbody.setAttribute("id","accordion-element-"+num);
+        accbody.setAttribute("value",value);
+        oarr.appendChild(accgroup);
+        init();
+    }
+
+    function addson1() {
+        init();
+        var op1 =bele.parentNode.parentNode.parentNode.children;
+        var op6=op1[1];
+        var oname = document.getElementById("sName").value;
+        var op2=op1[1];
+        op2.appendChild(accinner);
+        accinner.appendChild(title);
+        title.innerHTML=oname;
+        btg1.appendChild(detele2);
+        btg1.appendChild(change);
+        accinner.appendChild(btg1);
+        init();
+    }
+    function changeson() {
+        var op1=bele.parentNode.parentNode.children;
+        var op2=op1[0];
+        op2.innerHTML="1";
+    }
+    function deleteson() {
+        var op1=bele.parentNode.parentNode.parentNode;
+        var op2=op1.parentNode;
+        op2.removeChild(op1);
+    }
+    function deleteson1() {
+        var op1=bele.parentNode.parentNode;
+        var op2=op1.parentNode;
+        op2.removeChild(op1);
+        console.log(op2);
+    }
+
+    function initfa(name,id){
+            init();
+            var num=document.getElementsByTagName("div").length;
+            var oarr=document.getElementById("accordion-38202");
+            accgroup.appendChild(accheading);
+            accheading.appendChild(acctoggle);
+            accheading.appendChild(btg);
+            btg.appendChild(detele);
+            btg.appendChild(change);
+            btg.appendChild(add);
+            accgroup.appendChild(accbody);
+            acctoggle.setAttribute("href","#accordion-element-"+num);
+            acctoggle.innerHTML=name;
+            accbody.setAttribute("id","accordion-element-"+num);
+            accbody.setAttribute("value",id);
+            oarr.appendChild(accgroup);
+            var abody=accbody;
+            var url='/api/title/'+id+'.html';
+            $.ajax({
+                url:url,
+                type:'post',
+                dataType:'json',
+                success:function (data) {
+                    var son = data.data;
+                    for (i = 0; i < son.length; i++) {
+                        abody.appendChild(accinner);
+                        accinner.appendChild(title);
+                        title.innerHTML=son[i].titleName;
+                        btg1.appendChild(detele2);
+                        btg1.appendChild(change);
+                        accinner.appendChild(btg1);
+                        init();
+                    }
+
+                }})
+        init();
+
+    }
+    $.ajax({
+        url:'/api/titles.html',
+        type:'post',
+        dataType:'json',
+        success:succFunction
+
+    })
+
+    function succFunction(father) {
+        var obj=father.data;
+        for(i=0;i<obj.length;i++){
+            initfa(obj[i].titleName,obj[i].titleId);
+        }
+
+    }
+</script>
+</body>
+
+</html>

@@ -55,20 +55,20 @@
 		
 
 		<div class="layui-inline">
-			<a class="layui-btn layui-btn-danger batchDel" href="/user/releases.html">显示所有</a>
+			<a class="layui-btn layui-btn-danger " href="/user/releases.html">显示所有</a>
 		</div>
 		<div class="layui-inline">
-			<a class="layui-btn layui-btn-danger batchDel" href="javascript:void(0);" onclick="document.pageForm.pageNum=1;document.pageForm.articleStatus.value=2;document.pageForm.submit();">显示暂时删除的文章</a>
+			<a class="layui-btn layui-btn-danger " href="javascript:void(0);" onclick="document.pageForm.pageNum=1;document.pageForm.articleStatus.value=2;document.pageForm.submit();">显示暂时删除的文章</a>
 		</div>
 		<div class="layui-inline">
-			<a class="layui-btn layui-btn-danger batchDel" href="javascript:void(0);" onclick="document.pageForm.pageNum=1;document.pageForm.articleStatus.value=0;document.pageForm.submit();">显示下线的文章</a>
+			<a class="layui-btn layui-btn-danger " href="javascript:void(0);" onclick="document.pageForm.pageNum=1;document.pageForm.articleStatus.value=0;document.pageForm.submit();">显示下线的文章</a>
 		</div>
 		<div class="layui-inline">
 			注意,已经删除的文章,当超过删除时间10天之后将会自动删除,不可恢复
 		</div>
 	</blockquote>
             
-		         <!-- 操作日志 -->
+		          <!-- 操作日志 -->
                 <div class="layui-form news_list">
                     <table class="layui-table">
 					    <colgroup>
@@ -83,36 +83,50 @@
 					</colgroup>
 					<thead>
 						<tr>
-							<th><input name="" lay-skin="primary" lay-filter="allChoose" id="allChoose" type="checkbox">
+							<th>
+								<input name="" lay-skin="primary" lay-filter="allChoose" id="allChoose" type="checkbox">
 								<div class="layui-unselect layui-form-checkbox" lay-skin="primary"><i class="layui-icon"></i></div>
 							</th>
-							<th>文章ID</th>
+							<th>文章编号</th>
+							<th>所属分类</th>
 							<th style="text-align:left;">文章标题</th>
-							<th>作者 </th>
+							<th>作者</th>
+							<th>处理人</th>
 							<th>发布时间</th>
+							<th>更新时间</th>
 							<th>文章状态</th>
 							<th>操作</th>
 						</tr>
 					</thead>
-					<tbody class="news_content" id="dataDetail">
+					<tbody class="news_content" id="contentBody">
 					<#if pageVO.data??>
-						<#list pageVO.data as item >
-						<tr>
-							<td><input name="checked" lay-skin="primary" lay-filter="choose" type="checkbox">
-								<div class="layui-unselect layui-form-checkbox" lay-skin="primary"><i class="layui-icon"></i></div>
+						<#list pageVO.data as item>
+							<tr>
+							<td>
+								<input name="checked" lay-skin="primary" lay-filter="choose" type="checkbox" value="${item.article_id?c}">
+								<div class="layui-unselect layui-form-checkbox" lay-skin="primary">
+								<i class="layui-icon"></i>
+								</div>
 							</td>
-							<td>${item.article_id ?c}</td>
+							<td>${item.article_id?c}</td>
+							<td>${item.title_name!"unkonwn"}</td>
 							<td align="left">${item.article_name}</td>
 							<td>${item.article_author}</td>
-							<td>${item.create_date?string('yyyy-MM-dd HH:mm:ss')}</td>
-							
-						<#if item.article_status == 0>
+							<td><a href="/user/releases.html?userId=${item.user_id}">${item.username!"unknow"}</a></td>
+							<td>
+								${item.create_date?string('yyyy-MM-dd HH:mm:ss')}
+							</td>
+							<td>
+								<#if item.update_date??>
+									${item.update_date?string('yyyy-MM-dd HH:mm:ss')}
+								</#if>
+							</td>
+								<#if item.article_status == 0>
 							<td>下线</td>
 							<td>
 									<a class="layui-btn layui-btn-mini news_edit"  onclick="changeStatus(this,1);" articleId="${item.article_id?c}" "><i class="iconfont icon-edit" ></i> 上线</a>
 									<a class="layui-btn layui-btn-mini " data-toggle="modal" data-target="#changeSource" onclick="loadArticle(this);" articleId="${item.article_id?c}"><i class="iconfont icon-edit"></i> 编辑</a>
 									<a class="layui-btn layui-btn-mini "  onclick="changeStatus(this,3)" articleId="${item.article_id?c}"><i class="iconfont icon-edit"></i> 设为推荐新闻</a>
-									<a class="layui-btn layui-btn-mini news_edit"  onclick="changeStatus(this,2);" articleId="${item.article_id?c}" "><i class="iconfont icon-edit" ></i> 删除</a>
 									<a class="layui-btn layui-btn-danger layui-btn-mini news_del" data-id="1" articleId="${item.article_id?c}"><i class="layui-icon"></i> 彻底删除</a>
 							</td>
 							<#elseif item.article_status ==1 >
@@ -121,7 +135,6 @@
 									<a class="layui-btn layui-btn-mini news_edit"  articleId="${item.article_id?c}" onclick="changeStatus(this,0);"><i class="iconfont icon-edit" ></i> 下线</a>
 									<a class="layui-btn layui-btn-mini " data-toggle="modal" data-target="#changeSource" onclick="loadArticle(this);" articleId="${item.article_id?c}"><i class="iconfont icon-edit"></i> 编辑</a>
 									<a class="layui-btn layui-btn-mini "  onclick="changeStatus(this,3);" articleId="${item.article_id?c}"><i class="iconfont icon-edit"></i> 设为推荐新闻</a>
-									<a class="layui-btn layui-btn-mini news_edit"  onclick="changeStatus(this,2);" articleId="${item.article_id?c}" "><i class="iconfont icon-edit" ></i> 删除</a>
 									<a class="layui-btn layui-btn-danger layui-btn-mini news_del" data-id="1" articleId="${item.article_id?c}"><i class="layui-icon"></i> 彻底删除</a>
 							</td>
 							<#elseif item.article_status == 2>
@@ -130,7 +143,6 @@
 									<a class="layui-btn layui-btn-mini news_edit" articleId="${item.article_id?c}" onclick="changeStatus(this,0)"><i class="iconfont icon-edit" ></i> 恢复</a>
 									<a class="layui-btn layui-btn-mini " data-toggle="modal" data-target="#changeSource" onclick="loadArticle(this);" articleId="${item.article_id?c}"><i class="iconfont icon-edit"></i> 编辑</a>
 									<a class="layui-btn layui-btn-mini "  onclick="changeStatus(this,3);" articleId="${item.article_id?c}"><i class="iconfont icon-edit"></i> 设为推荐新闻</a>
-									<a class="layui-btn layui-btn-mini news_edit"  onclick="changeStatus(this,2);" articleId="${item.article_id?c}" "><i class="iconfont icon-edit" ></i> 删除</a>
 									<a class="layui-btn layui-btn-danger layui-btn-mini news_del" data-id="1" articleId="${item.article_id?c}"><i class="layui-icon"></i> 彻底删除</a>
 							</td>
 							<#else>
@@ -139,44 +151,42 @@
 									<a class="layui-btn layui-btn-mini news_edit" articleId="${item.article_id?c}" onclick="changeStatus(this,1)"><i class="iconfont icon-edit" ></i> 取消推荐</a>
 									<a class="layui-btn layui-btn-mini " data-toggle="modal" data-target="#changeSource" onclick="loadArticle(this);" articleId="${item.article_id?c}"><i class="iconfont icon-edit"></i> 编辑</a>
 									<a class="layui-btn layui-btn-mini "  onclick="changeStatus(this,3);" articleId="${item.article_id?c}"><i class="iconfont icon-edit"></i> 设为推荐新闻</a>
-									<a class="layui-btn layui-btn-mini news_edit"  onclick="changeStatus(this,2);" articleId="${item.article_id?c}" "><i class="iconfont icon-edit" ></i> 删除</a>
 									<a class="layui-btn layui-btn-danger layui-btn-mini news_del" data-id="1" articleId="${item.article_id?c}"><i class="layui-icon"></i> 彻底删除</a>
 							</td>
 							</#if>
-							
 						</tr>
 						</#list>
 					</#if>
 					</tbody>
 					</table>
                      <div class="larry-table-page clearfix">
-                          <a href="javascript:;" class="layui-btn layui-btn-small"><i class="iconfont icon-shanchu1"></i>彻底删除</a>
-						<#if pageVO??>
-					      <form name="pageForm" action="/user/releases.html" method="get">
-						      	<input type="hidden" name="pageNum" value="${pageVO.pageNum}">
-						      	<input type="hidden" name="q" value="${q!""}">
-						      	<input type="hidden" name="articleStatus" value="${articleStatus!""}">
-						      	<input type="hidden" name="userId" value="${userId!""}">
-						      	<div id="page2" class="page">
-									<div class="layui-box layui-laypage layui-laypage-default" id="layui-laypage-0">
-										<span class="layui-laypage-curr">
-							      			<em class="layui-laypage-em"></em>
-							      			<em>当前第 ${pageVO.pageNum}页 总共有${pageVO.maxPage}页,总计${pageVO.totalCount}条记录 </em>
-						      			</span>
-										<#if pageVO.pageNum==1><a href="javascript:void(0)">首页</a>	<#else><a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=1;document.pageForm.submit();">首页</a>   </#if>
-										<#if pageVO.pageNum<=1> <a href="javascript:void(0)">上一页</a><#else><a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=(${pageVO.pageNum}-1);document.pageForm.submit();"> 上一页</a>  </#if>
-										<#if (pageVO.pageNum>=pageVO.maxPage)> <a href="javascript:void(0)">下一页</a>  <#else><a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=${pageVO.pageNum}+1;document.pageForm.submit();">下一页</a> </#if>		
-										<#if (pageVO.pageNum>=pageVO.maxPage)> <a href="javascript:void(0)">最后一页</a> <#else> <a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=${pageVO.maxPage};document.pageForm.submit();">最后一页</a> </#if>>
-									</div>				          
-						      </div>
-					      </form>
-			 			</#if>
+                          <input type="button" id="batchDelButton" class="layui-btn layui-btn-small" value="删除">
+                           <#if pageVO??>
+						      <form name="pageForm" action="/user/releases.html" method="get">
+							      	<input type="hidden" name="pageNum" value="${pageVO.pageNum}">
+							      	<input type="hidden" name="q" value="${q!""}">
+							      	<input type="hidden" name="articleStatus" value="${articleStatus!""}">
+							      	<div id="page2" class="page">
+										<div class="layui-box layui-laypage layui-laypage-default" id="layui-laypage-0">
+											<span class="layui-laypage-curr">
+								      			<em class="layui-laypage-em"></em>
+								      			<em id="pageEm">当前第 ${pageVO.pageNum}页 总共有${pageVO.maxPage}页 总共有${pageVO.totalCount}条记录</em>
+							      			</span>
+											<#if pageVO.pageNum==1><a href="javascript:void(0)">首页</a>	<#else><a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=1;document.pageForm.submit();">首页</a>   </#if>
+											<#if pageVO.pageNum<=1> <a href="javascript:void(0)">上一页</a><#else><a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=(${pageVO.pageNum}-1);document.pageForm.submit();"> 上一页</a>  </#if>
+											<#if (pageVO.pageNum>=pageVO.maxPage)> <a href="javascript:void(0)">下一页</a>  <#else><a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=${pageVO.pageNum}+1;document.pageForm.submit();">下一页</a> </#if>		
+											<#if (pageVO.pageNum>=pageVO.maxPage)> <a href="javascript:void(0)">最后一页</a> <#else> <a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=${pageVO.maxPage};document.pageForm.submit();">最后一页</a> </#if>>
+										</div>				          
+							      </div>
+						      </form>
+						 </#if>
 			         </div>
 			    </div>
-			     <!-- 登录日志 -->
+			    </div>
 		    </div>
 		</div>
-		<div class="modal fade" id="changeSource" role="dialog" aria-labelledby="gridSystemModalLabel">
+	<form method="post" action="/api/article/update.html" id="editForm">
+	<div class="modal fade" id="changeSource" role="dialog" aria-labelledby="gridSystemModalLabel">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -187,7 +197,6 @@
 				</div>
 				<div class="modal-body">
 					<div class="container-fluid">
-						<form class="form-horizontal">
 								<label class="col-xs-3 control-label">文章标题：</label>
 								<div class="col-xs-8 ">
 									<input type="text" class="form-control input-sm duiqi" id="edit_articleName" placeholder="" name="articleName">
@@ -219,21 +228,24 @@
 								<textarea cols="0" rows="5" name="articleContent" class="form-control" id="edit_articleContent" style="margin: 0px -0.5px 0px 0px; height: 250px; width: 100%;">
     							</textarea>
 							</div>
-						</form>
+						
 					</div>
 				</div>
 				<div class="modal-footer">
+					<input type="hidden" name="articleId" id="edit_articleId">
 					<button type="button" class="btn btn-xs btn-white" data-dismiss="modal">取 消</button>
-					<button type="button" class="btn btn-xs btn-green" data-dismiss="modal">保 存</button>
+					<input type="button" id="editSaveButton" onclick="editSaveUpdate();" class="btn btn-xs btn-green"  value="保 存">
 				</div>
 			</div>
 		</div>
 	</div>
+</form>
 	
 </section>
 <script type="text/javascript" src="common/layui/layui.js"></script>
 <script type="text/javascript" src="js/newslist.js"></script>
 <script type="text/javascript">
+	
 	function editSaveUpdate(){
 		var d=$("#editForm").serialize();
 		jQuery.post('/api/article/update.html',d,function(data,textStatus,jqXHR){
@@ -257,7 +269,7 @@
 		jQuery.post('/api/article/del/batch.html',params,function(data,textStatus,jqXHR){
 			if(data.code==1){
 				alert('删除成功');
-				window.location.href="http://localhost:8000/article/all.html";
+				window.location.reload();
 			}else{
 				alert('fail');
 			}
@@ -276,44 +288,67 @@
 	}
 	$("#searchButton").click(function(){
 		var q=$("#searchText").val();
-		var userId=$("input[name=userId]").val();
-		jQuery.get('/api/search/article.html',{"q":q,"userId":userId},function(data,textStatus,jqXHR){
-				var obj=$("#dataDetail");
-			if(data.code==1){
-				alert(data.data.data.length);
-				if(data.data.data.length<1){
-				
-				}else{
-				obj.empty();
-				for(var i=0;i<data.data.data.length;i++){
-					var d=data.data.data[i];
-					obj.append('<tr><td><input name="checked" lay-skin="primary" lay-filter="choose" type="checkbox"><div class="layui-unselect layui-form-checkbox" lay-skin="primary"><i class="layui-icon"></i></div></td><td>'+d.articleId+'</td><td align="left">'+d.articleName+'</td><td>'+d.articleAuthor+'</td><td>'+d.createDate+'</td><td><a class="layui-btn layui-btn-mini news_edit"><i class="iconfont icon-edit"></i> 恢复</a><a class="layui-btn layui-btn-danger layui-btn-mini news_del" data-id="1"><i class="layui-icon"></i> 彻底删除</a></td></tr>')
-					}
+		$.ajax({
+			type:'get',
+			url:'/api/search/article.html',
+			data:{"q":q,"pageNum":1},
+			success:function(data,str){
+				if(data.code==1){
 					var pageVO=data.data;
-					var page=$("#layui-laypage-0");
-					page.empty();
-					page.append('<span class="layui-laypage-curr"><em class="layui-laypage-em"></em><em>当前第 '+pageVO.pageNum+'页 总共有'+pageVO.maxPage+'页,总计'+pageVO.totalCount+'条记录 </em></span>')
-					var str="";
-					if(pageVO.pageNum<=1){
-						str+='<a href="javascript:void(0);">首页</a>';
-						str+='<a href="javascript:void(0);">上一页</a>';
-					}else{
-						str='<a href="javascript:void(0);" onclick="document.pageForm.pageNum.value=1;document.pageForm.submit()"';
-						str+='<a href="javscript:void(0);" onclick="document.pageForm.pageNum.value='+(pageVO.pageNum-1)+';document.pageForm.submit();"';
+					document.pageForm.q.value=q;
+					var contentBody=$("#contentBody");
+					contentBody.empty();
+					for(var i=0;i<data.data.data.length;i++){
+						var p=data.data.data[i];
+						
+						var t='<tr><td><input name="checked" lay-skin="primary" lay-filter="choose" type="checkbox" value=""><div class="layui-unselect layui-form-checkbox" lay-skin="primary"><i class="layui-icon"></i></div></td><td>'+p.articleId+'</td><td>'+p.titleName+'</td><td align="left">'+p.articleName+'</td><td>'+p.articleAuthor+'</td>	<td>'+p.username+'</td><td>'+p.createDateStr+'</td><td>'+p.updateDateStr+'</td>'
+						if(p.status==0){
+							t+='<td>下线</td><td><a class="layui-btn layui-btn-mini news_edit"  onclick="changeStatus(this,1);" articleId="'+p.articleId+'" "><i class="iconfont icon-edit" ></i> 上线</a><a class="layui-btn layui-btn-mini " data-toggle="modal" data-target="#changeSource" onclick="loadArticle(this);" articleId="'+p.articleId+'"><i class="iconfont icon-edit"></i> 编辑</a><a class="layui-btn layui-btn-mini "  onclick="changeStatus(this,3)" articleId="'+p.articleId+'"><i class="iconfont icon-edit"></i> 设为推荐新闻</a><a class="layui-btn layui-btn-danger layui-btn-mini news_del" data-id="1" articleId="'+p.articleId+'"><i class="layui-icon"></i> 彻底删除</a></td>';
+						}else if(p.status==1){
+							t+='<td>上线</td><td><a class="layui-btn layui-btn-mini news_edit"  articleId="'+p.articleId+'" onclick="changeStatus(this,0);"><i class="iconfont icon-edit" ></i> 下线</a><a class="layui-btn layui-btn-mini " data-toggle="modal" data-target="#changeSource" onclick="loadArticle(this);" articleId="'+p.articleId+'"><i class="iconfont icon-edit"></i> 编辑</a><a class="layui-btn layui-btn-mini "  onclick="changeStatus(this,3);" articleId="'+p.articleId+'"><i class="iconfont icon-edit"></i> 设为推荐新闻</a><a class="layui-btn layui-btn-danger layui-btn-mini news_del" data-id="1" articleId="'+p.articleId+'"><i class="layui-icon"></i> 彻底删除</a></td>';
+						}else if(p.status==2){
+							t+='<td>回收站</td><td><a class="layui-btn layui-btn-mini news_edit" articleId="'+p.articleId+'" onclick="changeStatus(this,0)"><i class="iconfont icon-edit" ></i> 恢复</a><a class="layui-btn layui-btn-mini " data-toggle="modal" data-target="#changeSource" onclick="loadArticle(this);" articleId="'+p.articleId+'"><i class="iconfont icon-edit"></i> 编辑</a><a class="layui-btn layui-btn-mini "  onclick="changeStatus(this,3);" articleId="'+p.articleId+'"><i class="iconfont icon-edit"></i> 设为推荐新闻</a><a class="layui-btn layui-btn-danger layui-btn-mini news_del" data-id="1" articleId="'+p.articleId+'"><i class="layui-icon"></i> 彻底删除</a></td>';
+						}else{
+							t+='<td>被推荐文章</td><td><a class="layui-btn layui-btn-mini news_edit" articleId="'+p.articleId+'" onclick="changeStatus(this,1)"><i class="iconfont icon-edit" ></i> 取消推荐</a><a class="layui-btn layui-btn-mini " data-toggle="modal" data-target="#changeSource" onclick="loadArticle(this);" articleId="'+p.articleId+'"><i class="iconfont icon-edit"></i> 编辑</a><a class="layui-btn layui-btn-mini "  onclick="changeStatus(this,3);" articleId="'+p.articleId+'"><i class="iconfont icon-edit"></i> 设为推荐新闻</a><a class="layui-btn layui-btn-danger layui-btn-mini news_del" data-id="1" articleId="'+p.articleId+'"><i class="layui-icon"></i> 彻底删除</a></td>';
+						}
+						contentBody.append(t);
 					}
-					if(pageVO.pageNum>=pageVO.maxPage){
-						str+='<a href="javascript:void(0);">下一页</a>'	
-						str+='<a href="javascript:void(0);">最后一页</a>'
+					
+					var o=$("#layui-laypage-0");
+					if(data.data.data.length==0){
+						o.empty();
+						o.append('<span class="layui-laypage-curr"><em class="layui-laypage-em"></em><em id="pageEm">暂无数据</em></span>')
 					}else{
-						str+='<a href="javascript:void(0);" onclick="document.pageForm.pageNum.value='+(pageVO.pageNum+1)+';document.pageForm.submit()">下一页</a>'
-						str+='<a href="javascript:void(0)" onclick="document.pageForm.pageNum.value='+(pageVO.maxPage)+';document.pageForm.submit();">最后一页</a>'
+						o.empty();
+						var s='<span class="layui-laypage-curr"><em class="layui-laypage-em"></em><em id="pageEm">当前第'+pageVO.pageNum+'页 总共有'+pageVO.maxPage+'页</em></span>';
+						o.append(s);
+						s="";
+						if(pageVO.pageNum==1)
+						{
+							s+='<a href="javascript:void(0)">首页</a>';						
+						}else{
+							s+='<a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=1;document.pageForm.submit();">首页</a>';
+						}
+						if(pageVO.pageNum<=1){
+							s+=' <a href="javascript:void(0)">上一页</a>';
+						}else{
+							s+='<a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=('+pageVO.pageNum-1+');document.pageForm.submit();"> 上一页</a>';
+						}
+						if(pageVO.pageNum>=pageVO.maxPage){
+							s+='<a href="javascript:void(0)">下一页</a>';
+							s+='<a href="javascript:void(0)">最后一页</a>';
+						}else{
+							s+='<a href="javascript:void(0)" onclick="document.pageForm.pageNum.value='+(pageVO.pageNum+1)+';document.pageForm.submit();">下一页</a> ';
+							s+='<a href="javascript:void(0)" onclick="document.pageForm.pageNum.value='+pageVO.maxPage+';document.pageForm.submit();">最后一页</a>';
+						}
+						o.append(s);
 					}
-					page.append(str);
 				}
-			}else{
-				alert(data.msg);
-			}			
-		},'json');
+			},
+			error:function(data){
+				alert('fail');
+			}
+		});
 	});
 	function singleDelButton(obj){
 		var articleId=$(obj).attr("articleId");
@@ -349,29 +384,26 @@
 	function loadArticle(obj){
 		var articleId=$(obj).attr("articleId");
 		$("#edit_articleId").val(articleId);
+		var parentTitleId=$(obj).attr("parentTitleId");
+		var titleId=$(obj).attr("titleId");
 		jQuery.get('/api/article/detail/'+articleId+'.html',function(data,textStatus,jqXHR){
 			if(data.code==1){
 				var article=data.data;
 				$("#edit_articleName").val(article.articleName);
 				$("#edit_articleAuthor").val(article.articleAuthor);
 				KindEditor.html("#edit_articleContent", article.articleContent);
-				if(artilce.titleParentId==0){
-					loadTitle()	
-				}else{
-					
-				}
 			}else{
 				alert(data.msg);
 			}
-		},'json')
+		},'json');
+		loadTitle(parentTitleId);	
 	}
-	function loadTitle(obj){
+	function loadTitle(id){
 	 	$.ajax({
-	        url:'/api/title/'+obj+'.html',
+	        url:'/api/title/'+id+'.html',
 	        type:'post',
 	        dataType:'json',
 	        success:succFunction
-	
 	    })
  	}
 	function succFunction(father) {

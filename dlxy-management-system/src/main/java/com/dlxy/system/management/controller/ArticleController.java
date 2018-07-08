@@ -167,8 +167,6 @@ public class ArticleController
 		modelAndView=new ModelAndView("news",params);
 		return modelAndView;
 	}
-
-
 	@RequestMapping("/deleted")
 	public ModelAndView showAllDeletedArticles(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(name = "pageSize", defaultValue = "2") String pageSizeStr,

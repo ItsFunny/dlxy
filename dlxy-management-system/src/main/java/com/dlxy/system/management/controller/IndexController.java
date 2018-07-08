@@ -16,6 +16,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -108,6 +109,14 @@ public class IndexController
 		ModelAndView modelAndView = null;
 		String username=request.getParameter("username");
 		String password=request.getParameter("password");
+		String Vcode=request.getParameter("vcode");
+		Object o = request.getSession(true).getAttribute(SessionConstant.LOGIN_KCODE);
+		if(null==o || StringUtils.isEmpty((String)o) ||! ((String)o).equals(Vcode))
+		{
+			modelAndView=new ModelAndView("login");
+			modelAndView.addObject("error","验证码错误");
+			return modelAndView;
+		}
 		UserDTO userDTO = userService.findByUsername(username);
 		if(null==userDTO || !userDTO.getPassword().equals(KeyUtils.md5Encrypt(password)))
 		{

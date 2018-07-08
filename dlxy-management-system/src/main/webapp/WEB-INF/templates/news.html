@@ -46,29 +46,7 @@
 	    <div class="layui-tab">
             <blockquote class="layui-elem-quote news_search">
 		
-		<div class="layui-inline">
-		    <div class="layui-input-inline">
-		    	<input value="" placeholder="请输入关键字" class="layui-input search_input" type="text" id="searchText">
-		    </div>
-		    <input type="button" id="searchButton" value="查询" class="layui-btn search_btn">
-		</div>
 		
-
-		<div class="layui-inline">
-			<a class="layui-btn layui-btn-danger batchDel" href="/user/releases.html">显示所有</a>
-		</div>
-		<div class="layui-inline">
-			<a class="layui-btn layui-btn-danger batchDel" href="javascript:void(0);" onclick="document.pageForm.pageNum=1;document.pageForm.articleStatus.value=2;document.pageForm.submit();">显示暂时删除的文章</a>
-		</div>
-		<div class="layui-inline">
-			<a class="layui-btn layui-btn-danger batchDel" href="javascript:void(0);" onclick="document.pageForm.pageNum=1;document.pageForm.articleStatus.value=0;document.pageForm.submit();">显示下线的文章</a>
-		</div>
-		<div class="layui-inline">
-			<a class="layui-btn layui-btn-danger batchDel" href="javascript:void(0);" onclick="document.pageForm.pageNum=1;document.pageForm.articleStatus.value=3;document.pageForm.submit();">显示下线的文章</a>
-		</div>
-		<div class="layui-inline">
-			注意,已经删除的文章,当超过删除时间10天之后将会自动删除,不可恢复
-		</div>
 	</blockquote>
             
 		         <!-- 操作日志 -->
@@ -86,9 +64,6 @@
 					</colgroup>
 					<thead>
 						<tr>
-							<th><input name="" lay-skin="primary" lay-filter="allChoose" id="allChoose" type="checkbox">
-								<div class="layui-unselect layui-form-checkbox" lay-skin="primary"><i class="layui-icon"></i></div>
-							</th>
 							<th>文章ID</th>
 							<th style="text-align:left;">文章标题</th>
 							<th>作者 </th>
@@ -101,9 +76,6 @@
 					<#if pageVO.data??>
 						<#list pageVO.data as item >
 						<tr>
-							<td><input name="checked" lay-skin="primary" lay-filter="choose" type="checkbox">
-								<div class="layui-unselect layui-form-checkbox" lay-skin="primary"><i class="layui-icon"></i></div>
-							</td>
 							<td>${item.articleId ?c}</td>
 							<td align="left">${item.articleName}</td>
 							<td>${item.articleAuthor}</td>
@@ -122,7 +94,6 @@
 					</tbody>
 					</table>
                      <div class="larry-table-page clearfix">
-                          <a href="javascript:;" class="layui-btn layui-btn-small"><i class="iconfont icon-shanchu1"></i>彻底删除</a>
 						<#if pageVO??>
 					      <form name="pageForm" action="/user/releases.html" method="get">
 						      	<input type="hidden" name="pageNum" value="${pageVO.pageNum}">
@@ -259,6 +230,7 @@
 				obj.empty();
 				for(var i=0;i<data.data.data.length;i++){
 					var d=data.data.data[i];
+					var t='<tr><td><input name="checked" lay-skin="primary" lay-filter="choose" type="checkbox"><div class="layui-unselect layui-form-checkbox" lay-skin="primary"><i class="layui-icon"></i></div></td><td>'+d.articleId+'</td><td align="left">'+d.articleName+'</td><td>'+d.articleAuthor+'</td><td>'+d.createDate+'</td>';
 					obj.append('<tr><td><input name="checked" lay-skin="primary" lay-filter="choose" type="checkbox"><div class="layui-unselect layui-form-checkbox" lay-skin="primary"><i class="layui-icon"></i></div></td><td>'+d.articleId+'</td><td align="left">'+d.articleName+'</td><td>'+d.articleAuthor+'</td><td>'+d.createDate+'</td><td><a class="layui-btn layui-btn-mini news_edit"><i class="iconfont icon-edit"></i> 恢复</a><a class="layui-btn layui-btn-danger layui-btn-mini news_del" data-id="1"><i class="layui-icon"></i> 彻底删除</a></td></tr>')
 					}
 					var pageVO=data.data;

@@ -26,4 +26,8 @@ public interface ITitleService
 	Collection<DlxyTitleDTO>findAllParent();
 	
 	DlxyTitleDTO findById(int titleId);
+	
+	void insertOrUpdate(DlxyTitleDTO dlxyTitleDTO);
+	
+	void deleteByTitleId(Integer titleId);
 }
