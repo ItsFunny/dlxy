@@ -23,4 +23,5 @@ public enum Events
 	
 	//用于白名单,黑名单的设置
 	IpCheck,
+	PicDelete,
 }

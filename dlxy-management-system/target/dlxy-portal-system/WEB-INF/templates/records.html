@@ -1,0 +1,124 @@
+<#include "wrapper-up.html">
+<#setting datetime_format="yyyy-MM-dd HH:mm:ss"/>
+<section class="layui-larry-box">
+	<div class="larry-personal">
+	    <div class="layui-tab">
+            <blockquote class="layui-elem-quote news_search">
+		
+		<div class="layui-inline">
+		    <div class="layui-input-inline">
+		    	<input value="" placeholder="请输入用户名或者用户id" class="layui-input search_input" type="text" id="searchText">
+		    </div>
+		    <a class="layui-btn search_btn" id="searchButton">查询</a>
+		</div>
+
+	
+		
+	</blockquote>
+            
+		         <!-- 操作日志 -->
+                <div class="layui-form news_list">
+                    <table class="layui-table">
+					    <colgroup>
+						<col width="50">
+						<col>
+						<col width="9%">
+						<col width="9%">
+						<col width="9%">
+						<col width="9%">
+						<col width="9%">
+						<col width="15%">
+					</colgroup>
+					<thead>
+						<tr>
+						<th>
+								<input name="" lay-skin="primary" lay-filter="allChoose" id="allChoose" type="checkbox">
+								<div class="layui-unselect layui-form-checkbox" lay-skin="primary"><i class="layui-icon"></i></div>
+							</th>
+							<th>用户ID</th>
+							<th style="text-align:left;">用户名称</th>
+							<th>用户操作详情</th>
+							<th>处理时间</th>
+							
+						</tr>
+					</thead>
+					<tbody class="news_content">
+					<#list pageVO.data as item>
+						<tr>
+							<td><input name="checked" lay-skin="primary" lay-filter="choose" type="checkbox">
+								<div class="layui-unselect layui-form-checkbox" lay-skin="primary"><i class="layui-icon"></i></div>
+							</td>
+							<td align="left">${item.userId}</td>
+							<td>${item.username}</td>
+							<td>${item.recordDetail}</td>
+							<td>${item.createDate?string('yyyy-MM-dd HH:mm:ss')}</td>
+							
+						</tr>
+					</#list>>
+					</tbody>
+					</table>
+                     <div class="larry-table-page clearfix">
+                         
+			           <#if pageVO??>
+					      <form name="pageForm" action="/user/record.html" method="get">
+						      	<input type="hidden" name="pageNum" value="${pageVO.pageNum}">
+						      	<input type="hidden" name="q" value="${q!""}">
+						      	<input type="hidden" name="userId" value="${userId!""}">
+						      	<div id="page2" class="page">
+									<div class="layui-box layui-laypage layui-laypage-default" id="layui-laypage-0">
+										<span class="layui-laypage-curr">
+							      			<em class="layui-laypage-em"></em>
+							      			<em id="pageEm">当前第 ${pageVO.pageNum}页 总共有${pageVO.maxPage} </em>
+						      			</span>
+										<#if pageVO.pageNum==1><a href="javascript:void(0)">首页</a>	<#else><a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=1;document.pageForm.submit();">首页</a>   </#if>
+										<#if pageVO.pageNum<=1> <a href="javascript:void(0)">上一页</a><#else><a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=(${pageVO.pageNum}-1);document.pageForm.submit();"> 上一页</a>  </#if>
+										<#if (pageVO.pageNum>=pageVO.maxPage)> <a href="javascript:void(0)">下一页</a>  <#else><a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=${pageVO.pageNum}+1;document.pageForm.submit();">下一页</a> </#if>		
+										<#if (pageVO.pageNum>=pageVO.maxPage)> <a href="javascript:void(0)">最后一页</a> <#else> <a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=${pageVO.maxPage};document.pageForm.submit();">最后一页</a> </#if>>
+									</div>				          
+						      </div>
+					      </form>
+					 </#if>
+			         </div>
+			    </div>
+		
+		</div>
+	
+</section>
+<#include "wrapper-down.html">
+<script type="text/javascript">
+	var ids="";
+	$("#batchDelButton").click(function batchDel(){
+		$("input:checkbox[name=checked]:checked").each(function(){
+			ids+=$(this).val()+",";
+		})
+		alert(ids);
+		var params={"ids":ids};
+		jQuery.post('/api/article/del/batch.html',params,function(data,textStatus,jqXHR){
+			if(data.code==1){
+				alert('删除成功');
+				window.location.href="http://localhost:8000/article/all.html";
+			}else{
+				alert('fail');
+			}
+		},'json');
+	});
+	function singeleDelButton(obj){
+		var articleId=$(obj).attr("articleId");
+		var params={"ids":articleId};
+		jQuery.post('/api/article/del/batch.html',params,function(data,textStatus,jqXHR){
+			if(data.code==1){
+				alert('删除成功');
+				window.location.href="http://localhost:8000/article/all.html";
+			}else{
+				alert('fail');
+			}
+		},'json');
+	}
+	$("#searchButton").click(function(){
+		var q=$("#searchText").val();
+		document.pageForm.q.value=q;
+		document.pageForm.pageNum.value=1;
+		document.pageForm.submit();
+	})
+</script>
+<#include "footer.html">

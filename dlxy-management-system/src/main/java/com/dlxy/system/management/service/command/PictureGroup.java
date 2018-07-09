@@ -42,7 +42,7 @@ public class PictureGroup implements IGroup
 		ArticleDTO articleDTO=(ArticleDTO) params.get("articleDTO");
 		Object status = params.get("pictureStatus");
 //		pictureService.updateArticlePictureStatus(pictureDTO.getArticleId(), pictureDTO.getPictureStatus());
-		pictureService.updateArticlePictureStatus(Integer.parseInt(status.toString()), articleDTO.getArticleId(),articleDTO.getPictureIds());
+		pictureService.updateArticlePictureStatusByArticleIdLimited(Integer.parseInt(status.toString()), articleDTO.getArticleId(),articleDTO.getPictureIds());
 	}
 
 	

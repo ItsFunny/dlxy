@@ -7,8 +7,11 @@
 */
 package com.dlxy.system.management.service.impl;
 
+import static org.hamcrest.CoreMatchers.everyItem;
+
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
 
@@ -23,10 +26,15 @@ import com.dlxy.common.dto.ArticleDTO;
 import com.dlxy.common.dto.DlxyTitleDTO;
 import com.dlxy.common.dto.PageDTO;
 import com.dlxy.common.dto.UserRecordDTO;
+import com.dlxy.common.enums.PictureStatusEnum;
+import com.dlxy.common.event.AppEvent;
+import com.dlxy.common.event.AppEventPublisher;
+import com.dlxy.common.event.Events;
 import com.dlxy.common.utils.PageResultUtil;
 import com.dlxy.server.article.service.IArticleCountService;
 import com.dlxy.server.article.service.IArticleService;
 import com.dlxy.server.article.service.ITitleService;
+import com.dlxy.server.picture.service.IPictureService;
 import com.dlxy.system.management.exception.ManagementIllegalException;
 import com.dlxy.system.management.service.IArticleManagementWrappedService;
 import com.joker.library.utils.CommonUtils;
@@ -50,6 +58,11 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 	
 	@Autowired
 	private ITitleService titleService;
+	
+	@Autowired
+	private AppEventPublisher appEventPublisher;
+	@Autowired
+	private IPictureService pictureService;
 
 	@Override
 	public PageDTO<Collection<ArticleDTO>> findByParams(int pageSize, int pageNum, Map<String, Object> params)
@@ -186,6 +199,8 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 	public void deleteInBatch(Long userId, Long[] articleIds)
 	{
 		articleService.deleteArticlesInBatch(articleIds);
+		//修改图片状态,或者发布信息,最后还是选择只修改状态,防止瞬间进行io操作  2018-07-09 不需要了,直接数据库自动设置为null即可,因为url中存放着路径
+//		pictureService.updateArticlePictureStatusByArticleIdsInbatch(articleIds, PictureStatusEnum.Invalid.ordinal());
 		String detail="delete:article:";
 		for (Long long1 : articleIds)
 		{

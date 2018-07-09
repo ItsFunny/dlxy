@@ -45,6 +45,7 @@ import com.dlxy.system.management.model.FormUser;
 import com.dlxy.system.management.service.IUserMangementWrappedService;
 import com.dlxy.system.management.utils.ManagementUtil;
 import com.joker.library.utils.CommonUtils;
+import com.joker.library.utils.KeyUtils;
 
 /**
  * 
@@ -210,6 +211,7 @@ public class UserController
 		if (!params.containsKey("error"))
 		{
 			formUser.to(userDTO);
+			userDTO.setPassword(KeyUtils.md5Encrypt(userDTO.getPassword()));
 			String ip = CommonUtils.getRemortIP(request);
 			userDTO.setLastLoginIp(ip);
 

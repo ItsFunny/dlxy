@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.Observer;
 import java.util.Properties;
 
-import javax.servlet.Filter;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbutils.QueryRunner;
@@ -26,15 +25,13 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.MethodInvokingFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.MediaType;
@@ -162,12 +159,22 @@ public class ManagementSystemConfiguration implements WebMvcConfigurer
 		return new ManagementUserRecordObserver();
 	}
 
+	@Profile("dev")
 	@Bean
 	public DlxyPropertyPlaceholderConfigurer dlxyPropertyPlaceholderConfigurer() throws IOException
 	{
 		DlxyPropertyPlaceholderConfigurer propertyPlaceholderConfigurer = new DlxyPropertyPlaceholderConfigurer();
 		propertyPlaceholderConfigurer
-				.setLocations(new PathMatchingResourcePatternResolver().getResources("classpath:*.properties"));
+				.setLocations(new PathMatchingResourcePatternResolver().getResources("classpath:/dev/*.properties"));
+		return propertyPlaceholderConfigurer;
+	}
+	@Profile("pro")
+	@Bean
+	public DlxyPropertyPlaceholderConfigurer dlxyPropertyProPlaceholderConfigurer() throws IOException
+	{
+		DlxyPropertyPlaceholderConfigurer propertyPlaceholderConfigurer = new DlxyPropertyPlaceholderConfigurer();
+		propertyPlaceholderConfigurer
+				.setLocations(new PathMatchingResourcePatternResolver().getResources("classpath:/pro/*.properties"));
 		return propertyPlaceholderConfigurer;
 	}
 	//shiro

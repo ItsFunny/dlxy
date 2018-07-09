@@ -13,10 +13,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -501,21 +503,26 @@ public class RestAPIController
 			RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResultDTO<String>deletePic(HttpServletRequest request,HttpServletResponse httpServletResponse)
 	{
-		String pictureId = request.getParameter("pictureId");
+		String pictureIdStr = request.getParameter("pictureId");
 		String pictureType=request.getParameter("pictureType");
-		if(StringUtils.isEmpty(pictureId)|| StringUtils.isEmpty(pictureType))
+		if(StringUtils.isEmpty(pictureIdStr)|| StringUtils.isEmpty(pictureType))
 		{
 			return ResultUtil.fail("missing argument:pictureId or pictureType");
 		}
 		try
 		{
-			pictureManagementWrappedService.deletePicture(ManagementUtil.getLoginUser().getUserId(), pictureId, Integer.parseInt(pictureType));
+			List<Long>pictureIds=new ArrayList<Long>();
+			String[] split = pictureIdStr.split(",");
+			for (String string : split)
+			{
+				pictureIds.add(Long.valueOf(string));
+			}
+			pictureManagementWrappedService.deletePicture(ManagementUtil.getLoginUser().getUserId(), pictureIds, Integer.parseInt(pictureType));
 			return ResultUtil.sucess("删除成功");
 		} catch (Exception e)
 		{
 			return ResultUtil.fail("error:"+e.getMessage());
 		}
-		
 	}
 
 	@RequestMapping(value = "/file/upload")

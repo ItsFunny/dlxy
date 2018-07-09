@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.dlxy.common.dto.PictureDTO;
 import com.dlxy.common.dto.UserRecordDTO;
+import com.dlxy.common.enums.PictureTypeEnum;
 import com.dlxy.server.picture.service.IPictureService;
 import com.dlxy.system.management.service.IPictureManagementWrappedService;
 
@@ -60,15 +61,27 @@ public class ManagementPictureServiceObservableImpl extends Observable implement
 	}
 
 	@Override
-	public void deletePicture(Long userId, String pictureId, int pictureType)
+	public void deletePicture(Long userId, List<Long> pictureIds,int type)
 	{
-		int count = pictureService.deleteByPictureIdAndStatus(pictureId, pictureType);
+//		int count = pictureService.deleteByPictureIdAndStatus(pictureId, pictureType);
+		int count=pictureService.deleteByPictureIds(pictureIds);
 		if(count<1)
 		{
 			throw new RuntimeException("wrong argument");
 		}
-		String detail="delete:portal-picture:"+pictureId;
-		UserRecordDTO userRecordDTO = UserRecordDTO.getUserRecordDTO(userId, detail);
+		StringBuilder detail=null;
+		if(type==PictureTypeEnum.Portal_Carousel.ordinal())
+		{
+			detail=new StringBuilder("delete:portal-picture:");
+		}else {
+			detail=new StringBuilder("delete:normal-picture:");
+		}
+		for (Long long1 : pictureIds)
+		{
+			detail.append(long1+",");
+		}
+//		String detail="delete:portal-picture:"+pictureId;
+		UserRecordDTO userRecordDTO = UserRecordDTO.getUserRecordDTO(userId, detail.toString());
 		setChanged();
 		notifyObservers(userRecordDTO);
 	}
