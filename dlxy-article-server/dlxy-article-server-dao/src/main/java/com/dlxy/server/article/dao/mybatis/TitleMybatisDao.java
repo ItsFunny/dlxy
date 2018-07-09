@@ -38,7 +38,7 @@ public interface TitleMybatisDao
 	@Select("select title_id,title_name,title_parent_id,title_display_seq,create_date from dlxy_title where title_parent_id=#{titleParentId} and title_id <> 0")
 	Collection<DlxyTitleDTO> findParentAllChilds(int titleParentId);
 	
-	@Select("select title_id,title_name,title_parent_id,title_display_seq,create_date from dlxy_title where title_parent_id= 0")
+	@Select("select title_id,title_name,title_parent_id,title_display_seq,create_date from dlxy_title where title_parent_id= 0 and title_id <> 0 ")
 	Collection<DlxyTitleDTO>findAllParents();
 	
 	@Select("select title_id,title_name,title_parent_id,title_display_seq,create_date from dlxy_title where title_id= #{id}")

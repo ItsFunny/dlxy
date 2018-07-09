@@ -1,0 +1,61 @@
+@charset "gb2312";
+* { margin: 0; padding: 0;}
+/* body */ 
+body { font: 14px/25px "Microsoft YaHei UI", "Microsoft YaHei UI Light", sans-serif, Arial, "Arial Narrow", "微软雅黑", "宋体";}
+i, em { font-style: normal;}
+/* a */ 
+a, a:link { color: #000; text-decoration: none;}
+a:visited {}
+a:active, a:hover { text-decoration: none; color: #02425b;}
+a:focus { outline: none;}
+/* form */ 
+textarea, input { word-wrap: break-word; word-break: break-all;}
+input { vertical-align: middle; font-size: 12px ;}
+.button { vertical-align: middle; font-size: 12px ;}
+.button { cursor: pointer;}
+/* li */
+ul, li { list-style-type: none;}
+/* img */ 
+img { border: 0 none; vertical-align: middle;}
+/*public*/
+.db { display: block;}
+/*float*/
+.fl, .fr { display: inline-block; float: left;}
+.fr { float: right;}
+/*margin*/
+.mt30 { margin-top: 30px;}
+.mr30 { margin-right: 30px;}
+.mb30 { margin-bottom: 30px;}
+.ml30 { margin-left: 30px;}
+
+.mt20 { margin-top: 20px;}
+.mr20 { margin-right: 20px;}
+.mb20 { margin-bottom: 20px;}
+.ml20 { margin-left: 20px;}
+
+.mt10 { margin-top: 10px;}
+.mr10 { margin-right: 10px;}
+.mb10 { margin-bottom: 10px;}
+.ml10 { margin-left: 10px;}
+/*padding*/
+.p_4_10 { padding: 10px;}
+.p_3_10 {padding: 10px 10px 0 10px;}
+.p_3_9 { padding: 10px 9px 9px 9px;}
+/*border*/
+.b_4_1 { border: 1px solid #999;}
+.b_3_1 { border: 1px solid #cc0000; border-top: none;}
+/*text*/
+.ti { text-indent: 2em;}
+/*other*/
+.cur { cursor: pointer;}
+.oh { overflow: hidden;}
+/*clearboth*/
+.cl { clear: both; display: block; height: 0; font-size: 0; overflow: hidden;}
+.clearfix:after {content:"24dq"; display:block; height:0; clear:both; visibility:hidden;}
+.clearfix {display:inline-block;}
+/* Hides from IE-mac \*/
+* html .clearfix {height:1%;}.clearfix {display:block;}
+/* End hide from IE-mac */
+/*position*/
+.poa { position: absolute;}
+.po { position: relative;}

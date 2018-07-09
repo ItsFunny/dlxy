@@ -21,6 +21,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.dlxy.common.event.AppEventPublisher;
+import com.dlxy.server.picture.service.IPictureService;
+
 /**
 * 
 * @When
@@ -36,6 +39,11 @@ public class DelArticlePicJob implements JobRunner
 	
 	@Autowired
 	private QueryRunner queryRunner;
+	@Autowired
+	private IPictureService pictureService;
+	
+	@Autowired
+	private AppEventPublisher eventPublisher;
 	
 	private class DelArticlePicJobModel 
 	{
@@ -76,7 +84,8 @@ public class DelArticlePicJob implements JobRunner
 			for (Map<String, Object> map : list)
 			{
 				String url=(String) map.get("picture_url");
-				
+				url.lastIndexOf(".");
+				String path="";
 			}
 			
 		} catch (SQLException e)
@@ -84,10 +93,18 @@ public class DelArticlePicJob implements JobRunner
 			logger.error("[batch_delete_pics] occur sql exception");
 		}
 	}
-	
+//	public static void main(String[] args)
+//	{
+//		String t="http://localhost:8000/imgs/380078818842509312/12be70ca-ebfa-469b-b8c0-4c195cabe7e1.png";
+//		String[] split = t.split("imgs");
+//		for (String string : split)
+//		{
+//			System.out.println(string);
+//		}
+//	}
 	protected void process(String url)
 	{
-		url.lastIndexOf(".");
+		
 	}
 
 }

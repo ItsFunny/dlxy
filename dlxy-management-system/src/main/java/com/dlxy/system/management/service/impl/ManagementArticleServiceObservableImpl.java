@@ -7,8 +7,8 @@
 */
 package com.dlxy.system.management.service.impl;
 
-import static org.hamcrest.CoreMatchers.everyItem;
 
+import java.io.File;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -24,8 +24,11 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.dlxy.common.dto.ArticleDTO;
 import com.dlxy.common.dto.DlxyTitleDTO;
+import com.dlxy.common.dto.IllegalLogDTO;
 import com.dlxy.common.dto.PageDTO;
+import com.dlxy.common.dto.PictureDTO;
 import com.dlxy.common.dto.UserRecordDTO;
+import com.dlxy.common.enums.IllegalLevelEnum;
 import com.dlxy.common.enums.PictureStatusEnum;
 import com.dlxy.common.event.AppEvent;
 import com.dlxy.common.event.AppEventPublisher;
@@ -37,6 +40,7 @@ import com.dlxy.server.article.service.ITitleService;
 import com.dlxy.server.picture.service.IPictureService;
 import com.dlxy.system.management.exception.ManagementIllegalException;
 import com.dlxy.system.management.service.IArticleManagementWrappedService;
+import com.dlxy.system.management.utils.FileUtil;
 import com.joker.library.utils.CommonUtils;
 
 
@@ -187,7 +191,8 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 		{
 			ServletRequestAttributes attributes=(ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 			HttpServletRequest request = attributes.getRequest();
-			throw new ManagementIllegalException(CommonUtils.getRemortIP(request),userId,"试图删除不存在的标题:"+titleId);
+			IllegalLogDTO illegalLogDTO=new IllegalLogDTO(CommonUtils.getRemortIP(request), userId,"试图删除不存在的标题", IllegalLevelEnum.Suspicious.ordinal());
+			throw new ManagementIllegalException(illegalLogDTO);
 		}
 		titleService.deleteByTitleId(dlxyTitleDTO.getTitleId());
 		String detail="delete:title:"+titleId+dlxyTitleDTO.getTitleName();
@@ -198,9 +203,20 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 	@Override
 	public void deleteInBatch(Long userId, Long[] articleIds)
 	{
-		articleService.deleteArticlesInBatch(articleIds);
+//		articleService.deleteArticlesInBatch(articleIds);
 		//修改图片状态,或者发布信息,最后还是选择只修改状态,防止瞬间进行io操作  2018-07-09 不需要了,直接数据库自动设置为null即可,因为url中存放着路径
 //		pictureService.updateArticlePictureStatusByArticleIdsInbatch(articleIds, PictureStatusEnum.Invalid.ordinal());
+		//直接全部删除  采用发布消息的方式
+		ServletRequestAttributes attributes=(ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+		HttpServletRequest request = attributes.getRequest();
+		String realPath = request.getServletContext().getRealPath("imgs");
+		for (Long long1 : articleIds)
+		{
+			System.out.println(realPath+File.separator+long1);
+			File file=new File(realPath+File.separator+long1);
+			FileUtil.delFileOrDir(file);
+		}
+//		Collection<PictureDTO> collection = pictureService.findByArticleIdArray(articleIds);
 		String detail="delete:article:";
 		for (Long long1 : articleIds)
 		{
@@ -208,6 +224,7 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 		}
 		execute(userId, detail);
 	}
+	
 
 	private void execute(Long userId,String detail)
 	{

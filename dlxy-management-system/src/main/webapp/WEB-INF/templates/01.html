@@ -17,6 +17,31 @@
     <link rel="stylesheet" type="text/css" href="css/01style.css">
 </head>
 <body>
+01
+<script>
+    $(document).ready(function(){
+        $.ajax({
+           url:'/api/titles.html',
+            type:'post',
+            dataType:'json',
+            success:function(data){
+                if(data.code==1){
+                    var index=document.getElementsByClassName("accordion-group").length;
+                    var obj=$(".data-div");
+                    for(var i=0;i<data.data.length;i++){
+                        var o=data.data[i];
+                        var t='<div class="accordion-group'+o.titleId+'" id="accordion-group"><div class="accordion-heading"><a class="accordion-toggle block" data-parent="accordion-38202" data-toggle="collapse" href="#accordion-element-'+o.titleId+'" onclick="loadChild('+o.titleId+');">'+o.titleName+'';
+                        t+='</a><div class="btg"><button class="btn btn-danger btn-xs right" data-toggle="modal" data-target="#deleteSource"  titleId="'+o.titleId+'" onclick="del(this)">删除</button><button class="btn btn-success btn-xs right" data-toggle="modal" data-target="#changeSource" titleId="'+o.titleId+'" onclick="beforeSave(this,false,true)">修改</button><add class="btn btn-add btn-xs right" data-toggle="modal" data-target="#changeSource" titleId="'+o.titleId+'" onclick="beforeSave(this,true,false)">添加</add></div></div><div class="accordion-body collapse" id="accordion-element-'+o.titleId+'"></div></div>';
+                        obj.append(t);
+                    }
+                }
+            }
+        })
+    });
+    <!--accbody=document.createElement("div");-->
+    <!--accbody.setAttribute("class","accordion-body collapse");-->
+    <!--accbody.setAttribute("id","");-->
+</script>
 <div id="wrap">
 
     <!-- 右侧具体内容栏目 -->
@@ -140,7 +165,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-xs btn-white" data-dismiss="modal">取 消</button>
-                        <button type="button" class="btn btn-xs btn-green" data-dismiss="modal" onclick="changeson()">保 存</button>
+                        <button type="button" class="btn btn-xs btn-green" data-dismiss="modal" onclick="changeson()" data-dismiss="modal">保 存</button>
                     </div>
                 </div>
                 <!-- /.modal-content -->
@@ -200,226 +225,283 @@
     </div>
 </div>
 <script>
-    var bele;
-
-    //according-group
-    var accgroup=document.createElement("div");
-
-    //according-heading
-    var accheading=document.createElement("div");
-
-    //accordion-toggle block
-    var acctoggle=document.createElement("a");
-
-
-    //btg
-    var btg=document.createElement("div");
-
-
-    //delete
-    var detele=document.createElement("button");
-    var detele2=document.createElement("button");
-    //change
-    var change=document.createElement("button");
-
-    //add
-    var add=document.createElement("add");
-
-    var add2=document.createElement("add");
-
-
-    var accbody=document.createElement("div");
-
-
-    var accinner=document.createElement("div");
-
-
-    var title=document.createElement("div");
-
-
-    var btg1=document.createElement("div");
-
-
-    function init() {
-        accgroup=document.createElement("div");
-        accgroup.setAttribute("class","accordion-group");
-
-//according-heading
-        accheading=document.createElement("div");
-        accheading.setAttribute("class","accordion-heading");
-
-//accordion-toggle block
-        acctoggle=document.createElement("a");
-        acctoggle.setAttribute("class","accordion-toggle block");
-        acctoggle.setAttribute("data-parent","accordion-38202");
-        acctoggle.setAttribute("data-toggle","collapse");
-        acctoggle.setAttribute("href","");
-
-//btg
-        btg=document.createElement("div");
-        btg.setAttribute("class","btg");
-
-//delete
-        detele=document.createElement("button");
-        detele.innerHTML="删除";
-        detele.setAttribute("class","btn btn-danger btn-xs right");
-        detele.setAttribute("data-toggle","modal");
-        detele.setAttribute("data-target","#deleteSource");
-        detele.setAttribute("onclick","toas1(this)");
-
-        detele2=document.createElement("button");
-        detele2.innerHTML="删除";
-        detele2.setAttribute("class","btn btn-danger btn-xs right");
-        detele2.setAttribute("data-toggle","modal");
-        detele2.setAttribute("data-target","#deleteSource2");
-        detele2.setAttribute("onclick","toas1(this)");
-//change
-        change=document.createElement("button");
-        change.innerHTML="修改";
-        change.setAttribute("class","btn btn-success btn-xs right");
-        change.setAttribute("data-toggle","modal");
-        change.setAttribute("data-target","#changeSource");
-        change.setAttribute("onclick","toas1(this)");
-
-//add
-        add=document.createElement("add");
-        add.innerHTML="添加";
-        add.setAttribute("class","btn btn-add btn-xs right");
-        add.setAttribute("data-toggle","modal");
-        add.setAttribute("data-target","#addSource");
-        add.setAttribute("onclick","toas1(this)");
-
-        add2=document.createElement("add");
-        add2.innerHTML="添加";
-        add2.setAttribute("class","btn btn-add btn-xs right");
-        add2.setAttribute("data-toggle","modal");
-        add2.setAttribute("data-target","#addSource2");
-        add2.setAttribute("onclick","toas1(this)");
-
-
-        accbody=document.createElement("div");
-        accbody.setAttribute("class","accordion-body collapse");
-        accbody.setAttribute("id","");
-
-        accinner=document.createElement("div");
-        accinner.setAttribute("class","accordion-inner");
-
-        title=document.createElement("div");
-        title.setAttribute("class","title");
-
-
-        btg1=document.createElement("div");
-        btg1.setAttribute("class","btg1");
-    }
-    function toas1(ele) {
-        bele=ele;
-    }
-    function addson() {
-        init();
-        var num=document.getElementsByTagName("div").length;
-        var value=document.getElementsByClassName("accordion-body").length;
-        var oarr=document.getElementById("accordion-38202");
-        var oname=document.getElementById("fName").value;
-        accgroup.appendChild(accheading);
-        accheading.appendChild(acctoggle);
-        accheading.appendChild(btg);
-        btg.appendChild(detele);
-        btg.appendChild(change);
-        btg.appendChild(add);
-        accgroup.appendChild(accbody);
-        acctoggle.setAttribute("href","#accordion-element-"+num);
-        acctoggle.innerHTML=oname;
-        accbody.setAttribute("id","accordion-element-"+num);
-        accbody.setAttribute("value",value);
-        oarr.appendChild(accgroup);
-        init();
-    }
-
-    function addson1() {
-        init();
-        var op1 =bele.parentNode.parentNode.parentNode.children;
-        var op6=op1[1];
-        var oname = document.getElementById("sName").value;
-        var op2=op1[1];
-        op2.appendChild(accinner);
-        accinner.appendChild(title);
-        title.innerHTML=oname;
-        btg1.appendChild(detele2);
-        btg1.appendChild(change);
-        accinner.appendChild(btg1);
-        init();
-    }
-    function changeson() {
-        var op1=bele.parentNode.parentNode.children;
-        var op2=op1[0];
-        op2.innerHTML="1";
-    }
-    function deleteson() {
-        var op1=bele.parentNode.parentNode.parentNode;
-        var op2=op1.parentNode;
-        op2.removeChild(op1);
-    }
-    function deleteson1() {
-        var op1=bele.parentNode.parentNode;
-        var op2=op1.parentNode;
-        op2.removeChild(op1);
-        console.log(op2);
-    }
-
-    function initfa(name,id){
-            init();
-            var num=document.getElementsByTagName("div").length;
-            var oarr=document.getElementById("accordion-38202");
-            accgroup.appendChild(accheading);
-            accheading.appendChild(acctoggle);
-            accheading.appendChild(btg);
-            btg.appendChild(detele);
-            btg.appendChild(change);
-            btg.appendChild(add);
-            accgroup.appendChild(accbody);
-            acctoggle.setAttribute("href","#accordion-element-"+num);
-            acctoggle.innerHTML=name;
-            accbody.setAttribute("id","accordion-element-"+num);
-            accbody.setAttribute("value",id);
-            oarr.appendChild(accgroup);
-            var abody=accbody;
-            var url='/api/title/'+id+'.html';
-            $.ajax({
-                url:url,
-                type:'post',
-                dataType:'json',
-                success:function (data) {
-                    var son = data.data;
-                    for (i = 0; i < son.length; i++) {
-                        abody.appendChild(accinner);
-                        accinner.appendChild(title);
-                        title.innerHTML=son[i].titleName;
-                        btg1.appendChild(detele2);
-                        btg1.appendChild(change);
-                        accinner.appendChild(btg1);
-                        init();
+    function loadChild(id){
+        var idName="accordion-element-"+id;
+        var url='/api/title/'+id+'.html';
+        $.ajax({
+            url:url,
+            type:'post',
+            dataType:'json',
+            success:function(data){
+                if(data.code==1){
+                    var obj=document.getElementById(idName);
+                    for(var i=0;i<data.data.length;i++){
+                        var o=data.data[i];
+                        //var a='<div class="accordion-inner"><div class="title">'+o.titleName+'</div><div class="btg1"><button class="btn btn-danger btn-xs right" data-toggle="modal" data-target="#deleteSource"  titleId="'+o.titleId+'" onclick="del(this)">删除</button><button class="btn btn-success btn-xs right" data-toggle="modal" data-target="#changeSource" titleId="'+o.titleId+'" onclick="beforeSave(this,false,true)">修改</button><add class="btn btn-add btn-xs right" data-toggle="modal" data-target="#changeSource" titleId="'+o.titleId+'" onclick="beforeSave(this,true,false)">添加</add></div></div>';
+                       var a='<div class="accordion-inner"> <div class="title">'+o.titleName+'</div></div>';
+                        alert(a);
+                  		obj.append(a);
                     }
-
-                }})
-        init();
-
-    }
-    $.ajax({
-        url:'/api/titles.html',
-        type:'post',
-        dataType:'json',
-        success:succFunction
-
-    })
-
-    function succFunction(father) {
-        var obj=father.data;
-        for(i=0;i<obj.length;i++){
-            initfa(obj[i].titleName,obj[i].titleId);
-        }
+                }
+            }
+        })
 
     }
+//     <!--var bele;-->
+//
+//     // <!--//according-group-->
+//     <!--var accgroup=document.createElement("div");-->
+//
+//     <!--//according-heading-->
+//     <!--var accheading=document.createElement("div");-->
+//
+//     <!--//accordion-toggle block-->
+//     <!--var acctoggle=document.createElement("a");-->
+//
+//
+//     <!--//btg-->
+//     <!--var btg=document.createElement("div");-->
+//
+//
+//     <!--//delete-->
+//     <!--var detele=document.createElement("button");-->
+//     <!--var detele2=document.createElement("button");-->
+//     <!--//change-->
+//     <!--var change=document.createElement("button");-->
+//
+//     <!--//add-->
+//     <!--var add=document.createElement("add");-->
+//
+//     <!--var add2=document.createElement("add");-->
+//
+//
+//     <!--var accbody=document.createElement("div");-->
+//
+//
+//     <!--var accinner=document.createElement("div");-->
+//
+//
+//     <!--var title=document.createElement("div");-->
+//
+//
+//     <!--var btg1=document.createElement("div");-->
+//
+//
+//     <!--function init() {-->
+//         <!--accgroup=document.createElement("div");-->
+//         <!--accgroup.setAttribute("class","accordion-group");-->
+//
+// <!--//according-heading-->
+//         <!--accheading=document.createElement("div");-->
+//         <!--accheading.setAttribute("class","accordion-heading");-->
+//
+// <!--//accordion-toggle block-->
+//         <!--acctoggle=document.createElement("a");-->
+//         <!--acctoggle.setAttribute("class","accordion-toggle block");-->
+//         <!--acctoggle.setAttribute("data-parent","accordion-38202");-->
+//         <!--acctoggle.setAttribute("data-toggle","collapse");-->
+//         <!--acctoggle.setAttribute("href","");-->
+//         <!--acctoggle.setAttribute("onclick","findson(this)");-->
+//         <!--acctoggle.setAttribute("flag","1");-->
+//
+// <!--//btg-->
+//         <!--btg=document.createElement("div");-->
+//         <!--btg.setAttribute("class","btg");-->
+//
+// <!--//delete-->
+//         <!--detele=document.createElement("button");-->
+//         <!--detele.innerHTML="删除";-->
+//         <!--detele.setAttribute("class","btn btn-danger btn-xs right");-->
+//         <!--detele.setAttribute("data-toggle","modal");-->
+//         <!--detele.setAttribute("data-target","#deleteSource");-->
+//         <!--detele.setAttribute("onclick","toas1(this)");-->
+//
+//         <!--detele2=document.createElement("button");-->
+//         <!--detele2.innerHTML="删除";-->
+//         <!--detele2.setAttribute("class","btn btn-danger btn-xs right");-->
+//         <!--detele2.setAttribute("data-toggle","modal");-->
+//         <!--detele2.setAttribute("data-target","#deleteSource2");-->
+//         <!--detele2.setAttribute("onclick","toas1(this)");-->
+// <!--//change-->
+//         <!--change=document.createElement("button");-->
+//         <!--change.innerHTML="修改";-->
+//         <!--change.setAttribute("class","btn btn-success btn-xs right");-->
+//         <!--change.setAttribute("data-toggle","modal");-->
+//         <!--change.setAttribute("data-target","#changeSource");-->
+//         <!--change.setAttribute("onclick","toas1(this)");-->
+//
+// <!--//add-->
+//         <!--add=document.createElement("add");-->
+//         <!--add.innerHTML="添加";-->
+//         <!--add.setAttribute("class","btn btn-add btn-xs right");-->
+//         <!--add.setAttribute("data-toggle","modal");-->
+//         <!--add.setAttribute("data-target","#addSource");-->
+//         <!--add.setAttribute("onclick","toas1(this)");-->
+//
+//         <!--add2=document.createElement("add");-->
+//         <!--add2.innerHTML="添加";-->
+//         <!--add2.setAttribute("class","btn btn-add btn-xs right");-->
+//         <!--add2.setAttribute("data-toggle","modal");-->
+//         <!--add2.setAttribute("data-target","#addSource2");-->
+//         <!--add2.setAttribute("onclick","toas1(this)");-->
+//
+//
+//         <!--accbody=document.createElement("div");-->
+//         <!--accbody.setAttribute("class","accordion-body collapse");-->
+//         <!--accbody.setAttribute("id","");-->
+//
+//         <!--accinner=document.createElement("div");-->
+//         <!--accinner.setAttribute("class","accordion-inner");-->
+//
+//         <!--title=document.createElement("div");-->
+//         <!--title.setAttribute("class","title");-->
+//
+//
+//         <!--btg1=document.createElement("div");-->
+//         <!--btg1.setAttribute("class","btg1");-->
+//     <!--}-->
+//     <!--function toas1(ele) {-->
+//         <!--bele=ele;-->
+//     <!--}-->
+//     <!--// function addson() {-->
+//     <!--//     init();-->
+//     <!--//     var num=document.getElementsByTagName("div").length;-->
+//     <!--//     var value=document.getElementsByClassName("accordion-body").length;-->
+//     <!--//     var oarr=document.getElementById("accordion-38202");-->
+//     <!--//     var oname=document.getElementById("fName").value;-->
+//     <!--//     accgroup.appendChild(accheading);-->
+//     <!--//     accheading.appendChild(acctoggle);-->
+//     <!--//     accheading.appendChild(btg);-->
+//     <!--//     btg.appendChild(detele);-->
+//     <!--//     btg.appendChild(change);-->
+//     <!--//     btg.appendChild(add);-->
+//     <!--//     accgroup.appendChild(accbody);-->
+//     <!--//     acctoggle.setAttribute("href","#accordion-element-"+num);-->
+//     <!--//     acctoggle.innerHTML=oname;-->
+//     <!--//     accbody.setAttribute("id","accordion-element-"+num);-->
+//     <!--//     accbody.setAttribute("value",value);-->
+//     <!--//     oarr.appendChild(accgroup);-->
+//     <!--//     init();-->
+//     <!--//     document.getElementById("fName").value="";-->
+//     <!--// }-->
+//     <!--//-->
+//     <!--// function addson1() {-->
+//     <!--//     init();-->
+//     <!--//     var op1 =bele.parentNode.parentNode.parentNode.children;-->
+//     <!--//     var op6=op1[1];-->
+//     <!--//     var oname = document.getElementById("sName").value;-->
+//     <!--//     var op2=op1[1];-->
+//     <!--//     op2.appendChild(accinner);-->
+//     <!--//     accinner.appendChild(title);-->
+//     <!--//     title.innerHTML=oname;-->
+//     <!--//     btg1.appendChild(detele2);-->
+//     <!--//     btg1.appendChild(change);-->
+//     <!--//     accinner.appendChild(btg1);-->
+//     <!--//     init();-->
+//     <!--//     document.getElementById("sName").value="";-->
+//     <!--// }-->
+//     <!--// function changeson() {-->
+//     <!--//     var op1=bele.parentNode.parentNode.children;-->
+//     <!--//     var oname=document.getElementById("xName").value;-->
+//     <!--//     var op2=op1[0];-->
+//     <!--//     op2.innerHTML=oname;-->
+//     <!--//     document.getElementById("xName").value="";-->
+//     <!--// }-->
+//     <!--// function deleteson() {-->
+//     <!--//     var op1=bele.parentNode.parentNode.parentNode;-->
+//     <!--//     var op2=op1.parentNode;-->
+//     <!--//     op2.removeChild(op1);-->
+//     <!--// }-->
+//     <!--// function deleteson1() {-->
+//     <!--//     var op1=bele.parentNode.parentNode;-->
+//     <!--//     var op2=op1.parentNode;-->
+//     <!--//     op2.removeChild(op1);-->
+//     <!--//     console.log(op2);-->
+//     <!--// }-->
+//
+//     <!--function initfa(name,id){-->
+//             <!--init();-->
+//             <!--var num=document.getElementsByTagName("div").length;-->
+//             <!--var oarr=document.getElementById("accordion-38202");-->
+//             <!--accgroup.appendChild(accheading);-->
+//             <!--accheading.appendChild(acctoggle);-->
+//             <!--accheading.appendChild(btg);-->
+//             <!--btg.appendChild(detele);-->
+//             <!--btg.appendChild(change);-->
+//             <!--btg.appendChild(add);-->
+//             <!--accgroup.appendChild(accbody);-->
+//             <!--acctoggle.setAttribute("href","#accordion-element-"+num);-->
+//             <!--acctoggle.setAttribute("fvalue",id);-->
+//             <!--acctoggle.innerHTML=name;-->
+//             <!--accbody.setAttribute("id","accordion-element-"+num);-->
+//             <!--accbody.setAttribute("value",id);-->
+//             <!--oarr.appendChild(accgroup);-->
+//             <!--// var abody=accbody;-->
+//             <!--// var url=id+".json";-->
+//             <!--// $.ajax({-->
+//             <!--//     url:url,-->
+//             <!--//     type:'post',-->
+//             <!--//     dataType:'json',-->
+//             <!--//     success:function (data) {-->
+//             <!--//         var son = data.data;-->
+//             <!--//         for (i = 0; i < son.length; i++) {-->
+//             <!--//             abody.appendChild(accinner);-->
+//             <!--//             accinner.appendChild(title);-->
+//             <!--//             title.innerHTML=son[i].titleName;-->
+//             <!--//             btg1.appendChild(detele2);-->
+//             <!--//             btg1.appendChild(change);-->
+//             <!--//             accinner.appendChild(btg1);-->
+//             <!--//             init();-->
+//             <!--//         }-->
+//             <!--//-->
+//             <!--//     }})-->
+//         <!--init();-->
+//
+//     <!--}-->
+//     // function findson(obj) {
+//     //     init();
+//     //     var flag=obj.getAttribute("flag");
+//     //     var obj1=obj.parentNode.nextSibling;
+//     //     var index=obj1.getAttribute("value");
+//     //     var url=index+".json";
+//     //     if(flag==0){
+//     //         return;
+//     //     }else{
+//     //          $.ajax({
+//     //             url:url,
+//     //             type:'post',
+//     //             dataType:'json',
+//     //             success:function (data) {
+//     //                 var son = data.data;
+//     //                 for (i = 0; i < son.length;i++) {
+//     //                     console.log("1");
+//     //                 }
+//     //
+//     //             }});
+//     //          obj.setAttribute("flag","0");
+//     //     }
+//     //     console.log(flag);
+//     //     init();
+//     //
+//     // }
+//     <!---->
+//     <!--$.ajax({-->
+//         <!--url:'father.html',-->
+//         <!--type:'post',-->
+//         <!--dataType:'json',-->
+//         <!--success:succFunction-->
+//
+//     <!--})-->
+//
+//     <!--function succFunction(father) {-->
+//         <!--var obj=father.data;-->
+//         <!--for(i=0;i<obj.length;i++){-->
+//             <!--initfa(obj[i].titleName,obj[i].titleId);-->
+//         <!--}-->
+//
+//     <!--}-->
 </script>
+
 </body>
 
 </html>

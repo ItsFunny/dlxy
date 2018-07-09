@@ -91,8 +91,6 @@ import redis.clients.jedis.JedisPoolConfig;
 })
 @MapperScan(annotationClass= Mapper.class,basePackages =
 { "com.dlxy.server.user.dao.mybatis", "com.dlxy.server.article.dao.mybatis", "com.dlxy.server.picture.dao.mybatis" })
-@ImportResource(locations =
-{ "classpath:/spring/applicationContext.xml" })
 @EnableWebMvc
 @EnableTransactionManagement
 public class ManagementSystemConfiguration implements WebMvcConfigurer

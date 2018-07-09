@@ -18,7 +18,7 @@
 </head>
 <script>
 
-	function test(id){
+	function loadChild(id){
 		alert(id);
 		var idName="accordion-group"+id;
 		alert(idName);
@@ -47,10 +47,11 @@
         		var obj=$(".data-div");
         		for(var i=0;i<data.data.length;i++){
         			var o=data.data[i];
-	        		var t='<div class="accordion-group" id="accordion-group'+o.titleId+'"><div class="accordion-heading"><a class="accordion-toggle block"  href="javascript:void(0);" onclick="test('+o.titleId+');">'+o.titleName+'';
+	        		var t='<div class="accordion-group" id="accordion-group'+o.titleId+'"><div class="accordion-heading"><a class="accordion-toggle block"  href="javascript:void(0);" onclick="loadChild('+o.titleId+');">'+o.titleName+'';
 	        		t+='</a><div class="btg"><button class="btn btn-danger btn-xs right" data-toggle="modal" data-target="#deleteSource"  titleId="'+o.titleId+'" onclick="del(this)">删除</button><button class="btn btn-success btn-xs right" data-toggle="modal" data-target="#changeSource" titleId="'+o.titleId+'" onclick="beforeSave(this,false,true)">修改</button><add class="btn btn-add btn-xs right" data-toggle="modal" data-target="#changeSource" titleId="'+o.titleId+'" onclick="beforeSave(this,true,false)">添加</add></div></div><div class="accordion-body collapse" id="accordion-element-40" value="1"></div></div>';
         			obj.append(t);
         		}
+        			window.location.reload();
         	}
         }
     })
@@ -58,9 +59,7 @@
 
 </script>
 <body>
-
 <div id="wrap">
-
     <!-- 右侧具体内容栏目 -->
     <div id="leftContent">
         <a class="toggle-btn" id="nimei">

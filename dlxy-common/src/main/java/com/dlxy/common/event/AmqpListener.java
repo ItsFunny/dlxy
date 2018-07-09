@@ -5,9 +5,7 @@
 * @date 创建时间：2018年6月29日 下午4:13:05
 * 
 */
-package com.dlxy.system.batch.consumer;
-
-import com.dlxy.common.event.AppEvent;
+package com.dlxy.common.event;
 
 /**
 * 

@@ -6,13 +6,17 @@
 */
 package com.dlxy.system.config;
 
+
 import java.io.IOException;
+import java.util.List;
 
 import javax.sql.DataSource;
 
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
+import org.mybatis.spring.annotation.MapperScan;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -21,8 +25,16 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 
@@ -36,10 +48,14 @@ import com.alibaba.druid.pool.DruidDataSource;
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages= {
-		"com.dlxy.system"
+		"com.dlxy"
 })
-public class PortalSystemConfiguration
+@MapperScan(annotationClass= Mapper.class,basePackages =
+{ "com.dlxy.server.user.dao.mybatis", "com.dlxy.server.article.dao.mybatis", "com.dlxy.server.picture.dao.mybatis" })
+public class PortalSystemConfiguration implements WebMvcConfigurer
 {
+	
+	
 	@Profile("dev")
 	@Bean
 	public DlxyPropertyPlaceholderConfigurer placeholderConfigurerDev() throws IOException
@@ -108,5 +124,24 @@ public class PortalSystemConfiguration
 		freeMarkerConfigurer.setDefaultEncoding("UTF-8");
 		return freeMarkerConfigurer;
 	}
+	@Override
+	public void addResourceHandlers(ResourceHandlerRegistry registry)
+	{
+//		registry.addResourceHandler("/js/**").addResourceLocations("classpath:/static/js").setCachePeriod(1036000);
+		WebMvcConfigurer.super.addResourceHandlers(registry);
+	}
+	@Override
+	public void configureMessageConverters(List<HttpMessageConverter<?>> converters)
+	{
+		converters.add(new MappingJackson2HttpMessageConverter());
+	}
+	@Override
+	public void configureContentNegotiation(ContentNegotiationConfigurer configurer)
+	{
+		configurer.mediaType("html", MediaType.APPLICATION_JSON);
+	}
+	
+	
+	
 	
 }

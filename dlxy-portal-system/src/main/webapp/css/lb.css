@@ -1,0 +1,43 @@
+
+        #lb{
+            width: 100%;
+            height: 410px;
+            background: url("../images/bg .jpg");
+            position: relative;
+        }
+#banner{
+    width: 795px;
+    height: 400px;
+    margin: 0 auto;
+}
+        #banner .sliderPage li{
+            position: absolute;
+        }
+        #banner_dot{
+            width: 125px;
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            margin-left: -62.5px;
+        }
+    #banner_dot li{
+        width: 15px;
+        height: 15px;
+        background: #fff;
+        border-radius: 50%;
+        float: left;
+        margin-right: 10px;
+
+    }
+    #banner li{
+        display: none;
+    }
+    #banner .first{
+        display: block;
+    }
+    #banner_dot li{
+        cursor: pointer;
+    }
+    #banner_dot .blue{
+        background: #00f;
+    }

@@ -37,8 +37,11 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.dlxy.common.event.AmqpListener;
+import com.dlxy.common.event.AppEventLogPubliher;
+import com.dlxy.common.event.AppEventPublisher;
+import com.dlxy.common.event.AppEventRabbitMQPublisher;
 import com.dlxy.common.event.Events;
-import com.dlxy.system.batch.consumer.AmqpListener;
 import com.dlxy.system.batch.consumer.FacadedAmqpListener;
 import com.dlxy.system.batch.consumer.detail.UserIllegalLogListener;
 import com.dlxy.system.batch.consumer.detail.UserRecordListener;
@@ -191,5 +194,15 @@ public class BatchSystemConfiguration
 		adapter.setDefaultListenerMethod("process");
 		simpleMessageListenerContainer.setMessageListener(adapter);
 		return simpleMessageListenerContainer;
+	}
+	@Bean
+	public AppEventPublisher appEventPublisher()
+	{
+		if(dlxyProperty.isAmqpEnabled())
+		{
+			return new AppEventRabbitMQPublisher();
+		}else {
+			return new AppEventLogPubliher();
+		}
 	}
 }

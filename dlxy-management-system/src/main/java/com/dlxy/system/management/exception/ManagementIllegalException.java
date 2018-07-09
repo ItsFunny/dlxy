@@ -7,6 +7,8 @@
 */
 package com.dlxy.system.management.exception;
 
+import com.dlxy.common.dto.IllegalLogDTO;
+
 /**
 * 
 * @When
@@ -26,21 +28,15 @@ public class ManagementIllegalException extends RuntimeException
 	*/
 	private static final long serialVersionUID = -758841428074965716L;
 	
-	private String ip;
+	private IllegalLogDTO illegalLogDTO;
 	
-	
-	public ManagementIllegalException(String ip, Long userId, String detail)
+	public ManagementIllegalException(IllegalLogDTO l)
 	{
 		super();
-		this.ip = ip;
-		this.userId = userId;
-		this.detail = detail;
+		this.illegalLogDTO=l;
 	}
 
-	private Long userId;
 	
-	private String detail;
-
 	
 	
 	public ManagementIllegalException()
@@ -48,37 +44,19 @@ public class ManagementIllegalException extends RuntimeException
 		super();
 	}
 
-	public Long getUserId()
+
+
+
+	public IllegalLogDTO getIllegalLogDTO()
 	{
-		return userId;
+		return illegalLogDTO;
 	}
 
-	public void setUserId(Long userId)
+	public void setIllegalLogDTO(IllegalLogDTO illegalLogDTO)
 	{
-		this.userId = userId;
+		this.illegalLogDTO = illegalLogDTO;
 	}
 
-	public String getDetail()
-	{
-		return detail;
-	}
-
-	public void setDetail(String detail)
-	{
-		this.detail = detail;
-	}
-
-	public String getIp()
-	{
-		return ip;
-	}
-
-	public void setIp(String ip)
-	{
-		this.ip = ip;
-	}
-	
-	
 	
 
 }

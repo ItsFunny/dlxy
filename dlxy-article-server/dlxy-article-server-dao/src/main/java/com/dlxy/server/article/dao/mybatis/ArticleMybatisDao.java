@@ -70,6 +70,7 @@ public interface ArticleMybatisDao
 	@Select("select count(1) from dlxy_article  a left join dlxy_title b on a.title_id=b.title_id left join dlxy_user_article c on a.article_id=c.article_id ")
 	long countAllArticles();
 	
+	
 	/*
 	 * 这个没用了,准备删除
 	 */

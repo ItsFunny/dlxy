@@ -15,6 +15,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<dlxy-common.version>0.0.1-SNAPSHOT</dlxy-common.version>
 		<dlxy-user-server-service.version>0.0.1-SNAPSHOT</dlxy-user-server-service.version>
+		<dlxy-picture-server-service.version>0.0.1-SNAPSHOT</dlxy-picture-server-service.version>
+		<dlxy-common.version>0.0.1-SNAPSHOT</dlxy-common.version>
 	</properties>
 
 	<parent>
@@ -23,7 +25,18 @@
 		<version>2.0.1.RELEASE</version>
 	</parent>
 	<dependencies>
-
+		
+		
+		<dependency>
+			<groupId>com.dlxy</groupId>
+			<artifactId>dlxy-common</artifactId>
+			<version>${dlxy-common.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.dlxy</groupId>
+			<artifactId>dlxy-server-picture-service</artifactId>
+			<version>${dlxy-picture-server-service.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>com.dlxy</groupId>

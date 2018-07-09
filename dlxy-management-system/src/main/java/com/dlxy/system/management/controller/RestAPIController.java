@@ -190,7 +190,6 @@ public class RestAPIController
 			return ResultUtil.fail(e.getMessage());
 		}
 		
-		
 	}
 
 	@RequestMapping(value = "/article/update", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, method = RequestMethod.POST)
@@ -434,8 +433,7 @@ public class RestAPIController
 		Collection<DlxyTitleDTO> collection = titleService.findChildsByParentId(parentId);
 		if(null==collection || collection.isEmpty())
 		{
-			collection=titleService.findAllParent();
-			return ResultUtil.needMoreOp(collection,"原类目不存在");
+			return ResultUtil.needMoreOp(collection,"无子类目");
 		}
 		return ResultUtil.sucess(collection);
 	}

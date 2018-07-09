@@ -16,9 +16,7 @@
 		    <filter-name>shiroFilter</filter-name>
 		    <url-pattern>/*</url-pattern>
 	  </filter-mapping>  
-
-	
-	<filter>
+	<filter> 
 		<filter-class>com.dlxy.system.management.filter.CharsetFilter</filter-class>
 		<filter-name>CharsetFilter</filter-name>
 		<init-param>

@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.dlxy.common.dto.IllegalLogDTO;
 import com.dlxy.common.dto.PageDTO;
 import com.dlxy.common.dto.UserDTO;
 import com.dlxy.common.dto.UserRecordDTO;
@@ -142,7 +143,11 @@ public class UserController
 				// eventPublisher.publish(new AppEvent(data, Events.UserIllegalLog.name()));
 				// //返回无权  
 				//直接抛出违法异常进行处理
-				throw new ManagementIllegalException();
+				String ip=CommonUtils.getRemortIP(request);
+				Long userId=user.getUserId();
+				String illegalDetail="试图访问他人发布的文章信息";
+				Integer illegalLevel=IllegalLevelEnum.Suspicious.ordinal();
+				throw new ManagementIllegalException(new IllegalLogDTO(ip, userId, illegalDetail, illegalLevel));
 //				params.put("error", "u dont have the authority");
 //				return new ModelAndView("error", params);
 			}

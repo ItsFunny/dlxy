@@ -14,10 +14,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.dlxy.common.event.AmqpListener;
 import com.dlxy.common.event.AppEvent;
 import com.dlxy.common.event.Events;
 import com.dlxy.server.user.service.IUserIllegalLogService;
-import com.dlxy.system.batch.consumer.AmqpListener;
 
 /**
 * 

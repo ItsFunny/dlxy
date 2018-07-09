@@ -42,7 +42,7 @@ public class TitleController
 		
 		params.put("user", user);
 		
-		ModelAndView modelAndView=new ModelAndView("titles",params);
+		ModelAndView modelAndView=new ModelAndView("01",params);
 		return modelAndView;
 	}
 }
