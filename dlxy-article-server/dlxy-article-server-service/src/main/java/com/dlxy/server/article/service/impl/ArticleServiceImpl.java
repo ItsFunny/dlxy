@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 
@@ -81,9 +82,9 @@ public class ArticleServiceImpl implements IArticleService ,IUserArticleService
 	}
 
 	@Override
-	public ArticleDTO findByArticleId(Long articleId) throws SQLException
+	public ArticleDTO findArticleDetailByArticleId(Long articleId) throws SQLException
 	{
-		return articleDao.findByArticleId(articleId);
+		return articleDao.findArticleDetailByArticleId(articleId);
 	}
 
 	@Override
@@ -127,6 +128,49 @@ public class ArticleServiceImpl implements IArticleService ,IUserArticleService
 	{
 		articleDao.deleteInBatch(articleIds);
 	}
+
+	@Override
+	public Collection<ArticleDTO> findAllRecommendArticles()
+	{
+		return articleDao.findAllRecommedArticles();
+	}
+
+	@Override
+	public ArticleDTO findByArticleId(Long articleId)
+	{
+		return articleDao.findByArticleId(articleId);
+	}
+
+//	@Override
+//	public Collection<ArticleDTO> findArtilcesByTilteIds(List<Integer> titleIds, int limit) throws SQLException
+//	{
+//		return articleQueryDao.findArticlesInTitleIds(titleIds, limit);
+//	}
+
+	@Override
+	public Collection<ArticleDTO> findArtilcesByTilteIdsAndPage(int pageSize,int pageNum,List<Integer> ids) throws SQLException
+	{
+		return articleDao.findArticlesInTitleIdsByPage((pageNum-1)*pageSize, pageSize, ids);
+	}
+
+	@Override
+	public Collection<ArticleDTO> findArticlesInTitleIdsTopNumber(List<Integer> ids, int limit) throws SQLException
+	{
+		Map<String, Object>params=new HashMap<>();
+		
+		//TODO
+		
+		
+		
+		
+		return null;
+	}
+
+//	@Override
+//	public Collection<ArticleDTO> findArticlesByTitleIds(Integer[] ids)
+//	{
+//		return articleDao.findByTitleIds(ids);
+//	}
 
 
 }

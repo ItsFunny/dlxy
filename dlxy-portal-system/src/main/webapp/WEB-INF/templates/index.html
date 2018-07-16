@@ -2,23 +2,31 @@
 
 <script>
 	$(document).ready(function(){
-	
 		$.ajax({
 			url:'/api/titles.html',
 			dataType: 'json',
 			type: 'get',
+			async: false,
 			success:function(data){
 				var obj=$("#titleUl");
+				var wrap=$("#wrap_index");
 				if(data.code==1){
 					for(var i=0;i<data.data.length;i++){
 						var o=data.data[i];
 						var t='<li id="mainlevel_'+o.titleId+'" class="mainlevel"><a class="nav-a" href="index.htm">'+o.titleName+'</a></li>';
 						obj.append(t);
+						
+						<#--  var j='<div class="xyxw_box mb30 mr30 fl" id="title_detail_'+o.titleId+'" titleId="'+o.titleId+'"> </div>';
+						wrap.append(j);-->
 					}
 				}
 			}
 		})
 	});
+	function loadChildArticles(obj){
+		var titleParentId=$(obj).attr("titleId");
+		alert(titleParentId);
+	}
 </script>
 
 
@@ -65,44 +73,43 @@
 </div>
 
 
-      <div class="wrap clearfix">
+      <div class="wrap clearfix" id="wrap_index">
+      <#list titleDTOLsit as item>
        <div class="xyxw_box mb30 mr30 fl">
 
           <div class="box_tit po">
 
-            <div class="box_t1 fl"><span>学院新闻</span></div>
+            <div class="box_t1 fl"><span>${item.titleName}</span></div>
             <div class="box_t2 fr"></div>
             <a href="xyxw.htm" target="_blank" class="poa">更多+</a>
           </div>
-
-
-          <div class="box_con">
-           <div class="pic mr20 fl"><div id="KinSlideshow" style="visibility:hidden;"> <!--#begineditable name="学院新闻图片" viewid="194975" tagname="学院新闻图片" action="" layout="" contype="" stylesysid="" template="" tplstyle="" clone="" istemp=""--><a href="info/1025/1482.htm" target="_blank" style="display: block;">
-            <img src="images/A173B9C6040CB7A33422EF2B070_5348CE18_25FD7.jpg" alt="校领导到农学院调研" width="220" height="165" />
-          </a>
-          <a href="info/1025/1027.htm" target="_blank">
-            <img src="images/201508101514048440.png" alt="我院“三区”人才助力脱贫工作取得成效" width="220" height="165" />
-          </a>
-          <a href="info/1025/1026.htm" target="_blank">
-            <img src="images/201508101514048440.png" alt="吉林省教育厅厅长一行人到我院基地调研" width="220" height="165" />
-          </a>
-          <script>_showDynClickBatch(['dynclicks_u2_1482','dynclicks_u2_1027','dynclicks_u2_1026'],[1482,1027,1026],"wbnews", 1440883816)</script>
-          <!--#endeditable--></div></div>
-
-          <!--#begineditable name="学院新闻头条" viewid="194976" tagname="学院新闻头条" action="" layout="" contype="" stylesysid="" template="" tplstyle="" clone="" istemp=""--><div class="xyxw fl"><a href="info/1025/1538.htm" target="_blank">农学院牵头举行“2018全国鲜食玉米...</a></div>
-          <div class="desc fl"><a href="content/?311.html" target="_blank">&nbsp;&nbsp;&nbsp; ​农学院牵头举行“2018全国鲜食玉米学术研讨会暨《中国糯玉...</a></div>
-          <script>_showDynClickBatch(['dynclicks_u3_1538'],[1538],"wbnews", 1440883816)</script>
-          <!--#endeditable-->
-
-          <!--#begineditable name="学院新闻" viewid="194965" tagname="学院新闻" action="" layout="" contype="" stylesysid="" template="" tplstyle="" clone="" istemp=""--><ul class="list_xyxw fl">
-            <li><a href="info/1025/1539.htm" target="_blank">[学院新闻]&#160;&#160;&#160;我院师生参加永吉·万昌现代农业技术推广会</a><span>2018-05-23</span></li>
-            <li><a href="info/1025/1536.htm" target="_blank">[学院新闻]&#160;&#160;&#160;抗旱保苗、保教，农院在行动</a><span>2018-05-16</span></li>
-            <li><a href="info/1025/1537.htm" target="_blank">[学院新闻]&#160;&#160;&#160;我院组织互联网+大赛培训</a><span>2018-05-11</span></li>
-            <li><a href="info/1025/1533.htm" target="_blank">[学院新闻]&#160;&#160;&#160;花之物语，名家风尚</a><span>2018-05-10</span></li>
-            <li><a href="info/1025/1521.htm" target="_blank">[学院新闻]&#160;&#160;&#160;金丰实习之旅,为未来筑梦</a><span>2018-05-09</span></li>
-          </ul><script>_showDynClickBatch(['dynclicks_u4_1538','dynclicks_u4_1539','dynclicks_u4_1536','dynclicks_u4_1537','dynclicks_u4_1533','dynclicks_u4_1521'],[1538,1539,1536,1537,1533,1521],"wbnews", 1440883816)</script>
-          <!--#endeditable-->
-        </div>
+			<#list item.articles as detail>
+				<#-- title对应的图片 -->
+	          <div class="box_con">
+		           <div class="pic mr20 fl"><div id="KinSlideshow" style="visibility:hidden;"> 
+			           <a href="info/1025/1482.htm" target="_blank" style="display: block;">
+			            <img src="images/A173B9C6040CB7A33422EF2B070_5348CE18_25FD7.jpg" alt="校领导到农学院调研" width="220" height="165" />
+			          </a>
+			          <a href="info/1025/1027.htm" target="_blank">
+			            <img src="images/201508101514048440.png" alt="我院“三区”人才助力脱贫工作取得成效" width="220" height="165" />
+			          </a>
+			          <a href="info/1025/1026.htm" target="_blank">
+			            <img src="images/201508101514048440.png" alt="吉林省教育厅厅长一行人到我院基地调研" width="220" height="165" />
+			          </a>
+		          </div>
+	       	  </div>
+			<#-- 这是放大显示的,直接第一个就行 -->
+			  <#if detail_index == 0>
+	          <div class="desc fl"><a href="/article/detail/${detail.articleId?c}.html" target="_blank">&nbsp;&nbsp;&nbsp; ​${detail.articleName}</a></div>
+	          </#if>
+	          <!--#begineditable name="学院新闻" viewid="194965" tagname="学院新闻" action="" layout="" contype="" stylesysid="" template="" tplstyle="" clone="" istemp=""-->
+	          <ul class="list_xyxw fl">
+	            <li><a href="/article/detail/${detail.articleId?c}.html" target="_blank">[${item.titleName}]&#160;&#160;&#160;${detail.articleName}</a><span>${detail.createDate?string('yyyy-MM-dd hh:MM:ss')}</span></li>
+	          </ul>
+	          <!--#endeditable-->
+	        </div>
+	        </#list>
+     </#list>>
      
    </div>
 

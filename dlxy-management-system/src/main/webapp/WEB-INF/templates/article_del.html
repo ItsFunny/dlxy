@@ -10,10 +10,6 @@
 		    </div>
 		    <a class="layui-btn search_btn">查询</a>
 		</div>
-
-		<div class="layui-inline">
-			<a class="layui-btn layui-btn-danger batchDel">批量彻底删除</a>
-		</div>
 		<div class="layui-inline">
 			注意,已经删除的文章,当超过删除时间10天之后将会自动删除,不可恢复
 		</div>
@@ -98,6 +94,7 @@
 		jQuery.post('/api/article/update/status.html',{"articleId":articleId,"articleStatus":0},function(data,textStatus,jqXHR){
 			if(data.code==1){
 				alert('恢复成功');
+				window.location.reload();
 			}else{
 				alert(data.msg);
 			}
@@ -108,15 +105,16 @@
 		$("input:checkbox[name=checked]:checked").each(function(){
 			ids+=$(this).val()+",";
 		})
-		alert(ids);
 		jQuery.get('/api/article/delete.html',{"articleId":ids},function(data,textStatus,jqXHR){
  			alert(data.msg);
+ 			window.location.reload();
  		},'json');
 	})
 	 function singleDelIndeed(obj){
  		var articleId=$(obj).attr("articleId");
  		jQuery.get('/api/article/delete.html',{"articleId":articleId},function(data,textStatus,jqXHR){
  			alert(data.msg);
+ 			window.location.reload();
  		},'json');
  	}
 </script>

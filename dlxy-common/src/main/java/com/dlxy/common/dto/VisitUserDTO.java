@@ -6,7 +6,10 @@
 */
 package com.dlxy.common.dto;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
 * 
@@ -20,12 +23,28 @@ public class VisitUserDTO
 {
 	private Long visitUserId;
 	private String visitUserIp;
-	private List<Long> articleIdList;
+	private Map<Long, Long> record;
 
+	public Long getLastVisitDate(Long articleId)
+	{
+		Long long1 = record.get(articleId);
+		if(null==long1)
+		{
+			record.put(articleId, System.currentTimeMillis());
+			return null;
+		}else {
+			return long1;
+		}
+	}
+	public VisitUserDTO()
+	{
+		this.record=new ConcurrentHashMap<>();
+	}
 	public Long getVisitUserId()
 	{
 		return visitUserId;
 	}
+	
 
 	public void setVisitUserId(Long visitUserId)
 	{
@@ -42,15 +61,16 @@ public class VisitUserDTO
 		this.visitUserIp = visitUserIp;
 	}
 
-	public List<Long> getArticleIdList()
+	public Map<Long, Long> getRecord()
 	{
-		return articleIdList;
+		return record;
 	}
 
-	public void setArticleIdList(List<Long> articleIdList)
+	public void setRecord(Map<Long, Long> record)
 	{
-		this.articleIdList = articleIdList;
+		this.record = record;
 	}
+
 	
 
 }

@@ -3,8 +3,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <title>“学习筑梦”专题系列活动之“园林苗木国内外发展现状及前景”-农学院</title><meta name="keywords" content="农学院">
-
-
 <meta name="Description" content="   6月7日，吉林农业科技学院植物科学学院园林系、植保系、农学系2017届毕业生毕业设计与论文答辩工作在我校D教学楼101、107、209与A教学楼500、300、501教室分别展开。副">
 <meta name="generator" content="吉林农业技术学院">
 <meta name="author" content="吉林农业技术学院">
@@ -22,8 +20,65 @@
 <link rel="stylesheet" type="text/css" href="/js/cont.vsb.css">
 <script type="text/javascript" src="/js/counter.js"></script>
 <script type="text/javascript">_jsq_(1025,'/cont.jsp',1574,1440883816)</script>
+<#--joker add js -->
+<script type="text/javascript" src="/js/jquery.min.js"></script>
 </head>
 
+<script>
+$(document).ready(function(){
+
+	loadTitles();
+	loadNews();
+})
+
+function loadTitles(){
+	
+	$.ajax({
+		url: '/api/titles.html',
+		dataType: 'json',
+		type:'get',
+		success:function(data){
+			if(data.code==1){
+				var obj=$("#titleUl");
+				if(data.data.length>1){
+					for(var i=0;i<data.data.length;i++){
+						var o=data.data[i];
+						var t='<li id="mainlevel_'+o.titleId+'" class="mainlevel"><a class="nav-a" href="http://nx.jlnku.edu.cn/index.htm">'+o.titleName+'</a></li>';
+						obj.append(t);
+					}
+				}
+			}
+		}
+	});
+}
+function loadNews(){
+	$.ajax({
+		url: '/api/article/recommend.html',
+		dataType:'json',
+		type:'get',
+		success:function(data){
+			if(data.code==1){
+			
+				if(data.data.length>1){
+					var obj=$("#newsUl");
+					for(var i=0;i<data.data.length;i++){
+						var o=data.data[i];
+						var t='<li><a href="/article/detail/'+o.articleId+'.html" target="_blank" title="'+o.articleName+'">'+o.articleName+'..</a></li>';
+						obj.append(t);
+					}
+				}else{
+					alert('无新闻数据');
+				}
+			}else{
+				alert('加载新闻数据失败');
+			}
+			
+		}
+	
+	})
+
+}
+</script>
 <body>
 <div class="header">
   <div class="logo" style="overflow: hidden;">
@@ -31,9 +86,9 @@
   </div>
   <div class="DH">
 <div id="nav">
-<!--#begineditable name="网站导航" viewid="194909" tagname="网站导航" action="" layout="" contype="" stylesysid="" template="" tplstyle="" clone="" istemp=""--><ul>
-<li id="mainlevel_00" class="mainlevel"><a class="nav-a" href="http://nx.jlnku.edu.cn/index.htm">首页</a></li>   //采用ajax
-</ul><!--#endeditable-->
+<!--#begineditable name="网站导航" viewid="194909" tagname="网站导航" action="" layout="" contype="" stylesysid="" template="" tplstyle="" clone="" istemp=""-->
+	<ul id="titleUl">
+	</ul><!--#endeditable-->
 </div>
 <!-- 导航结束 -->
   </div>
@@ -64,15 +119,8 @@ $(document).ready(function(){
     <div class="box_tit"><span>最新公告</span></div>    //这里要采用ajax
     <div class="box_con">
 <!--#begineditable name="最新通知" viewid="195002" tagname="最新通知" action="" layout="" contype="" stylesysid="" template="" tplstyle="" clone="" istemp="true"-->
-<script language="javascript" src="js/dynclicks.js"></script>
-<ul class="list_news">
-<li>
-    <a href="http://nx.jlnku.edu.cn/info/1025/1574.htm" target="_blank" title="${articleDTO.articleName}">${articleDTO.articleName}..
-    </a>
-</li>
-</ul>
-<script>_showDynClickBatch(['dynclicks_u3_1574','dynclicks_u3_1573','dynclicks_u3_1572','dynclicks_u3_1571','dynclicks_u3_1552','dynclicks_u3_1551'],[1574,1573,1572,1571,1552,1551],"wbnews", 1440883816)
-</script>
+		<ul class="list_news" id="newsUl">
+		</ul>
 <!--#endeditable-->
     </div>
   </div>
@@ -92,13 +140,14 @@ $(document).ready(function(){
     <div class="nr">
     
 <!--#begineditable name="文章内容" viewid="194938" tagname="文章内容" action="" layout="" contype="" stylesysid="" template="" tplstyle="" clone="" istemp=""-->
-<script language="javascript" src="js/NewsvoteDWR.js"></script>
-<script language="javascript" src="js/engine.js"></script>
-<script language="javascript" src="js/newscontent.js"></script>
+<script language="javascript" src="/js/NewsvoteDWR.js"></script>
+<script language="javascript" src="/js/engine.js"></script>
+<script language="javascript" src="/js/newscontent.js"></script>
 <script type="text/javascript">NewsvoteDWR.getNewsLinkUrl(1573,'1440883816','vsb',newsSkip);function newsSkip(data){if(data != ""){window.location.href = data;}}</script><link href="css/photoswipe.css" type="text/css" rel="stylesheet">
-<script language="javascript" src="js/klass.min.js"></script>
+<script language="javascript" src="/js/klass.min.js"></script>
 <script language="javascript" src="./“学习筑梦”专题系列活动之“园林苗木国内外发展现状及前景”-农学院_files/ajax.js"></script>      
 
+<#if articleDTO??>
 <!-- 文章 -->
 <div class="nr_bt">
   <!-- 文章标题 -->
@@ -118,7 +167,7 @@ $(document).ready(function(){
 <!-- 文章描述结束 -->
 <p style="line-height: 250%; text-indent: 28px;">&nbsp;</p>
 
-
+</#if>
 <!-- 内容页图片 -->
 <p style="text-align: center;">
  <img width="800" src="images/95033D369650CC81AB62FB6459B_D3867284_4FAF7.jpg" vsbhref="vurl" vurl="/_vsl/59B5C95033D369650CC81AB62FB6459B/D3867284/4FAF7" vheight="" vwidth="800" orisrc="/__local/5/9B/5C/95033D369650CC81AB62FB6459B_D3867284_4FAF7.jpg" class="img_vsb_content">
@@ -132,9 +181,6 @@ $(document).ready(function(){
         </p><p><strong>下一篇：</strong><a href="http://nx.jlnku.edu.cn/info/1025/1572.htm">农学院召开2019年度吉林省科技发展计划项目申报布置会</a></p>
     <p></p>
       </div>
-
-
-
 
 <!--#endeditable-->
       

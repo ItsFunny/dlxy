@@ -7,8 +7,17 @@
 */
 package com.dlxy.system.listener;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import com.dlxy.system.service.RedisService;
+import com.joker.library.utils.CommonUtils;
 
 /**
 * 
@@ -21,10 +30,11 @@ import javax.servlet.http.HttpSessionListener;
 public class PortalVisiterListener implements HttpSessionListener
 {
 
+	@Autowired
+	private RedisService redisService;
 	@Override
 	public void sessionCreated(HttpSessionEvent se)
 	{
-		
 	}
 
 	@Override

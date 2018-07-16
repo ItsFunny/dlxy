@@ -144,7 +144,7 @@ public class RestAPIController
 	{
 		try
 		{
-			ArticleDTO articleDTO = articleService.findByArticleId(articleId);
+			ArticleDTO articleDTO = articleService.findArticleDetailByArticleId(articleId);
 			return ResultUtil.sucess(articleDTO);
 		} catch (Exception e)
 		{

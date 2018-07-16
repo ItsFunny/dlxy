@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+
+
+<mapper
+	namespace="com.dlxy.server.picture.dao.mybatis.PictureMybatisDao">
+
+
+	<insert id="addPicturesInBatch" useGeneratedKeys="true"
+		keyProperty="pictureId">
+		insert into dlxy_picture (
+		picture_id,picture_url,picture_type,picture_display_seq) values
+		<foreach collection="list" index="index" open="("
+			separator="," close=")" item="p">
+			#{p.pictureId},#{p.pictureUrl},#{p.pictureType},#{p.pictureDisplaySeq}
+		</foreach>
+
+	</insert>
+	<insert id="addPictureWithAricleId" useGeneratedKeys="true"
+		keyProperty="pictureId">
+		insert into dlxy_article_picture
+		(article_id,picture_id,picture_status) values
+
+		<foreach collection="list" index="index" open="("
+			separator="," close=")" item="p">
+			#{p.articleId},#{p.pictureId},#{p.pictureStatus}
+		</foreach>
+	</insert>
+
+
+	<update id="updatePictureStausInBatch">
+		update dlxy_article_picture set picture_status=#{status} where
+		article_id = #{articleId}
+		<if test="null!=ids and  ids.length>0">
+			and picture_id in
+			<foreach collection="ids" index="index" open="(" close=")"
+				separator="," item="id">
+				#{id}
+			</foreach>
+		</if>
+	</update>
+
+	<update id="updatePicStatusByArticleIdInBatch">
+		update dlxy_article_picture set picture_status=#{status} where
+		article_id in
+		<foreach collection="ids" index="index" open="(" close=")"
+			separator="," item="id">
+			#{id}
+		</foreach>
+	</update>
+	
+	<delete id="deleteByPictureIdsInBatch">
+		delete from dlxy_picture where 1=1 and  picture_id in 
+		<foreach collection="list" index="index" item="id" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+	</delete>
+	
+	<select id="findByArticleIdArray" resultType="com.dlxy.common.dto.PictureDTO">
+		select picture_url,from dlxy_picture where picture_id in (
+			select picture_id from dlxy_article_picture where article_id in 
+			<foreach collection="array" index="index" open="(" close=")" separator="," item="id">
+				#{id}
+			</foreach>
+		)
+	</select>
+</mapper>

@@ -133,13 +133,22 @@ public class ArticleQueryDaoImpl implements ArticleQueryDao
 			if (!StringUtils.isEmpty(params.get("searchParam").toString()))
 			{
 				// 这里好像有问题,这样写好像如果知道userId 对应的username 照样能获取到某个user的文章信息
-				//2018-07-07 22:47 直接屏蔽 对username的判断
-//				or a.article_id in (select d.article_id from dlxy_user_article d where d.username like ? )
-				sql.append(
-						"and ( a.article_name like ? or a.article_author like ? )");
+				// 2018-07-07 22:47 直接屏蔽 对username的判断
+				// or a.article_id in (select d.article_id from dlxy_user_article d where
+				// d.username like ? )
+				sql.append("and ( a.article_name like ? or a.article_author like ? )");
 				set.add("%" + params.get("searchParam") + "%");
 				set.add("%" + params.get("searchParam") + "%");
 			}
+		}
+		if (params.containsKey("titleId"))
+		{
+			sql.append(" and a.title_id = ? ");
+			set.add(params.get("titleId"));
+		} else if (params.containsKey("titleParentId"))
+		{
+			sql.append(" and a.title_id in ( select g.title_id from dlxy_title g where g.title_parent_id = ? ) ");
+			set.add(params.get("titleParentId"));
 		}
 		if (params.containsKey("userId"))
 		{
@@ -176,8 +185,8 @@ public class ArticleQueryDaoImpl implements ArticleQueryDao
 					articleDTO.setArticleName(rs.getString(3));
 					articleDTO.setArticleAuthor(rs.getString(4));
 					articleDTO.setArticleIsRecommend(rs.getInt(5));
-					articleDTO.setCreateDate((Date)rs.getObject(6));
-					articleDTO.setUpdateDate((Date)rs.getObject(7));
+					articleDTO.setCreateDate((Date) rs.getObject(6));
+					articleDTO.setUpdateDate((Date) rs.getObject(7));
 					articleDTO.setArticleStatus(rs.getInt(8));
 					articleDTO.setUsername(rs.getString(9));
 					articleDTO.setUserId(rs.getLong(10));
@@ -219,7 +228,7 @@ public class ArticleQueryDaoImpl implements ArticleQueryDao
 		{
 			throw new RuntimeException("article id is required ");
 		}
-		ArticleDTO dbArticleDTO = articleDao.findByArticleId(articleDTO.getArticleId());
+		ArticleDTO dbArticleDTO = articleDao.findArticleDetailByArticleId(articleDTO.getArticleId());
 		StringBuilder sb = new StringBuilder();
 		List<Object> l = new LinkedList<>();
 		sb.append("update dlxy_article set update_date=?");
@@ -258,9 +267,90 @@ public class ArticleQueryDaoImpl implements ArticleQueryDao
 			sb.append(" , article_status = ? ");
 			l.add(articleDTO.getArticleStatus());
 		}
+		if(null!=articleDTO.getTitleId() && ! articleDTO.getTitleId().equals(dbArticleDTO.getTitleId()))
+		{
+			sb.append(" , title_id = ? ");
+			l.add(articleDTO.getTitleId());
+		}
 		sb.append(" where article_id = ? ");
 		l.add(articleDTO.getArticleId());
 		queryRunner.update(sb.toString(), l.toArray());
+	}
+
+	// @Override
+	// public Collection<ArticleDTO> findArticlesInTitleIds(List<Integer> titelIds,
+	// int limit) throws SQLException
+	// {
+	// StringBuilder sql = new StringBuilder(
+	// " SELECT a.article_id,article_name,a.create_date,b.title_parent_id FROM
+	// dlxy_article a,dlxy_title b WHERE a.title_id=b.title_id AND
+	// a.article_status<> 2 AND a.title_id IN ( ");
+	// sql.append(" select b.title_id from dlxy_title b where b.title_parent_id in (
+	// ");
+	// sql.append(StringUtils.repeat(" ?, ", titelIds.size()-1)).append(" ? ) ");
+	// sql.append(" ) ");
+	// return queryRunner.query(sql.toString(), new
+	// ResultSetHandler<Collection<ArticleDTO>>()
+	// {
+	//
+	// @Override
+	// public Collection<ArticleDTO> handle(ResultSet rs) throws SQLException
+	// {
+	// List<ArticleDTO>articleDTOs=new ArrayList<ArticleDTO>();
+	// while(rs.next())
+	// {
+	// ArticleDTO articleDTO=new ArticleDTO();
+	// articleDTO.setArticleId(rs.getLong(1));
+	// articleDTO.setArticleName(rs.getString(2));
+	// articleDTO.setCreateDate((Date)rs.getDate(3));
+	// articleDTO.setTitleParentId(rs.getInt(4));
+	// articleDTOs.add(articleDTO);
+	// }
+	// return articleDTOs;
+	// }
+	// }, titelIds.toArray());
+	// }
+
+	@Override
+	public Collection<ArticleDTO> findArticlesInTitleIds(Map<String, Object> params) throws SQLException
+	{
+		List<Object> l = new LinkedList<>();
+		List<Integer> titleIds = (List<Integer>) params.get("ids");
+		StringBuilder sql = new StringBuilder(
+				" SELECT a.article_id,article_name,a.create_date,b.title_parent_id,a.article_author FROM dlxy_article a,dlxy_title b WHERE a.title_id=b.title_id AND a.article_status<> 2 AND a.title_id IN ( ");
+		sql.append(" select b.title_id from dlxy_title b where b.title_parent_id in ( ");
+		sql.append(StringUtils.repeat(" ?, ", titleIds.size() - 1)).append(" ? ) ");
+		sql.append(" ) ");
+		l.addAll(titleIds);
+		sql.append("order by a.create_date desc ");
+		if (params.containsKey("start") || params.containsKey("end"))
+		{
+			sql.append(" limit ?, ? ");
+			l.add(params.get("start"));
+			l.add(params.get("end"));
+		} else
+		{
+			sql.append("limit ? ");
+			l.add(params.get("limit"));
+		}
+		return queryRunner.query(sql.toString(), new ResultSetHandler<Collection<ArticleDTO>>()
+		{
+			@Override
+			public Collection<ArticleDTO> handle(ResultSet rs) throws SQLException
+			{
+				List<ArticleDTO> articleDTOs = new ArrayList<ArticleDTO>();
+				while (rs.next())
+				{
+					ArticleDTO articleDTO = new ArticleDTO();
+					articleDTO.setArticleId(rs.getLong(1));
+					articleDTO.setArticleName(rs.getString(2));
+					articleDTO.setCreateDate((Date) rs.getDate(3));
+					articleDTO.setTitleParentId(rs.getInt(4));
+					articleDTOs.add(articleDTO);
+				}
+				return articleDTOs;
+			}
+		}, l.toArray());
 	}
 
 }

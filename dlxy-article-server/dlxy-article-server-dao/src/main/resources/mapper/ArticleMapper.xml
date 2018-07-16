@@ -2,28 +2,76 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 
-<mapper namespace="com.dlxy.server.article.dao.mybatis.ArticleMybatisDao">
+<mapper
+	namespace="com.dlxy.server.article.dao.mybatis.ArticleMybatisDao">
 	<update id="updateInBatch" parameterType="java.util.Map">
 		update dlxy_article set article_status=#{status}
 		<if test="status==2">
 			,delete_date =#{deleteDate}
 		</if>
-		where 1=1 
+		where 1=1
 		<if test="null!=titleId and titleId >0">
-			and exists(select 1 from dlxy_title where title_id =#{titleId}
+			and exists(select 1 from dlxy_title where title_id
+			=#{titleId}
 		</if>
-		and article_id in 
-		<foreach collection="list" index="index" open="(" separator="," close=")" item="id">
+		and article_id in
+		<foreach collection="list" index="index" open="("
+			separator="," close=")" item="id">
 			#{id}
 		</foreach>
 	</update>
-	
+
 	<delete id="deleteInBatch">
-		
-		delete from dlxy_article where article_id in 
-		<foreach collection="array" index="index" open="(" close=")" separator="," item="articleId">
+
+		delete from dlxy_article where article_id in
+		<foreach collection="array" index="index" open="(" close=")"
+			separator="," item="articleId">
 			#{articleId}
 		</foreach>
-	
 	</delete>
+
+
+	<!-- <select id="findArticlesInTitleIds" resultType="com.dlxy.common.dto.ArticleDTO"> 
+		select a.article_id,article_name,a.create_date,a.title_id ,c.title_parent_id 
+		from dlxy_article a,dlxy_title c where a.title_id = c.title_id and a.article_status 
+		<> 2 and a.title_id in ( select b.title_id from dlxy_title b where b.title_parent_id 
+		in <foreach collection="list" index="index" open="(" close=")" separator="," 
+		item="id"> #{id} </foreach> ) order by a.create_date limit #{limit} </select> -->
+	<select id="countArticleByTitleIds" resultType="java.lang.Long">
+		select count(1) from dlxy_article where 1=1 and
+		title_id in
+		<foreach collection="array" index="index" item="id" open="("
+			close=")" separator=",">
+			#{id}
+		</foreach>
+	</select>
+	<select id="findByTitleIds"
+		resultType="com.dlxy.common.dto.ArticleDTO">
+		select
+		a.article_id,a.title_id,a.article_name,a.article_author,a.article_is_recommend,a.create_date,a.update_date,a.article_status
+		,c.username,c.user_id,a.delete_date,b.title_name from dlxy_article a
+		left join dlxy_title b on a.title_id=b.title_id
+		left join dlxy_user_article c on a.article_id=c.article_id where 1=1
+		and
+		a.article_id in
+		<foreach collection="array" index="index" item="id" open="("
+			close=")" separator=",">
+			#{id}
+		</foreach>
+	</select>
+	<select id="findArticlesInTitleIdsByPage" resultType="com.dlxy.common.dto.ArticleDTO">
+		select
+		a.article_id,a.title_id,a.article_name,a.article_author,a.article_is_recommend,a.create_date,a.update_date,a.article_status
+		,c.username,c.user_id,a.delete_date,b.title_name from dlxy_article a
+		left join dlxy_title b on a.title_id=b.title_id
+		left join dlxy_user_article c on a.article_id=c.article_id where 1=1
+		and
+		a.title_id in
+		<foreach collection="ids" index="index" item="id" open="("
+			close=")" separator=",">
+			#{id}
+		</foreach>
+		order by a.create_date desc 
+		limit #{start},#{end}
+	</select>
 </mapper>

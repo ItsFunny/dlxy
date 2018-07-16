@@ -9,6 +9,7 @@ package com.dlxy.system.batch.consumer;
 
 import java.util.List;
 
+import com.dlxy.common.event.AmqpListener;
 import com.dlxy.common.event.AppEvent;
 
 /**

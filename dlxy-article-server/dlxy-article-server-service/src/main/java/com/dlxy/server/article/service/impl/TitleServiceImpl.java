@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dlxy.common.dto.DlxyTitleDTO;
+import com.dlxy.common.enums.DlxyTitleEnum;
 import com.dlxy.server.article.dao.mybatis.TitleMybatisDao;
 import com.dlxy.server.article.service.ITitleService;
 
@@ -36,11 +37,11 @@ public class TitleServiceImpl implements ITitleService
 		return titleDao.findParentAllChilds(titleParentId);
 	}
 
-	@Override
-	public Collection<DlxyTitleDTO> findAllParent()
-	{
-		return titleDao.findAllParents();
-	}
+//	@Override
+//	public Collection<DlxyTitleDTO> findAllParent()
+//	{
+//		return titleDao.findByType(DlxyTitleEnum.UP_TITLE.ordinal());
+//	}
 
 	@Override
 	public DlxyTitleDTO findById(int titleId)
@@ -58,6 +59,24 @@ public class TitleServiceImpl implements ITitleService
 	public void deleteByTitleId(Integer titleId)
 	{
 		titleDao.deleteByTitleId(titleId);
+	}
+
+//	@Override
+//	public DlxyTitleDTO findNewsTitle()
+//	{
+//		Collection<DlxyTitleDTO> collection = titleDao.findByType(DlxyTitleEnum.NEWS_TITLE.ordinal());
+//		if(null!=collection && !collection.isEmpty())
+//		{
+//			return collection.iterator().next();
+//		}else {
+//			return null;
+//		}
+//	}
+
+	@Override
+	public Collection<DlxyTitleDTO> findTitlesByType(Integer type)
+	{
+		return titleDao.findByType(type);
 	}
 
 }

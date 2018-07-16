@@ -21,4 +21,6 @@ import java.util.Map;
 public interface IArticleCountService
 {
 	Long countArticlesByDetailParam(Map<String, Object>params) throws SQLException;
+	
+	Long coutArtilcesByTitleIds(Integer[] titleIds);
 }	

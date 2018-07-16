@@ -23,7 +23,16 @@ public interface ITitleService
 {
 	Collection<DlxyTitleDTO>findChildsByParentId(int titleParentId);
 	
-	Collection<DlxyTitleDTO>findAllParent();
+//	Collection<DlxyTitleDTO>findAllParent();
+	
+	Collection<DlxyTitleDTO>findTitlesByType(Integer type);
+	
+	
+	//查找出真正新闻的页面
+//	DlxyTitleDTO findNewsTitle();
+	
+	
+	
 	
 	DlxyTitleDTO findById(int titleId);
 	

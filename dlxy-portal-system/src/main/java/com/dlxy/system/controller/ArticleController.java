@@ -38,21 +38,17 @@ public class ArticleController
 
 	@Autowired
 	private IArticleService articleService;
+
 	@RequestMapping("/detail/{articleId}")
 	public ModelAndView articleDetail(@PathVariable Long articleId, HttpServletRequest request,
 			HttpServletResponse response)
 	{
-		Map<String, Object>params=new HashMap<String, Object>();
-		ModelAndView modelAndView=null;
-		try
-		{
-			ArticleDTO articleDTO = articleService.findByArticleId(articleId);
-			params.put("articleDTO", articleDTO);
-		} catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
-		modelAndView=new ModelAndView("article_detail",params);
+		Map<String, Object> params = new HashMap<String, Object>();
+		ModelAndView modelAndView = null;
+		ArticleDTO articleDTO = articleService.findByArticleId(articleId);
+		params.put("articleDTO", articleDTO);
+		
+		modelAndView = new ModelAndView("article_detail", params);
 		return modelAndView;
 	}
 }

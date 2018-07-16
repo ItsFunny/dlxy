@@ -110,7 +110,7 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 	public ArticleDTO findByArticleId(Long articleId) throws SQLException
 	{
 		
-		return articleService.findByArticleId(articleId);
+		return articleService.findArticleDetailByArticleId(articleId);
 	}
 
 

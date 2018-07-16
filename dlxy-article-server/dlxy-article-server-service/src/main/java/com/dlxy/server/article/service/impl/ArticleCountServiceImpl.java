@@ -13,6 +13,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.dlxy.server.article.dao.mybatis.ArticleMybatisDao;
 import com.dlxy.server.article.dao.query.ArticleCountQueryDao;
 import com.dlxy.server.article.service.IArticleCountService;
 
@@ -31,9 +32,17 @@ public class ArticleCountServiceImpl implements IArticleCountService
 	@Autowired
 	private ArticleCountQueryDao articleCountQueryDao;
 	
+	@Autowired
+	private ArticleMybatisDao articleMybatisDao;
 	public Long countArticlesByDetailParam(Map<String, Object> params) throws SQLException
 	{
 		return articleCountQueryDao.coutArticles(params);
+	}
+
+	@Override
+	public Long coutArtilcesByTitleIds(Integer[] titleIds)
+	{
+		return articleMybatisDao.countArticleByTitleIds(titleIds);
 	}
 
 }

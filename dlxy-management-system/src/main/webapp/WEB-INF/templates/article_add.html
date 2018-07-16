@@ -47,7 +47,7 @@
 		jQuery.post('/api/titles.html',{"parentId":0},function(data,textStatus,jqXHR){
 			if(data.code==1 && null!=data.data){
 				index++;
-				$("#title").append('<div class="layui-input-inline" child='+index+'><select name="browseLook" class="title0" lay-filter="browseLook" onchange="showDetail(this)"></select></div>')
+				$("#title").append('<div class="layui-input-inline" child='+index+'><select name="browseLook" class="title0"  onchange="test();"></select></div>')
 				for(var i=0;i<data.data.length;i++){
 					var p=data.data[i];
 					$(".title0").append('<option value="'+p.titleId+'">'+p.titleName+'</option>')
@@ -57,6 +57,13 @@
 			}
 		},'json');
 	});
+	function test(){
+		alert('1');
+	}
+	function showDetail(obj){
+		alert(ob.val());
+	}
+	
 </script>
 	
 
@@ -140,11 +147,6 @@
 	<script type="text/javascript" src="/common/layui/layui.js"></script>
 	<script type="text/javascript" src="/js/newsadd.js"></script>
 	
-	
-	<script>
-		$(".layui-input layui-unselect").onclick(function(){
-			alert('1');
-		})
-	</script>
+
 	
 <#include "wrapper-down.html">

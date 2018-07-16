@@ -6,7 +6,6 @@
 */
 package com.dlxy.system.config;
 
-
 import java.io.IOException;
 import java.util.List;
 
@@ -39,45 +38,52 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.dlxy.system.service.RedisService;
+import com.dlxy.system.service.impl.RedisServiceImpl;
+
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 
 /**
-* 
-* @author joker 
-* @date 创建时间：2018年6月8日 下午2:26:32
-*/
+ * 
+ * @author joker
+ * @date 创建时间：2018年6月8日 下午2:26:32
+ */
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages= {
-		"com.dlxy"
-})
-@MapperScan(annotationClass= Mapper.class,basePackages =
+@ComponentScan(basePackages =
+{ "com.dlxy" })
+@MapperScan(annotationClass = Mapper.class, basePackages =
 { "com.dlxy.server.user.dao.mybatis", "com.dlxy.server.article.dao.mybatis", "com.dlxy.server.picture.dao.mybatis" })
 public class PortalSystemConfiguration implements WebMvcConfigurer
 {
-	
-	
+
 	@Profile("dev")
 	@Bean
 	public DlxyPropertyPlaceholderConfigurer placeholderConfigurerDev() throws IOException
 	{
-		DlxyPropertyPlaceholderConfigurer dlxyPropertyPlaceholderConfigurer=new DlxyPropertyPlaceholderConfigurer();
-		dlxyPropertyPlaceholderConfigurer.setLocations(new PathMatchingResourcePatternResolver().getResources("classpath:/dev/*.properties"));
+		DlxyPropertyPlaceholderConfigurer dlxyPropertyPlaceholderConfigurer = new DlxyPropertyPlaceholderConfigurer();
+		dlxyPropertyPlaceholderConfigurer
+				.setLocations(new PathMatchingResourcePatternResolver().getResources("classpath:/dev/*.properties"));
 		dlxyPropertyPlaceholderConfigurer.setIgnoreUnresolvablePlaceholders(true);
 		return dlxyPropertyPlaceholderConfigurer;
 	}
+
 	@Profile("pro")
 	@Bean
 	public DlxyPropertyPlaceholderConfigurer placeholderConfigurerPro() throws IOException
 	{
-		DlxyPropertyPlaceholderConfigurer dlxyPropertyPlaceholderConfigurer=new DlxyPropertyPlaceholderConfigurer();
-		dlxyPropertyPlaceholderConfigurer.setLocations(new PathMatchingResourcePatternResolver().getResources("classpath:/pro/*.properties"));
+		DlxyPropertyPlaceholderConfigurer dlxyPropertyPlaceholderConfigurer = new DlxyPropertyPlaceholderConfigurer();
+		dlxyPropertyPlaceholderConfigurer
+				.setLocations(new PathMatchingResourcePatternResolver().getResources("classpath:/pro/*.properties"));
 		dlxyPropertyPlaceholderConfigurer.setIgnoreUnresolvablePlaceholders(true);
 		return dlxyPropertyPlaceholderConfigurer;
 	}
+
 	@Bean
 	public DataSource dataSource(DlxyProperty dlxyProperty)
 	{
-		DruidDataSource dataSource=new DruidDataSource();
+		DruidDataSource dataSource = new DruidDataSource();
 		dataSource.setUsername(dlxyProperty.getUsername());
 		dataSource.setPassword(dlxyProperty.getPassword());
 		dataSource.setUrl(dlxyProperty.getUrl());
@@ -85,63 +91,87 @@ public class PortalSystemConfiguration implements WebMvcConfigurer
 		return dataSource;
 	}
 
-	@Bean(name="sqlSessionFactory")
+	@Bean(name = "sqlSessionFactory")
 	public SqlSessionFactoryBean sqlSessionFactoryBean(DlxyProperty dlxyProperty) throws IOException
 	{
-		SqlSessionFactoryBean sqlSessionFactoryBean=new SqlSessionFactoryBean();
+		SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
 		sqlSessionFactoryBean.setDataSource(dataSource(dlxyProperty));
-		org.apache.ibatis.session.Configuration configuration=new org.apache.ibatis.session.Configuration();
+		org.apache.ibatis.session.Configuration configuration = new org.apache.ibatis.session.Configuration();
 		configuration.setMapUnderscoreToCamelCase(true);
 		sqlSessionFactoryBean.setConfiguration(configuration);
-		sqlSessionFactoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath*:/mapper/*.xml"));
+		sqlSessionFactoryBean
+				.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath*:/mapper/*.xml"));
 		return sqlSessionFactoryBean;
 	}
+
 	@Bean
 	public QueryRunner queryRunner(DlxyProperty dlxyProperty)
 	{
 		return new QueryRunner(dataSource(dlxyProperty));
 	}
-//	@Bean
-//	public MapperScannerConfigurer mapperScannerConfigurer()
-//	{
-//		MapperScannerConfigurer mapperScannerConfigurer=new MapperScannerConfigurer();
-//		mapperScannerConfigurer.setSqlSessionFactoryBeanName("sqlSessionFactory");
-////		mapperScannerConfigurer.set
-//		return mapperScannerConfigurer;
-//	}
+
+	// @Bean
+	// public MapperScannerConfigurer mapperScannerConfigurer()
+	// {
+	// MapperScannerConfigurer mapperScannerConfigurer=new
+	// MapperScannerConfigurer();
+	// mapperScannerConfigurer.setSqlSessionFactoryBeanName("sqlSessionFactory");
+	//// mapperScannerConfigurer.set
+	// return mapperScannerConfigurer;
+	// }
 	@Bean
 	public ViewResolver viewResolver()
 	{
-		FreeMarkerViewResolver freeMarkerViewResolver=new FreeMarkerViewResolver();
+		FreeMarkerViewResolver freeMarkerViewResolver = new FreeMarkerViewResolver();
 		freeMarkerViewResolver.setSuffix(".html");
 		return freeMarkerViewResolver;
 	}
+
 	@Bean
 	public FreeMarkerConfigurer freeMarkerConfigurer()
 	{
-		FreeMarkerConfigurer freeMarkerConfigurer=new FreeMarkerConfigurer();
+		FreeMarkerConfigurer freeMarkerConfigurer = new FreeMarkerConfigurer();
 		freeMarkerConfigurer.setTemplateLoaderPath("/WEB-INF/templates/");
 		freeMarkerConfigurer.setDefaultEncoding("UTF-8");
 		return freeMarkerConfigurer;
 	}
+
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry)
 	{
-//		registry.addResourceHandler("/js/**").addResourceLocations("classpath:/static/js").setCachePeriod(1036000);
+		// registry.addResourceHandler("/js/**").addResourceLocations("classpath:/static/js").setCachePeriod(1036000);
 		WebMvcConfigurer.super.addResourceHandlers(registry);
 	}
+
 	@Override
 	public void configureMessageConverters(List<HttpMessageConverter<?>> converters)
 	{
 		converters.add(new MappingJackson2HttpMessageConverter());
 	}
+
 	@Override
 	public void configureContentNegotiation(ContentNegotiationConfigurer configurer)
 	{
 		configurer.mediaType("html", MediaType.APPLICATION_JSON);
 	}
-	
-	
-	
-	
+
+	@Bean
+	public JedisPool jedisPool()
+	{
+		JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
+		jedisPoolConfig.setMaxIdle(5);
+		jedisPoolConfig.setMaxTotal(1024);
+		jedisPoolConfig.setMaxWaitMillis(10000);
+		jedisPoolConfig.setTestOnBorrow(true);
+		// JedisPool jedisPool=new
+		// JedisPool(jedisPoolConfig,dlxyProperty.getRedisHost(),dlxyProperty.getRedisPort(),10000,dlxyProperty.getRedisPassword());
+		JedisPool jedisPool = new JedisPool("localhost", 6379);
+		return jedisPool;
+	}
+	@Bean
+	public RedisService redisService()
+	{
+		return new RedisServiceImpl();
+	}
+
 }
