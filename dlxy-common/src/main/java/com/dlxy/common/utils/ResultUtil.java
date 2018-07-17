@@ -57,6 +57,10 @@ public class ResultUtil
 		return sucess(null,"sucess");
 	}
 
+	public static <T> ResultDTO<T>fail()
+	{
+		return fail("fail");
+	}
 	public static <T> ResultDTO<T> fail(String msg)
 	{
 		ResultDTO<T> resultDTO = new ResultDTO<T>();

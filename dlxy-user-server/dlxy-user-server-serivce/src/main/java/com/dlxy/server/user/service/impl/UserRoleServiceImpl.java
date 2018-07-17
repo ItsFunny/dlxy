@@ -7,6 +7,8 @@
 */
 package com.dlxy.server.user.service.impl;
 
+import java.util.Collection;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +35,12 @@ public class UserRoleServiceImpl implements IUserRoleService
 	{
 		// TODO Auto-generated method stub
 		return userRoleMybatisDao.findByRoleId(roleId);
+	}
+
+	@Override
+	public Collection<UserRoleDTO> findAllRoles()
+	{
+		return userRoleMybatisDao.findAllRoels();
 	}
 
 }

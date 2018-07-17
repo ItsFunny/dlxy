@@ -34,7 +34,7 @@ public class ArticleDTO
 	private String updateDateStr;
 	// 2018-06-30 11:30 add
 	private Long userId;
-	private String username;
+	private String realname;
 	// 2018-06-30 22:02 add
 	private Date deleteDate;
 	private String deleteDateStr;
@@ -187,15 +187,6 @@ public class ArticleDTO
 		this.userId = userId;
 	}
 
-	public String getUsername()
-	{
-		return username;
-	}
-
-	public void setUsername(String username)
-	{
-		this.username = username;
-	}
 
 	public Date getDeleteDate()
 	{
@@ -249,6 +240,16 @@ public class ArticleDTO
 	public void setTitleParentId(Integer titleParentId)
 	{
 		this.titleParentId = titleParentId;
+	}
+
+	public String getRealname()
+	{
+		return realname;
+	}
+
+	public void setRealname(String realname)
+	{
+		this.realname = realname;
 	}
 
 }

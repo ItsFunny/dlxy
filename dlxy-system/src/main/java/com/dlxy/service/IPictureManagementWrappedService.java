@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.dlxy.common.dto.PictureDTO;
+import com.dlxy.common.dto.UserDTO;
 
 /**
 * 
@@ -23,9 +24,9 @@ import com.dlxy.common.dto.PictureDTO;
 */
 public interface IPictureManagementWrappedService
 {
-	Collection<Long> addPciture(Long userId,Long articleId,PictureDTO[] pictureDTOs) throws SQLException;
+	Collection<Long> addPciture(UserDTO userDTO,Long articleId,PictureDTO[] pictureDTOs) throws SQLException;
 	
-	void addPortalPicture(Long userId,PictureDTO pictureDTO) throws SQLException;
+	void addPortalPicture(UserDTO userDTO,PictureDTO pictureDTO) throws SQLException;
 	
-	 void deletePicture(Long userId, List<Long> pictureIds,int type);
+	 void deletePicture(UserDTO userDTO, List<Long> pictureIds,int type);
 }

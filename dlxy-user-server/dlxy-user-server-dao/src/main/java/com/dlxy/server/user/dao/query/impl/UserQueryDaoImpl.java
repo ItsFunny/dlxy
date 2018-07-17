@@ -57,14 +57,14 @@ public class UserQueryDaoImpl implements UserQueryDao
 		public Collection<UserDTO> handle(ResultSet rs) throws SQLException
 		{
 			// select
-			// user_id,username,realname,password,role_id,last_login_ip,last_login_date,create_date,
+			// user_id,realname,realname,password,role_id,last_login_ip,last_login_date,create_date,
 			// update_date
 			List<UserDTO> userDTOs = new ArrayList<UserDTO>();
 			while (rs.next())
 			{
 				UserDTO userDTO = new UserDTO();
 				userDTO.setUserId(rs.getLong(1));
-				userDTO.setUsername(rs.getString(2));
+				userDTO.setRealname(rs.getString(2));
 				userDTO.setRealname(rs.getString(3));
 				if (needPwd)
 				{
@@ -85,7 +85,7 @@ public class UserQueryDaoImpl implements UserQueryDao
 	@Override
 	public UserDTO findByNameOrId(String key) throws SQLException
 	{
-		String sql = "select a.user_id,a.username,a.realname,a.passwrod,a.role_id,a.last_login_ip,a.crete_date,a.update_date from dlxy_user a where 1=1 ";
+		String sql = "select a.user_id,a.realname,a.realname,a.passwrod,a.role_id,a.last_login_ip,a.crete_date,a.update_date from dlxy_user a where 1=1 ";
 		List<Object> l = new LinkedList<>();
 		try
 		{
@@ -94,7 +94,7 @@ public class UserQueryDaoImpl implements UserQueryDao
 			l.add(userId);
 		} catch (NumberFormatException e)
 		{
-			sql += " and a.username = ? ";
+			sql += " and a.realname = ? ";
 //			l.add("%" + key + "%");
 			l.add(key);
 		}
@@ -114,7 +114,7 @@ public class UserQueryDaoImpl implements UserQueryDao
 //	@Override
 //	public UserDTO findByUserId(Long userId) throws SQLException
 //	{
-//		String sql = "select a.user_id,a.username,a.realname,a.passwrod,a.role_id,a.last_login_ip,a.crete_date,a.update_date from dlxy_user a where 1=1 and a.user_id=? ";
+//		String sql = "select a.user_id,a.realname,a.realname,a.passwrod,a.role_id,a.last_login_ip,a.crete_date,a.update_date from dlxy_user a where 1=1 and a.user_id=? ";
 //		Collection<UserDTO> query = queryRunner.query(sql, new UserResultSetHandler(true), userId);
 //		if (null == query)
 //		{
@@ -147,7 +147,7 @@ public class UserQueryDaoImpl implements UserQueryDao
 //	public Collection<UserDTO> findUsersByPage(int start, int end, Map<String, Object> params) throws SQLException
 //	{
 //		List<Object> l = new LinkedList<>();
-//		String sql = "select user_id,username,realname,password,role_id,last_login_ip,last_login_date,create_date, update_date from dlxy_user where 1=1 ";
+//		String sql = "select user_id,realname,realname,password,role_id,last_login_ip,last_login_date,create_date, update_date from dlxy_user where 1=1 ";
 //
 //		sql += "order by create_date desc limit ?,?";
 //		l.add(start);
@@ -161,8 +161,8 @@ public class UserQueryDaoImpl implements UserQueryDao
 //	@Override
 //	public void addUser(UserDTO userDTO) throws SQLException
 //	{
-//		String sql = "insert into dlxy_user (username,realname,password,role_id,last_login_ip,last_login_date,create_date,update_date values (?,?,?,?,?,?,?,?)";
-//		queryRunner.update(sql, userDTO.getUsername(), userDTO.getRealname(), userDTO.getRoleId(),
+//		String sql = "insert into dlxy_user (realname,realname,password,role_id,last_login_ip,last_login_date,create_date,update_date values (?,?,?,?,?,?,?,?)";
+//		queryRunner.update(sql, userDTO.getrealname(), userDTO.getRealname(), userDTO.getRoleId(),
 //				userDTO.getLastLoginIp(), userDTO.getLastLoginDate(), userDTO.getCreateDate(), userDTO.getUpdateDate());
 //	}
 

@@ -1,3 +1,5 @@
+com/dlxy/controller/RestAPIController$1.class
+com/dlxy/controller/AdminController$1.class
 com/dlxy/service/WrappedServiceFactory.class
 com/dlxy/config/DlxySystemShiroConfiguration.class
 com/dlxy/service/IArticleManagementWrappedService.class

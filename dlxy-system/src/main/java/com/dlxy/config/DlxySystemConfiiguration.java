@@ -36,6 +36,8 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.dlxy.common.event.AppEventLogPubliher;
 import com.dlxy.common.event.AppEventPublisher;
 import com.dlxy.common.event.AppEventRabbitMQPublisher;
+import com.dlxy.common.service.IdWorkerService;
+import com.dlxy.common.service.IdWorkerServiceTwitter;
 import com.dlxy.service.IArticleManagementWrappedService;
 import com.dlxy.service.IPictureManagementWrappedService;
 import com.dlxy.service.IUserMangementWrappedService;

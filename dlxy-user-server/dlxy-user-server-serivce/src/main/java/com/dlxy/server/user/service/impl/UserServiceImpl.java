@@ -158,4 +158,10 @@ public class UserServiceImpl implements IUserArticleService, IUserService, IUser
 		return userDTO.getUserId();
 	}
 
+	@Override
+	public void updateUserStatusByUserId(Long userId, Integer status)
+	{
+		userMybatisDao.updateUserStatusByUserId(userId, status);
+	}
+
 }

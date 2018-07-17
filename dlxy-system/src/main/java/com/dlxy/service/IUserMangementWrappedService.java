@@ -32,4 +32,6 @@ public interface IUserMangementWrappedService
 	PageDTO<Collection<UserDTO>> findUsersByPage(int pageSize,int pageNum,Map<String, Object>params) throws SQLException;
 	
 	void addUser(Long userId,UserDTO userDTO) throws SQLException;
+	
+	void updateUserStatusByUserId(UserDTO loginUser,Long userId,int status);
 }

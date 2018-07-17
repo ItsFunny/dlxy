@@ -20,7 +20,7 @@ import java.util.Date;
 public class UserDTO
 {
 	private Long userId;
-	private String username;
+//	private String username;
 	private String realname;
 	private String password;
 	private Integer roleId;
@@ -28,6 +28,15 @@ public class UserDTO
 	private Date lastLoginDate;
 	private Date createDate;
 	private Date updateDate;
+	 
+	//2018-07-17 add
+	private boolean able;  //1 able 0 disable
+	//2018-07-18 00:06 add
+	private String roleDescription;
+	private String roleName;
+	
+	
+	
 
 	public boolean isAdmin()
 	{
@@ -43,15 +52,15 @@ public class UserDTO
 		this.userId = userId;
 	}
 
-	public String getUsername()
-	{
-		return username;
-	}
-
-	public void setUsername(String username)
-	{
-		this.username = username;
-	}
+//	public String getUsername()
+//	{
+//		return username;
+//	}
+//
+//	public void setUsername(String username)
+//	{
+//		this.username = username;
+//	}
 
 	public String getRealname()
 	{
@@ -121,6 +130,30 @@ public class UserDTO
 	public void setUpdateDate(Date updateDate)
 	{
 		this.updateDate = updateDate;
+	}
+	public boolean isAble()
+	{
+		return able;
+	}
+	public void setAble(boolean able)
+	{
+		this.able = able;
+	}
+	public String getRoleDescription()
+	{
+		return roleDescription;
+	}
+	public void setRoleDescription(String roleDescription)
+	{
+		this.roleDescription = roleDescription;
+	}
+	public String getRoleName()
+	{
+		return roleName;
+	}
+	public void setRoleName(String roleName)
+	{
+		this.roleName = roleName;
 	}
 
 }

@@ -7,6 +7,8 @@
 */
 package com.dlxy.server.user.service;
 
+import java.util.Collection;
+
 import com.dlxy.common.dto.UserRoleDTO;
 
 /**
@@ -20,4 +22,6 @@ import com.dlxy.common.dto.UserRoleDTO;
 public interface IUserRoleService
 {
 	UserRoleDTO findByRoleId(int roleId);
+	
+	Collection<UserRoleDTO>findAllRoles();
 }

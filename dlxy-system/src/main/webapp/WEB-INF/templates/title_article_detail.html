@@ -1,13 +1,12 @@
 <#include "wrapper_up.html">
 <#setting datetime_format="yyyy-MM-dd HH:mm:ss"/>
 <script type="text/javascript">
-	initkindEditor();
 	var editor;
+	window.K = KindEditor;
  	function initkindEditor() {
-     KindEditor.ready(function (K) {
           editor = K.create('#edit_articleContent', {
              themeType: "simple",
-             uploadJson: '/api/file/upload.html?articleId='+$("#edit_articleId").val(),
+             uploadJson: '/api/v1/file/upload.html?articleId='+$("#edit_articleId").val(),
              resizeType: 1,
              pasteType: 2,
              syncType: "",
@@ -30,7 +29,10 @@
                   K('.word_count1').html("最多20000个字符,已输入" + this.count() + "个字符");
              },
              afterUpload:function(url){
-             	
+             	var t=url.substring(url.lastIndexOf("/")+1,url.indexOf("."));
+             	var pictureId=url.substring(url.lastIndexOf("=")+1);
+             	alert(pictureId);
+             	$("#hiddenBlock").append('<input type="hidden" name="pictureId" value='+pictureId+'>');
              },
              allowFileManager: false,
              allowFlashUpload: false,
@@ -39,8 +41,7 @@
              formatUploadUrl: false,
              
          });
-     });
- }	
+     };
 </script>
 <section class="layui-larry-box">
 	<div class="larry-personal">
@@ -91,7 +92,7 @@
 						<#list pageVO.data as item>
 							<tr>
 							<td>
-								<input name="checked" lay-skin="primary" lay-filter="choose" type="checkbox" value="${item.articleId}">
+								<input name="checked" lay-skin="primary" lay-filter="choose" type="checkbox" value="${item.articleId?c}">
 								<div class="layui-unselect layui-form-checkbox" lay-skin="primary">
 								<i class="layui-icon"></i>
 								</div>
@@ -100,7 +101,7 @@
 							<td>${item.titleName!"unkonwn"}</td>
 							<td align="left">${item.articleName}</td>
 							<td>${item.articleAuthor}</td>
-							<td><a href="/user/releases.html?userId=${item.userId}">${item.username!"unknow"}</a></td>
+							<td><a href="/user/releases.html?userId=${item.userId}">${item.realname!"unknow"}</a></td>
 							<td>
 								${item.createDate?string('yyyy-MM-dd HH:mm:ss')}
 							</td>
@@ -200,10 +201,8 @@
 									<input type="text" name="articleAuthor" class="form-control input-sm duiqi" id="edit_articleAuthor" placeholder="">
 								</div>
 								<label class="col-xs-2 control-label">类目：</label>
-								<label class="col-xs-2 control-label">类目：</label>
 								<div class="col-xs-3 ">
 									<select id="leimu0" onchange="showChild(this)" style="width:100px;height: 30px" name="titleId">
-
 									</select>
 								</div>
 								<div class="col-xs-3 " id="leimu1_div">
@@ -213,10 +212,9 @@
 								<textarea cols="0" rows="5" name="articleContent" class="form-control" id="edit_articleContent" style="margin: 0px -0.5px 0px 0px; height: 250px; width: 100%;">
     							</textarea>
 							</div>
-						
 					</div>
 				</div>
-				<div class="modal-footer">
+				<div class="modal-footer" id="hiddenBlock">
 					<input type="hidden" name="articleId" id="edit_articleId">
 					<button type="button" class="btn btn-xs btn-white" data-dismiss="modal">取 消</button>
 					<input type="button" id="editSaveButton" onclick="editSaveUpdate();" class="btn btn-xs btn-green"  value="保 存">
@@ -285,7 +283,7 @@
 					for(var i=0;i<data.data.data.length;i++){
 						var p=data.data.data[i];
 						
-						var t='<tr><td><input name="checked" lay-skin="primary" lay-filter="choose" type="checkbox" value=""><div class="layui-unselect layui-form-checkbox" lay-skin="primary"><i class="layui-icon"></i></div></td><td>'+p.articleId+'</td><td>'+p.titleName+'</td><td align="left">'+p.articleName+'</td><td>'+p.articleAuthor+'</td>	<td>'+p.username+'</td><td>'+p.createDateStr+'</td><td>'+p.updateDateStr+'</td>'
+						var t='<tr><td><input name="checked" lay-skin="primary" lay-filter="choose" type="checkbox" value=""><div class="layui-unselect layui-form-checkbox" lay-skin="primary"><i class="layui-icon"></i></div></td><td>'+p.articleId+'</td><td>'+p.titleName+'</td><td align="left">'+p.articleName+'</td><td>'+p.articleAuthor+'</td>	<td>'+p.realname+'</td><td>'+p.createDateStr+'</td><td>'+p.updateDateStr+'</td>'
 						if(p.status==0){
 							t+='<td>下线</td><td><a class="layui-btn layui-btn-mini news_edit"  onclick="changeStatus(this,1);" articleId="'+p.articleId+'" "><i class="iconfont icon-edit" ></i> 上线</a><a class="layui-btn layui-btn-mini " data-toggle="modal" data-target="#changeSource" onclick="loadArticle(this);" articleId="'+p.articleId+'"><i class="iconfont icon-edit"></i> 编辑</a><a class="layui-btn layui-btn-mini "  onclick="changeStatus(this,3)" articleId="'+p.articleId+'"><i class="iconfont icon-edit"></i> 设为推荐新闻</a><a class="layui-btn layui-btn-danger layui-btn-mini news_del" data-id="1" articleId="'+p.articleId+'" onclick="changeStatus(this,2)" ><i class="layui-icon"></i> 放至回收站</a></td>';
 						}else if(p.status==1){
@@ -350,26 +348,11 @@
 		
 	
 	
-    $("#leimu").change(function () {
-        $("#leimu2").empty();
-        var parentId=$("#leimu0").val();
-            $.ajax({
-                url:'/api/v1/title/'+parentId+'.html',
-                type:'post',
-                dataType:'json',
-                success:function (data) {
-					var son2=data.data;
-                    var str="";
-                    for(i=0;i<son2.length;i++){
-                        str+="<option>"+son2[i].titleName+"</option>";
-                    }
-                    $("#leimu2").append(str);
-                }
-            })
-	})	
 	function loadArticle(obj){
 		var articleId=$(obj).attr("articleId");
 		$("#edit_articleId").val(articleId);
+		initkindEditor();
+		alert(editor.uploadJson);
 		jQuery.get('/api/v1/article/detail/'+articleId+'.html',function(data,textStatus,jqXHR){
 			if(data.code==1){
 				var article=data.data;
@@ -412,6 +395,7 @@
  	 $("#leimu1").empty();
  		var titleId=$("#edit_articleId").val();
         var parentId=$(obj).val();
+ 		alert(parentId);
             $.ajax({
                 url:'/api/v1/title/'+parentId+'.html',
                 type:'post',
@@ -446,5 +430,6 @@
  			alert(data.msg);
  		},'json');
  	}
+ 	
 </script>
 <#include "wrapper_down.html">

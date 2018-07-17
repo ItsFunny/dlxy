@@ -7,19 +7,23 @@
 */
 package com.dlxy.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,19 +32,25 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.dlxy.common.dto.ArticleDTO;
 import com.dlxy.common.dto.DlxyTitleDTO;
 import com.dlxy.common.dto.IllegalLogDTO;
 import com.dlxy.common.dto.PageDTO;
+import com.dlxy.common.dto.PictureDTO;
+import com.dlxy.common.dto.PictureUploadResponseDTO;
 import com.dlxy.common.dto.ResultDTO;
 import com.dlxy.common.dto.UserDTO;
+import com.dlxy.common.dto.UserRoleDTO;
 import com.dlxy.common.enums.ArticleStatusEnum;
 import com.dlxy.common.enums.DlxyTitleEnum;
 import com.dlxy.common.enums.IllegalLevelEnum;
 import com.dlxy.common.enums.PictureStatusEnum;
+import com.dlxy.common.enums.PictureTypeEnum;
 import com.dlxy.common.event.AppEvent;
 import com.dlxy.common.utils.ResultUtil;
 import com.dlxy.common.vo.PageVO;
@@ -49,8 +59,11 @@ import com.dlxy.model.FormArticle;
 import com.dlxy.model.FormTitle;
 import com.dlxy.server.article.service.IArticleService;
 import com.dlxy.server.article.service.ITitleService;
+import com.dlxy.server.user.service.IUserRoleService;
+import com.dlxy.server.user.service.IUserService;
 import com.dlxy.service.IArticleManagementWrappedService;
 import com.dlxy.service.IPictureManagementWrappedService;
+import com.dlxy.service.IUserMangementWrappedService;
 import com.dlxy.service.command.AddOrUpdateArtilceCommand;
 import com.dlxy.utils.AdminUtil;
 import com.joker.library.utils.CommonUtils;
@@ -74,14 +87,19 @@ public class RestAPIController
 	@Autowired
 	private IArticleManagementWrappedService articleManagementWrappedService;
 	@Autowired
+	private IUserService userService;
+	@Autowired
 	private ITitleService titleService;
 	@Autowired
 	private IArticleService articleService;
 	@Autowired
 	private IPictureManagementWrappedService pictureManagementWrappedService;
 	@Autowired
+	private IUserMangementWrappedService userManagementWrappedService;
+	@Autowired
 	private AddOrUpdateArtilceCommand addOrUpdateArtilceCommand;
-
+	@Autowired
+	private IUserRoleService userRoleService;
 
 	@RequestMapping(value = "/admin/title/addOrUpdate", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResultDTO<String> addOrUpdateTitle(FormTitle formTitle, HttpServletRequest request,
@@ -222,8 +240,10 @@ public class RestAPIController
 			return ResultUtil.fail(e.getMessage());
 		}
 	}
-	@RequestMapping(value="/titles",method= {RequestMethod.POST,RequestMethod.GET},produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResultDTO<Collection<DlxyTitleDTO>>findAllTitles()
+
+	@RequestMapping(value = "/titles", method =
+	{ RequestMethod.POST, RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResultDTO<Collection<DlxyTitleDTO>> findAllTitles()
 	{
 		try
 		{
@@ -257,6 +277,9 @@ public class RestAPIController
 		}
 	}
 
+	/*
+	 * 放到回收站中
+	 */
 	@RequestMapping(value = "/article/del/batch")
 	@ResponseBody
 	public ResultDTO<String> delArticles(HttpServletRequest request, HttpServletResponse response)
@@ -380,15 +403,15 @@ public class RestAPIController
 	public ResultDTO<String> updateArticle(FormArticle formArticle, BindingResult result, HttpServletRequest request,
 			HttpServletResponse response)
 	{
-		String[] titleIdStrs=request.getParameterValues("titleId");
-		Arrays.sort(titleIdStrs,new Comparator<String>()
+		String[] titleIdStrs = request.getParameterValues("titleId");
+		Arrays.sort(titleIdStrs, new Comparator<String>()
 		{
 			@Override
 			public int compare(String o1, String o2)
 			{
-				int i1=Integer.valueOf(o1);
-				int i2=Integer.valueOf(o2);
-				return i1<i2?1:-1;
+				int i1 = Integer.valueOf(o1);
+				int i2 = Integer.valueOf(o2);
+				return i1 < i2 ? 1 : -1;
 			}
 		});
 		formArticle.setTitleId(Integer.parseInt(titleIdStrs[0]));
@@ -428,6 +451,142 @@ public class RestAPIController
 		} catch (Exception e)
 		{
 			e.printStackTrace();
+			return ResultUtil.fail(e.getMessage());
+		}
+	}
+
+	@RequestMapping(value = "/file/upload")
+	public PictureUploadResponseDTO uploadFile(@RequestParam("imgFile") MultipartFile file, HttpServletRequest request,
+			HttpServletResponse response)
+	{
+		// MultipartRequest req=(MultipartRequest) request;
+		PictureUploadResponseDTO pictureUploadResponseDTO = new PictureUploadResponseDTO();
+		String articleId = request.getParameter("articleId");
+		articleId = articleId.replaceAll(",", "");
+		if (StringUtils.isEmpty(articleId))
+		{
+			pictureUploadResponseDTO.setError(0);
+			pictureUploadResponseDTO.setMessage("缺失参数,请刷新页面重试");
+			return pictureUploadResponseDTO;
+		}
+		String suffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf('.'));
+		String realPath = request.getServletContext().getRealPath("");
+		File dirFile = new File(realPath + File.separator + "imgs" + File.separator + articleId + File.separator);
+		if (!dirFile.exists())
+		{
+			dirFile.mkdirs();
+		}
+		String fileName = UUID.randomUUID().toString();
+
+		File newFiel = new File(dirFile.getAbsolutePath() + File.separator + fileName + suffix);
+		try
+		{
+			file.transferTo(newFiel);
+		} catch (IllegalStateException | IOException e)
+		{
+			e.printStackTrace();
+			pictureUploadResponseDTO.setError(1);
+			pictureUploadResponseDTO.setMessage(e.getMessage());
+			return pictureUploadResponseDTO;
+		}
+
+		StringBuffer reqUrl = request.getRequestURL();
+		String requestURI = request.getRequestURI();
+		String string = reqUrl.substring(0, reqUrl.indexOf(requestURI));
+		// System.out.println(string+File.separator+"imgs"+File.separator+articleId+File.separator+fileName);
+		String url = string + File.separator + "imgs" + File.separator + articleId + File.separator + fileName + suffix;
+		PictureDTO pictureDTO = new PictureDTO();
+		// pictureDTO.setPictureId(fileName);
+		pictureDTO.setPictureUrl(url);
+		pictureDTO.setArticleId(Long.parseLong(articleId));
+		pictureDTO.setCreateDate(new Date());
+		pictureDTO.setPictureType(PictureTypeEnum.Article_Picture.ordinal());
+		pictureDTO.setPictureStatus(PictureStatusEnum.Invalid.ordinal());
+		try
+		{
+			// 这里上面需要进行设置,使之成为一个集合,至于保存采用多线程的方式
+			// pictureService.addPicture(new PictureDTO[] {pictureDTO});
+			// pictureService.addPictureWithArticleId(Long.parseLong(articleId), new
+			// PictureDTO[] {pictureDTO});
+			pictureManagementWrappedService.addPciture(AdminUtil.getLoginUser(), Long.parseLong(articleId),
+					new PictureDTO[]
+					{ pictureDTO });
+			System.out.println(pictureDTO.getPictureId());
+			pictureUploadResponseDTO.setError(0);
+			pictureUploadResponseDTO.setUrl(url + "?pictureId=" + pictureDTO.getPictureId());
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			pictureUploadResponseDTO.setError(1);
+			pictureUploadResponseDTO.setMessage(e.getMessage());
+		}
+		return pictureUploadResponseDTO;
+	}
+
+//	@RequiresRoles(value= {
+//			"admin"
+//	})
+	@RequestMapping(value = "/user/updateStatus", method =
+	{ RequestMethod.POST,
+			RequestMethod.GET },produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResultDTO<String> banUser(HttpServletRequest request, HttpServletResponse response)
+	{
+		String userIdStr = request.getParameter("userId");
+		String statusStr=request.getParameter("status");
+		UserDTO userDTO=AdminUtil.getLoginUser();
+		if(StringUtils.isEmpty(userIdStr) || StringUtils.isEmpty(statusStr))
+		{
+			return ResultUtil.fail("错误的参数");
+		}
+		Long userId=Long.parseLong(userIdStr);
+		int status=Integer.parseInt(statusStr);
+		try
+		{
+			userManagementWrappedService.updateUserStatusByUserId(userDTO, userId, status);
+			return ResultUtil.sucess();
+		} catch (Exception e)
+		{
+			logger.error("[update user status ] error {}" ,e.getMessage());
+			return ResultUtil.fail(e.getMessage());
+		}
+	}
+//	@RequiresRoles(value= {	"admin","subAdmin"
+//	})
+	@RequestMapping(value="/user/find",produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResultDTO<UserDTO>findUser(HttpServletRequest request,HttpServletResponse response)
+	{
+		String keyStr=request.getParameter("q");
+		UserDTO userDTO=null;
+		try
+		{
+			Long userId=Long.parseLong(keyStr);
+			userDTO=userService.findByUserId(userId);
+		} catch (Exception e)
+		{
+			userDTO=userService.findByUsername(keyStr);
+		}
+		if(null==userDTO)
+		{
+			return ResultUtil.fail("no user find");
+		}else {
+			return ResultUtil.sucess(userDTO);
+		}
+	}
+	/*
+	 * 列出所有的角色
+	 */
+//	@RequiresRoles(value= {	"admin","subAdmin"
+//			})
+	@RequestMapping(value="/user/roles/all",produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResultDTO<Collection<UserRoleDTO>>findRoles(HttpServletRequest request,HttpServletResponse response)
+	{
+		try
+		{
+			Collection<UserRoleDTO> roles = userRoleService.findAllRoles();
+			return ResultUtil.sucess(roles);
+		} catch (Exception e)
+		{
+			logger.error("[find roles] error:{}",e.getMessage());
 			return ResultUtil.fail(e.getMessage());
 		}
 	}

@@ -41,7 +41,7 @@ public interface ArticleMybatisDao
 	 */
 	// @Select("select
 	// a.article_id,a.title_id,a.article_name,a.article_author,a.article_is_recommend,a.create_date,a.update_date
-	// ,a.article_status ,b.title_id,b.title_name,c.username "
+	// ,a.article_status ,b.title_id,b.title_name,c.realname "
 	// + "from dlxy_article a,dlxy_title b ,dlxy_user_article c where
 	// a.title_id=b.title_id and a.article_id= c.article_id and a.article_status <>
 	// 2 "
@@ -61,14 +61,14 @@ public interface ArticleMybatisDao
 
 	// @Select("select
 	// a.article_id,a.title_id,a.article_name,a.article_author,a.article_is_recommend,a.create_date,a.update_date
-	// ,a.article_status ,c.username ,c.user_id,a.delete_date,a.article_content from
+	// ,a.article_status ,c.realname ,c.user_id,a.delete_date,a.article_content from
 	// dlxy_article a where a.article_id=#{articleId}")
 	// @Select("select
 	// a.article_id,a.title_id,a.article_name,a.article_author,a.article_is_recommend,a.create_date,a.update_date
-	// ,a.article_status ,c.username ,c.user_id,a.delete_date,a.article_content from
+	// ,a.article_status ,c.realname ,c.user_id,a.delete_date,a.article_content from
 	// dlxy_article a,dlxy_title b ,dlxy_user_article c where a.title_id=b.title_id
 	// and a.article_id= c.article_id and a.article_id=#{articleId}")
-	@Select("select a.article_id,a.title_id,a.article_name,a.article_author,a.article_is_recommend,a.create_date,a.update_date ,a.article_status,a.article_content,c.username ,c.user_id,a.delete_date,b.title_parent_id "
+	@Select("select a.article_id,a.title_id,a.article_name,a.article_author,a.article_is_recommend,a.create_date,a.update_date ,a.article_status,a.article_content,c.realname ,c.user_id,a.delete_date,b.title_parent_id,b.title_name "
 			+ "from dlxy_article a left join dlxy_title b  on a.title_id=b.title_id "
 			+ "left join dlxy_user_article c on a.article_id=c.article_id " + "where 1=1 and "
 			+ " a.article_id=#{articleId}")
@@ -102,11 +102,11 @@ public interface ArticleMybatisDao
 	/*
 	 * 这个没用了,准备删除
 	 */
-	@Select("select a.article_id,a.title_id,a.article_name,a.article_author,a.article_is_recommend,a.create_date,a.update_date,a.article_status ,c.username,c.user_id,a.delete_date,b.title_name from dlxy_article  a left join dlxy_title b on a.title_id=b.title_id "
+	@Select("select a.article_id,a.title_id,a.article_name,a.article_author,a.article_is_recommend,a.create_date,a.update_date,a.article_status ,c.realname,c.user_id,a.delete_date,b.title_name from dlxy_article  a left join dlxy_title b on a.title_id=b.title_id "
 			+ "left join dlxy_user_article c on a.article_id=c.article_id order by a.create_date desc limit #{start},#{end}")
 	Collection<ArticleDTO> findAllArtilcesByPage(@Param("start") int start, @Param("end") int end);
 
-	@Select("select a.article_id,a.title_id,a.article_name,a.article_author,a.article_is_recommend,a.create_date,a.update_date,a.article_status ,c.username,c.user_id,a.delete_date,b.title_name from dlxy_article  a left join dlxy_title b on a.title_id=b.title_id  left join dlxy_user_article c on a.article_id=c.article_id   WHERE article_is_recommend= 1 and article_status=1 order by a.create_date desc ")
+	@Select("select a.article_id,a.title_id,a.article_name,a.article_author,a.article_is_recommend,a.create_date,a.update_date,a.article_status ,c.realname,c.user_id,a.delete_date,b.title_name from dlxy_article  a left join dlxy_title b on a.title_id=b.title_id  left join dlxy_user_article c on a.article_id=c.article_id   WHERE article_is_recommend= 1 and article_status=1 order by a.create_date desc ")
 	Collection<ArticleDTO> findAllRecommedArticles();
 
 	// Collection<ArticleDTO>findArticlesByStatus();

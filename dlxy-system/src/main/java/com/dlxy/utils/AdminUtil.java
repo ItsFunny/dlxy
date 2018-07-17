@@ -8,11 +8,8 @@
 package com.dlxy.utils;
 
 
-import org.apache.shiro.SecurityUtils;
 
 import com.dlxy.common.dto.UserDTO;
-import com.dlxy.enums.DlxytExceptionEnum;
-import com.dlxy.exception.DlxySystemException;
 
 /**
 * 
@@ -28,7 +25,7 @@ public class AdminUtil
 	{
 		UserDTO userDTO=new UserDTO();
 		userDTO.setUserId(1L);
-		userDTO.setUsername("joker");
+		userDTO.setRealname("joker");
 		userDTO.setRoleId(0);
 		return userDTO;
 //		UserDTO userDTO=(UserDTO) SecurityUtils.getSubject().getPrincipal();

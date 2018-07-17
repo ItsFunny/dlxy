@@ -117,5 +117,14 @@ public class ManagementUserServiceImpl extends Observable implements IUserMangem
 		UserRecordDTO userRecordDTO=UserRecordDTO.getUserRecordDTO(userId, detail);
 		notifyObservers(userRecordDTO);
 	}
+	@Override
+	public void updateUserStatusByUserId(UserDTO loginUser, Long userId,int status)
+	{
+		userService.updateUserStatusByUserId(userId, status);
+		String detail="update:user:"+userId+"|用户"+loginUser.getRealname()+"修改了userId为"+userId+"的状态,更改为了:"+status;
+		setChanged();
+		UserRecordDTO recordDTO=UserRecordDTO.getUserRecordDTO(loginUser.getUserId(), detail);
+		notifyObservers(recordDTO);
+	}
 
 }

@@ -4,15 +4,20 @@
 
 <mapper
 	namespace="com.dlxy.server.user.dao.mybatis.UserMybatisDao">
-	<insert id="addUser" parameterType="com.dlxy.common.dto.UserDTO" useGeneratedKeys="true" keyProperty="userId">
+	<insert id="addUser" parameterType="com.dlxy.common.dto.UserDTO"
+		useGeneratedKeys="true" keyProperty="userId">
 		insert into dlxy_user
-		(username,realname,password,role_id,last_login_ip,create_date,update_date)
+		(realname,password,role_id,last_login_ip,create_date,update_date)
 		values
-		(#{username},#{realname},#{password},#{roleId},#{lastLoginIp},#{createDate},#{updateDate})
+		(#{realname},#{password},#{roleId},#{lastLoginIp},#{createDate},#{updateDate})
 	</insert>
-	
-	<select id="findUsersByPage" resultType="com.dlxy.common.dto.UserDTO">
-		select user_id,username,realname,password,role_id,last_login_ip,last_login_date,create_date, update_date from dlxy_user where 1=1
+
+	<select id="findUsersByPage"
+		resultType="com.dlxy.common.dto.UserDTO">
+		select
+		a.user_id,a.able,a.realname,a.password,a.role_id,a.last_login_ip,a.last_login_date,a.create_date,
+		a.update_date,b.role_name,b.role_description from dlxy_user a ,dlxy_role b
+		where 1=1 and a.role_id=b.role_id
 		order by create_date desc limit #{start},#{end}
 	</select>
 

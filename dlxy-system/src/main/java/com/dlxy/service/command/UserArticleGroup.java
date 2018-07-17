@@ -33,7 +33,7 @@ public class UserArticleGroup implements IGroup
 	public void add(Map<String, Object> map)
 	{
 		ArticleDTO articleDTO = (ArticleDTO) map.get("articleDTO");
-		userArticleService.addUserArticle(articleDTO.getUserId(), articleDTO.getArticleId(), articleDTO.getUsername());
+		userArticleService.addUserArticle(articleDTO.getUserId(), articleDTO.getArticleId(), articleDTO.getRealname());
 	}
 
 

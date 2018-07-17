@@ -60,7 +60,7 @@ public class ArticleQueryDaoImpl implements ArticleQueryDao
 				articleDTO.setUpdateDate(rs.getDate(7));
 				System.out.println(rs.getObject(7));
 				articleDTO.setArticleStatus(rs.getInt(8));
-				articleDTO.setUsername(rs.getString(9));
+				articleDTO.setRealname(rs.getString(9));
 				articleDTO.setUserId(rs.getLong(10));
 				articleDTO.setDeleteDate(rs.getDate(11));
 				articleDTO.setArticleContent(rs.getString(12));
@@ -93,7 +93,7 @@ public class ArticleQueryDaoImpl implements ArticleQueryDao
 				articleDTO.setUpdateDate(rs.getDate(7));
 				System.out.println(rs.getObject(7));
 				articleDTO.setArticleStatus(rs.getInt(8));
-				articleDTO.setUsername(rs.getString(9));
+				articleDTO.setRealname(rs.getString(9));
 				articleDTO.setUserId(rs.getLong(10));
 				articleDTO.setDeleteDate(rs.getDate(11));
 				articleDTOs.add(articleDTO);
@@ -109,12 +109,12 @@ public class ArticleQueryDaoImpl implements ArticleQueryDao
 	{
 		// StringBuilder sql = new StringBuilder(
 		// "select
-		// a.article_id,a.title_id,a.article_name,a.article_author,a.article_is_recommend,a.create_date,a.update_date,a.article_status,c.username,c.user_id,"
+		// a.article_id,a.title_id,a.article_name,a.article_author,a.article_is_recommend,a.create_date,a.update_date,a.article_status,c.realname,c.user_id,"
 		// + " a.delete_date,b.title_name from dlxy_article a,dlxy_title
 		// b,dlxy_user_article c "
 		// + "where a.title_id=b.title_id and c.article_id=a.article_id");
 		StringBuilder sql = new StringBuilder(
-				"select a.article_id,a.title_id,a.article_name,a.article_author,a.article_is_recommend,a.create_date,a.update_date,a.article_status ,c.username,c.user_id,a.delete_date,b.title_name from dlxy_article  a left join dlxy_title b on a.title_id=b.title_id "
+				"select a.article_id,a.title_id,a.article_name,a.article_author,a.article_is_recommend,a.create_date,a.update_date,a.article_status ,c.realname,c.user_id,a.delete_date,b.title_name from dlxy_article  a left join dlxy_title b on a.title_id=b.title_id "
 						+ "left join dlxy_user_article c on a.article_id=c.article_id where 1=1 ");
 		List<Object> set = new LinkedList<Object>();
 		if (params.containsKey("articleStatus"))
@@ -132,10 +132,10 @@ public class ArticleQueryDaoImpl implements ArticleQueryDao
 		{
 			if (!StringUtils.isEmpty(params.get("searchParam").toString()))
 			{
-				// 这里好像有问题,这样写好像如果知道userId 对应的username 照样能获取到某个user的文章信息
-				// 2018-07-07 22:47 直接屏蔽 对username的判断
+				// 这里好像有问题,这样写好像如果知道userId 对应的realname 照样能获取到某个user的文章信息
+				// 2018-07-07 22:47 直接屏蔽 对realname的判断
 				// or a.article_id in (select d.article_id from dlxy_user_article d where
-				// d.username like ? )
+				// d.realname like ? )
 				sql.append("and ( a.article_name like ? or a.article_author like ? )");
 				set.add("%" + params.get("searchParam") + "%");
 				set.add("%" + params.get("searchParam") + "%");
@@ -176,8 +176,8 @@ public class ArticleQueryDaoImpl implements ArticleQueryDao
 				{
 					// select a.article_id,a.title_id,
 					// a.article_name,a.article_author,a.article_is_recommend,a.create_date,
-					// a.update_date,a.article_status ,(select c.username from dlxy_user_article c
-					// where c.article_id=a.article_id)username,"
+					// a.update_date,a.article_status ,(select c.realname from dlxy_user_article c
+					// where c.article_id=a.article_id)realname,"
 					// + " a.delete_date
 					ArticleDTO articleDTO = new ArticleDTO();
 					articleDTO.setArticleId(rs.getLong(1));
@@ -188,7 +188,7 @@ public class ArticleQueryDaoImpl implements ArticleQueryDao
 					articleDTO.setCreateDate((Date) rs.getObject(6));
 					articleDTO.setUpdateDate((Date) rs.getObject(7));
 					articleDTO.setArticleStatus(rs.getInt(8));
-					articleDTO.setUsername(rs.getString(9));
+					articleDTO.setRealname(rs.getString(9));
 					articleDTO.setUserId(rs.getLong(10));
 					articleDTO.setDeleteDate(rs.getDate(11));
 					articleDTO.setTitleName(rs.getString(12));
@@ -204,7 +204,7 @@ public class ArticleQueryDaoImpl implements ArticleQueryDao
 	// {
 	// String sql = "select
 	// a.article_id,a.title_id,a.article_name,a.article_author,a.article_is_recommend,a.create_date,a.update_date
-	// ,a.article_status ,c.username ,c.user_id,a.delete_date,a.article_content "
+	// ,a.article_status ,c.realname ,c.user_id,a.delete_date,a.article_content "
 	// + " from dlxy_article a,dlxy_title b ,dlxy_user_article c where
 	// a.title_id=b.title_id and a.article_id= c.article_id and a.article_id=?";
 	// ArticleDTO query = queryRunner.query(sql, new

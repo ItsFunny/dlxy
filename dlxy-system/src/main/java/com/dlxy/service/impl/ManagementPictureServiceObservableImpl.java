@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dlxy.common.dto.PictureDTO;
+import com.dlxy.common.dto.UserDTO;
 import com.dlxy.common.dto.UserRecordDTO;
 import com.dlxy.common.enums.PictureTypeEnum;
 import com.dlxy.server.picture.service.IPictureService;
@@ -40,7 +41,7 @@ public class ManagementPictureServiceObservableImpl extends Observable implement
 	
 	@Transactional
 	@Override
-	public Collection<Long> addPciture(Long userId,Long articleId, PictureDTO[] pictureDTOs) throws SQLException
+	public Collection<Long> addPciture(UserDTO userDTO,Long articleId, PictureDTO[] pictureDTOs) throws SQLException
 	{
 		pictureService.addPicture(pictureDTOs);
 		List<Long>idList=new ArrayList<Long>();
@@ -55,13 +56,13 @@ public class ManagementPictureServiceObservableImpl extends Observable implement
 			pictureDTO.setArticleId(articleId);
 			string+=pictureDTO.getPictureId();
 		}
-		UserRecordDTO userRecordDTO=UserRecordDTO.getUserRecordDTO(userId, "add:picture:"+string);
+		UserRecordDTO userRecordDTO=UserRecordDTO.getUserRecordDTO(userDTO.getUserId(), "add:picture:"+string);
 		notifyObservers(userRecordDTO);
 		return idList;
 	}
 
 	@Override
-	public void deletePicture(Long userId, List<Long> pictureIds,int type)
+	public void deletePicture(UserDTO userDTO, List<Long> pictureIds,int type)
 	{
 //		int count = pictureService.deleteByPictureIdAndStatus(pictureId, pictureType);
 		int count=pictureService.deleteByPictureIds(pictureIds);
@@ -81,18 +82,18 @@ public class ManagementPictureServiceObservableImpl extends Observable implement
 			detail.append(long1+",");
 		}
 //		String detail="delete:portal-picture:"+pictureId;
-		UserRecordDTO userRecordDTO = UserRecordDTO.getUserRecordDTO(userId, detail.toString());
+		UserRecordDTO userRecordDTO = UserRecordDTO.getUserRecordDTO(userDTO.getUserId(), detail.toString());
 		setChanged();
 		notifyObservers(userRecordDTO);
 	}
 
 	@Override
-	public void addPortalPicture(Long userId, PictureDTO pictureDTO) throws SQLException
+	public void addPortalPicture(UserDTO userDTO, PictureDTO pictureDTO) throws SQLException
 	{
 		pictureService.addPicture(new PictureDTO[] {pictureDTO});
 		setChanged();
 		String detail="add:portal-picture:"+pictureDTO.getPictureId();
-		UserRecordDTO recordDTO=UserRecordDTO.getUserRecordDTO(userId, detail);
+		UserRecordDTO recordDTO=UserRecordDTO.getUserRecordDTO(userDTO.getUserId(), detail);
 		notifyObservers(recordDTO);
 	}
 

@@ -49,7 +49,7 @@
 		resultType="com.dlxy.common.dto.ArticleDTO">
 		select
 		a.article_id,a.title_id,a.article_name,a.article_author,a.article_is_recommend,a.create_date,a.update_date,a.article_status
-		,c.username,c.user_id,a.delete_date,b.title_name from dlxy_article a
+		,c.realname,c.user_id,a.delete_date,b.title_name from dlxy_article a
 		left join dlxy_title b on a.title_id=b.title_id
 		left join dlxy_user_article c on a.article_id=c.article_id where 1=1
 		and
@@ -62,7 +62,7 @@
 	<select id="findArticlesInTitleIdsByPage" resultType="com.dlxy.common.dto.ArticleDTO">
 		select
 		a.article_id,a.title_id,a.article_name,a.article_author,a.article_is_recommend,a.create_date,a.update_date,a.article_status
-		,c.username,c.user_id,a.delete_date,b.title_name from dlxy_article a
+		,c.realname,c.user_id,a.delete_date,b.title_name from dlxy_article a
 		left join dlxy_title b on a.title_id=b.title_id
 		left join dlxy_user_article c on a.article_id=c.article_id where 1=1
 		and

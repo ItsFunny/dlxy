@@ -32,6 +32,8 @@ public interface IUserService
 	
 	UserDTO findByUsername(String username);
 	
+	void updateUserStatusByUserId(Long userId,Integer status);
+	
 	Long countUsersByParam(Map<String, Object>params) throws SQLException;
 	
 	Collection<UserDTO>findUsersByPage(int start,int end ,Map<String, Object>params) throws SQLException;

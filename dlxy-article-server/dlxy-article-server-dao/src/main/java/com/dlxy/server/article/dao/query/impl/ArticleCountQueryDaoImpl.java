@@ -64,7 +64,7 @@ public class ArticleCountQueryDaoImpl implements ArticleCountQueryDao
 		{
 			if(!StringUtils.isEmpty(params.get("searchParam").toString()))
 			{
-//				article_id in (select b.article_id from dlxy_user_article b where b.username like ? ) 
+//				article_id in (select b.article_id from dlxy_user_article b where b.realname like ? ) 
 				sql+=" and (article_name like ? or article_author like ? )";
 				String tParam="%" +params.get("searchParam")+"%";
 				p.add(tParam);
@@ -80,12 +80,12 @@ public class ArticleCountQueryDaoImpl implements ArticleCountQueryDao
 				p.add(params.get("userId"));
 			}
 		}
-//		if(params.containsKey("username"))
+//		if(params.containsKey("realname"))
 //		{
-//			if (!StringUtils.isEmpty(params.get("username").toString()))
+//			if (!StringUtils.isEmpty(params.get("realname").toString()))
 //			{
 //				sql += " or article_id in ( select article_id from dlxy_user_article b where b.user_name like ? )";
-//				p.add("%" + params.get("username") + "%");
+//				p.add("%" + params.get("realname") + "%");
 //			}
 //		}
 	

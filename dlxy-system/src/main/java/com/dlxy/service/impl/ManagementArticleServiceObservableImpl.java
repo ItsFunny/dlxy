@@ -209,9 +209,9 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 	@Override
 	public void deleteInBatch(UserDTO userDTO, Long[] articleIds)
 	{
-//		articleService.deleteArticlesInBatch(articleIds);
+		articleService.deleteArticlesInBatch(articleIds);
 		//修改图片状态,或者发布信息,最后还是选择只修改状态,防止瞬间进行io操作  2018-07-09 不需要了,直接数据库自动设置为null即可,因为url中存放着路径
-//		pictureService.updateArticlePictureStatusByArticleIdsInbatch(articleIds, PictureStatusEnum.Invalid.ordinal());
+		pictureService.updateArticlePictureStatusByArticleIdsInbatch(articleIds, PictureStatusEnum.Invalid.ordinal());
 		//直接全部删除  采用发布消息的方式
 		ServletRequestAttributes attributes=(ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 		HttpServletRequest request = attributes.getRequest();
