@@ -184,7 +184,7 @@ public class UserController
 		return modelAndView;
 	}
 
-	 @RequiresRoles(value="admin")
+	@RequiresRoles(value="admin")
 	@RequestMapping(value = "/add")
 	public ModelAndView addUser(HttpServletRequest request, HttpServletResponse response)
 	{

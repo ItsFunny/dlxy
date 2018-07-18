@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.dlxy.common.dto.PictureDTO;
 import com.dlxy.common.dto.UserDTO;
 import com.dlxy.common.dto.UserRecordDTO;
-import com.dlxy.common.enums.PictureTypeEnum;
+import com.dlxy.common.enums.ArticlePictureTypeEnum;
 import com.dlxy.server.picture.service.IPictureService;
 import com.dlxy.service.IPictureManagementWrappedService;
 
@@ -60,6 +60,18 @@ public class ManagementPictureServiceObservableImpl extends Observable implement
 		notifyObservers(userRecordDTO);
 		return idList;
 	}
+	@Override
+	public Long addPictureWithArticleIdSingel(UserDTO userDTO, Long articleId, PictureDTO pictureDTO)
+	{
+		pictureService.addPicture(pictureDTO);
+		Long pictureId=pictureDTO.getPictureId();
+		pictureService.addPictureWithArticleIdSingle(pictureDTO);
+		String detail="add:picture:"+pictureId;
+		UserRecordDTO userRecordDTO=UserRecordDTO.getUserRecordDTO(userDTO.getUserId(), "add:picture:"+detail);
+		setChanged();
+		notifyObservers(userRecordDTO);
+		return pictureId;
+	}
 
 	@Override
 	public void deletePicture(UserDTO userDTO, List<Long> pictureIds,int type)
@@ -71,11 +83,11 @@ public class ManagementPictureServiceObservableImpl extends Observable implement
 			throw new RuntimeException("wrong argument");
 		}
 		StringBuilder detail=null;
-		if(type==PictureTypeEnum.Portal_Carousel.ordinal())
+		if(type==ArticlePictureTypeEnum.DETAIL_PICTURE.ordinal())
 		{
-			detail=new StringBuilder("delete:portal-picture:");
+			detail=new StringBuilder("delete:detail-picture:");
 		}else {
-			detail=new StringBuilder("delete:normal-picture:");
+			detail=new StringBuilder("delete:description-picture:");
 		}
 		for (Long long1 : pictureIds)
 		{
@@ -96,5 +108,6 @@ public class ManagementPictureServiceObservableImpl extends Observable implement
 		UserRecordDTO recordDTO=UserRecordDTO.getUserRecordDTO(userDTO.getUserId(), detail);
 		notifyObservers(recordDTO);
 	}
+
 
 }

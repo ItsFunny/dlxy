@@ -31,4 +31,6 @@ public interface UserRoleMybatisDao
 	
 	@Select("select role_id,role_name,role_description from dlxy_role")
 	Collection<UserRoleDTO>findAllRoels();
+	
+	
 }

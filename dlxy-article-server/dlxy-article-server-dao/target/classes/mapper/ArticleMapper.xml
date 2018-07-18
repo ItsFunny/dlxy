@@ -5,10 +5,18 @@
 <mapper
 	namespace="com.dlxy.server.article.dao.mybatis.ArticleMybatisDao">
 	<update id="updateInBatch" parameterType="java.util.Map">
-		update dlxy_article set article_status=#{status}
-		<if test="status==2">
-			,delete_date =#{deleteDate}
-		</if>
+		update dlxy_article set update_date=#{updateDate} ,
+		
+		<if test="null!=status">
+				article_status=#{status}
+			<if test="status==2">
+					,delete_date =#{deleteDate}
+			</if>
+		</if>	
+		<if test="null!=type">
+			article_type=#{type}
+		</if>	
+		
 		where 1=1
 		<if test="null!=titleId and titleId >0">
 			and exists(select 1 from dlxy_title where title_id
@@ -20,6 +28,7 @@
 			#{id}
 		</foreach>
 	</update>
+	
 
 	<delete id="deleteInBatch">
 
@@ -48,7 +57,7 @@
 	<select id="findByTitleIds"
 		resultType="com.dlxy.common.dto.ArticleDTO">
 		select
-		a.article_id,a.title_id,a.article_name,a.article_author,a.article_is_recommend,a.create_date,a.update_date,a.article_status
+		a.article_id,a.title_id,a.article_name,a.article_author,a.article_type,a.create_date,a.update_date,a.article_status
 		,c.realname,c.user_id,a.delete_date,b.title_name from dlxy_article a
 		left join dlxy_title b on a.title_id=b.title_id
 		left join dlxy_user_article c on a.article_id=c.article_id where 1=1
@@ -61,7 +70,7 @@
 	</select>
 	<select id="findArticlesInTitleIdsByPage" resultType="com.dlxy.common.dto.ArticleDTO">
 		select
-		a.article_id,a.title_id,a.article_name,a.article_author,a.article_is_recommend,a.create_date,a.update_date,a.article_status
+		a.article_id,a.title_id,a.article_name,a.article_author,a.article_type,a.create_date,a.update_date,a.article_status
 		,c.realname,c.user_id,a.delete_date,b.title_name from dlxy_article a
 		left join dlxy_title b on a.title_id=b.title_id
 		left join dlxy_user_article c on a.article_id=c.article_id where 1=1

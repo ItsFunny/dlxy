@@ -36,10 +36,21 @@ public class PictureServiceImpl implements IPictureService
 
 	@Autowired
 	private PictureMybatisDao pictureMybatisDao;
+	/*
+	 * batch insert
+	 */
 	@Override
 	public void addPicture(PictureDTO[] pictureDTOs) throws SQLException
 	{
 		pictureMybatisDao.addPicturesInBatch(Arrays.asList(pictureDTOs));
+	}
+	/*
+	 * singel insert
+	 */
+	@Override
+	public void addPicture(PictureDTO pictureDTO)
+	{
+		pictureMybatisDao.addPicture(pictureDTO);
 	}
 
 	@Override
@@ -52,6 +63,12 @@ public class PictureServiceImpl implements IPictureService
 	public void addPictureWithArticleId(PictureDTO[] pictureDTOs) throws SQLException
 	{
 		pictureMybatisDao.addPictureWithAricleId(Arrays.asList(pictureDTOs));
+	}
+	
+	@Override
+	public void addPictureWithArticleIdSingle(PictureDTO pictureDTO)
+	{
+		pictureMybatisDao.addPictureWithArticleIdSingle(pictureDTO);
 	}
 
 	@Override
@@ -83,4 +100,6 @@ public class PictureServiceImpl implements IPictureService
 	{
 		return pictureMybatisDao.findByArticleIdArray(articleIds);
 	}
+
+	
 }

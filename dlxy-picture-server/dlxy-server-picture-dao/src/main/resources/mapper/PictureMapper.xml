@@ -10,22 +10,37 @@
 	<insert id="addPicturesInBatch" useGeneratedKeys="true"
 		keyProperty="pictureId">
 		insert into dlxy_picture (
-		picture_id,picture_url,picture_type,picture_display_seq) values
+		picture_id,picture_url,picture_display_seq)
+		values
 		<foreach collection="list" index="index" open="("
 			separator="," close=")" item="p">
-			#{p.pictureId},#{p.pictureUrl},#{p.pictureType},#{p.pictureDisplaySeq}
+			#{p.pictureId},#{p.pictureUrl},#{p.pictureDisplaySeq}
 		</foreach>
+	</insert>
 
+	<insert id="addPicture" useGeneratedKeys="true"
+		keyProperty="pictureId">
+		insert into dlxy_picture (
+		picture_id,picture_url,picture_display_seq ) 
+		values
+		(#{pictureId},#{pictureUrl},#{pictureDisplaySeq})
 	</insert>
 	<insert id="addPictureWithAricleId" useGeneratedKeys="true"
 		keyProperty="pictureId">
 		insert into dlxy_article_picture
-		(article_id,picture_id,picture_status) values
+		(article_id,picture_id,picture_status,picture_type) values
 
 		<foreach collection="list" index="index" open="("
 			separator="," close=")" item="p">
-			#{p.articleId},#{p.pictureId},#{p.pictureStatus}
+			#{p.articleId},#{p.pictureId},#{p.pictureStatus},#{p.pictureType}
 		</foreach>
+	</insert>
+	
+	<insert id="addPictureWithArticleIdSingle" parameterType="com.dlxy.common.dto.PictureDTO">
+	insert into dlxy_article_picture
+		(article_id,picture_id,picture_status,picture_type) values
+		
+		(#{articleId},#{pictureId},#{pictureStatus},#{pictureType} )
 	</insert>
 
 
@@ -49,20 +64,24 @@
 			#{id}
 		</foreach>
 	</update>
-	
+
 	<delete id="deleteByPictureIdsInBatch">
-		delete from dlxy_picture where 1=1 and  picture_id in 
-		<foreach collection="list" index="index" item="id" open="(" close=")" separator=",">
+		delete from dlxy_picture where 1=1 and picture_id in
+		<foreach collection="list" index="index" item="id" open="("
+			close=")" separator=",">
 			#{id}
 		</foreach>
 	</delete>
-	
-	<select id="findByArticleIdArray" resultType="com.dlxy.common.dto.PictureDTO">
+
+	<select id="findByArticleIdArray"
+		resultType="com.dlxy.common.dto.PictureDTO">
 		select picture_url,from dlxy_picture where picture_id in (
-			select picture_id from dlxy_article_picture where article_id in 
-			<foreach collection="array" index="index" open="(" close=")" separator="," item="id">
-				#{id}
-			</foreach>
+		select
+		picture_id from dlxy_article_picture where article_id in
+		<foreach collection="array" index="index" open="(" close=")"
+			separator="," item="id">
+			#{id}
+		</foreach>
 		)
 	</select>
 </mapper>

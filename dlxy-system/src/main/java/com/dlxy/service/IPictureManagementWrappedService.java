@@ -26,6 +26,11 @@ public interface IPictureManagementWrappedService
 {
 	Collection<Long> addPciture(UserDTO userDTO,Long articleId,PictureDTO[] pictureDTOs) throws SQLException;
 	
+	@Deprecated  //这个方法应该是会删除的
+	Long addPictureWithArticleIdSingel(UserDTO userDTO,Long articleId,PictureDTO pictureDTO);
+	
+	
+	@Deprecated//无效了,需求变了
 	void addPortalPicture(UserDTO userDTO,PictureDTO pictureDTO) throws SQLException;
 	
 	 void deletePicture(UserDTO userDTO, List<Long> pictureIds,int type);

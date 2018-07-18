@@ -108,13 +108,13 @@ public class ManagementUserServiceImpl extends Observable implements IUserMangem
 	}
 	
 	@Override
-	public void addUser(Long userId, UserDTO userDTO) throws SQLException
+	public void addUser(UserDTO loginUser, UserDTO userDTO) throws SQLException
 	{
 		String detail="";
 		Long dbUserId = userService.addUser(userDTO);
 		detail="add:user:"+dbUserId;
 		setChanged();
-		UserRecordDTO userRecordDTO=UserRecordDTO.getUserRecordDTO(userId, detail);
+		UserRecordDTO userRecordDTO=UserRecordDTO.getUserRecordDTO(loginUser.getUserId(), detail);
 		notifyObservers(userRecordDTO);
 	}
 	@Override

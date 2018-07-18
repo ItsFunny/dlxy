@@ -111,6 +111,17 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 		}
 		execute(userDTO, "update:article:"+sBuilder+":status to "+status);
 	}
+	@Override
+	public void updateArticleTypeInBatch(UserDTO userDTO, Long[] articleIds, int type)
+	{
+			articleService.updateArticleTypeInbatch(articleIds, type);
+			StringBuilder sBuilder=new StringBuilder();
+			for (Long long1 : articleIds)
+			{
+				sBuilder.append(long1+",");
+			}
+			execute(userDTO, "update:article:"+sBuilder+":type to "+type);
+	}
 
 	@Override
 	public ArticleDTO findByArticleId(Long articleId) throws SQLException
@@ -259,6 +270,8 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 			return new PageDTO<Collection<ArticleDTO>>(count, collection2);
 		}
 	}
+
+
 	
 
 }

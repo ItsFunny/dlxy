@@ -40,6 +40,7 @@ public class CharsetFilter implements Filter
 	{
 		if(null!=encoding)
 		{
+			request.setCharacterEncoding(encoding);
 			response.setContentType("text/html;charset="+encoding);
 			response.setCharacterEncoding(encoding);
 		}

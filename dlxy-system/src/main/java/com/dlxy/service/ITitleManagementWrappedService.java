@@ -20,4 +20,8 @@ import com.dlxy.common.dto.DlxyTitleDTO;
 public interface ITitleManagementWrappedService
 {
 	void addParent(DlxyTitleDTO dlxyTitleDTO);
+	
+	
+	//显示dlxy具体的新闻,而不是关于的上方的那些标题
+	DlxyTitleDTO findDlxyDetailTitles();
 }

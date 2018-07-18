@@ -1,5 +1,6 @@
 com/dlxy/controller/RestAPIController$1.class
 com/dlxy/controller/AdminController$1.class
+com/dlxy/model/FormUser.class
 com/dlxy/service/WrappedServiceFactory.class
 com/dlxy/config/DlxySystemShiroConfiguration.class
 com/dlxy/service/IArticleManagementWrappedService.class
@@ -22,6 +23,7 @@ com/dlxy/filter/copy/CharsetFilter.class
 com/dlxy/service/impl/RedisServiceImpl.class
 com/dlxy/shiro/DlxyShiroRealm.class
 com/dlxy/enums/DlxytExceptionEnum.class
+com/dlxy/service/impl/ManagemeentTitleServiceImpl.class
 com/dlxy/service/ITitleManagementWrappedService.class
 com/dlxy/service/command/UpdateArticleCommand.class
 com/dlxy/service/impl/ManagementPictureServiceObservableImpl.class

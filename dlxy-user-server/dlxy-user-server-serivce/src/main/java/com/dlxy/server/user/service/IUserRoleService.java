@@ -23,5 +23,7 @@ public interface IUserRoleService
 {
 	UserRoleDTO findByRoleId(int roleId);
 	
+	
+	
 	Collection<UserRoleDTO>findAllRoles();
 }

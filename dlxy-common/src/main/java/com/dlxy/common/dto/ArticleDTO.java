@@ -26,7 +26,9 @@ public class ArticleDTO
 	private String articleName;
 	private String articleAuthor;
 	private String articleContent;
-	private Integer articleIsRecommend=0;
+	//2018-07-18 change recommend -> articleType   0:normal article 1 recommend article , 2 picture article 
+//	private Integer articleIsRecommend=0;
+	private Integer articleType=0;
 	private Integer articleStatus;
 	private Date createDate;
 	private Date updateDate;
@@ -44,6 +46,8 @@ public class ArticleDTO
 	private String titleName;
 	//2018-07-07 15:02 add
 	private Integer titleParentId=0;
+	//2018-07-18 19:58 add
+	private String pictureUrl;
 	
 	
 	
@@ -99,15 +103,6 @@ public class ArticleDTO
 		this.articleContent = articleContent;
 	}
 
-	public Integer getArticleIsRecommend()
-	{
-		return articleIsRecommend;
-	}
-
-	public void setArticleIsRecommend(Integer articleIsRecommend)
-	{
-		this.articleIsRecommend = articleIsRecommend;
-	}
 
 	public Integer getArticleStatus()
 	{
@@ -167,15 +162,6 @@ public class ArticleDTO
 		this.updateDateStr = updateDateStr;
 	}
 
-	@Override
-	public String toString()
-	{
-		return "ArticleDTO [articleId=" + articleId + ", titleId=" + titleId + ", articleName=" + articleName
-				+ ", articleAuthor=" + articleAuthor + ", articleContent=" + articleContent + ", articleIsRecommend="
-				+ articleIsRecommend + ", articleStatus=" + articleStatus + ", createDate=" + createDate
-				+ ", updateDate=" + updateDate + ", createDateStr=" + createDateStr + ", updateDateStr=" + updateDateStr
-				+ "]";
-	}
 
 	public Long getUserId()
 	{
@@ -250,6 +236,26 @@ public class ArticleDTO
 	public void setRealname(String realname)
 	{
 		this.realname = realname;
+	}
+
+	public Integer getArticleType()
+	{
+		return articleType;
+	}
+
+	public void setArticleType(Integer articleType)
+	{
+		this.articleType = articleType;
+	}
+
+	public String getPictureUrl()
+	{
+		return pictureUrl;
+	}
+
+	public void setPictureUrl(String pictureUrl)
+	{
+		this.pictureUrl = pictureUrl;
 	}
 
 }

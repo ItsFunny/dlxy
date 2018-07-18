@@ -66,11 +66,22 @@ public class ArticleServiceImpl implements IArticleService ,IUserArticleService
 	public void updateArticleStatusInBatch(Long[] articleIds, int status)
 	{
 		Map<String, Object>params=new HashMap<String, Object>();
+		params.put("updateDate", new Date());
 		if(status==ArticleStatusEnum.DELETE.ordinal())
 		{
 			params.put("deleteDate", new Date());
 		}
 		params.put("status", status);
+		params.put("list", Arrays.asList(articleIds));
+		articleDao.updateInBatch(params);
+	}
+
+	@Override
+	public void updateArticleTypeInbatch(Long[] articleIds, int type)
+	{
+		Map<String, Object>params=new HashMap<String, Object>();
+		params.put("updateDate", new Date());
+		params.put("type", type);
 		params.put("list", Arrays.asList(articleIds));
 		articleDao.updateInBatch(params);
 	}
@@ -158,7 +169,6 @@ public class ArticleServiceImpl implements IArticleService ,IUserArticleService
 	{
 		Map<String, Object>params=new HashMap<>();
 		
-		//TODO
 		
 		
 		

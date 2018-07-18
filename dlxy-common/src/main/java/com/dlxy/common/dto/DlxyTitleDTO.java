@@ -9,6 +9,7 @@ package com.dlxy.common.dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -39,6 +40,10 @@ public class DlxyTitleDTO implements Serializable
 	private List<ArticleDTO>articles;
 	//2018-07-16 20:19 add
 	private Integer titleType;
+	
+	//这里可以采用组合模式,明天复习一下然后更改,今天先直接这么定死:
+	private List<DlxyTitleDTO>childTitles;
+	
 	
 	public DlxyTitleDTO()
 	{
@@ -125,6 +130,14 @@ public class DlxyTitleDTO implements Serializable
 	public static long getSerialversionuid()
 	{
 		return serialVersionUID;
+	}
+	public List<DlxyTitleDTO> getChildTitles()
+	{
+		return childTitles;
+	}
+	public void setChildTitles(List<DlxyTitleDTO> childTitles)
+	{
+		this.childTitles = childTitles;
 	}
 
 }

@@ -40,12 +40,14 @@ import com.dlxy.common.service.IdWorkerService;
 import com.dlxy.common.service.IdWorkerServiceTwitter;
 import com.dlxy.service.IArticleManagementWrappedService;
 import com.dlxy.service.IPictureManagementWrappedService;
+import com.dlxy.service.ITitleManagementWrappedService;
 import com.dlxy.service.IUserMangementWrappedService;
 import com.dlxy.service.ManagementUserRecordObserver;
 import com.dlxy.service.command.AddOrUpdateArtilceCommand;
 import com.dlxy.service.command.ArticleGroup;
 import com.dlxy.service.command.PictureGroup;
 import com.dlxy.service.command.UserArticleGroup;
+import com.dlxy.service.impl.ManagemeentTitleServiceImpl;
 import com.dlxy.service.impl.ManagementArticleServiceObservableImpl;
 import com.dlxy.service.impl.ManagementPictureServiceObservableImpl;
 import com.dlxy.service.impl.ManagementUserServiceImpl;
@@ -108,6 +110,16 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer
 		return addArtilceCommand;
 	}
 
+	@Bean
+	public ITitleManagementWrappedService titleMangementWrappedServie(List<Observer> observers)
+	{
+		ManagemeentTitleServiceImpl iTitleManagementWrappedService=new ManagemeentTitleServiceImpl();
+		for (Observer observer : observers)
+		{
+			iTitleManagementWrappedService.addObserver(observer);
+		}
+		return iTitleManagementWrappedService;
+	}
 	@Bean
 	public IUserMangementWrappedService userManagementWrappedservice(List<Observer> observers)
 	{

@@ -7,8 +7,10 @@
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-system/src/main/java/com/dlxy/controller/RestAPIController.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-system/src/main/java/com/dlxy/exception/DlxySystemException.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-system/src/main/java/com/dlxy/exception/DlxySystemExceptionEnum.java
+/Users/joker/Java/oxygen_workspace/dlxy/dlxy-system/src/main/java/com/dlxy/service/impl/ManagemeentTitleServiceImpl.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-system/src/main/java/com/dlxy/service/impl/ManagementArticleServiceObservableImpl.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-system/src/main/java/com/dlxy/exhandler/DlxySystemExceptionHandler.java
+/Users/joker/Java/oxygen_workspace/dlxy/dlxy-system/src/main/java/com/dlxy/model/FormUser.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-system/src/main/java/com/dlxy/service/WrappedServiceFactory.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-system/src/main/java/com/dlxy/shiro/DlxyShiroRealm.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-system/src/main/java/com/dlxy/service/command/Command.java

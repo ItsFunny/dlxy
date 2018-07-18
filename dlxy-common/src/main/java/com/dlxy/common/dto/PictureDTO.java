@@ -23,7 +23,7 @@ public class PictureDTO
 	private Long pictureId;
 	private Long articleId;
 	private String pictureUrl;
-	private Integer pictureType;
+	private Integer pictureType=0; //0 为文章内部图 1位文章描述图
 	private Integer pictureStatus;
 	private Date createDate;
 	//2018-07-07 13:12 add

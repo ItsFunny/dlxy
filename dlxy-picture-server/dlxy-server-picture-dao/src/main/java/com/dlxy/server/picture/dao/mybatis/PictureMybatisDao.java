@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -42,7 +43,11 @@ public interface PictureMybatisDao
 	
 	void addPicturesInBatch(List<PictureDTO> pictureDTOs);
 	
+	void addPicture(PictureDTO pictureDTO);
+	
 	void  addPictureWithAricleId(List<PictureDTO> pictureDTOs);
+	
+	void addPictureWithArticleIdSingle(PictureDTO pictureDTO);
 	
 	void updatePictureStausInBatch(@Param("status")int status,@Param("articleId")Long articleId, @Param("ids")String[] pictureIds);
 	
@@ -57,7 +62,7 @@ public interface PictureMybatisDao
 	int deleteByPictureIdsInBatch(List<Long>pictureIds);
 	
 	
-	@Select("select picture_id,picture_url,picture_type,create_date,picture_display_seq from dlxy_picture where picture_type=#{status} order by picture_display_seq desc")
+	@Select("select picture_id,picture_url,create_date,picture_display_seq from dlxy_picture where picture_type=#{status} order by picture_display_seq desc")
 	Collection<PictureDTO>findByStatus(int status);
 	
 	Collection<PictureDTO>findByArticleIdArray(Long[] articleIds);

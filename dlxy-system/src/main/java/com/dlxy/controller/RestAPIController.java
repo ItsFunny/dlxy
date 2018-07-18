@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -36,6 +37,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.dlxy.common.dto.ArticleDTO;
 import com.dlxy.common.dto.DlxyTitleDTO;
@@ -50,13 +52,13 @@ import com.dlxy.common.enums.ArticleStatusEnum;
 import com.dlxy.common.enums.DlxyTitleEnum;
 import com.dlxy.common.enums.IllegalLevelEnum;
 import com.dlxy.common.enums.PictureStatusEnum;
-import com.dlxy.common.enums.PictureTypeEnum;
 import com.dlxy.common.event.AppEvent;
 import com.dlxy.common.utils.ResultUtil;
 import com.dlxy.common.vo.PageVO;
 import com.dlxy.exception.DlxySystemIllegalException;
 import com.dlxy.model.FormArticle;
 import com.dlxy.model.FormTitle;
+import com.dlxy.model.FormUser;
 import com.dlxy.server.article.service.IArticleService;
 import com.dlxy.server.article.service.ITitleService;
 import com.dlxy.server.user.service.IUserRoleService;
@@ -241,6 +243,24 @@ public class RestAPIController
 		}
 	}
 
+	/*
+	 * 显示新闻相关的类目 这里的数据结构需要重新设置一下
+	 */
+//	@RequestMapping(value = "/newsTitles", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+//	public ResultDTO<DlxyTitleDTO> showAllNewsTitles(HttpServletRequest requestq, HttpServletResponse response)
+//	{
+//		Collection<DlxyTitleDTO> collection = titleService.findTitlesByType(DlxyTitleEnum.NEWS_TITLE.ordinal());
+//		DlxyTitleDTO dlxyTitleDTO = null;
+//		if (null != collection && !collection.isEmpty())
+//		{
+//			dlxyTitleDTO = collection.iterator().next();
+//			List<DlxyTitleDTO> childs = (List<DlxyTitleDTO>) titleService
+//					.findChildsByParentId(dlxyTitleDTO.getTitleId());
+//			dlxyTitleDTO.setChildTitles(childs);
+//		}
+//		return ResultUtil.sucess(dlxyTitleDTO);
+//	}
+
 	@RequestMapping(value = "/titles", method =
 	{ RequestMethod.POST, RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResultDTO<Collection<DlxyTitleDTO>> findAllTitles()
@@ -362,40 +382,60 @@ public class RestAPIController
 		}
 	}
 
-	@RequestMapping(value = "/article/update/status", method =
+	@RequestMapping(value = "/article/update/typeOrStatus", method =
 	{ RequestMethod.POST, RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResultDTO<String> updateArticleStatus(HttpServletRequest request, HttpServletResponse response)
 	{
+		UserDTO userDTO = AdminUtil.getLoginUser();
+		String key = request.getParameter("key");
+		String error = "success";
+		if (StringUtils.isEmpty(key))
+		{
+			error = "missing artgument:type";
+		}
 		String[] articleIds = request.getParameterValues("articleId");
 		if (null == articleIds || articleIds.length < 1)
 		{
-			return ResultUtil.fail("missing argument:articleId");
+			error = "missing argument:articleId";
 		}
-		String articleStatusStr = request.getParameter("articleStatus");
-		int artilceStatus = 0;
-		Long[] ids = new Long[articleIds.length];
-		try
+		if (error.equals("success"))
 		{
-			for (int i = 0; i < articleIds.length; i++)
+			try
 			{
-				ids[i] = Long.parseLong(articleIds[i]);
-			}
-			artilceStatus = Integer.parseInt(articleStatusStr);
-			if (artilceStatus < 0 || artilceStatus > 3)
+				Long[] ids = new Long[articleIds.length];
+				for (int i = 0; i < articleIds.length; i++)
+				{
+					ids[i] = Long.parseLong(articleIds[i]);
+				}
+
+				if (key.equals("status"))
+				{
+					String articleStatusStr = request.getParameter("articleStatus");
+					int artilceStatus = 0;
+					artilceStatus = Integer.parseInt(articleStatusStr);
+					if (artilceStatus < 0 || artilceStatus > 2)
+					{
+						throw new RuntimeException("文章状态超出范围");
+					}
+					{
+						articleManagementWrappedService.updateArticlesInBatch(userDTO, ids, artilceStatus);
+						return ResultUtil.sucess();
+					}
+				} else if (key.equals("type"))
+				{
+					String typeStr = request.getParameter("articleType");
+					int type = Integer.parseInt(typeStr);
+					articleManagementWrappedService.updateArticleTypeInBatch(userDTO, ids, type);
+				}
+			} catch (Exception e)
 			{
-				throw new RuntimeException("文章状态超出范围");
+				logger.error("[update article status or type ],error:{},key:{}", e.getMessage(), key);
+				return ResultUtil.fail(e.getMessage());
 			}
-		} catch (Exception e)
-		{
-			return ResultUtil.fail("illegal argument" + e.getMessage());
-		}
-		try
-		{
-			articleManagementWrappedService.updateArticlesInBatch(AdminUtil.getLoginUser(), ids, artilceStatus);
 			return ResultUtil.sucess();
-		} catch (Exception e)
+		} else
 		{
-			return ResultUtil.fail(e.getMessage());
+			return ResultUtil.fail(error);
 		}
 	}
 
@@ -500,7 +540,6 @@ public class RestAPIController
 		pictureDTO.setPictureUrl(url);
 		pictureDTO.setArticleId(Long.parseLong(articleId));
 		pictureDTO.setCreateDate(new Date());
-		pictureDTO.setPictureType(PictureTypeEnum.Article_Picture.ordinal());
 		pictureDTO.setPictureStatus(PictureStatusEnum.Invalid.ordinal());
 		try
 		{
@@ -523,62 +562,64 @@ public class RestAPIController
 		return pictureUploadResponseDTO;
 	}
 
-//	@RequiresRoles(value= {
-//			"admin"
-//	})
+	// @RequiresRoles(value= {
+	// "admin"
+	// })
 	@RequestMapping(value = "/user/updateStatus", method =
-	{ RequestMethod.POST,
-			RequestMethod.GET },produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	{ RequestMethod.POST, RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResultDTO<String> banUser(HttpServletRequest request, HttpServletResponse response)
 	{
 		String userIdStr = request.getParameter("userId");
-		String statusStr=request.getParameter("status");
-		UserDTO userDTO=AdminUtil.getLoginUser();
-		if(StringUtils.isEmpty(userIdStr) || StringUtils.isEmpty(statusStr))
+		String statusStr = request.getParameter("status");
+		UserDTO userDTO = AdminUtil.getLoginUser();
+		if (StringUtils.isEmpty(userIdStr) || StringUtils.isEmpty(statusStr))
 		{
 			return ResultUtil.fail("错误的参数");
 		}
-		Long userId=Long.parseLong(userIdStr);
-		int status=Integer.parseInt(statusStr);
+		Long userId = Long.parseLong(userIdStr);
+		int status = Integer.parseInt(statusStr);
 		try
 		{
 			userManagementWrappedService.updateUserStatusByUserId(userDTO, userId, status);
 			return ResultUtil.sucess();
 		} catch (Exception e)
 		{
-			logger.error("[update user status ] error {}" ,e.getMessage());
+			logger.error("[update user status ] error {}", e.getMessage());
 			return ResultUtil.fail(e.getMessage());
 		}
 	}
-//	@RequiresRoles(value= {	"admin","subAdmin"
-//	})
-	@RequestMapping(value="/user/find",produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResultDTO<UserDTO>findUser(HttpServletRequest request,HttpServletResponse response)
+
+	// @RequiresRoles(value= { "admin","subAdmin"
+	// })
+	@RequestMapping(value = "/user/find", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResultDTO<UserDTO> findUser(HttpServletRequest request, HttpServletResponse response)
 	{
-		String keyStr=request.getParameter("q");
-		UserDTO userDTO=null;
+		String keyStr = request.getParameter("q");
+		UserDTO userDTO = null;
 		try
 		{
-			Long userId=Long.parseLong(keyStr);
-			userDTO=userService.findByUserId(userId);
+			Long userId = Long.parseLong(keyStr);
+			userDTO = userService.findByUserId(userId);
 		} catch (Exception e)
 		{
-			userDTO=userService.findByUsername(keyStr);
+			userDTO = userService.findByUsername(keyStr);
 		}
-		if(null==userDTO)
+		if (null == userDTO)
 		{
 			return ResultUtil.fail("no user find");
-		}else {
+		} else
+		{
 			return ResultUtil.sucess(userDTO);
 		}
 	}
+
 	/*
 	 * 列出所有的角色
 	 */
-//	@RequiresRoles(value= {	"admin","subAdmin"
-//			})
-	@RequestMapping(value="/user/roles/all",produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResultDTO<Collection<UserRoleDTO>>findRoles(HttpServletRequest request,HttpServletResponse response)
+	// @RequiresRoles(value= { "admin","subAdmin"
+	// })
+	@RequestMapping(value = "/user/roles/all", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResultDTO<Collection<UserRoleDTO>> findRoles(HttpServletRequest request, HttpServletResponse response)
 	{
 		try
 		{
@@ -586,9 +627,59 @@ public class RestAPIController
 			return ResultUtil.sucess(roles);
 		} catch (Exception e)
 		{
-			logger.error("[find roles] error:{}",e.getMessage());
+			logger.error("[find roles] error:{}", e.getMessage());
 			return ResultUtil.fail(e.getMessage());
 		}
 	}
+
+	/*
+	 * 添加用户
+	 */
+	// @RequiresRoles(value= {
+	// "admin"
+	// })
+	// @RequestMapping(value = "/user/doAddUser", consumes =
+	// MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces =
+	// MediaType.APPLICATION_JSON_UTF8_VALUE, method = RequestMethod.POST)
+	// public ResultDTO<String> doAddUser(HttpServletRequest request,
+	// HttpServletResponse response)
+	// {
+	// FormUser formUser=new FormUser();
+	// Map<String, Object>params=new HashMap<>();
+	// try
+	// {
+	// formUser.valid();
+	// } catch (Exception e)
+	// {
+	// params.put("error", e.getMessage());
+	// }
+	// if(!params.containsKey("error"))
+	// {
+	// UserRoleDTO role = userRoleService.findByRoleId(formUser.getRoleId());
+	// if(role==null)
+	// {
+	// params.put("error", "role信息不存在");
+	// }else {
+	// UserDTO userDTO=new UserDTO();
+	// formUser.to(userDTO);
+	// try
+	// {
+	// userManagementWrappedService.addUser(AdminUtil.getLoginUser(), userDTO);
+	// } catch (Exception e)
+	// {
+	// logger.error("[add user] error:{} ",e.getMessage());
+	// params.put("error", e.getMessage());
+	// }
+	// }
+	// }
+	// if(params.containsKey("error"))
+	// {
+	// return ResultUtil.fail(params.get("error").toString());
+	// }
+	// return ResultUtil.sucess();
+	// }
+	/*
+	 * 搜索用户
+	 */
 
 }

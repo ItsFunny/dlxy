@@ -1,0 +1,232 @@
+<#include "header.html">
+<script>
+	$(document).ready(function(){
+		jQuery.get('/api/v1/aboutTitles.html',function(data){
+			 if(data.code==1){
+				var str='';			  	
+			  	for(var i=0;i<data.data.length;i++){
+			  		var o=data.data[i];
+			  		str+='<li  class="aaa" id="li_'+o.titleId+'" titleId="'+o.titleId+'""><a href="index.html"><i class="icon-home"></i>'+o.titleName+'</a></li>';
+			  	}
+			  	$("#above_titles").append(str);
+			  }
+		},'json');
+	});
+</script>
+<body>
+<!--头部-->
+<div class="ding">
+    <div class="ding_jz">
+        <p>欢迎来到鼎力学院！</p>
+        <ul>
+            <li><a  target="_blank" href="http://weibo.com/PanZhongQuan"><img class="tubiao" src="images/t_03.png">微博</a></li>
+            <li>
+                <a href="#" class="big-link" data-reveal-id="myModal" data-animation="fade"><img class="tubiao" src="images/t_10.png">微信</a>
+                <div id="myModal" class="reveal-modal"><h1><img src="images/IMG_0859.jpg"></h1><h3>扫一扫关注我们</h3>
+                <a class="close-reveal-modal">&#215;</a></div>
+            </li>
+            <li><img class="tubiao" src="images/t_05.png">QQ：2239329788</li>
+            <li><img class="tubiao" src="images/t_07.png">0851-83627862</li>
+        </ul>
+    </div>
+</div>
+<div class="toubu_bj">
+    <div class="toubu">
+        <a href="../"><img src="images/t_17.png"></a> 
+        <span>
+            <input class="suk" type="text" placeholder="请输入关键词">
+            <button class="scan">搜索</button>
+        </span>
+    </div>
+</div>
+
+<!-- 展示标题-->
+<div class="content">
+    <ul class="venus-menu" id="above_titles">
+    <#--   <li class="active"><a href="index.html"><i class="icon-home"></i>网站首页</a></li>
+        <li>
+            <a href="#"><i class="icon-magic"></i>企业介绍</a>
+             <ul>
+                <li><a href="qyjs.html">企业简介</a></li>
+                <li><a href="qyjs.html">发展历程</a></li>
+            </ul>
+        </li> -->
+    </ul>
+</div>
+<!-- 展示一些额外的东西吧,比如说系统统计等-->
+<!--内容上部分-->
+<div class="neirong_bj">
+    <div class="neirong_jz">
+    	<#if dlxyTitleDTO??>
+        <div class="pxxm">
+            <H1>${dlxyTitleDTO.titleName}</H1>
+            <ul>
+            <#list dlxyTitleDTO.childTitles as item>
+                <li><a href="/title/detial/${item.titleId}.html">${item.titleName}</a></li>
+             </#list>
+            </ul>
+        </div>
+        </#if>
+        <div class="zhongbu">
+          
+            <!-- 轮播图 用于展示首页显示的文章 -->
+            <div id="container" class="mbox">
+                <!--内容区域-->
+                <div id="focus_wrap">
+                  <div id="focus_box">
+                    <div id="focus">
+                      <div class="loading"><img src="images/loading.gif"  alt="请稍候..." /></div>
+                      <!--载入画面(可删除)-->
+                      <div class="pic">  
+                        <!--图片列表-->
+                        <ul>
+                          <li><a href="#1"><img src="images/t_21.jpg" thumb="" alt="图片1说明" text="图片1更详细的描述文字" /></a></li>
+                          <li><a href="#2"><img src="images/t_21_0.jpg" thumb="" alt="图片2说明" text="图片2更详细的描述文字" /></a></li>
+                          <li><a href="#3"><img src="images/t_21_1.jpg" thumb="" alt="图片3说明" text="图片3更详细的描述文字" /></a></li>
+                          <li><a href="#4"><img src="images/t_21_2.jpg" thumb="" alt="图片4说明" text="图片4更详细的描述文字" /></a></li>
+                          <li><a href="#5"><img src="images/t_21_3.jpg" thumb="" alt="图片5说明" text="图片5更详细的描述文字" /></a></li>
+                        </ul>
+                      </div>
+                    </div>
+                    <div class="clear"></div>
+                  </div>
+                </div>
+                <div id="focus_set" style="display: none;">
+                  <select id="focus_pattern"  >
+                    <option  value="mF_expo2010">mF_expo2010</option>
+                  </select>
+                </div>
+            </div>
+                <script type="text/javascript" src="js/mF_expo2010.js"></script>
+                <script type="text/javascript">
+                        var $id=function(id){return document.getElementById(id)};
+                          var oriHtml=$id('focus_box').innerHTML;
+                          function resetHTML(){//还原
+                                $id('focus_box').innerHTML=oriHtml;
+                                var css=document.getElementsByTagName('style')[0];
+                                css.parentNode.removeChild(css);
+                            }
+                    function pageInit(){
+                        var pattern=location.href.split('pattern=')[1];
+                        if(pattern) $id('focus_pattern').value=pattern;
+                        myFocus.set({id:'focus',pattern:$id('focus_pattern').value});
+                    }
+                    pageInit();
+                            $id('focus_pattern').onchange=function(){
+                    if(this.value==='more'){//更多风格
+                    location.href='more.html';
+                    return;
+                    }           
+                    resetHTML();
+                                myFocus.set({id:'focus',pattern:this.value,loadIMGTimeout:0});
+                            }
+                    </script>
+
+            <!-- 最新的文章-->
+            <div class="zxzkzx">
+                <div class="zxzkzx_bt">
+                    <img src="images/t_29.png">
+                    <h2>最新发布的文章</h2>
+                    <a href="#">更多>></a>
+                </div>
+                <ul class="zxzkzx_lb">
+                    <li><a href="xw_xq.html"><i></i>习近平画出的最美同心圆</a><span>2017-02-11</span></li>
+                    <li><a href="xw_xq.html"><i></i>滞留印度54年中国老兵已抵京 下午将回老家咸阳</a><span>2017-02-11</span></li>
+                   
+                </ul>
+            </div>
+             <!-- end 最新的文章-->
+        </div>
+        <!--新闻通知-->
+        <div class="zuixin_kk">
+            <h2><img src="images/t_24.png"><span>新闻通知</span></h2>
+            <ul>
+                <li><a href="xw_xq.html"><i></i><span>习近平画出的最美同心圆</span></a></li>
+                <li><a href="xw_xq.html"><i></i><span>滞留印度54年中国老兵已抵京 下滞留印度54年中国老兵已抵京 下</span></a></li>
+               
+            </ul>
+        </div>
+        <!--end 新闻通知-->
+    </div>
+</div>
+<!-- 中间过度图片,可更换 -->
+<div class="ggy_bj">
+    <div class="ggy_z">
+        <img src="images/t_33.jpg">
+    </div>
+</div>
+<!-- end 中间过度图片,可更换 -->
+
+<#if dlxyTitleDTO.childTitles??>
+<#list dlxyTitleDTO.childTitles as item>
+<div class="kaoshi">
+	
+    <div class="biaoti"><h2>${item.titleName}</h2><a href="xw.html">查看详情 +</a></div>
+    <ul class="kemu">
+        <div class="kemu_bt"><h2>卷一</h2><a href="xw.html">更多>></a></div>
+        <li><a href="xw_xq.html"><i></i>特朗普当着安倍说：中美友好对日本有好</a></li>
+        <li><a href="xw_xq.html"><i></i>习近平画出的最美 下午将滞留印度54年中国老兵已抵京</a></li>
+        <li><a href="xw_xq.html"><i></i>滞留印度54年中国老兵已抵京 下午将</a></li>
+        <li><a href="xw_xq.html"><i></i>特朗普当着安倍说：中美友好对日本有好</a></li>
+        <li><a href="xw_xq.html"><i></i>特朗普当着安倍说：中美友好对日本有好 下午将滞留印度54年中国老兵已抵京</a></li>
+        <li><a href="xw_xq.html"><i></i>滞留印度54年中国老兵</a></li>
+    </ul>
+   
+</div>
+ </#list>
+</#if>>
+<div class="ggy_bj">
+    <div class="ggy_z">
+        <img src="images/t_36.jpg">
+    </div>
+</div>
+
+
+
+<!--底部-->
+<div class="endbg">
+    <div class="endmain">
+        <div class="di_lb">
+            <ul class="di_1">   
+                <h2><i></i>信息资讯</h2>
+                <li><a href="#">最新招考资讯</a></li>
+                <li><a href="#">最新开课通知</a></li>
+                <li><a href="#">报名点</a></li>
+                <li><a href="#">教学点</a></li>
+
+            </ul>
+            <ul class="di_1">   
+                <h2><i></i>大城题库</h2>
+                <li><a href="#">大城题库</a></li>
+                <li><a href="#">免费课堂</a></li>
+                <li><a href="#">图书</a></li>
+            </ul>
+            <ul class="di_1">   
+                <h2><i></i>联系我们</h2>
+                <li><a href="#">联系我们</a></li>
+                <li><a href="#">在线留言</a></li>
+                <li><a href="#">招聘英才</a></li>
+            </ul>
+            <ul class="di_1 kefu">   
+                <h2><img src="images/t_39.jpg">客服中心热线</h2>
+                <li>
+                    <p>全国免费咨询热线：400-8200-800</p>
+                    <p>服务时间:周一至周六90:00-18:00</p>
+                </li>
+            </ul>
+        </div>
+        <div class="endfont">
+            <p>
+                京ICP备11017824号-4 / 京ICP证130164号 <br>
+北京市公安局朝阳分局备案编号:110105000501Copyright © 2006-2017 ZCOOL
+            </p>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+	$("li ").mouseenter(function(){
+	});
+
+</script>
+</html>

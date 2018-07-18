@@ -39,7 +39,8 @@
 							<th>用户角色</th>
 							<th>状态</th>
 							<th>创建时间</th>
-							<th>上次登录时间</th>
+							<th>最近登录时间</th>
+							<th>最近登录ip地址</th>
 							<th>操作</th>
 						</tr>
 					</thead>
@@ -74,6 +75,11 @@
 							<td>
 								<#if item.lastLoginDate??>
 									${item.lastLoginDate?string('yyyy-MM-dd HH:mm:ss')}
+								</#if>
+							</td>
+							<td>
+								<#if item.lastLoginIp??>
+									${item.lastLoginIp}
 								</#if>
 							</td>
 							<td>
@@ -136,7 +142,10 @@
 								</div>
 								<label class="col-xs-3 control-label">用户性别:</label>
 								<div class="col-xs-3 ">
-									<input type="text" name="sex" class="form-control input-sm duiqi" id="edit_sex" placeholder="">
+									<select name="able"  style="width:100px;height: 30px">
+										<option value ="0">男</option>
+										<option value="1">女</option>
+									</select>
 								</div>
 								<label class="col-xs-2 control-label">用户密码:</label>
 								<div class="col-xs-3 ">
@@ -186,7 +195,6 @@
 			if(data.code==1){
 				$("#edit_realname").val(data.data.realname);
 				var roleId=data.data.roleId;
-				alert(roleId);
 				loadRoles(roleId);
 			}else{
 				alert(data.msg);

@@ -39,6 +39,9 @@ public class FormArticle
 	// private Integer articleIsRecommend;
 	@Max(2)
 	private Integer articleStatus;
+	
+	@Max(5)
+	private Integer articleType;
 
 	public void to(ArticleDTO articleDTO)
 	{
@@ -48,6 +51,7 @@ public class FormArticle
 		articleDTO.setArticleStatus(this.articleStatus);
 		articleDTO.setArticleContent(this.articleContent);
 		articleDTO.setTitleId(this.titleId);
+		articleDTO.setArticleType(this.articleType);
 	}
 	public Long getArticleId()
 	{
@@ -113,6 +117,14 @@ public class FormArticle
 	{
 		CommonUtils.validStringException(this.articleAuthor);
 		CommonUtils.validStringException(this.articleName);
+	}
+	public Integer getArticleType()
+	{
+		return articleType;
+	}
+	public void setArticleType(Integer articleType)
+	{
+		this.articleType = articleType;
 	}
 
 	// private Date createDate;

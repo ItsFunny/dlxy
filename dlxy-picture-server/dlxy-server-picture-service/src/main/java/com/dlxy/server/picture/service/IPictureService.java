@@ -27,6 +27,8 @@ public interface IPictureService
 	Collection<PictureDTO>findByArticleIdArray(Long[] articleIds);
 	
 	void addPicture(PictureDTO[] pictureDTOs) throws SQLException;
+	
+	void addPicture(PictureDTO pictureDTO);
 	/**
 	 * 用于删除文章时,自动将其对应的图片状态更新为0,batch system 会自动清理对应的图片
 	 * @param articleIds 传入的文章id ,是一个数组
@@ -49,6 +51,8 @@ public interface IPictureService
 	void updateArticlePictureStatusByArticleIdLimited(int status,Long articleId,String[] ids) throws SQLException;
 	
 	void addPictureWithArticleId(PictureDTO[] pictureDTOs) throws SQLException;
+	
+	void addPictureWithArticleIdSingle(PictureDTO pictureDTO);
 	
 	Collection<PictureDTO>findByStatus(int status);
 	

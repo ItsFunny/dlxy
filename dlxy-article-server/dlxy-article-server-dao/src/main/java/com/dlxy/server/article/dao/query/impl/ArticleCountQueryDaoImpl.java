@@ -51,12 +51,12 @@ public class ArticleCountQueryDaoImpl implements ArticleCountQueryDao
 		{
 			sql += " and article_status <> 2 ";
 		}
-		if(params.containsKey("articleIsRecommend"))
+		if(params.containsKey("articleType"))
 		{
-			if (!StringUtils.isEmpty(params.get("articleIsRecommend").toString()))
+			if (!StringUtils.isEmpty(params.get("articleType").toString()))
 			{
-				sql += " and article_is_recommend=? ";
-				p.add(params.get("articleIsRecommend"));
+				sql += " and article_type=? ";
+				p.add(params.get("articleType"));
 			}
 		}
 		

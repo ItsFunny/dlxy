@@ -30,7 +30,11 @@ public interface IArticleService
 	
 	void updateArticleStatus(Long articleId,int status);
 	
+	//修改文章状态
 	void updateArticleStatusInBatch(Long[] articleIds,int status);
+	
+	//修改文章类型
+	void updateArticleTypeInbatch(Long[] articleIds,int type);
 	
 //	void updateArticleStatusInBatch(Long[] articleIds,int status);
 	

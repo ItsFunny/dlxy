@@ -7,13 +7,16 @@
 */
 package com.dlxy.controller;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,14 +32,19 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.dlxy.common.dto.ArticleDTO;
 import com.dlxy.common.dto.DlxyTitleDTO;
 import com.dlxy.common.dto.IllegalLogDTO;
 import com.dlxy.common.dto.PageDTO;
+import com.dlxy.common.dto.PictureDTO;
 import com.dlxy.common.dto.UserDTO;
+import com.dlxy.common.dto.UserRoleDTO;
+import com.dlxy.common.enums.ArticlePictureTypeEnum;
 import com.dlxy.common.enums.ArticleStatusEnum;
+import com.dlxy.common.enums.ArticleTypeEnum;
 import com.dlxy.common.enums.DlxyTitleEnum;
 import com.dlxy.common.enums.IllegalLevelEnum;
 import com.dlxy.common.enums.PictureStatusEnum;
@@ -44,11 +52,15 @@ import com.dlxy.common.service.IdWorkerService;
 import com.dlxy.common.vo.PageVO;
 import com.dlxy.exception.DlxySystemIllegalException;
 import com.dlxy.model.FormArticle;
+import com.dlxy.model.FormUser;
 import com.dlxy.server.article.service.ITitleService;
+import com.dlxy.server.user.service.IUserRoleService;
 import com.dlxy.service.IArticleManagementWrappedService;
+import com.dlxy.service.IPictureManagementWrappedService;
 import com.dlxy.service.IUserMangementWrappedService;
 import com.dlxy.service.command.AddOrUpdateArtilceCommand;
 import com.dlxy.utils.AdminUtil;
+import com.dlxy.utils.FileUtil;
 import com.joker.library.utils.CommonUtils;
 
 /**
@@ -63,6 +75,7 @@ import com.joker.library.utils.CommonUtils;
 @RequestMapping("/admin")
 public class AdminController
 {
+	Pattern realNamePattern = Pattern.compile("^([\u4e00-\u9fa5]{1,20}|[a-zA-Z]+ [a-zA-Z]+)$");
 	private Logger logger = LoggerFactory.getLogger(AdminController.class);
 	@Autowired
 	private ITitleService titleService;
@@ -72,9 +85,13 @@ public class AdminController
 	private AddOrUpdateArtilceCommand articleCommand;
 	@Autowired
 	private IUserMangementWrappedService userManagementWrappedService;
+	@Autowired
+	private IPictureManagementWrappedService pictureManagementWrappedService;
 
 	@Autowired
 	private IdWorkerService idWorkService;
+	@Autowired
+	private IUserRoleService userRoleService;
 
 	@RequestMapping("/test")
 	public ModelAndView test(HttpServletRequest request, HttpServletResponse response)
@@ -88,7 +105,7 @@ public class AdminController
 	{
 		UserDTO user = AdminUtil.getLoginUser();
 		ModelAndView modelAndView = new ModelAndView("index");
-		modelAndView.addObject("user", user);
+		modelAndView.addObject("admin/user", user);
 		return modelAndView;
 	}
 
@@ -98,7 +115,7 @@ public class AdminController
 	@RequestMapping("/aboutTitles")
 	public ModelAndView showAllTiltles(HttpServletRequest request, HttpServletResponse response)
 	{
-		ModelAndView modelAndView = new ModelAndView("about_titles");
+		ModelAndView modelAndView = new ModelAndView("admin/about_titles");
 		// Collection<DlxyTitleDTO> collection = titleService.findAllParent();
 		// modelAndView.addObject("titles",collection);
 		return modelAndView;
@@ -117,7 +134,7 @@ public class AdminController
 		{
 			dlxyTitleDTO = collection.iterator().next();
 			Collection<DlxyTitleDTO> childs = titleService.findChildsByParentId(dlxyTitleDTO.getTitleId());
-			modelAndView.addObject("titles", childs);
+			modelAndView.addObject("admin/titles", childs);
 		}
 		modelAndView.addObject("title", dlxyTitleDTO);
 		return modelAndView;
@@ -169,7 +186,7 @@ public class AdminController
 			modelAndView = new ModelAndView("error", params);
 		} else
 		{
-			modelAndView = new ModelAndView("title_article_detail", params);
+			modelAndView = new ModelAndView("admin/title_article_detail", params);
 		}
 		return modelAndView;
 	}
@@ -185,13 +202,16 @@ public class AdminController
 		UserDTO user = AdminUtil.getLoginUser();
 		Long userId = user.getUserId();
 		boolean isIllegal = false;
-		int pageSize = Integer.parseInt(StringUtils.defaultString(request.getParameter("pageSize"), "5"));
+		int pageSize = Integer.parseInt(StringUtils.defaultString(request.getParameter("pageSize"), "10"));
 		int pageNum = Integer.parseInt(StringUtils.defaultString(request.getParameter("pageNum"), "1"));
 		String userIdStr = request.getParameter("userId");
 		String type = StringUtils.defaultString(request.getParameter("type"), "");
-		if (type.equals("news"))
+		if (type.equals("picArticles"))
 		{
-			params.put("articleStatus", ArticleStatusEnum.INTRODUCE.ordinal());
+			params.put("articleType", ArticleTypeEnum.PICTURE_ARTICLE.ordinal());
+		} else if (type.equals("news"))
+		{
+			params.put("articleType", ArticleTypeEnum.INTRODUCE_ARTICLE.ordinal());
 		} else if (type.equals("deleted"))
 		{
 			params.put("articleStatus", ArticleStatusEnum.DELETE.ordinal());
@@ -231,7 +251,7 @@ public class AdminController
 			params.put("pageVO", pageVO);
 			params.put("user", user);
 			params.put("type", type);
-			modelAndView = new ModelAndView("articles", params);
+			modelAndView = new ModelAndView("admin/articles", params);
 			return modelAndView;
 		} catch (Exception e)
 		{
@@ -250,16 +270,44 @@ public class AdminController
 		long articleId = idWorkService.nextId();
 		params.put("articleId", articleId);
 		params.put("user", user);
-		ModelAndView modelAndView = new ModelAndView("article_add", params);
+		ModelAndView modelAndView = new ModelAndView("admin/article_add", params);
 		return modelAndView;
 	}
 
 	@RequestMapping("/article/doAddArticle")
 	public ModelAndView doAddArticle(@Valid FormArticle formArticle, BindingResult bindingResult,
-			HttpServletRequest request, HttpServletResponse response)
+			@RequestParam(name = "imgFile", required = false) MultipartFile imgFile, HttpServletRequest request,
+			HttpServletResponse response)
 	{
 		ModelAndView modelAndView = null;
 		String[] pictureIds = request.getParameterValues("pictureId");
+		String url = null;
+		PictureDTO descPic = null;
+		// 需要事务
+		if (null != imgFile && !imgFile.isEmpty())
+		{
+			url = FileUtil.saveFile(imgFile, formArticle.getArticleId(), request);
+			descPic = new PictureDTO();
+			descPic.setPictureUrl(url);
+			descPic.setArticleId(formArticle.getArticleId());
+			descPic.setCreateDate(new Date());
+			descPic.setPictureType(ArticlePictureTypeEnum.DESCRIPTION_PICTURE.ordinal());
+			descPic.setPictureStatus(PictureStatusEnum.Invalid.ordinal());
+			try
+			{
+				pictureManagementWrappedService.addPciture(AdminUtil.getLoginUser(), formArticle.getArticleId(),
+						new PictureDTO[]
+						{ descPic });
+				if (null == pictureIds || pictureIds.length <= 0)
+				{
+					pictureIds = new String[1];
+					pictureIds[0] = descPic.getPictureId().toString();
+				}
+			} catch (Exception e1)
+			{
+				e1.printStackTrace();
+			}
+		}
 		Map<String, Object> params = new HashMap<>();
 		if (bindingResult.hasErrors())
 		{
@@ -268,7 +316,6 @@ public class AdminController
 		String[] titleIds = request.getParameterValues("titleId");
 		Arrays.sort(titleIds, new Comparator<String>()
 		{
-
 			@Override
 			public int compare(String o1, String o2)
 			{
@@ -326,13 +373,13 @@ public class AdminController
 	// "admin"
 	// })
 	@RequestMapping("/users")
-	public ModelAndView showAllUsers(HttpServletRequest request, HttpServletResponse response)
+	public ModelAndView showAllUsers(@RequestParam Map<String, Object> params, HttpServletRequest request,
+			HttpServletResponse response)
 	{
 		ModelAndView modelAndView = null;
 		int pageSize = Integer.parseInt(StringUtils.defaultString(request.getParameter("pageSize"), "5"));
 		int pageNum = Integer.parseInt(StringUtils.defaultString(request.getParameter("pageNum"), "1"));
-		Map<String, Object> params = new HashMap<>();
-		UserDTO user=AdminUtil.getLoginUser();
+		UserDTO user = AdminUtil.getLoginUser();
 		params.put("user", user);
 		try
 		{
@@ -353,4 +400,57 @@ public class AdminController
 		return modelAndView;
 	}
 
+	// @RequiresRoles(value =
+	// { "admin" })
+	@RequestMapping("/user/add")
+	public ModelAndView addUser(HttpServletRequest request, HttpServletResponse response)
+	{
+		ModelAndView modelAndView = new ModelAndView("admin/user_add");
+		modelAndView.addObject("user", AdminUtil.getLoginUser());
+		return modelAndView;
+	}
+
+	@RequestMapping("/user/doAddUser")
+	public ModelAndView doAddUser(FormUser formUser, HttpServletRequest request, HttpServletResponse response)
+	{
+		ModelAndView modelAndView = null;
+		UserDTO user = AdminUtil.getLoginUser();
+		Map<String, Object> params = new HashMap<>();
+		params.put("user", AdminUtil.getLoginUser());
+		if (!realNamePattern.matcher(formUser.getRealname()).matches()
+				|| !CommonUtils.validString(formUser.getRealname()))
+		{
+			params.put("error", "姓名格式不正确,正确格式:吕小聪 或者Justin Bieber,请不要包含特殊字符<>? 等");
+		}
+		if (!params.containsKey("error"))
+		{
+			UserRoleDTO userRole = userRoleService.findByRoleId(formUser.getRoleId());
+			if (null == userRole)
+			{
+				params.put("error", "无效的角色信息,请刷新重试");
+			} else
+			{
+
+				UserDTO userDTO = new UserDTO();
+				formUser.to(userDTO);
+				try
+				{
+					userManagementWrappedService.addUser(user, userDTO);
+				} catch (Exception e)
+				{
+					logger.error("[add user] error:{}", e.getMessage());
+					params.put("error", "用户已存在,请更换名字");
+				}
+			}
+		}
+		if (params.containsKey("error"))
+		{
+			modelAndView = new ModelAndView("admin/user_add", params);
+		} else
+		{
+			params.put("error", "添加成功");
+			modelAndView = new ModelAndView("redirect:/admin/users.html", params);
+		}
+		return modelAndView;
+	}
 }
