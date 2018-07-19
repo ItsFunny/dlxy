@@ -3,6 +3,7 @@ com/dlxy/controller/AdminController$1.class
 com/dlxy/model/FormUser.class
 com/dlxy/service/WrappedServiceFactory.class
 com/dlxy/config/DlxySystemShiroConfiguration.class
+com/dlxy/constant/TitleArticleConstant.class
 com/dlxy/service/IArticleManagementWrappedService.class
 com/dlxy/service/IUserMangementWrappedService.class
 com/dlxy/exception/DlxySystemExceptionEnum.class

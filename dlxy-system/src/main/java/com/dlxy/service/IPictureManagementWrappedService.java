@@ -26,6 +26,8 @@ public interface IPictureManagementWrappedService
 {
 	Collection<Long> addPciture(UserDTO userDTO,Long articleId,PictureDTO[] pictureDTOs) throws SQLException;
 	
+	void updateDescPicture(UserDTO userDTO,Long articleId,PictureDTO pictureDTO) throws SQLException;
+	
 	@Deprecated  //这个方法应该是会删除的
 	Long addPictureWithArticleIdSingel(UserDTO userDTO,Long articleId,PictureDTO pictureDTO);
 	

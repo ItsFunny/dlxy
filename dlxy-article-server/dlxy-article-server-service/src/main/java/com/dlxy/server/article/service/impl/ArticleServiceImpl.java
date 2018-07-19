@@ -176,6 +176,41 @@ public class ArticleServiceImpl implements IArticleService ,IUserArticleService
 		return null;
 	}
 
+	@Override
+	public Collection<ArticleDTO> findLatestArticleLimited(int count)
+	{
+		return articleDao.findLatestArticleLimited(count);
+	}
+
+	@Override
+	public ArticleDTO findArticlePrevAndNext(Long articleId)
+	{
+		ArticleDTO articleDTO = findByArticleId(articleId);
+		if(null==articleDTO)
+		{
+			return null;
+		}
+		Collection<ArticleDTO> collection = articleDao.findArticlePrevAndNext(articleId);
+		for (ArticleDTO articleDTO2 : collection)
+		{
+			if(articleDTO2.getCreateDate().before(articleDTO.getCreateDate()))
+			{
+				articleDTO.setPrevious(articleDTO2);
+			}else {
+				articleDTO.setNext(articleDTO2);
+			}
+		}
+//		collection.forEach(a->{
+//			if(a.getCreateDate().before(articleDTO.getCreateDate()))
+//			{
+//				articleDTO.setPrevious(a);
+//			}else {
+//				articleDTO.setNext(a);
+//			}
+//		});
+		return articleDTO;
+	}
+
 //	@Override
 //	public Collection<ArticleDTO> findArticlesByTitleIds(Integer[] ids)
 //	{

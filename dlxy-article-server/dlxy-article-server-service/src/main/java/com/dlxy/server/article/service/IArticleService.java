@@ -74,6 +74,20 @@ public interface IArticleService
 	 */
 	ArticleDTO findByArticleId(Long articleId);
 	
+	/*
+	 * 查询最新的几篇文章
+	 */
+	Collection<ArticleDTO> findLatestArticleLimited(int count);
+	
+	/**
+	 * 搜索上一篇文章和下一篇文章
+	 * @param articleId
+	 * @return
+	 * @author joker 
+	 * @date 创建时间：2018年7月19日 下午9:48:55
+	 */
+	ArticleDTO findArticlePrevAndNext(Long articleId);
+	
 	
 	int rollBackArticle(int status,Long articleId,int titleId) throws SQLException;
 	

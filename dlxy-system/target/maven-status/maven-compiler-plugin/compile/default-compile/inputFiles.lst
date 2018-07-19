@@ -29,6 +29,7 @@
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-system/src/main/java/com/dlxy/service/IPictureManagementWrappedService.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-system/src/main/java/com/dlxy/service/ManagementUserRecordObserver.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-system/src/main/java/com/dlxy/config/DlxySystemConfiiguration.java
+/Users/joker/Java/oxygen_workspace/dlxy/dlxy-system/src/main/java/com/dlxy/constant/TitleArticleConstant.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-system/src/main/java/com/dlxy/exception/DlxySystemIllegalException.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-system/src/main/java/com/dlxy/enums/DlxytExceptionEnum.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-system/src/main/java/com/dlxy/service/command/IGroup.java

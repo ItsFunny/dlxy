@@ -1,0 +1,243 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,user-scalable=no, initial-scale=1">
+<title>谭八套 大城教育</title>
+<link rel="stylesheet" href="/css/index.css" type="text/css">
+<link rel="stylesheet" href="/css/zy.css" type="text/css">
+
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+</script><script type="text/javascript" src="/js/jquery.reveal.js"></script>
+<script type="text/javascript" src="/js/script.js"></script>
+<script type="text/javascript" src="/js/myfocus-2.0.4.min.js"></script>
+<script type="text/javascript" src="/js/jquery.SuperSlide.js"></script>
+
+</head>
+<script>
+	$(document).ready(function(){
+		jQuery.get('/api/v1/aboutTitles.html',function(data){
+			 if(data.code==1){
+				var str='';
+				titleIdArray=new Array(data.data.length);
+			  	for(var i=0;i<data.data.length;i++){
+			  		var o=data.data[i];
+			  		titleIdArray[i]=o.titleId;
+			  		str+='<li class="aaa" id="li_'+o.titleId+'" titleId="'+o.titleId+'""><a href="index.html"><i class="icon-home"></i>'+o.titleName+'</a></li>';
+			  	}
+			  	$("#above_titles").append(str);
+			  	loadNews(8,1);
+			  }
+		},'json');
+	});
+	function loadNews(pageSize,pageNum){
+    	$("#article_news").empty();
+   	 	var params={"type":"news","pageSize":pageSize,"pageNum":pageNum};
+    	jQuery.get('/api/v1/article.html',params,function(data,textStatus,jqXHR){
+    		var pageVO=data.data;
+    		if(data.code==1){
+    			var str='';
+    			var str2='';
+    			for(var i=0;i<data.data.data.length;i++){
+    				var o=data.data.data[i];
+    				str+=' <li class="no"><i class="tt">'+i+'</i><a href="/article/detail/'+o.articleId+'.html">'+o.articleName+'</a></li>';
+    				if(i==0){
+    				str2+=' <li class="first"><a href="/article/detail/'+o.articleId+'.html" target="_blank">'+o.articleName+'...</a><span class="dateRight">['+o.createDate+']</span></li';
+    				}else if(i==data.data.data.length-1){
+    					str2+=' <li class="last"><a href="/article/detail/'+o.articleId+'.html" target="_blank">'+o.articleName+'...</a><span class="dateRight">['+o.createDate+']</span></li';
+    				}else{
+    					str2+=' <li><a href="/article/detail/'+o.articleId+'.html" target="_blank">'+o.articleName+'...</a><span class="dateRight">['+o.createDate+']</span></li';
+    				}
+    			}
+    			str+='总共有'+pageVO.totalCount+'条记录';
+    			if(pageVO.pageNum<=1){
+    				str+='<a href="javascript:void(0)">上一页</a>';
+    			}else{
+    				str+='<a href="javascript:void(0)" onclick="loadNews(8,'+(pageVO.pageNum-1)+')">上一页</a>';
+    			}
+    			if(pageVO.pageNum>=pageVO.maxPage){
+    				str+='<a href="javascript:void(0)">下一页</a>';
+    			}else{
+    				str+='<a href="javascript:void(0)" onclick="loadNews(8,'+(pageVO.pageNum+1)+')">下一页</a>';
+    			}
+    			$("#article_news").append(str);
+    			$("#article_roll_news").append(str2);
+    		}else{
+    			alert('加载新闻失败');
+    		}
+    	},'json')
+    }
+</script>
+<body>
+<!--头部-->
+<div class="ding">
+    <div class="ding_jz">
+        <p>欢迎来到大城教育！</p>
+        <ul>
+            <li><a  target="_blank" href="http://weibo.com/PanZhongQuan"><img class="tubiao" src="/images/t_03.png">微博</a></li>
+            <li>
+                <a href="#" class="big-link" data-reveal-id="myModal" data-animation="fade"><img class="tubiao" src="/images/t_10.png">微信</a>
+                <div id="myModal" class="reveal-modal"><h1><img src="/images/IMG_0859.jpg"></h1><h3>扫一扫关注我们</h3>
+                <a class="close-reveal-modal">&#215;</a></div>
+            </li>
+            <li><img class="tubiao" src="/images/t_05.png">QQ：2239329788</li>
+            <li><img class="tubiao" src="/images/t_07.png">0851-83627862</li>
+        </ul>
+    </div>
+</div>
+<div class="toubu_bj">
+    <div class="toubu">
+        <a href="../"><img src="/images/t_17.png"></a> 
+        <span>
+            <input class="suk" type="text" placeholder="请输入关键词">
+            <button class="scan">搜索</button>
+        </span>
+    </div>
+</div>
+
+
+<div class="content">
+    <ul class="venus-menu" id="above_titles">
+    </ul>
+</div>
+    
+<!--内容上部分-->
+<div class="shijian">
+    <div class="annBar">
+        <strong>最新新闻信息：</strong>
+        <div id="ann" class="ann">
+            <div class="tempWrap" style="overflow:hidden; position:relative; width:1738px">
+                <div class="annCon" style="width: 5214px; position: relative; overflow: hidden; padding: 0px; margin: 0px; left: -1923px;">
+                   <ul style="float: left; width: 1728px;" id="article_roll_news">
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">jQuery("#ann").slide({ mainCell:".annCon",autoPlay:true,effect:"leftMarquee",interTime:50,vis:"1"  });</script>
+        <div class="showDate">
+            <script language="javascript" type="text/javascript" src="/js/show_date.js"></script>2017年3月25日 星期六  农历丁酉年 二月廿八
+        </div>
+    </div>
+</div>
+
+
+<!--子页内容-->
+<div class="zybj">
+    <div class="zuo_nr">
+        <div class="dqwz">
+            <span><img src="/images/xx_03.jpg">您当前的位置：<a href="index.html">信息咨询 </a>> <a href="qyjs.html">最新招考资讯 </a> </span>
+        </div>
+        <!--nr-->
+        <div class="xw_xq">
+	            <h1>${article.articleName}<span>创建时间:${article.createDate?string('yyyy-MM-dd HH:mm:ss')} 
+	            <#if article.updateDate??>
+		            最近一次更新时间:${article.updateDate?string('yyyy-MM-dd HH:mm:ss')}</span></h1>
+	            </#if>
+	            ${article.articleContent!"暂无内容"}
+        </div>
+
+
+        <div class="fy">
+            <div class="shangxiaye">
+            	 <p>上一篇：
+        	    	<#if article.previous??>
+                		<a href="/article/detail/${article.previous.articleId?c}.html">${article.previous.articleName}</a>
+                	<#else>
+                		没有了
+                	</#if>
+                </p>
+                <p>下一篇：
+               	 	<#if article.next??>
+                		<a href="/article/detail/${article.next.articleId?c}.html">${article.next.articleName}</a>
+                	<#else>
+                		没有了
+                	</#if>
+                </p>
+            </div>
+            <!-- JiaThis Button BEGIN -->
+            <div class="fx">
+                <div class="jiathis_style_24x24">
+                    <a class="jiathis_button_qzone"></a>
+                    <a class="jiathis_button_tsina"></a>
+                    <a class="jiathis_button_tqq"></a>
+                    <a class="jiathis_button_weixin"></a>
+                    <a class="jiathis_button_renren"></a>
+                    <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+                    <a class="jiathis_counter_style"></a>
+                </div>
+                <script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+                <!-- JiaThis Button END -->
+            </div>
+        </div>
+     
+        <script type="text/javascript">
+           
+        </script>
+
+    </div>
+    <div class="you_dh">
+        <div class="erji_dh">
+            <div class="daohang_biaot">项目列表</div>
+            <ul>
+                <li><a href="xw.html">最新招考资讯</a></li>
+                <li><a href="#">最新开课通知</a></li>
+                <li><a href="#">报名点</a></li>
+                <li><a href="#">教学点</a></li>
+                <li><a href="#">班次学费以及优惠</a></li>
+                <li><a href="#">课程安排</a></li>
+            </ul>
+        </div>
+        <div class="erji_dh">
+            <div class="daohang_biaot">最新新闻通知</div>
+            <ul id="article_news">
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+<!--底部-->
+<div class="endbg">
+    <div class="endmain">
+        <div class="di_lb">
+            <ul class="di_1">   
+                <h2><i></i>信息资讯</h2>
+                <li><a href="#">最新招考资讯</a></li>
+                <li><a href="#">最新开课通知</a></li>
+                <li><a href="#">报名点</a></li>
+                <li><a href="#">教学点</a></li>
+
+            </ul>
+            <ul class="di_1">   
+                <h2><i></i>大城题库</h2>
+                <li><a href="#">大城题库</a></li>
+                <li><a href="#">免费课堂</a></li>
+                <li><a href="#">图书</a></li>
+            </ul>
+            <ul class="di_1">   
+                <h2><i></i>联系我们</h2>
+                <li><a href="#">联系我们</a></li>
+                <li><a href="#">在线留言</a></li>
+                <li><a href="#">招聘英才</a></li>
+            </ul>
+            <ul class="di_1 kefu">   
+                <h2><img src="/images/t_39.jpg">客服中心热线</h2>
+                <li>
+                    <p>全国免费咨询热线：400-8200-800</p>
+                    <p>服务时间:周一至周六90:00-18:00</p>
+                </li>
+            </ul>
+        </div>
+        <div class="endfont">
+            <p>
+                京ICP备11017824号-4 / 京ICP证130164号 <br>
+北京市公安局朝阳分局备案编号:110105000501Copyright © 2006-2017 ZCOOL
+            </p>
+        </div>
+    </div>
+</div>
+
+
+
+</body>
+</html>

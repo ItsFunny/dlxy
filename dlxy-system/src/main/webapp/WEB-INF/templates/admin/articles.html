@@ -83,7 +83,11 @@
 							<th>发布时间</th>
 							<th>更新时间</th>
 							<th>文章类型</th>
+							<#if type=='picArticles'>
+							<th>描述图</th>
+							</#if>
 							<th>文章状态</th>
+							
 							<th>操作</th>
 						</tr>
 					</thead>
@@ -126,9 +130,13 @@
 								<td>首页图片显示文章</td>
 							</#if>
 						
-							
+							<#if type=='picArticles'>
+								<td><img src="${item.pictureUrl!"null"}" style="width:100px;height:100px"></td>
+							</#if>
 							<#if item.articleStatus == 0>
-							<td>下线</td>
+							<td>
+							下线
+							</td>
 							<td>
 									<a class="layui-btn layui-btn-mini news_edit"  onclick="changeStatus(this,1);" articleId="${item.articleId?c}" "><i class="iconfont icon-edit" ></i> 上线</a>
 									<a class="layui-btn layui-btn-mini " data-toggle="modal" data-target="#changeSource" onclick="loadArticle(this);" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i> 编辑</a>
@@ -143,6 +151,9 @@
 										<a class="layui-btn layui-btn-mini "  onclick="changeType(this,1)" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i> 设置为推荐新闻</a>
 									</#if>
 									<a class="layui-btn layui-btn-danger layui-btn-mini news_del" data-id="1" articleId="${item.articleId?c}" onclick="changeStatus(this,2)"><i class="layui-icon"></i> 放至回收站</a>
+									<#if type='picArticles'>
+										<a class="layui-btn layui-btn-mini" data-id="1" articleId="${item.articleId?c}" data-toggle="modal" data-target="#changeDescPic" onclick="changeDescPic(this)"><i class="layui-icon"></i> 更换描述图</a>
+									</#if>
 							</td>
 							<#elseif item.articleStatus ==1 >
 							<td>上线</td>
@@ -160,13 +171,16 @@
 										<a class="layui-btn layui-btn-mini "  onclick="changeType(this,1)" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i> 设置为推荐新闻</a>
 									</#if>
 									<a class="layui-btn layui-btn-danger layui-btn-mini news_del" data-id="1" articleId="${item.articleId?c}" onclick="changeStatus(this,2)"><i class="layui-icon"></i> 放至回收站</a>
+									<#if type='picArticles'>
+										<a class="layui-btn layui-btn-mini" data-id="1" articleId="${item.articleId?c}" data-toggle="modal" data-target="#changeDescPic" onclick="changeDescPic(this)"><i class="layui-icon"></i>更换描述图</a>
+									</#if>
 							</td>
 							<#elseif item.articleStatus == 2>
 							<td>回收站</td>
 							<td>
 									<a class="layui-btn layui-btn-mini news_edit" articleId="${item.articleId?c}" onclick="changeStatus(this,0)"><i class="iconfont icon-edit" ></i> 恢复</a>
 									<a class="layui-btn layui-btn-mini " data-toggle="modal" data-target="#changeSource" onclick="loadArticle(this);" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i> 编辑</a>
-										<#if item.articleType==0>
+									<#if item.articleType==0>
 										<a class="layui-btn layui-btn-mini "  onclick="changeType(this,1)" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i>设置为推荐新闻</a>
 										<a class="layui-btn layui-btn-mini "  onclick="changeType(this,2)" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i> 设置为首页图片新闻</a>
 									<#elseif item.articleType==1>
@@ -177,6 +191,9 @@
 										<a class="layui-btn layui-btn-mini "  onclick="changeType(this,1)" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i> 设置为推荐新闻</a>
 									</#if>
 									<a class="layui-btn layui-btn-danger layui-btn-mini news_del "  onclick="singleDelIndeed(this);" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i> 彻底删除</a>
+									<#if type='picArticles'>
+										<a class="layui-btn layui-btn-mini" data-id="1" articleId="${item.articleId?c}" data-toggle="modal" data-target="#changeDescPic" onclick="changeDescPic(this)"><i class="layui-icon"></i> 更换描述图</a>
+									</#if>
 							</td>
 							</#if>
 						</tr>
@@ -215,6 +232,24 @@
 			    </div>
 		    </div>
 		</div>
+
+<form method='post' action='/admin/article/update/descpic.html' id="changeDescPicForm" enctype="multipart/form-data">
+	<div class="modal fade" id="changeDescPic" role="dialog" aria-labelledby="gridSystemModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					</button>
+					<h4 class="modal-title" id="gridSystemModalLabel">修改标题</h4>
+					<input type="file" name="imgFile">
+					<input type="hidden" id="pic_articleId" name="articleId" value="">
+					<input type="hidden" id="pic_pictureId" name="pictureId" value="">
+					<input type="submit" value="上传" id="changeDescPicButton" >
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
 <form method="post" action="/api/article/update.html" id="editForm">
 	<div class="modal fade" id="changeSource" role="dialog" aria-labelledby="gridSystemModalLabel">
 		<div class="modal-dialog" role="document">
@@ -522,5 +557,43 @@ function editSaveUpdate(){
  		},'json');
  	}
  	
+ 	function changeDescPic(obj){
+ 		var articleId=$(obj).attr("articleId");
+ 		$("#pic_articleId").val(articleId);
+ 	}
+ 	function uploadDescPic(){
+ 		var obj=$("#changeDescPicForm");
+ 		var formData=new FormData($("#changeDescPicForm")[0]);
+ 		
+ 		var params=$("#changeDescPicForm").serialize();
+ 		alert(params);
+ 		<#-- jQuery.post('/api/v1/article/update/descpic.html',formData,function(data){
+ 			alert(data.msg);
+ 			if(data.code==1){
+	 				location.reload();
+	 		}
+ 		},'json'); -->
+ 		
+ 		$.ajax({
+ 			headers:{
+ 				'Accept':'application/json',
+ 				'Content-type':'application/json'
+ 			},
+ 			url:'/api/v1/article/update/descpic.html',
+ 			type:'post',
+ 			data:formData,
+ 			dataType:'json',
+ 			contentType: false, // 注意这里应设为false
+            processData: false,
+   			success:function(data){
+   			alert(data.msg);
+	 			if(data.code==1){
+	 				location.reload();
+	 			}
+   			}
+ 		})  
+ 		
+ 	}
+	 	
 </script>
 <#include "footer.html">

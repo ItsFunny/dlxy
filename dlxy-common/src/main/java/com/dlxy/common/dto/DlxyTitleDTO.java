@@ -21,7 +21,7 @@ import java.util.List;
  * @author joker
  * @date 创建时间：2018年7月1日 下午3:15:52
  */
-public class DlxyTitleDTO implements Serializable
+public class DlxyTitleDTO extends AbstractDlxyTitleComposite implements Serializable
 {
 	/**
 	* 
@@ -37,21 +37,25 @@ public class DlxyTitleDTO implements Serializable
 	private Date createDate;
 	private Date updateDate;
 	//2018-07-10 13:07 add 
-	private List<ArticleDTO>articles;
+//	private List<ArticleDTO>articles;
 	//2018-07-16 20:19 add
 	private Integer titleType;
+	//这里可以采用组合模式,明天复习一下然后更改,今天先直接这么定死:  2018-07-19 changed
+//	private List<DlxyTitleDTO>childTitles;
 	
-	//这里可以采用组合模式,明天复习一下然后更改,今天先直接这么定死:
-	private List<DlxyTitleDTO>childTitles;
 	
-	
-	public DlxyTitleDTO()
-	{
-		this.articles=new ArrayList<ArticleDTO>();
-	}
+//	public DlxyTitleDTO()
+//	{
+//		this.articles=new ArrayList<ArticleDTO>();
+//	}
 	public Integer getTitleId()
 	{
 		return titleId;
+	}
+
+	public DlxyTitleDTO()
+	{
+		super();
 	}
 
 	public void setTitleId(Integer titleId)
@@ -110,15 +114,15 @@ public class DlxyTitleDTO implements Serializable
 		this.createDate = createDate;
 	}
 
-	public List<ArticleDTO> getArticles()
-	{
-		return articles;
-	}
-
-	public void setArticles(List<ArticleDTO> articles)
-	{
-		this.articles = articles;
-	}
+//	public List<ArticleDTO> getArticles()
+//	{
+//		return articles;
+//	}
+//
+//	public void setArticles(List<ArticleDTO> articles)
+//	{
+//		this.articles = articles;
+//	}
 	public Integer getTitleType()
 	{
 		return titleType;
@@ -131,13 +135,13 @@ public class DlxyTitleDTO implements Serializable
 	{
 		return serialVersionUID;
 	}
-	public List<DlxyTitleDTO> getChildTitles()
-	{
-		return childTitles;
-	}
-	public void setChildTitles(List<DlxyTitleDTO> childTitles)
-	{
-		this.childTitles = childTitles;
-	}
+//	public List<DlxyTitleDTO> getChildTitles()
+//	{
+//		return childTitles;
+//	}
+//	public void setChildTitles(List<DlxyTitleDTO> childTitles)
+//	{
+//		this.childTitles = childTitles;
+//	}
 
 }

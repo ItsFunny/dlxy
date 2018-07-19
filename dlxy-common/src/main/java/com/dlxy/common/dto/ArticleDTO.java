@@ -9,6 +9,7 @@ package com.dlxy.common.dto;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.joker.library.utils.CommonUtils;
 
 /**
@@ -19,7 +20,7 @@ import com.joker.library.utils.CommonUtils;
  * @author joker
  * @date 创建时间：2018年6月28日 下午2:13:09
  */
-public class ArticleDTO
+public class ArticleDTO extends AbstractDlxyArticleComposite
 {
 	private Long articleId;
 	private Integer titleId;
@@ -36,6 +37,7 @@ public class ArticleDTO
 	private String updateDateStr;
 	// 2018-06-30 11:30 add
 	private Long userId;
+	@JsonIgnore
 	private String realname;
 	// 2018-06-30 22:02 add
 	private Date deleteDate;
@@ -48,6 +50,7 @@ public class ArticleDTO
 	private Integer titleParentId=0;
 	//2018-07-18 19:58 add
 	private String pictureUrl;
+	
 	
 	
 	

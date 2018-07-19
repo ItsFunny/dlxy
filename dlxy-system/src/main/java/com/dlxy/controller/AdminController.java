@@ -49,6 +49,7 @@ import com.dlxy.common.enums.DlxyTitleEnum;
 import com.dlxy.common.enums.IllegalLevelEnum;
 import com.dlxy.common.enums.PictureStatusEnum;
 import com.dlxy.common.service.IdWorkerService;
+import com.dlxy.common.utils.ResultUtil;
 import com.dlxy.common.vo.PageVO;
 import com.dlxy.exception.DlxySystemIllegalException;
 import com.dlxy.model.FormArticle;
@@ -302,6 +303,9 @@ public class AdminController
 				{
 					pictureIds = new String[1];
 					pictureIds[0] = descPic.getPictureId().toString();
+				}else {
+					pictureIds=new String[pictureIds.length+1];
+					pictureIds[pictureIds.length-1]=descPic.getPictureId().toString();
 				}
 			} catch (Exception e1)
 			{
@@ -363,6 +367,44 @@ public class AdminController
 
 		// 还需要修改图片的状态 今天先直接增加再说
 
+		return modelAndView;
+	}
+	@RequestMapping("/article/update/descpic")
+	public ModelAndView updateDsescPic(@RequestParam("imgFile") MultipartFile imgFile,HttpServletRequest request,HttpServletResponse response)
+	{
+		ModelAndView modelAndView=null;
+		Map<String, Object>params=new HashMap<>();
+		String articleIdStr=request.getParameter("articleId");
+		if(StringUtils.isEmpty(articleIdStr) || imgFile==null || imgFile.isEmpty())
+		{
+			params.put("error", "缺失参数");
+		}
+		if(params.containsKey("error"))
+		{
+			return new ModelAndView("error",params);
+		}
+		try
+		{
+			Long articleId=Long.parseLong(articleIdStr);
+			String url = FileUtil.saveFile(imgFile, articleId, request);
+			PictureDTO pictureDTO=new PictureDTO();
+			pictureDTO.setArticleId(articleId);
+			pictureDTO.setPictureUrl(url);
+			pictureDTO.setPictureStatus(PictureStatusEnum.Effective.ordinal());
+			pictureDTO.setPictureType(ArticlePictureTypeEnum.DESCRIPTION_PICTURE.ordinal());
+			pictureManagementWrappedService.updateDescPicture(AdminUtil.getLoginUser(), articleId, pictureDTO);
+			
+		} catch (Exception e)
+		{
+			logger.error("[update article desc pic] error : {}" ,e.getMessage());
+			params.put("error", e.getMessage());
+		}
+		if(params.containsKey("error"))
+		{
+			modelAndView=new ModelAndView("error",params);
+		}else {
+			modelAndView=new ModelAndView("redirect:/admin/articles.html?type=picArticles",params);
+		}
 		return modelAndView;
 	}
 

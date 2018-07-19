@@ -83,4 +83,7 @@
 		order by a.create_date desc 
 		limit #{start},#{end}
 	</select>
+	<select id="findArticlesInTitleIds" resultType="com.dlxy.common.dto.ArticleDTO">
+		
+	</select>
 </mapper>

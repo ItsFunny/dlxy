@@ -7,6 +7,7 @@
 */
 package com.dlxy.controller;
 
+
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -39,6 +40,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.alibaba.fastjson.JSON;
 import com.dlxy.common.dto.ArticleDTO;
 import com.dlxy.common.dto.DlxyTitleDTO;
 import com.dlxy.common.dto.IllegalLogDTO;
@@ -48,13 +50,17 @@ import com.dlxy.common.dto.PictureUploadResponseDTO;
 import com.dlxy.common.dto.ResultDTO;
 import com.dlxy.common.dto.UserDTO;
 import com.dlxy.common.dto.UserRoleDTO;
+import com.dlxy.common.enums.ArticlePictureTypeEnum;
 import com.dlxy.common.enums.ArticleStatusEnum;
+import com.dlxy.common.enums.ArticleTypeEnum;
 import com.dlxy.common.enums.DlxyTitleEnum;
 import com.dlxy.common.enums.IllegalLevelEnum;
 import com.dlxy.common.enums.PictureStatusEnum;
 import com.dlxy.common.event.AppEvent;
+import com.dlxy.common.utils.JsonUtil;
 import com.dlxy.common.utils.ResultUtil;
 import com.dlxy.common.vo.PageVO;
+import com.dlxy.constant.TitleArticleConstant;
 import com.dlxy.exception.DlxySystemIllegalException;
 import com.dlxy.model.FormArticle;
 import com.dlxy.model.FormTitle;
@@ -65,9 +71,11 @@ import com.dlxy.server.user.service.IUserRoleService;
 import com.dlxy.server.user.service.IUserService;
 import com.dlxy.service.IArticleManagementWrappedService;
 import com.dlxy.service.IPictureManagementWrappedService;
+import com.dlxy.service.ITitleManagementWrappedService;
 import com.dlxy.service.IUserMangementWrappedService;
 import com.dlxy.service.command.AddOrUpdateArtilceCommand;
 import com.dlxy.utils.AdminUtil;
+import com.dlxy.utils.FileUtil;
 import com.joker.library.utils.CommonUtils;
 
 /**
@@ -102,6 +110,8 @@ public class RestAPIController
 	private AddOrUpdateArtilceCommand addOrUpdateArtilceCommand;
 	@Autowired
 	private IUserRoleService userRoleService;
+	@Autowired
+	private ITitleManagementWrappedService titleManagementWrappedService;
 
 	@RequestMapping(value = "/admin/title/addOrUpdate", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResultDTO<String> addOrUpdateTitle(FormTitle formTitle, HttpServletRequest request,
@@ -206,6 +216,55 @@ public class RestAPIController
 		}
 	}
 
+	@RequestMapping(value = "/article/latest", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResultDTO<Collection<ArticleDTO>> findLatestArticles(HttpServletRequest request,
+			HttpServletResponse response)
+	{
+		/*
+		 * 默认为5,可在nosql中配置
+		 */
+		try
+		{
+			Collection<ArticleDTO> articles = articleService.findLatestArticleLimited(TitleArticleConstant.MAX_NUMBER_ARTICLES);
+			return ResultUtil.sucess(articles);
+		} catch (Exception e)
+		{
+			return ResultUtil.fail();
+		}
+	}
+
+	@RequestMapping(value = "/article", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResultDTO<PageVO<Collection<ArticleDTO>>> findNews(HttpServletRequest request, HttpServletResponse response)
+	{
+		int pageSize = Integer.parseInt(StringUtils.defaultString(request.getParameter("pageSize"), "8"));
+		int pageNum = Integer.parseInt(StringUtils.defaultString(request.getParameter("pageNum"), "1"));
+		String type = request.getParameter("type");
+		Map<String, Object> params = new HashMap<>();
+		if (StringUtils.isEmpty(type))
+		{
+			return ResultUtil.fail("缺失参数");
+		} else if (type.equals("news"))
+		{
+			params.put("articleType", ArticleTypeEnum.INTRODUCE_ARTICLE.ordinal());
+		} else if (type.equals("picArticle"))
+		{
+			params.put("articleType", ArticleTypeEnum.PICTURE_ARTICLE.ordinal());
+		} 
+		try
+		{
+			PageDTO<Collection<ArticleDTO>> pageDTO = articleManagementWrappedService.findByParams(pageSize, pageNum,
+					params);
+			PageVO<Collection<ArticleDTO>> pageVO = new PageVO<Collection<ArticleDTO>>(pageDTO.getData(), pageSize,
+					pageNum, pageDTO.getTotalCount());
+			return ResultUtil.sucess(pageVO);
+		} catch (Exception e)
+		{
+			logger.error("[find news] error:{}", e.getMessage());
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	/**
 	 * @param parentId
 	 *            父类的id
@@ -242,24 +301,55 @@ public class RestAPIController
 			return ResultUtil.fail(e.getMessage());
 		}
 	}
-
+	
+	@RequestMapping(value="/scrollLoadTitle/{titleId}",method=RequestMethod.GET,produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public void scrollLoadTitles(@PathVariable("titleId")String titleIdStr,HttpServletRequest request,HttpServletResponse response)
+	{
+		try
+		{
+			Integer titleId=Integer.parseInt(titleIdStr);
+			DlxyTitleDTO dto = titleManagementWrappedService.findChildsAndArticles(titleId, TitleArticleConstant.MAX_NUMBER_ARTICLES);
+//			String json = JsonUtil.obj2Json(ResultUtil.sucess(dto));
+			String json=JSON.toJSONString(ResultUtil.sucess(dto));
+			System.out.println(json);
+			response.getWriter().write(json);
+//			return ResultUtil.sucess(dto);
+		} catch (Exception e)
+		{
+			logger.error("[下拉加载信息]error:{}",e.getMessage());
+			try
+			{
+				response.getWriter().write(JSON.toJSONString(ResultUtil.fail()));
+			} catch (IOException e1)
+			{
+				logger.error("sss");
+				e1.printStackTrace();
+			}
+		}
+	}
+	
+	
+	
 	/*
 	 * 显示新闻相关的类目 这里的数据结构需要重新设置一下
 	 */
-//	@RequestMapping(value = "/newsTitles", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-//	public ResultDTO<DlxyTitleDTO> showAllNewsTitles(HttpServletRequest requestq, HttpServletResponse response)
-//	{
-//		Collection<DlxyTitleDTO> collection = titleService.findTitlesByType(DlxyTitleEnum.NEWS_TITLE.ordinal());
-//		DlxyTitleDTO dlxyTitleDTO = null;
-//		if (null != collection && !collection.isEmpty())
-//		{
-//			dlxyTitleDTO = collection.iterator().next();
-//			List<DlxyTitleDTO> childs = (List<DlxyTitleDTO>) titleService
-//					.findChildsByParentId(dlxyTitleDTO.getTitleId());
-//			dlxyTitleDTO.setChildTitles(childs);
-//		}
-//		return ResultUtil.sucess(dlxyTitleDTO);
-//	}
+	// @RequestMapping(value = "/newsTitles", method = RequestMethod.GET, produces =
+	// MediaType.APPLICATION_JSON_UTF8_VALUE)
+	// public ResultDTO<DlxyTitleDTO> showAllNewsTitles(HttpServletRequest requestq,
+	// HttpServletResponse response)
+	// {
+	// Collection<DlxyTitleDTO> collection =
+	// titleService.findTitlesByType(DlxyTitleEnum.NEWS_TITLE.ordinal());
+	// DlxyTitleDTO dlxyTitleDTO = null;
+	// if (null != collection && !collection.isEmpty())
+	// {
+	// dlxyTitleDTO = collection.iterator().next();
+	// List<DlxyTitleDTO> childs = (List<DlxyTitleDTO>) titleService
+	// .findChildsByParentId(dlxyTitleDTO.getTitleId());
+	// dlxyTitleDTO.setChildTitles(childs);
+	// }
+	// return ResultUtil.sucess(dlxyTitleDTO);
+	// }
 
 	@RequestMapping(value = "/titles", method =
 	{ RequestMethod.POST, RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -494,7 +584,32 @@ public class RestAPIController
 			return ResultUtil.fail(e.getMessage());
 		}
 	}
-
+//	@RequestMapping(value="/article/update/descpic",method=RequestMethod.POST,produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+//	public ResultDTO<String>updateArticleDescPic( @RequestParam Map<String, Object>params,MultipartFile imgFile,HttpServletRequest request,HttpServletResponse response)
+//	{
+//		String articleIdStr=request.getParameter("articleId");
+//		if(StringUtils.isEmpty(articleIdStr) || imgFile==null || imgFile.isEmpty())
+//		{
+//			return ResultUtil.fail("缺失参数");
+//		}
+//		try
+//		{
+//			Long articleId=Long.parseLong(articleIdStr);
+//			String url = FileUtil.saveFile(imgFile, articleId, request);
+//			PictureDTO pictureDTO=new PictureDTO();
+//			pictureDTO.setArticleId(articleId);
+//			pictureDTO.setPictureUrl(url);
+//			pictureDTO.setPictureType(ArticlePictureTypeEnum.DESCRIPTION_PICTURE.ordinal());
+//			pictureManagementWrappedService.addPciture(AdminUtil.getLoginUser(), articleId, new PictureDTO[] {pictureDTO});
+//			return ResultUtil.sucess();
+//		} catch (Exception e)
+//		{
+//			logger.error("[update article desc pic] error : {}" ,e.getMessage());
+//			return ResultUtil.fail(e.getMessage());
+//		}
+//		
+//	}
+	
 	@RequestMapping(value = "/file/upload")
 	public PictureUploadResponseDTO uploadFile(@RequestParam("imgFile") MultipartFile file, HttpServletRequest request,
 			HttpServletResponse response)

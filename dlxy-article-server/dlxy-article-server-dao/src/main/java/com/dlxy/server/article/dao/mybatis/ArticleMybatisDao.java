@@ -96,13 +96,33 @@ public interface ArticleMybatisDao
 	ArticleDTO findByArticleId(Long articleId);
 
 	Long countArticleByTitleIds(Integer[] ids);
+	
 
+	/**
+	 * 查询最新的几篇文章
+	 * @param count 查询的数量
+	 * @return
+	 * @author joker 
+	 * @date 创建时间：2018年7月19日 上午7:57:11
+	 */
+	@Select("select article_id,title_id,article_name,article_author,article_type,article_status,create_date,update_date from dlxy_article order by create_date desc limit #{count}")
+	Collection<ArticleDTO>findLatestArticleLimited(int count);
 	/*
 	 * 找到分类下的所有文章 ,没用了 ,用上述的代替
 	 */
-	@Description(value = "findArticlesInTitleIds")
+	@Deprecated
 	Collection<ArticleDTO> findByTitleIds(Integer[] ids);
 
+	/*
+	 * 查询在某段titleid内的 一部分最新的文章
+	 */
+	Collection<ArticleDTO>findArticlesInTitleIds(@Param("list")List<Integer>ids,@Param("limit")int limit);
+//	( SELECT a.article_id,article_name FROM dlxy_article a WHERE EXISTS ( SELECT 1 FROM dlxy_article b WHERE b.article_id=2) AND a.article_id< 2 LIMIT 1) UNION ALL SELECT c.article_id,c.title_id,c.article_name,ç.article_author,c.article_content,ç.article_type,ç.article_status,c.create_date,c.update_date FROM dlxy_article c WHERE c.article_id=2 UNION ALL (SELECT d.article_id,d.article_name FROM dlxy_article d WHERE EXISTS (SELECT 1 FROM dlxy_article e WHERE e.article_id=2) AND d.article_id> 2 LIMIT 1)
+	/*
+	 * 查询文章的上一篇和下一篇
+	 */
+	@Select("(select a.article_id,a.article_name,a.create_date from dlxy_article a where a.article_id <#{articleId} order by a.create_date desc limit 1 ) union all (select b.article_id,b.article_name,b.create_date from dlxy_article b where b.article_id> #{articleId} order by b.create_date desc limit 1 )")
+	Collection<ArticleDTO>findArticlePrevAndNext(Long articleId);
 	@Select("select count(1) from dlxy_article  a left join dlxy_title b on a.title_id=b.title_id left join dlxy_user_article c on a.article_id=c.article_id ")
 	long countAllArticles();
 

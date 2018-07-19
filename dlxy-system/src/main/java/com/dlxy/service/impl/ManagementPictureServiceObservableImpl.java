@@ -22,6 +22,7 @@ import com.dlxy.common.dto.PictureDTO;
 import com.dlxy.common.dto.UserDTO;
 import com.dlxy.common.dto.UserRecordDTO;
 import com.dlxy.common.enums.ArticlePictureTypeEnum;
+import com.dlxy.common.enums.PictureStatusEnum;
 import com.dlxy.server.picture.service.IPictureService;
 import com.dlxy.service.IPictureManagementWrappedService;
 
@@ -108,6 +109,16 @@ public class ManagementPictureServiceObservableImpl extends Observable implement
 		UserRecordDTO recordDTO=UserRecordDTO.getUserRecordDTO(userDTO.getUserId(), detail);
 		notifyObservers(recordDTO);
 	}
+	@Transactional
+	@Override
+	public void updateDescPicture(UserDTO userDTO, Long articleId, PictureDTO pictureDTO) throws SQLException
+	{
+		//更新原先图片的状态
+		pictureService.updateArticlePictureStatusByArticleIdsInbatch(new Long[] {articleId}, PictureStatusEnum.Invalid.ordinal());
+		//查询新的图片
+		addPciture(userDTO,articleId,new PictureDTO[] {pictureDTO});
+	}
+	
 
 
 }
