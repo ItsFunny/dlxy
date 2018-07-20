@@ -86,6 +86,7 @@ public class ArticleServiceImpl implements IArticleService ,IUserArticleService
 		articleDao.updateInBatch(params);
 	}
 
+	
 	@Override
 	public Collection<ArticleDTO> findByParam(Map<String, Object> params, int pageSize, int pageNum) throws SQLException
 	{
@@ -163,6 +164,12 @@ public class ArticleServiceImpl implements IArticleService ,IUserArticleService
 	{
 		return articleDao.findArticlesInTitleIdsByPage((pageNum-1)*pageSize, pageSize, ids);
 	}
+	@Override
+	public Collection<ArticleDTO> findArticlesByTitleId(int pageSize, int pageNum, int titleId,int status)
+	{
+		return articleDao.findArticlesByTitleId((pageNum-1)*pageSize,pageSize, titleId,status);
+	}
+
 
 	@Override
 	public Collection<ArticleDTO> findArticlesInTitleIdsTopNumber(List<Integer> ids, int limit) throws SQLException
@@ -211,6 +218,13 @@ public class ArticleServiceImpl implements IArticleService ,IUserArticleService
 		return articleDTO;
 	}
 
+	@Override
+	public Collection<ArticleDTO> findArticlesByParentTitleId(int pageSize, int pageNum, int titleParentId, int status)
+	{
+		return articleDao.findArticlesByParentTitleId((pageNum-1)*pageSize,pageSize, titleParentId, status);
+	}
+
+	
 //	@Override
 //	public Collection<ArticleDTO> findArticlesByTitleIds(Integer[] ids)
 //	{

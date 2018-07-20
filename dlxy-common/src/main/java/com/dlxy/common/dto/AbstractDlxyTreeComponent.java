@@ -8,6 +8,8 @@
 package com.dlxy.common.dto;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -20,7 +22,7 @@ import java.util.List;
 */
 public abstract class AbstractDlxyTreeComponent
 {
-	private   AbstractDlxyTreeComponent parent;
+	private  AbstractDlxyTreeComponent parent;
 	
 	private List<AbstractDlxyTreeComponent>childs;
 
@@ -28,7 +30,7 @@ public abstract class AbstractDlxyTreeComponent
 	public AbstractDlxyTreeComponent()
 	{
 		super();
-		this.childs=new ArrayList<AbstractDlxyTreeComponent>();
+		this.childs=Collections.emptyList();
 	}
 
 
@@ -50,10 +52,13 @@ public abstract class AbstractDlxyTreeComponent
 	}
 
 
-	public void setChilds(List<AbstractDlxyTreeComponent> childs)
+	public void setChilds(List<? extends AbstractDlxyTreeComponent> childs)
 	{
-		this.childs = childs;
+		this.childs = (List<AbstractDlxyTreeComponent>) childs;
 	}
+
+
+
 	
 	
 

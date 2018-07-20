@@ -9,6 +9,7 @@ package com.dlxy.server.article.service;
 
 import java.util.Collection;
 
+import com.dlxy.common.dto.ArticleDTO;
 import com.dlxy.common.dto.DlxyTitleDTO;
 
 /**
@@ -21,7 +22,9 @@ import com.dlxy.common.dto.DlxyTitleDTO;
 */
 public interface ITitleService
 {
-	Collection<DlxyTitleDTO>findChildsByParentId(int titleParentId);
+	Collection<DlxyTitleDTO> findChildsByParentId(int titleParentId);
+	
+	DlxyTitleDTO findParentAndHisChilds(int titleParentId);
 	
 //	Collection<DlxyTitleDTO>findAllParent();
 	

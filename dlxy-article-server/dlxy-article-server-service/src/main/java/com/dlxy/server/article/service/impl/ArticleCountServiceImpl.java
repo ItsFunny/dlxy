@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import com.dlxy.server.article.dao.mybatis.ArticleMybatisDao;
 import com.dlxy.server.article.dao.query.ArticleCountQueryDao;
+import com.dlxy.server.article.dao.query.ArticleQueryDao;
 import com.dlxy.server.article.service.IArticleCountService;
 
 /**
@@ -34,6 +35,7 @@ public class ArticleCountServiceImpl implements IArticleCountService
 	
 	@Autowired
 	private ArticleMybatisDao articleMybatisDao;
+	
 	public Long countArticlesByDetailParam(Map<String, Object> params) throws SQLException
 	{
 		return articleCountQueryDao.coutArticles(params);
@@ -43,6 +45,12 @@ public class ArticleCountServiceImpl implements IArticleCountService
 	public Long coutArtilcesByTitleIds(Integer[] titleIds)
 	{
 		return articleMybatisDao.countArticleByTitleIds(titleIds);
+	}
+
+	@Override
+	public Long countTitleArticles(Integer titleId, Integer parentTitleId, Integer status) throws SQLException
+	{
+		return articleCountQueryDao.countTitleArticles(titleId, parentTitleId, status);
 	}
 
 }

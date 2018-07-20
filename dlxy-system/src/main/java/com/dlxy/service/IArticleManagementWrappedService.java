@@ -16,6 +16,8 @@ import com.dlxy.common.dto.ArticleDTO;
 import com.dlxy.common.dto.DlxyTitleDTO;
 import com.dlxy.common.dto.PageDTO;
 import com.dlxy.common.dto.UserDTO;
+import com.dlxy.vo.ArticleVO;
+import com.dlxy.vo.TitleDetailVO;
 
 /**
  * 
@@ -36,8 +38,15 @@ public interface IArticleManagementWrappedService
 	PageDTO<Collection<ArticleDTO>>findByTitleIds(int pageSize,int pageNum,List<Integer> ids) throws SQLException;
 
 	PageDTO<Collection<ArticleDTO>> findByParams(int pageSize, int pageNum, Map<String, Object> params) throws SQLException;
+	
+	/*
+	 * 查询某个分类下的文章 以及显示他的兄弟类或者子类
+	 */
+	TitleDetailVO findTitleArticles(int pageSize,int pageNum,int titleId) throws SQLException;
 
 	ArticleDTO findByArticleId(Long articleId) throws SQLException;
+	
+	ArticleDTO showArticleDetail(Long articleId) throws SQLException;
 //	void updateArticleStatusInBatch(Long[] articleIds, int status);
 //	void delArticle(UserDTO userDTO,Long articleId);
 

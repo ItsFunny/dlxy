@@ -16,6 +16,7 @@ import java.util.Observable;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.dlxy.common.dto.AbstractDlxyTitleComposite;
 import com.dlxy.common.dto.AbstractDlxyTreeComponent;
 import com.dlxy.common.dto.ArticleDTO;
 import com.dlxy.common.dto.DlxyTitleDTO;
@@ -54,10 +55,9 @@ public class ManagemeentTitleServiceImpl extends Observable implements ITitleMan
 		{
 			dlxyTitleDTO=collection.iterator().next();
 		}
-		Collection<DlxyTitleDTO> childs =  titleService.findChildsByParentId(dlxyTitleDTO.getTitleId());
+//		List<AbstractDlxyTitleComposite> l=new ArrayList<>(titleService.findChildsByParentId(dlxyTitleDTO.getTitleId()));
+		dlxyTitleDTO .setChilds((List<? extends AbstractDlxyTreeComponent>) titleService.findChildsByParentId(dlxyTitleDTO.getTitleId()));
 //		dlxyTitleDTO.setChildTitles(childs);
-		List<AbstractDlxyTreeComponent>l=new ArrayList<>(childs);
-		dlxyTitleDTO.setChilds(l);
 		return dlxyTitleDTO;
 	}
 

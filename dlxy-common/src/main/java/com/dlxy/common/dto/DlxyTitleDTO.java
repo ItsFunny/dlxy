@@ -48,6 +48,7 @@ public class DlxyTitleDTO extends AbstractDlxyTitleComposite implements Serializ
 //	{
 //		this.articles=new ArrayList<ArticleDTO>();
 //	}
+	
 	public Integer getTitleId()
 	{
 		return titleId;
@@ -73,15 +74,6 @@ public class DlxyTitleDTO extends AbstractDlxyTitleComposite implements Serializ
 		this.titleName = titleName;
 	}
 
-	public Integer getTitleParentId()
-	{
-		return titleParentId;
-	}
-
-	public void setTitleParentId(Integer titleParentId)
-	{
-		this.titleParentId = titleParentId;
-	}
 
 	public Integer getTitleDisplaySeq()
 	{
@@ -143,5 +135,28 @@ public class DlxyTitleDTO extends AbstractDlxyTitleComposite implements Serializ
 //	{
 //		this.childTitles = childTitles;
 //	}
+
+	public Integer getTitleParentId()
+	{
+		return titleParentId;
+	}
+
+	public void setTitleParentId(Integer titleParentId)
+	{
+		this.titleParentId = titleParentId;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		// TODO Auto-generated method stub
+		return super.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		return ((DlxyTitleDTO)obj).getTitleId().equals(this.titleId);
+	}
 
 }

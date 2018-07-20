@@ -8,6 +8,7 @@
 package com.dlxy.common.dto;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -38,16 +39,16 @@ public abstract class AbstractDlxyTitleComposite extends AbstractDlxyTreeCompone
 		abstractDlxyTitleComposite.setParent(this);
 		super.getChilds().add(abstractDlxyTitleComposite);
 	}
-	
-	
-	public List<AbstractDlxyArticleComposite> getArticles()
+	public Collection<AbstractDlxyArticleComposite> getArticles()
 	{
 		return articles;
 	}
-	public void setArticles(List<AbstractDlxyArticleComposite> articles)
+	public void setArticles(List<? extends AbstractDlxyArticleComposite> articles)
 	{
-		this.articles = articles;
+		this.articles = (List<AbstractDlxyArticleComposite>) articles;
 	}
+	
+	
 
 	
 	

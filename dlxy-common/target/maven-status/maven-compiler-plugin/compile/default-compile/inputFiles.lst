@@ -27,6 +27,7 @@
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/dto/DlxyTitleDTO.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/event/Events.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/dto/IllegalLogDTO.java
+/Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/dto/SuspicionDTO.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/service/IdWorkerServiceTwitter.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/enums/PictureStatusEnum.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/vo/PageVO.java

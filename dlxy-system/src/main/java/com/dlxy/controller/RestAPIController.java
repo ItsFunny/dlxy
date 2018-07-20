@@ -279,7 +279,7 @@ public class RestAPIController
 	public ResultDTO<Collection<DlxyTitleDTO>> findTitles(@PathVariable Integer parentId, HttpServletRequest request,
 			HttpServletResponse response)
 	{
-		Collection<DlxyTitleDTO> collection = titleService.findChildsByParentId(parentId);
+		Collection<DlxyTitleDTO> collection =  titleService.findChildsByParentId(parentId);
 		if (null == collection || collection.isEmpty())
 		{
 			return ResultUtil.needMoreOp(collection, "无子类目");

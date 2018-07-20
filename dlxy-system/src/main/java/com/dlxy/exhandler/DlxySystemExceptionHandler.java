@@ -8,6 +8,10 @@
 package com.dlxy.exhandler;
 
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.dlxy.exception.DlxySuspicionException;
 
 /**
 * 
@@ -20,6 +24,13 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 @ControllerAdvice
 public class DlxySystemExceptionHandler
 {
-	
+	@ExceptionHandler(value=DlxySuspicionException.class)
+	public ModelAndView recordIp(DlxySuspicionException dlxySuspicionException)
+	{
+		//返回404 界面
+		ModelAndView modelAndView=new ModelAndView("404");
+		
+		return modelAndView;
+	}
 
 }

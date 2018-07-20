@@ -156,6 +156,19 @@ public class AdminController
 		try
 		{
 			titleId = Integer.parseInt(titleIdStr);
+			/*
+			 * 查询类目下的所有文章
+			 * 1.类目是父类目
+			 * 1):遍历得到所有的子类,然后查询
+			 * 2.类目是子类目
+			 * 1):则直接查询该类目下的文章
+			 * 	
+			 */
+//			DlxyTitleDTO titleDTO = titleService.findById(titleId);
+//			if(titleDTO.getTitleParentId()==0)
+//			{
+//				
+//			}
 			Collection<DlxyTitleDTO> collection = titleService.findChildsByParentId(titleId);
 			List<Integer> ids = new ArrayList<>();
 			if (null != collection && !collection.isEmpty())

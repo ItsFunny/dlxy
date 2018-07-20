@@ -18,7 +18,9 @@
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-system/src/main/java/com/dlxy/service/IRedisService.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-system/src/main/java/com/dlxy/service/impl/RedisServiceImpl.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-system/src/main/java/com/dlxy/service/ITitleManagementWrappedService.java
+/Users/joker/Java/oxygen_workspace/dlxy/dlxy-system/src/main/java/com/dlxy/vo/ArticleVO.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-system/src/main/java/com/dlxy/service/command/AddOrUpdateArtilceCommand.java
+/Users/joker/Java/oxygen_workspace/dlxy/dlxy-system/src/main/java/com/dlxy/vo/TitleDetailVO.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-system/src/main/java/com/dlxy/shiro/DlxyShiroAuthToken.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-system/src/main/java/com/dlxy/service/impl/ManagementPictureServiceObservableImpl.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-system/src/main/java/com/dlxy/model/FormTitle.java
@@ -36,6 +38,7 @@
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-system/src/main/java/com/dlxy/config/DlxySystemShiroConfiguration.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-system/src/main/java/com/dlxy/service/impl/ManagementUserServiceImpl.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-system/src/main/java/com/dlxy/service/IArticleManagementWrappedService.java
+/Users/joker/Java/oxygen_workspace/dlxy/dlxy-system/src/main/java/com/dlxy/exception/DlxySuspicionException.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-system/src/main/java/com/dlxy/filter/copy/CharsetFilter.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-system/src/main/java/com/dlxy/service/impl/RedsiClusterServiceImpl.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-system/src/main/java/com/dlxy/service/IUserMangementWrappedService.java

@@ -18,7 +18,7 @@
 	$(document).ready(function(){
 		jQuery.get('/api/v1/aboutTitles.html',function(data){
 			 if(data.code==1){
-				var str='';
+				var str='<li class="aaa" ><a href="/index.html"><i class="icon-home"></i>首页</a></li>';
 				titleIdArray=new Array(data.data.length);
 			  	for(var i=0;i<data.data.length;i++){
 			  		var o=data.data[i];
@@ -30,6 +30,21 @@
 			  }
 		},'json');
 	});
+	function loadLatestArticles(){
+		jQuery.get('/api/v1/article/latest.html',function(data,textStatus,jqXHR){
+			if(data.code==1){
+				var str='';
+				for(var i=0;i<data.data.length;i++){
+					var o=data.data[i];
+					str+='<li><a href="/article/detail/'+o.articleId+'.html"><i></i>'+o.articleName+'</a><span>'+o.createDateStr+'</span> <span style="margin-right:300px;">作者:'+o.articleAuthor+'</span></li>';
+				}
+				$("#latest_articles").append(str);
+			}else{
+				alert('加载最新文章失败:'+data.msg);
+			}
+			
+		},'json');
+	}
 	function loadNews(pageSize,pageNum){
     	$("#article_news").empty();
    	 	var params={"type":"news","pageSize":pageSize,"pageNum":pageNum};
@@ -104,11 +119,23 @@
 <!--内容上部分-->
 <div class="shijian">
     <div class="annBar">
-        <strong>最新新闻信息：</strong>
+        <strong>最新发布的文章：</strong>
         <div id="ann" class="ann">
             <div class="tempWrap" style="overflow:hidden; position:relative; width:1738px">
                 <div class="annCon" style="width: 5214px; position: relative; overflow: hidden; padding: 0px; margin: 0px; left: -1923px;">
                    <ul style="float: left; width: 1728px;" id="article_roll_news">
+	                   <#if latestArticles??>
+	                   		<#assign length=latestArticles?size>
+	                   		<#list latestArticles as item>
+	                   			<#if item_index==0>
+	                   				 <li class="first"><a href="/article/detail/${item.articleId?c}.html" target="_blank">${item.articleName}...</a><span class="dateRight">[${item.createDate?string('yyyy-MM-dd')}]</span></li>
+	                   			<#elseif item_index==length>
+	                   				  <li class="last"><a href="/article/detail/${item.articleId?c}.html" target="_blank">${item.articleName}...</a><span class="dateRight">[${item.createDate?string('yyyy-MM-dd')}]</span></li>
+	                   			<#else>
+	                   				    <li><a href="/article/detail/${item.articleId?c}.html" target="_blank">${item.articleName}...</a><span class="dateRight">[${item.createDate?string('yyyy-MM-dd')}]</span></li>
+	                   			</#if>
+	                   		 </#list>
+	                   </#if>
                     </ul>
                 </div>
             </div>
@@ -120,12 +147,20 @@
     </div>
 </div>
 
-
+ <#assign belongTo=article.belongTo>
 <!--子页内容-->
 <div class="zybj">
     <div class="zuo_nr">
         <div class="dqwz">
-            <span><img src="/images/xx_03.jpg">您当前的位置：<a href="index.html">信息咨询 </a>> <a href="qyjs.html">最新招考资讯 </a> </span>
+            <span><img src="/images/xx_03.jpg">您当前的位置：
+           
+            <#if belongTo.parent??>
+ 				<#assign title=belongTo.parent>		
+          	 	 <a href="index.html">${title.titleName} </a>> <a href="qyjs.html">${belongTo.titleName} </a> </span>
+            <#else>
+             	<#assign title=article.belongTo>
+            	 <a href="index.html">${belongTo.titleName} </a>> 
+            </#if>
         </div>
         <!--nr-->
         <div class="xw_xq">
@@ -177,14 +212,11 @@
     </div>
     <div class="you_dh">
         <div class="erji_dh">
-            <div class="daohang_biaot">项目列表</div>
-            <ul>
-                <li><a href="xw.html">最新招考资讯</a></li>
-                <li><a href="#">最新开课通知</a></li>
-                <li><a href="#">报名点</a></li>
-                <li><a href="#">教学点</a></li>
-                <li><a href="#">班次学费以及优惠</a></li>
-                <li><a href="#">课程安排</a></li>
+            <div class="daohang_biaot">${title.titleName}</div>
+            <ul id="">
+            	<#list title.childs as item>
+                <li>	<a href="/title/detail/${item.titleId}.html"> ${item.titleName}</a> </li>
+                </#list>>
             </ul>
         </div>
         <div class="erji_dh">

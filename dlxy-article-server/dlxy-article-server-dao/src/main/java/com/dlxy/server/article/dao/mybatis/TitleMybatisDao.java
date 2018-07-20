@@ -37,12 +37,17 @@ public interface TitleMybatisDao
 	 * 可做缓存
 	 * title_parent_id=#{titleParentId} and
 	 */
-	@Select("select title_id,title_name,title_parent_id,title_display_seq,create_date from dlxy_title where  title_parent_id=#{titleParentId} and  title_id <> 0")
+//	select title_id,title_name,title_parent_id,title_display_seq,create_date from dlxy_title where  title_parent_id=#{titleParentId} union all   select title_id,title_name,title_parent_id,title_display_seq,create_date from dlxy_title where  title_id=#{titleParentId} order by title_display_seq desc
+	@Select("select title_id,title_name,title_parent_id,title_display_seq,create_date from dlxy_title where  title_parent_id=#{titleParentId} order by title_display_seq desc  ")
 	Collection<DlxyTitleDTO> findParentAllChilds(int titleParentId);
+	@Select("select title_id,title_name,title_parent_id,title_display_seq,create_date from dlxy_title where  title_parent_id=#{titleParentId} union all   select title_id,title_name,title_parent_id,title_display_seq,create_date from dlxy_title where  title_id=#{titleParentId} order by title_display_seq desc")
+	Collection<DlxyTitleDTO> findParentAndChildsWithUnion(int titleParentId);
 	
 //	@Select("select title_id,title_name,title_parent_id,title_display_seq,create_date from dlxy_title where title_parent_id= 0 and title_type=#{type} and title_id <> 0 ")
 	Collection<DlxyTitleDTO>findByType(@Param("type")int type);
 //	Collection<DlxyTitleDTO>findAllParents();
+	
+
 	
 	
 	

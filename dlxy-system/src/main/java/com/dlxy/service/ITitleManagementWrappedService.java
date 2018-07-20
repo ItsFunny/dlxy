@@ -10,6 +10,7 @@ package com.dlxy.service;
 import java.sql.SQLException;
 
 import com.dlxy.common.dto.DlxyTitleDTO;
+import com.dlxy.vo.ArticleVO;
 
 /**
 * 
@@ -29,4 +30,7 @@ public interface ITitleManagementWrappedService
 	
 	//查询某个父类下的所有子类和对应的部分文章
 	DlxyTitleDTO findChildsAndArticles(Integer titleId,int limitNumber) throws SQLException;
+	
+	
+	
 }

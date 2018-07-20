@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observer;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.dlxy.common.dto.ArticleDTO;
 
 /**
@@ -38,7 +40,9 @@ public interface IArticleService
 	
 //	void updateArticleStatusInBatch(Long[] articleIds,int status);
 	
-	
+	/*
+	 * search专用
+	 */
 	Collection<ArticleDTO>findByParam(Map<String, Object>params,int start,int end) throws SQLException;
 	
 	//好像不需要,已经写过了
@@ -53,6 +57,10 @@ public interface IArticleService
 	
 	//需要更改
 	Collection<ArticleDTO>findArtilcesByTilteIdsAndPage(int pageSize,int pageNum,List<Integer> ids) throws SQLException;
+	//查询单个的,为什么要单个,因为可以根据索引查,快,in查询不走索引
+	Collection<ArticleDTO>findArticlesByTitleId(int pageSize,int pageNum,int titleId,int status);
+	//通过父节点查找 
+	Collection<ArticleDTO>findArticlesByParentTitleId(int pageSize,int pageNum,int titleParentId,int status);
 	
 	/*
 	 * 用于前端展示需要显示多少文章

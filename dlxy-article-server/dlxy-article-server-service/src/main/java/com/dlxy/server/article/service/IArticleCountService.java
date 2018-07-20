@@ -23,4 +23,6 @@ public interface IArticleCountService
 	Long countArticlesByDetailParam(Map<String, Object>params) throws SQLException;
 	
 	Long coutArtilcesByTitleIds(Integer[] titleIds);
+	
+	Long countTitleArticles(Integer titleId,Integer parentTitleId,Integer status) throws SQLException;
 }	

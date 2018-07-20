@@ -32,7 +32,7 @@
 	$(document).ready(function(){
 		jQuery.get('/api/v1/aboutTitles.html',function(data){
 			 if(data.code==1){
-				var str='';
+				var str='<li class="aaa" ><a href="/index.html"><i class="icon-home"></i>首页</a></li>';
 				titleIdArray=new Array(data.data.length);
 			  	for(var i=0;i<data.data.length;i++){
 			  		var o=data.data[i];
@@ -53,7 +53,6 @@
 				var str='';
 				for(var i=0;i<data.data.length;i++){
 					var o=data.data[i];
-					alert(o.articleId);
 					str+='<li><a href="/article/detail/'+o.articleId+'.html"><i></i>'+o.articleName+'</a><span>'+o.createDateStr+'</span> <span style="margin-right:300px;">作者:'+o.articleAuthor+'</span></li>';
 				}
 				$("#latest_articles").append(str);
@@ -156,7 +155,7 @@
             <H1>${dlxyTitleDTO.titleName}</H1>
             <ul>
             <#list dlxyTitleDTO.childs as item>
-                <li><a href="/title/detial/${item.titleId}.html">${item.titleName}</a></li>
+                <li><a href="/title/detail/${item.titleId}.html">${item.titleName}</a></li>
              </#list>
             </ul>
         </div>

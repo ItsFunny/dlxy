@@ -7,11 +7,15 @@
 */
 package com.dlxy.server.article.service.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.dlxy.common.dto.AbstractDlxyTitleComposite;
+import com.dlxy.common.dto.ArticleDTO;
 import com.dlxy.common.dto.DlxyTitleDTO;
 import com.dlxy.common.enums.DlxyTitleEnum;
 import com.dlxy.server.article.dao.mybatis.TitleMybatisDao;
@@ -34,7 +38,43 @@ public class TitleServiceImpl implements ITitleService
 	@Override
 	public Collection<DlxyTitleDTO> findChildsByParentId(int titleParentId)
 	{
-		return titleDao.findParentAllChilds(titleParentId);
+		List<DlxyTitleDTO> all = (List<DlxyTitleDTO>) titleDao.findParentAllChilds(titleParentId);
+//		DlxyTitleDTO dlxyTitleDTO=null;
+//		if(all==null || all.isEmpty())
+//		{
+//			return null;
+//		}
+//		for(int i=all.size()-1;i>=0;i--)
+//		{
+//			if(all.get(i).getTitleId()==titleParentId)
+//			{
+//				dlxyTitleDTO=all.get(i);
+//				all.remove(i);
+//			}
+//		}
+//		dlxyTitleDTO.setChilds(all);
+		return all;
+	}
+	@Override
+	public DlxyTitleDTO findParentAndHisChilds(int titleParentId)
+	{
+		List<DlxyTitleDTO> all = (List<DlxyTitleDTO>) titleDao.findParentAndChildsWithUnion(titleParentId);
+		DlxyTitleDTO dlxyTitleDTO=null;
+		if(null==all || all.isEmpty())
+		{
+			return null;
+		}
+		for(int i=all.size()-1;i>=0;i--)
+		{
+			if(all.get(i).getTitleId()==titleParentId)
+			{
+				dlxyTitleDTO=all.get(i);
+				all.remove(i);
+				break;
+			}
+		}
+		dlxyTitleDTO.setChilds(all);
+		return dlxyTitleDTO;
 	}
 
 //	@Override
@@ -78,5 +118,7 @@ public class TitleServiceImpl implements ITitleService
 	{
 		return titleDao.findByType(type);
 	}
+
+	
 
 }
