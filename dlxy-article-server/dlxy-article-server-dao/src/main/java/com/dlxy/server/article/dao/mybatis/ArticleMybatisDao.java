@@ -134,8 +134,7 @@ public interface ArticleMybatisDao
 	/*
 	 * 查询在某段titleid内的 一部分最新的文章
 	 */
-	@Deprecated
-	Collection<ArticleDTO> findArticlesInTitleIds(@Param("list") List<Integer> ids, @Param("limit") int limit);
+	Collection<ArticleDTO> findArticlesInTitleIdsLimited(@Param("list") List<Integer> ids, @Param("limit") int limit,@Param("status")int status);
 
 	// ( SELECT a.article_id,article_name FROM dlxy_article a WHERE EXISTS ( SELECT
 	// 1 FROM dlxy_article b WHERE b.article_id=2) AND a.article_id< 2 LIMIT 1)

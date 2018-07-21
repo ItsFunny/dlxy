@@ -30,7 +30,7 @@ public abstract class AbstractDlxyTreeComponent
 	public AbstractDlxyTreeComponent()
 	{
 		super();
-		this.childs=Collections.emptyList();
+		this.childs=new ArrayList<>();
 	}
 
 

@@ -128,7 +128,7 @@ public class AdminController
 	@RequestMapping("/newsTitles")
 	public ModelAndView showAllNewsTitles(HttpServletRequest requestq, HttpServletResponse response)
 	{
-		ModelAndView modelAndView = new ModelAndView("news_titles");
+		ModelAndView modelAndView = new ModelAndView("admin/news_titles");
 		Collection<DlxyTitleDTO> collection = titleService.findTitlesByType(DlxyTitleEnum.NEWS_TITLE.ordinal());
 		DlxyTitleDTO dlxyTitleDTO = null;
 		if (null != collection && !collection.isEmpty())
@@ -368,7 +368,7 @@ public class AdminController
 		try
 		{
 			articleCommand.execute(params);
-			modelAndView = new ModelAndView("redirect:/article/all.html");
+			modelAndView = new ModelAndView("redirect:/admin/articles.html?type=all");
 			modelAndView.addObject("error", "添加成功");
 		} catch (Exception e)
 		{

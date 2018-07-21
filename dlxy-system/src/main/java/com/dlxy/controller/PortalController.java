@@ -7,6 +7,7 @@
 */
 package com.dlxy.controller;
 
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +29,7 @@ import com.dlxy.common.dto.DlxyTitleDTO;
 import com.dlxy.common.dto.IllegalLogDTO;
 import com.dlxy.common.dto.PageDTO;
 import com.dlxy.common.dto.SuspicionDTO;
+import com.dlxy.common.enums.ArticleStatusEnum;
 import com.dlxy.common.enums.ArticleTypeEnum;
 import com.dlxy.common.enums.DlxyTitleEnum;
 import com.dlxy.common.enums.IllegalLevelEnum;
@@ -74,7 +76,15 @@ public class PortalController
 		 */
 		Map<String, Object>params=new HashMap<String, Object>();
 		ModelAndView modelAndView=null;
-		DlxyTitleDTO dlxyTitleDTO = titleManagementWrappedService.findDlxyDetailTitles();
+		DlxyTitleDTO dlxyTitleDTO=null;
+		try
+		{
+			dlxyTitleDTO = titleManagementWrappedService.findDlxyDetailTitles(ITitleManagementWrappedService.MAX_SHOW_ARTICLE_NUMBER);
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+			logger.error("[显示首页学院相关新闻]error:{}",e.getCause());
+		}
 		params.put("dlxyTitleDTO", dlxyTitleDTO);
 		modelAndView=new ModelAndView("portal/index",params);
 		return modelAndView;
@@ -119,16 +129,18 @@ public class PortalController
 		{
 			Long articleId=Long.parseLong(articleIdStr);
 			ArticleDTO articleDTO = articleManagementWrappedService.showArticleDetail(articleId);
+			if(null==articleDTO || !articleDTO.getArticleStatus().equals(ArticleStatusEnum.UP.ordinal()))
+			{
+				params.put("error", "文章不存在或已下线");
+				modelAndView=new ModelAndView("error",params);
+				return modelAndView;
+			}
 			params.put("article", articleDTO);
-			//不知道为什么,前端ajax 获取到数据了,但是滚轮无法转动,所以这里也直接从这里取吧,可以解决,但不是我的范围了,交给前端的人解决
-			Map<String, Object>p=new HashMap<>();
-			p.put("articleType", ArticleTypeEnum.INTRODUCE_ARTICLE.ordinal());
-			Collection<ArticleDTO> latest = articleService.findLatestArticleLimited(TitleArticleConstant.MAX_NUMBER_ARTICLES);
-//			PageDTO<Collection<ArticleDTO>> dto = articleManagementWrappedService.findByParams(10, 1, p);
-//			Collection<ArticleDTO> news = dto.getData();
+//			Map<String, Object>p=new HashMap<>();
+//			p.put("articleType", ArticleTypeEnum.INTRODUCE_ARTICLE.ordinal());
+//			Collection<ArticleDTO> latest = articleService.findLatestArticleLimited(TitleArticleConstant.MAX_NUMBER_ARTICLES);
 			
-			
-			params.put("latestArticles", latest);
+//			params.put("latestArticles", latest);
 			modelAndView=new ModelAndView("portal/article_detail",params);
 		} catch (Exception e)
 		{

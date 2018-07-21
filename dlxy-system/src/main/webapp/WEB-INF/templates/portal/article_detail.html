@@ -1,44 +1,87 @@
-<!doctype html>
-<html>
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,user-scalable=no, initial-scale=1">
-<title>谭八套 大城教育</title>
-<link rel="stylesheet" href="/css/index.css" type="text/css">
-<link rel="stylesheet" href="/css/zy.css" type="text/css">
-
-<script type="text/javascript" src="/js/jquery.min.js"></script>
-</script><script type="text/javascript" src="/js/jquery.reveal.js"></script>
-<script type="text/javascript" src="/js/script.js"></script>
-<script type="text/javascript" src="/js/myfocus-2.0.4.min.js"></script>
-<script type="text/javascript" src="/js/jquery.SuperSlide.js"></script>
-
-</head>
+<#include "header.html">
 <script>
+	loadLatestArticles();
 	$(document).ready(function(){
 		jQuery.get('/api/v1/aboutTitles.html',function(data){
 			 if(data.code==1){
-				var str='<li class="aaa" ><a href="/index.html"><i class="icon-home"></i>首页</a></li>';
+				var str='<li class="bbb" ><a href="/index.html"><i class="icon-home"></i>首页</a></li>';
 				titleIdArray=new Array(data.data.length);
 			  	for(var i=0;i<data.data.length;i++){
 			  		var o=data.data[i];
 			  		titleIdArray[i]=o.titleId;
-			  		str+='<li class="aaa" id="li_'+o.titleId+'" titleId="'+o.titleId+'""><a href="index.html"><i class="icon-home"></i>'+o.titleName+'</a></li>';
+			  		str+='<li class="aaa" id="li_'+o.titleId+'" titleId="'+o.titleId+'""><a href="/title/detail/'+o.titleId+'.html"><i class="icon-home"></i>'+o.titleName+'</a>';
+			  		str+='</li>';
 			  	}
 			  	$("#above_titles").append(str);
-			  	loadNews(8,1);
+			  	$(".aaa").mouseenter(function(obj){
+			  		var t=obj.currentTarget;
+					loadChildTitles(t);
+				})	
+				$(".aaa").mouseleave(function(obj){
+					var t=obj.currentTarget;
+					changeChildsStatus(t,"none");
+				})
 			  }
 		},'json');
+		loadNews(8,1);
+		setTimeout("loadLatestArticles()",1000);
 	});
+	
+	function loadChildTitles(obj){
+		var titleId=$(obj).attr("titleId");
+		var childs=$(".belong_"+titleId);
+		if(childs.length!=0){
+			changeChildsStatus(obj,"block");
+			return;
+		}
+		$.ajax({
+			url:'/api/v1/title/'+titleId+'.html',
+			type:'get',
+			success:function(data){
+				if(data.code==1){
+           			 var str='';
+						str+='<ul id="child_'+titleId+'" style="display: block;">';           			 
+           			 for(var i=0;i<data.data.length;i++){
+           			 	var o=data.data[i];
+           			 	str+='<li class="belong_'+titleId+'"><a  href="/title/detail/'+o.titleId+'.html">'+o.titleName+'</a></li>';
+           			 }
+           			 str+='</ul>';
+           			 $(obj).append(str);
+				}else{
+				}
+			},
+			error:function(){
+				alert('加载子菜单失败');
+			}
+		})
+	}
+	function changeChildsStatus(obj,status){
+		var titleId=$(obj).attr("titleId");
+		if(status=='block')
+		{
+			$("#child_"+titleId).show();
+		}else{
+			$("#child_"+titleId).hide();
+		}
+	}
 	function loadLatestArticles(){
 		jQuery.get('/api/v1/article/latest.html',function(data,textStatus,jqXHR){
 			if(data.code==1){
-				var str='';
+				var str2='<ul style="float: left; width: 1728px;">';
 				for(var i=0;i<data.data.length;i++){
 					var o=data.data[i];
-					str+='<li><a href="/article/detail/'+o.articleId+'.html"><i></i>'+o.articleName+'</a><span>'+o.createDateStr+'</span> <span style="margin-right:300px;">作者:'+o.articleAuthor+'</span></li>';
+					var d=$.format.date(o.createDate,"yyyy-MM-dd");
+					if(i==0){
+    				str2+=' <li class="first"><a href="/article/detail/'+o.articleId+'.html" target="_blank">'+o.articleName+'...</a><span class="dateRight">['+d+']</span></li>';
+    				}else if(i==data.data.length-1){
+    					str2+=' <li class="last"><a href="/article/detail/'+o.articleId+'.html" target="_blank">'+o.articleName+'...</a><span class="dateRight">['+d+']</span></li>';
+    				}else{
+    					str2+=' <li><a href="/article/detail/'+o.articleId+'.html" target="_blank">'+o.articleName+'...</a><span class="dateRight">['+d+']</span></li>';
+    				}
 				}
-				$("#latest_articles").append(str);
+				str2+='</ul>';
+				$(".annCon").html(str2);
+				jQuery("#ann").slide({ mainCell:".annCon",autoPlay:true,effect:"leftMarquee",interTime:50,vis:"1" });
 			}else{
 				alert('加载最新文章失败:'+data.msg);
 			}
@@ -52,17 +95,9 @@
     		var pageVO=data.data;
     		if(data.code==1){
     			var str='';
-    			var str2='';
     			for(var i=0;i<data.data.data.length;i++){
     				var o=data.data.data[i];
     				str+=' <li class="no"><i class="tt">'+i+'</i><a href="/article/detail/'+o.articleId+'.html">'+o.articleName+'</a></li>';
-    				if(i==0){
-    				str2+=' <li class="first"><a href="/article/detail/'+o.articleId+'.html" target="_blank">'+o.articleName+'...</a><span class="dateRight">['+o.createDate+']</span></li';
-    				}else if(i==data.data.data.length-1){
-    					str2+=' <li class="last"><a href="/article/detail/'+o.articleId+'.html" target="_blank">'+o.articleName+'...</a><span class="dateRight">['+o.createDate+']</span></li';
-    				}else{
-    					str2+=' <li><a href="/article/detail/'+o.articleId+'.html" target="_blank">'+o.articleName+'...</a><span class="dateRight">['+o.createDate+']</span></li';
-    				}
     			}
     			str+='总共有'+pageVO.totalCount+'条记录';
     			if(pageVO.pageNum<=1){
@@ -76,7 +111,7 @@
     				str+='<a href="javascript:void(0)" onclick="loadNews(8,'+(pageVO.pageNum+1)+')">下一页</a>';
     			}
     			$("#article_news").append(str);
-    			$("#article_roll_news").append(str2);
+    			<#--  $("#article_roll_news").append(str2);-->
     		}else{
     			alert('加载新闻失败');
     		}
@@ -119,31 +154,17 @@
 <!--内容上部分-->
 <div class="shijian">
     <div class="annBar">
-        <strong>最新发布的文章：</strong>
-        <div id="ann" class="ann">
+         <strong>最新发布的文章：</strong>
+         <div id="ann" class="ann">
             <div class="tempWrap" style="overflow:hidden; position:relative; width:1738px">
-                <div class="annCon" style="width: 5214px; position: relative; overflow: hidden; padding: 0px; margin: 0px; left: -1923px;">
-                   <ul style="float: left; width: 1728px;" id="article_roll_news">
-	                   <#if latestArticles??>
-	                   		<#assign length=latestArticles?size>
-	                   		<#list latestArticles as item>
-	                   			<#if item_index==0>
-	                   				 <li class="first"><a href="/article/detail/${item.articleId?c}.html" target="_blank">${item.articleName}...</a><span class="dateRight">[${item.createDate?string('yyyy-MM-dd')}]</span></li>
-	                   			<#elseif item_index==length>
-	                   				  <li class="last"><a href="/article/detail/${item.articleId?c}.html" target="_blank">${item.articleName}...</a><span class="dateRight">[${item.createDate?string('yyyy-MM-dd')}]</span></li>
-	                   			<#else>
-	                   				    <li><a href="/article/detail/${item.articleId?c}.html" target="_blank">${item.articleName}...</a><span class="dateRight">[${item.createDate?string('yyyy-MM-dd')}]</span></li>
-	                   			</#if>
-	                   		 </#list>
-	                   </#if>
-                    </ul>
+                <div class="annCon" style="width: 5214px; position: relative; overflow: hidden; padding: 0px; margin: 0px; left: -1923px;" >
                 </div>
             </div>
         </div>
-        <script type="text/javascript">jQuery("#ann").slide({ mainCell:".annCon",autoPlay:true,effect:"leftMarquee",interTime:50,vis:"1"  });</script>
+        <script type="text/javascript"></script>
         <div class="showDate">
             <script language="javascript" type="text/javascript" src="/js/show_date.js"></script>2017年3月25日 星期六  农历丁酉年 二月廿八
-        </div>
+        </div> 
     </div>
 </div>
 

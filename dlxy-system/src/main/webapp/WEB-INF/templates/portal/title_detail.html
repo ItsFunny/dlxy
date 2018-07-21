@@ -1,35 +1,69 @@
-<!doctype html>
-<html>
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,user-scalable=no, initial-scale=1">
-<title>谭八套 大城教育</title>
-<link rel="stylesheet" href="/css/index.css" type="text/css">
-<link rel="stylesheet" href="/css/zy.css" type="text/css">
-
-<script type="text/javascript" src="/js/jquery.min.js"></script>
-</script><script type="text/javascript" src="js/jquery.reveal.js"></script>
-<script type="text/javascript" src="/js/script.js"></script>
-<script type="text/javascript" src="/js/myfocus-2.0.4.min.js"></script>
-<script type="text/javascript" src="/js/jquery.SuperSlide.js"></script>
-
-</head>
+<#include "header.html">
 <script>
 	$(document).ready(function(){
 		jQuery.get('/api/v1/aboutTitles.html',function(data){
 			 if(data.code==1){
-				var str='<li class="aaa" ><a href="/index.html"><i class="icon-home"></i>首页</a></li>';
+				var str='<li class="bbb" ><a href="/index.html"><i class="icon-home"></i>首页</a></li>';
 				titleIdArray=new Array(data.data.length);
 			  	for(var i=0;i<data.data.length;i++){
 			  		var o=data.data[i];
 			  		titleIdArray[i]=o.titleId;
-			  		str+='<li class="aaa" id="li_'+o.titleId+'" titleId="'+o.titleId+'""><a href="index.html"><i class="icon-home"></i>'+o.titleName+'</a></li>';
+			  		str+='<li class="aaa" id="li_'+o.titleId+'" titleId="'+o.titleId+'""><a href="/title/detail/'+o.titleId+'.html"><i class="icon-home"></i>'+o.titleName+'</a>';
+			  		str+='</li>';
 			  	}
 			  	$("#above_titles").append(str);
-			  	loadNews(8,1);
+			  	$(".aaa").mouseenter(function(obj){
+			  		var t=obj.currentTarget;
+					loadChildTitles(t);
+				})	
+				$(".aaa").mouseleave(function(obj){
+					var t=obj.currentTarget;
+					changeChildsStatus(t,"none");
+				})
 			  }
 		},'json');
+		loadNews(8,1);
+		setTimeout("loadLatestArticles()",1000);
 	});
+	
+	function loadChildTitles(obj){
+		var titleId=$(obj).attr("titleId");
+		var childs=$(".belong_"+titleId);
+		if(childs.length!=0){
+			changeChildsStatus(obj,"block");
+			return;
+		}
+		$.ajax({
+			url:'/api/v1/title/'+titleId+'.html',
+			type:'get',
+			success:function(data){
+				if(data.code==1){
+           			 var str='';
+						str+='<ul id="child_'+titleId+'" style="display: block;">';           			 
+           			 for(var i=0;i<data.data.length;i++){
+           			 	var o=data.data[i];
+           			 	str+='<li class="belong_'+titleId+'"><a  href="/title/detail/'+o.titleId+'.html">'+o.titleName+'</a></li>';
+           			 }
+           			 str+='</ul>';
+           			 $(obj).append(str);
+				}else{
+				}
+			},
+			error:function(){
+				alert('加载子菜单失败');
+			}
+		})
+	}
+	function changeChildsStatus(obj,status){
+		var titleId=$(obj).attr("titleId");
+		if(status=='block')
+		{
+			$("#child_"+titleId).show();
+		}else{
+			$("#child_"+titleId).hide();
+		}
+		
+	}
 	function loadNews(pageSize,pageNum){
     	$("#article_news").empty();
    	 	var params={"type":"news","pageSize":pageSize,"pageNum":pageNum};
@@ -37,17 +71,9 @@
     		var pageVO=data.data;
     		if(data.code==1){
     			var str='';
-    			var str2='';
     			for(var i=0;i<data.data.data.length;i++){
     				var o=data.data.data[i];
     				str+=' <li class="no"><i class="tt">'+i+'</i><a href="/article/detail/'+o.articleId+'.html">'+o.articleName+'</a></li>';
-    				if(i==0){
-    				str2+=' <li class="first"><a href="/article/detail/'+o.articleId+'.html" target="_blank">'+o.articleName+'...</a><span class="dateRight">['+o.createDate+']</span></li';
-    				}else if(i==data.data.data.length-1){
-    					str2+=' <li class="last"><a href="/article/detail/'+o.articleId+'.html" target="_blank">'+o.articleName+'...</a><span class="dateRight">['+o.createDate+']</span></li';
-    				}else{
-    					str2+=' <li><a href="/article/detail/'+o.articleId+'.html" target="_blank">'+o.articleName+'...</a><span class="dateRight">['+o.createDate+']</span></li';
-    				}
     			}
     			str+='总共有'+pageVO.totalCount+'条记录';
     			if(pageVO.pageNum<=1){
@@ -61,12 +87,36 @@
     				str+='<a href="javascript:void(0)" onclick="loadNews(8,'+(pageVO.pageNum+1)+')">下一页</a>';
     			}
     			$("#article_news").append(str);
-    			$("#article_roll_news").append(str2);
     		}else{
     			alert('加载新闻失败');
     		}
     	},'json')
     }
+    function loadLatestArticles(){
+		jQuery.get('/api/v1/article/latest.html',function(data,textStatus,jqXHR){
+			if(data.code==1){
+				var str2='<ul style="float: left; width: 1728px;">';
+				for(var i=0;i<data.data.length;i++){
+					var o=data.data[i];
+					var d=$.format.date(o.createDate,"yyyy-MM-dd");
+					
+					if(i==0){
+    				str2+=' <li class="first"><a href="/article/detail/'+o.articleId+'.html" target="_blank">'+o.articleName+'...</a><span class="dateRight">['+d+']</span></li>';
+    				}else if(i==data.data.length-1){
+    					str2+=' <li class="last"><a href="/article/detail/'+o.articleId+'.html" target="_blank">'+o.articleName+'...</a><span class="dateRight">['+d+']</span></li>';
+    				}else{
+    					str2+=' <li><a href="/article/detail/'+o.articleId+'.html" target="_blank">'+o.articleName+'...</a><span class="dateRight">['+d+']</span></li>';
+    				}
+				}
+				str2+='</ul>';
+				$(".annCon").html(str2);
+				jQuery("#ann").slide({ mainCell:".annCon",autoPlay:true,effect:"leftMarquee",interTime:50,vis:"1" });
+			}else{
+				alert('加载最新文章失败:'+data.msg);
+			}
+			
+		},'json');
+	}
 </script>
 <body>
 <!--头部-->
@@ -107,20 +157,11 @@
         <div id="ann" class="ann">
             <div class="tempWrap" style="overflow:hidden; position:relative; width:1738px">
                 <div class="annCon" style="width: 5214px; position: relative; overflow: hidden; padding: 0px; margin: 0px; left: -1923px;">
-                   <ul style="float: left; width: 1728px;">
-                        <li class="first"><a href="#" target="_blank">鲱鱼宝宝山西长治中心即将...</a><span class="dateRight">[2017-03-22]</span></li
-                        li><a href="#" target="_blank">现在早教机构加盟需要投资多呢</a><span class="dateRight">[2017-03-20]</span></li>
-                        <li><a href="#" target="_blank">鲱鱼宝宝山西长治中心即将...</a><span class="dateRight">[2017-03-14]</span></li>
-                        <li><a href="#" target="_blank">现在早教机构加盟需要投资多呢</a><span class="dateRight">[2017-03-10]</span></li>
-                        <li><a href="#" target="_blank">鲱鱼宝宝山西长治中心即将...</a><span class="dateRight">[2017-03-10]</span></li>
-                        <li class="last"><a href="#" target="_blank">现在早教机构加盟需要投资多呢</a><span class="dateRight">[2017-03-06]</span></li>
-                    </ul>
                 </div>
             </div>
         </div>
-        <script type="text/javascript">jQuery("#ann").slide({ mainCell:".annCon",autoPlay:true,effect:"leftMarquee",interTime:50,vis:"1"  });</script>
         <div class="showDate">
-            <script language="javascript" type="text/javascript" src="js/show_date.js"></script>2017年3月25日 星期六  农历丁酉年 二月廿八
+            <script language="javascript" type="text/javascript" src="/js/show_date.js"></script>2017年3月25日 星期六  农历丁酉年 二月廿八
         </div>
     </div>
 </div>
@@ -143,44 +184,48 @@
         <!--nr-->
         <#if (pageVO.data?size>0)>
         <ul class="zy_lb">
-        	
         		<#list pageVO.data as item>
-            		<li><i></i><a href="/article/detail/${item.articleId}.html">${item.articleName}</a><span>${item.createDate?string('yyyy-MM-dd')}</span></li>
+            		<li><i></i><a href="/article/detail/${item.articleId?c}.html">${item.articleName}</a><span>${item.createDate?string('yyyy-MM-dd')}</span></li>
           	 	</#list>>
-          
         </ul>
-
-        <div class="page"><span id="pe100_page_通用信息列表_普通式" class="pagecss"><!--{pe.begin.pagination}-->
-            <script type="text/javascript" language="javascript">
-            function listPage_Jumpto通用信息列表_普通式(e,ele){
-            e=e||event;
-            if(13==e.keyCode){
-            var i=Number(ele.value);
-            if(i<1||i>25){alert("你输入的页码超出范围。");}
-            switch(i){
-            case 1: break; case 2: location='Index_2.aspx';break; case 3: location='Index_3.aspx';break; case 4: location='Index_4.aspx';break; case 5: location='Index_5.aspx';break; case 6: location='Index_6.aspx';break; case 7: location='Index_7.aspx';break; case 8: location='Index_8.aspx';break; case 9: location='Index_9.aspx';break; case 10: location='Index_10.aspx';break; case 11: location='Index_11.aspx';break; case 12: location='Index_12.aspx';break; case 13: location='Index_13.aspx';break; case 14: location='Index_14.aspx';break; case 15: location='Index_15.aspx';break; case 16: location='Index_16.aspx';break; case 17: location='Index_17.aspx';break; case 18: location='Index_18.aspx';break; case 19: location='Index_19.aspx';break; case 20: location='Index_20.aspx';break; case 21: location='Index_21.aspx';break; case 22: location='Index_22.aspx';break; case 23: location='Index_23.aspx';break; case 24: location='Index_24.aspx';break; case 25: location='Index_25.aspx';break; 
-            default: break;
-            }
-            }
-            }
-            </script>
-            <div class="pager">
-             <a href="Index.aspx">首页</a>
-             <a href="Index.aspx">上一页</a>
-             <span class="current">1</span>
-              <a href="Index_2.aspx">2</a> 
-             <a href="Index_3.aspx">3</a> 
-             <a href="Index_4.aspx">4</a> 
-             <a href="Index_5.aspx">5</a> 
-             <a href="Index_6.aspx">6</a> 
-             <a href="Index_7.aspx">7</a> 
-            <a href="Index_2.aspx">下一页</a>
-             <a href="Index_25.aspx">尾页</a>
-            <input type="text" value="1" onkeydown="listPage_Jumpto通用信息列表_普通式(event,this)" size="3" title="输入数字，回车跳转">
-            <span class="disabled">共492篇文章/共25页</span>
-            </div><!--{pe.end.pagination}--></span>
-        </div>
-  	</#if>
+        </#if>
+        <form name="pageForm" method="get" action="/title/detail/${title.titleId}.html">
+        	<input type="hidden" name="pageNum">
+	        <div class="page"><span id="pe100_page_通用信息列表_普通式" class="pagecss"><!--{pe.begin.pagination}-->
+	            <script type="text/javascript" language="javascript">
+	            function listPage_Jumpto通用信息列表_普通式(e,ele){
+	            e=e||event;
+	            if(13==e.keyCode){
+	            var i=Number(ele.value);
+	            if(i<1||i>25){alert("你输入的页码超出范围。");}
+	            switch(i){
+	            case 1: break; case 2: location='Index_2.aspx';break; case 3: location='Index_3.aspx';break; case 4: location='Index_4.aspx';break; case 5: location='Index_5.aspx';break; case 6: location='Index_6.aspx';break; case 7: location='Index_7.aspx';break; case 8: location='Index_8.aspx';break; case 9: location='Index_9.aspx';break; case 10: location='Index_10.aspx';break; case 11: location='Index_11.aspx';break; case 12: location='Index_12.aspx';break; case 13: location='Index_13.aspx';break; case 14: location='Index_14.aspx';break; case 15: location='Index_15.aspx';break; case 16: location='Index_16.aspx';break; case 17: location='Index_17.aspx';break; case 18: location='Index_18.aspx';break; case 19: location='Index_19.aspx';break; case 20: location='Index_20.aspx';break; case 21: location='Index_21.aspx';break; case 22: location='Index_22.aspx';break; case 23: location='Index_23.aspx';break; case 24: location='Index_24.aspx';break; case 25: location='Index_25.aspx';break; 
+	            default: break;
+	            }
+	            }
+	            }
+	            </script>
+	            <div class="pager">
+	            <#if pageVO.pageNum<=1>
+		             <a href="javascript:void(0);">首页</a>
+		             <a href="javascript:void(0)">上一页</a>
+	            <#else>
+	            	<a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=1;document.pageForm.submit();">首页</a>
+	            	<a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=(${pageVO.pageNum-1});document.pageForm.submit();">上一页</a>
+	            </#if>
+	            <#if (pageVO.pageNum>=pageVO.maxPage)>
+	            	<a href="javascript:void(0);">下一页</a>
+	             	<a href="javascript:void(0)">尾页</a>
+	            <#else>
+	            	<a href="javascript:void(0);" onclick="document.pageForm.pageNum.value=${pageVO.pageNum+1};document.pageForm.submit();">下一页</a>
+	             	<a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=${pageVO.maxPage};document.pageForm.submit();">尾页</a>
+	            </#if>
+	            <input type="text" value="1" onkeydown="listPage_Jumpto通用信息列表_普通式(event,this)" size="3" title="输入数字，回车跳转">
+	            <span class="disabled">共${pageVO.totalCount}篇文章/共${pageVO.maxPage}页</span>
+	            </div><!--{pe.end.pagination}--></span>
+	        </div>
+	       </form>
+  
 
     </div>
     <div class="you_dh">
@@ -188,7 +233,7 @@
             <div class="daohang_biaot">${parent.titleName}</div>
             <ul>
             	<#list parent.childs as item>
-                <li><a href="/title/detail/${item.titleId}.html">${item.titleName}</a></li>
+                <li><a href="/title/detail/${item.titleId?c}.html">${item.titleName}</a></li>
                 </#list>
             </ul>
         </div>

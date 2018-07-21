@@ -21,7 +21,7 @@ import java.util.List;
 */
 public abstract class AbstractDlxyTitleComposite extends AbstractDlxyTreeComponent
 {
-	private List<AbstractDlxyArticleComposite> articles;
+	private List<? super AbstractDlxyArticleComposite> articles;
 
 	
 	public AbstractDlxyTitleComposite()
@@ -41,7 +41,7 @@ public abstract class AbstractDlxyTitleComposite extends AbstractDlxyTreeCompone
 	}
 	public Collection<AbstractDlxyArticleComposite> getArticles()
 	{
-		return articles;
+		return (Collection<AbstractDlxyArticleComposite>) articles;
 	}
 	public void setArticles(List<? extends AbstractDlxyArticleComposite> articles)
 	{

@@ -65,7 +65,7 @@ public interface IArticleService
 	/*
 	 * 用于前端展示需要显示多少文章
 	 */
-	Collection<ArticleDTO>findArticlesInTitleIdsTopNumber(List<Integer>ids,int limit) throws SQLException;
+	Collection<ArticleDTO>findArticlesInTitleIdsTopNumber(List<Integer>ids,int limit,Integer status) throws SQLException;
 	/*
 	 * 查询所有推荐文章
 	 */

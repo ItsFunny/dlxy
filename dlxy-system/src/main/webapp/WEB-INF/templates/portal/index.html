@@ -10,7 +10,9 @@
    
     function scrollLoadTitles(){
     	var titleId=titleIdArray.shift();
-    	alert(titleId);
+    	if(titleId==null){
+    		return;
+    	}
     	jQuery.get('/api/v1/scrollLoadTitle/'+titleId+'.html',function(data,textStatus,jqXHR){
     		if(data.code==1 && data.data !=null){
     			var dto=data.data;
@@ -32,22 +34,69 @@
 	$(document).ready(function(){
 		jQuery.get('/api/v1/aboutTitles.html',function(data){
 			 if(data.code==1){
-				var str='<li class="aaa" ><a href="/index.html"><i class="icon-home"></i>首页</a></li>';
+				var str='<li class="bbb" ><a href="/index.html"><i class="icon-home"></i>首页</a></li>';
 				titleIdArray=new Array(data.data.length);
 			  	for(var i=0;i<data.data.length;i++){
 			  		var o=data.data[i];
 			  		titleIdArray[i]=o.titleId;
-			  		str+='<li class="aaa" id="li_'+o.titleId+'" titleId="'+o.titleId+'""><a href="index.html"><i class="icon-home"></i>'+o.titleName+'</a></li>';
+			  		str+='<li class="aaa" id="li_'+o.titleId+'" titleId="'+o.titleId+'""><a href="/title/detail/'+o.titleId+'.html"><i class="icon-home"></i>'+o.titleName+'</a>';
+			  		str+='</li>';
 			  	}
 			  	$("#above_titles").append(str);
+			  	$(".aaa").mouseenter(function(obj){
+			  		var t=obj.currentTarget;
+					loadChildTitles(t);
+				})	
+				$(".aaa").mouseleave(function(obj){
+					var t=obj.currentTarget;
+					changeChildsStatus(t,"none");
+				})
 			  }
 		},'json');
-		loadNews(8,1);
+		setTimeout("loadNews(8,1)",700);
 		loadPicArticles();
 		setTimeout("loadLatestArticles()",1000);
 	});
-	function loadLatestArticles(){
+	
+	function loadChildTitles(obj){
+		var titleId=$(obj).attr("titleId");
+		var childs=$(".belong_"+titleId);
+		if(childs.length!=0){
+			changeChildsStatus(obj,"block");
+			return;
+		}
+		$.ajax({
+			url:'/api/v1/title/'+titleId+'.html',
+			type:'get',
+			success:function(data){
+				if(data.code==1){
+           			 var str='';
+						str+='<ul id="child_'+titleId+'" style="display: block;">';           			 
+           			 for(var i=0;i<data.data.length;i++){
+           			 	var o=data.data[i];
+           			 	str+='<li class="belong_'+titleId+'"><a  href="/title/detail/'+o.titleId+'.html">'+o.titleName+'</a></li>';
+           			 }
+           			 str+='</ul>';
+           			 $(obj).append(str);
+				}else{
+				}
+			},
+			error:function(){
+				alert('加载子菜单失败');
+			}
+		})
+	}
+	function changeChildsStatus(obj,status){
+		var titleId=$(obj).attr("titleId");
+		if(status=='block')
+		{
+			$("#child_"+titleId).show();
+		}else{
+			$("#child_"+titleId).hide();
+		}
 		
+	}
+	function loadLatestArticles(){
 		jQuery.get('/api/v1/article/latest.html',function(data,textStatus,jqXHR){
 			if(data.code==1){
 				var str='';
@@ -68,6 +117,8 @@
    		if(data.code==1){
 			var pageVO=data.data;
 			var str='';
+			var width=$("#container").width()+"px";
+			var height=$("#container").outerHeight()+"px";
 			for(var i=0;i<pageVO.data.length;i++){
 				var o=pageVO.data[i];
 				if(i==0){
@@ -75,9 +126,30 @@
 				}else{
 					str+='<li style="display: none; opacity: 1">';
 				}
-				str+='<a href="/article/detail/'+o.articleId+'.html"><img src="'+o.pictureUrl+'" thumb="" alt="'+o.articleName+'" text="'+o.articleName+'" /></a></li>';
+				str+='<a href="/article/detail/'+o.articleId+'.html"><img style="height:'+height+';width:'+width+'" src="'+o.pictureUrl+'" thumb="" alt="'+o.articleName+'" text="'+o.articleName+'" /></a></li>';
 			}   		
 			$("#article_pics").append(str);
+			 var $id=function(id){return document.getElementById(id)};
+                          var oriHtml=$id('focus_box').innerHTML;
+                          function resetHTML(){//还原
+                                $id('focus_box').innerHTML=oriHtml;
+                                var css=document.getElementsByTagName('style')[0];
+                                css.parentNode.removeChild(css);
+                            }
+                    function pageInit(){
+                        var pattern=location.href.split('pattern=')[1];
+                        if(pattern) $id('focus_pattern').value=pattern;
+                        myFocus.set({id:'focus',pattern:$id('focus_pattern').value});
+                    }
+                    pageInit();
+                            $id('focus_pattern').onchange=function(){
+                    if(this.value==='more'){//更多风格
+                    location.href='more.html';
+                    return;
+                    }           
+                    resetHTML();
+                                myFocus.set({id:'focus',pattern:this.value,loadIMGTimeout:0});
+                }
    		}else{
    			alert("加载图片新闻失败:"+data.msg);
    		}
@@ -111,7 +183,8 @@
     		}
     	},'json')
     }
-	
+
+
       
 </script>
 <body>
@@ -122,7 +195,7 @@
         <ul>
             <li><a  target="_blank" href="http://weibo.com/PanZhongQuan"><img class="tubiao" src="images/t_03.png">微博</a></li>
             <li>
-                <a href="#" class="big-link" data-reveal-id="myModal" data-animation="fade"><img class="tubiao" src="images/t_10.png">微信</a>
+                <a href="#" class="big-link" data-reveal-id="myModal" data-animation="fade"><img class="tubiao" src="/images/t_10.png">微信</a>
                 <div id="myModal" class="reveal-modal"><h1><img src="images/IMG_0859.jpg"></h1><h3>扫一扫关注我们</h3>
                 <a class="close-reveal-modal">&#215;</a></div>
             </li>
@@ -133,7 +206,7 @@
 </div>
 <div class="toubu_bj">
     <div class="toubu">
-        <a href="../"><img src="images/t_17.png"></a> 
+        <a href="../"><img src="/images/t_17.png"></a> 
         <span>
             <input class="suk" type="text" placeholder="请输入关键词">
             <button class="scan">搜索</button>
@@ -168,7 +241,7 @@
                 <div id="focus_wrap">
                   <div id="focus_box">
                     <div id="focus">
-                      <div class="loading"><img src="images/loading.gif"  alt="请稍候..." /></div>
+                      <div class="loading"><img src="/images/loading.gif"  alt="请稍候..." /></div>
                       <!--载入画面(可删除)-->
                       <div class="pic">  
                         <ul id="article_pics">
@@ -186,27 +259,7 @@
             </div>
                 <script type="text/javascript" src="js/mF_expo2010.js"></script>
                 <script type="text/javascript">
-                        var $id=function(id){return document.getElementById(id)};
-                          var oriHtml=$id('focus_box').innerHTML;
-                          function resetHTML(){//还原
-                                $id('focus_box').innerHTML=oriHtml;
-                                var css=document.getElementsByTagName('style')[0];
-                                css.parentNode.removeChild(css);
-                            }
-                    function pageInit(){
-                        var pattern=location.href.split('pattern=')[1];
-                        if(pattern) $id('focus_pattern').value=pattern;
-                        myFocus.set({id:'focus',pattern:$id('focus_pattern').value});
-                    }
-                    pageInit();
-                            $id('focus_pattern').onchange=function(){
-                    if(this.value==='more'){//更多风格
-                    location.href='more.html';
-                    return;
-                    }           
-                    resetHTML();
-                                myFocus.set({id:'focus',pattern:this.value,loadIMGTimeout:0});
-                            }
+                       
                     </script>
 
             <!-- 最新的文章-->
@@ -246,15 +299,14 @@
 		 <div class="biaoti"><h2>${dlxyTitleDTO.titleName}</h2><a href="/title/detail/${dlxyTitleDTO.titleId}.html">查看详情 +</a></div>
 		<#if dlxyTitleDTO.childs??>
 			<#list dlxyTitleDTO.childs as item>
-		    <ul class="kemu">
-		        <div class="kemu_bt"><h2>${item.titleName}</h2><a href="xw.html">更多>></a></div>
-		        <li><a href="xw_xq.html"><i></i>特朗普当着安倍说：中美友好对日本有好</a></li>
-		        <li><a href="xw_xq.html"><i></i>习近平画出的最美 下午将滞留印度54年中国老兵已抵京</a></li>
-		        <li><a href="xw_xq.html"><i></i>滞留印度54年中国老兵已抵京 下午将</a></li>
-		        <li><a href="xw_xq.html"><i></i>特朗普当着安倍说：中美友好对日本有好</a></li>
-		        <li><a href="xw_xq.html"><i></i>特朗普当着安倍说：中美友好对日本有好 下午将滞留印度54年中国老兵已抵京</a></li>
-		        <li><a href="xw_xq.html"><i></i>滞留印度54年中国老兵</a></li>
-		    </ul>
+					<ul class="kemu">
+					   <div class="kemu_bt"><h2>${item.titleName}</h2><a href="xw.html">更多>></a></div>
+						<#if item.articles??>
+							<#list item.articles as article>
+					   			<li><a href="/article/detail/${article.articleId?c}.html"><i></i>${article.articleName}</a>    <span style="margin-left:186px">${article.createDate?string('yyyy-MM-dd')}</span></li>
+					   		</#list>
+						</#if>
+				   </ul>
 		    </#list>
 		</#if>>
 	</div>
@@ -310,9 +362,5 @@
     </div>
 </div>
 </body>
-<script>
-	$("li ").mouseenter(function(){
-	});
 
-</script>
 </html>

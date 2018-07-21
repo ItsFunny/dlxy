@@ -172,15 +172,10 @@ public class ArticleServiceImpl implements IArticleService ,IUserArticleService
 
 
 	@Override
-	public Collection<ArticleDTO> findArticlesInTitleIdsTopNumber(List<Integer> ids, int limit) throws SQLException
+	public Collection<ArticleDTO> findArticlesInTitleIdsTopNumber(List<Integer> ids, int limit,Integer status) throws SQLException
 	{
-		Map<String, Object>params=new HashMap<>();
-		
-		
-		
-		
-		
-		return null;
+		Collection<ArticleDTO> articleDTOs = articleDao.findArticlesInTitleIdsLimited(ids, limit,status);
+		return articleDTOs;
 	}
 
 	@Override

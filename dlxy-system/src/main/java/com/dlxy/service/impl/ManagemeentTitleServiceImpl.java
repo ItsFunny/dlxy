@@ -20,6 +20,7 @@ import com.dlxy.common.dto.AbstractDlxyTitleComposite;
 import com.dlxy.common.dto.AbstractDlxyTreeComponent;
 import com.dlxy.common.dto.ArticleDTO;
 import com.dlxy.common.dto.DlxyTitleDTO;
+import com.dlxy.common.enums.ArticleStatusEnum;
 import com.dlxy.common.enums.DlxyTitleEnum;
 import com.dlxy.server.article.service.IArticleService;
 import com.dlxy.server.article.service.ITitleService;
@@ -47,16 +48,16 @@ public class ManagemeentTitleServiceImpl extends Observable implements ITitleMan
 	}
 
 	@Override
-	public DlxyTitleDTO findDlxyDetailTitles()
+	public DlxyTitleDTO findDlxyDetailTitles(Integer limitNumber) throws SQLException
 	{
 		Collection<DlxyTitleDTO> collection = titleService.findTitlesByType(DlxyTitleEnum.NEWS_TITLE.ordinal());
-		DlxyTitleDTO dlxyTitleDTO=null;
-		if(null!=collection && !collection.isEmpty())
+		if(collection==null || collection.isEmpty())
 		{
-			dlxyTitleDTO=collection.iterator().next();
+			return null;
 		}
+		DlxyTitleDTO dlxyTitleDTO=collection.iterator().next();
 //		List<AbstractDlxyTitleComposite> l=new ArrayList<>(titleService.findChildsByParentId(dlxyTitleDTO.getTitleId()));
-		dlxyTitleDTO .setChilds((List<? extends AbstractDlxyTreeComponent>) titleService.findChildsByParentId(dlxyTitleDTO.getTitleId()));
+		dlxyTitleDTO=findChildsAndArticles(dlxyTitleDTO.getTitleId(), limitNumber);
 //		dlxyTitleDTO.setChildTitles(childs);
 		return dlxyTitleDTO;
 	}
@@ -71,17 +72,20 @@ public class ManagemeentTitleServiceImpl extends Observable implements ITitleMan
 			return null;
 		}
 		Collection<DlxyTitleDTO> childs = titleService.findChildsByParentId(titleId);
-	
 		if(null==childs || childs.isEmpty())
 		{
 			return dlxyTitleDTO;
 		}
 		List<Integer>ids=new LinkedList<Integer>();
+//		for (DlxyTitleDTO dlxyTitleDTO2 : childs)
+//		{
+//			dlxyTitleDTO.addChild(dlxyTitleDTO2);
+//		}
 		childs.forEach(p->{
 			ids.add(p.getTitleId());
 			dlxyTitleDTO.addChild(p);
 		});
-		List<ArticleDTO> articles = (List<ArticleDTO>) articleService.findArticlesInTitleIdsTopNumber(ids, limitNumber);
+		List<ArticleDTO> articles = (List<ArticleDTO>) articleService.findArticlesInTitleIdsTopNumber(ids, limitNumber,ArticleStatusEnum.UP.ordinal());
 		if(null==articles || articles.isEmpty())
 		{
 			return dlxyTitleDTO;
@@ -90,11 +94,19 @@ public class ManagemeentTitleServiceImpl extends Observable implements ITitleMan
 		{
 			for(int i=articles.size()-1;i>=0;i--)
 			{
-				if(dlxyTitleDTO2.getTitleId().equals(articles.get(i).getTitleId()));
+				Integer titleId2 = dlxyTitleDTO2.getTitleId();
+				Integer titleId3 = articles.get(i).getTitleId();
+				if(titleId3.equals(titleId2))
 				{
 					dlxyTitleDTO2.addArticle(articles.get(i));
 					articles.remove(i);
 				}
+//				if(dlxyTitleDTO2.getTitleParentId().equals(articles.get(i).getTitleId()));
+//				{
+					//这是一个bug吗,,无论如何都相等
+//					dlxyTitleDTO2.addArticle(articles.get(i));
+//					articles.remove(i);
+//				}
 			}
 		}
 //		childs.forEach(d->{

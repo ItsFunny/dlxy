@@ -280,10 +280,10 @@ public class RestAPIController
 			HttpServletResponse response)
 	{
 		Collection<DlxyTitleDTO> collection =  titleService.findChildsByParentId(parentId);
-		if (null == collection || collection.isEmpty())
-		{
-			return ResultUtil.needMoreOp(collection, "无子类目");
-		}
+//		if (null == collection || collection.isEmpty())
+//		{
+//			return ResultUtil.needMoreOp(collection, "无子类目");
+//		}
 		return ResultUtil.sucess(collection);
 	}
 
@@ -308,7 +308,7 @@ public class RestAPIController
 		try
 		{
 			Integer titleId=Integer.parseInt(titleIdStr);
-			DlxyTitleDTO dto = titleManagementWrappedService.findChildsAndArticles(titleId, TitleArticleConstant.MAX_NUMBER_ARTICLES);
+			DlxyTitleDTO dto = titleManagementWrappedService.findChildsAndArticles(titleId, ITitleManagementWrappedService.MAX_SHOW_ARTICLE_NUMBER);
 //			String json = JsonUtil.obj2Json(ResultUtil.sucess(dto));
 			String json=JSON.toJSONString(ResultUtil.sucess(dto));
 			System.out.println(json);
@@ -316,6 +316,7 @@ public class RestAPIController
 //			return ResultUtil.sucess(dto);
 		} catch (Exception e)
 		{
+			e.printStackTrace();
 			logger.error("[下拉加载信息]error:{}",e.getMessage());
 			try
 			{
