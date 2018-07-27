@@ -35,6 +35,11 @@ public class DlxySystemIllegalException extends RuntimeException
 		super();
 		this.illegalLogDTO=l;
 	}
+	public DlxySystemIllegalException(String msg,IllegalLogDTO l)
+	{
+		super(msg);
+		this.illegalLogDTO=l;
+	}
 	
 	public DlxySystemIllegalException()
 	{

@@ -40,5 +40,6 @@
 		dlxy_title where title_parent_id= 0 
 		<![CDATA[ and title_id <> 0 ]]>
 		<if test="null!=type and type >=0 ">and title_type=#{type}</if>
+		order by title_display_seq desc
 	</select>
 </mapper>

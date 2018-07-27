@@ -14,7 +14,9 @@ import java.util.Set;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.collections.functors.FalsePredicate;
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
@@ -35,6 +37,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.FilterType;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.dlxy.common.event.AmqpListener;
@@ -43,6 +46,7 @@ import com.dlxy.common.event.AppEventPublisher;
 import com.dlxy.common.event.AppEventRabbitMQPublisher;
 import com.dlxy.common.event.Events;
 import com.dlxy.system.batch.consumer.FacadedAmqpListener;
+import com.dlxy.system.batch.consumer.detail.ArticleVistitCountListener;
 import com.dlxy.system.batch.consumer.detail.UserIllegalLogListener;
 import com.dlxy.system.batch.consumer.detail.UserRecordListener;
 
@@ -58,11 +62,11 @@ import com.dlxy.system.batch.consumer.detail.UserRecordListener;
 @EnableConfigurationProperties(value =
 { DlxyProperty.class })
 @ComponentScan(basePackages= {
-		"com.dlxy.server.user.service"
-})
+		"com.dlxy"
+},excludeFilters=@ComponentScan.Filter(type=FilterType.ANNOTATION,value=Mapper.class))
 @MapperScan(basePackages= {
-		"com.dlxy.server.user.dao"
-})
+		"com.dlxy"
+},annotationClass=Mapper.class)
 public class BatchSystemConfiguration
 {
 	@Autowired
@@ -158,6 +162,22 @@ public class BatchSystemConfiguration
 		Queue queue=userIllegalQueue();
 		return BindingBuilder.bind(queue).to(dlxyExchange()).with(Events.UserIllegalLog.name().toUpperCase());
 	}
+	@ConditionalOnProperty(prefix="dlxy.config",name="amqp-enabled" ,matchIfMissing=false)
+	@Bean
+	public Queue articleVistUpdateQueue()
+	{
+		Queue queue=new Queue(Events.ArticleVisitCount.name());
+		return queue;
+	}
+	@ConditionalOnProperty(prefix="dlxy.config",name="amqp-enabled",matchIfMissing=false)
+	@Bean
+	public Binding articleVisitCountBinding()
+	{
+		Queue queue=articleVistUpdateQueue();
+		return BindingBuilder.bind(queue).to(dlxyExchange()).with(Events.ArticleVisitCount.name().toUpperCase());
+	}
+	
+	
 	@ConditionalOnProperty(prefix="dlxy.config",name="amqp-enabled",matchIfMissing=false)
 	@Bean
 	public AmqpListener userRecordListener()
@@ -169,6 +189,13 @@ public class BatchSystemConfiguration
 	public UserIllegalLogListener userIllegalLogListener()
 	{
 		return new UserIllegalLogListener();
+	}
+
+	@ConditionalOnProperty(prefix="dlxy.config",name="amqp-enabled",matchIfMissing=false)
+	@Bean
+	public ArticleVistitCountListener articleVistitCountListener()
+	{
+		return new ArticleVistitCountListener();
 	}
 	
 	@ConditionalOnProperty(prefix="dlxy.config",name="amqp-enabled",matchIfMissing=false)
@@ -205,4 +232,5 @@ public class BatchSystemConfiguration
 			return new AppEventLogPubliher();
 		}
 	}
+	
 }

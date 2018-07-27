@@ -10,6 +10,7 @@ package com.dlxy.shiro;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
@@ -32,10 +33,11 @@ import com.dlxy.server.user.service.IUserService;
 public class DlxyShiroRealm extends AuthorizingRealm
 {
 
-	@Autowired
-	private IUserService userService;
+//	@Autowired
+//	private IUserService userService;
 	@Autowired
 	private IUserRoleService userRoleService;
+	
 	
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals)
@@ -55,7 +57,15 @@ public class DlxyShiroRealm extends AuthorizingRealm
 	@Override
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException
 	{
-		return null;
+		DlxyShiroAuthToken dlxyShiroAuthToken=(DlxyShiroAuthToken) token;
+		SimpleAuthenticationInfo simpleAuthenticationInfo=new SimpleAuthenticationInfo(dlxyShiroAuthToken.getPrincipal(), dlxyShiroAuthToken.getCredentials(),getName());
+		return simpleAuthenticationInfo;
+	}
+
+	@Override
+	public boolean supports(AuthenticationToken token)
+	{
+		return token instanceof DlxyShiroAuthToken;
 	}
 
 }

@@ -19,20 +19,32 @@
 <script>
 
 	function loadChild(id){
-		alert(id);
-		var idName="accordion-group"+id;
-		alert(idName);
+		var parentDiv="#accordion-group"+id;
+		var idName="#accordion-element-"+id;
 		jQuery.get('/api/v1/title/'+id+'.html',function(data,textStatus,jqXHR){
 			if(data.code==1){
 				var obj=$(idName);
-				var a='<div class="accordion-body collapse in" id="accordion-element-60" value="2" aria-expanded="true" style="">';
+				var state=$(parentDiv).attr("state");
+				if(state=='parent'){
+					obj.attr("class","accordion-body collapse in");
+					$(parentDiv).attr("state","child");
+				}else{
+					obj.attr("class","accordion-body collapse");
+					$(parentDiv).attr("state","parent");
+				}
+				//这样判断是有问题的
+				if(obj.html()!='')
+				{
+					return;
+				}
+				var a='';
 				for(var i=0;i<data.data.length;i++){
 					var o=data.data[i];
-					a+='<div class="accordion-inner"><div class="title">'+obj.titleName+'</div><div class="btg1">';
-					a+='<button class="btn btn-danger btn-xs right" data-toggle="modal" data-target="#deleteSource"  titleId="'+o.titleId+'" onclick="del(this)">删除</button><button class="btn btn-success btn-xs right" data-toggle="modal" data-target="#changeSource" titleId="'+o.titleId+'" onclick="beforeSave(this,false,true)">修改</button><add class="btn btn-add btn-xs right" data-toggle="modal" data-target="#changeSource" titleId="'+o.titleId+'" onclick="beforeSave(this,true,false)">添加</add></div></div><div class="accordion-body collapse" id="accordion-element-40" value="1"></div>';
+					a+='<div class="accordion-inner">';
+					a+='<div class="title">'+o.titleName+'<em style="padding-left:200px">排序码:'+o.titleDisplaySeq+'</em></div> ';
+					a+='<div class="btg"><button class="btn btn-danger btn-xs right" data-toggle="modal" data-target="#deleteSource"  titleId="'+o.titleId+'" onclick="del(this)">删除</button><button class="btn btn-success btn-xs right" data-toggle="modal" data-target="#changeSource" titleId="'+o.titleId+'" titleDisplaySeq="'+o.titleDisplaySeq+'" titleName="'+o.titleName+'" onclick="beforeSave(this,false,true)">修改</button></div></div>';
 				}
 				a+='</div>';			
-				alert(a);
 				obj.append(a);
 			}
 		},'json');
@@ -47,8 +59,8 @@
         		var obj=$(".data-div");
         		for(var i=0;i<data.data.length;i++){
         			var o=data.data[i];
-	        		var t='<div class="accordion-group" id="accordion-group'+o.titleId+'"><div class="accordion-heading"><a class="accordion-toggle block"  href="javascript:void(0);" onclick="loadChild('+o.titleId+');">'+o.titleName+'';
-	        		t+='</a><div class="btg"><button class="btn btn-danger btn-xs right" data-toggle="modal" data-target="#deleteSource"  titleId="'+o.titleId+'" onclick="del(this)">删除</button><button class="btn btn-success btn-xs right" data-toggle="modal" data-target="#changeSource" titleId="'+o.titleId+'" onclick="beforeSave(this,false,true)">修改</button><add class="btn btn-add btn-xs right" data-toggle="modal" data-target="#changeSource" titleId="'+o.titleId+'" onclick="beforeSave(this,true,false)">添加</add></div><a href="/admin/title/article/'+o.titleId+'.html" class="btn btn-success btn-xs right" >查看此类目下的所有文章</a></div><div class="accordion-body collapse" id="accordion-element-40" value="1"></div></div>';
+	        		var t='<div class="accordion-group" state="parent" id="accordion-group'+o.titleId+'"><div class="accordion-heading"><a class="accordion-toggle block"  href="javascript:void(0);" onclick="loadChild('+o.titleId+');">'+o.titleName+' <em style="padding-left:200px">排序码:'+o.titleDisplaySeq+'</em>';
+	        		t+='</a><div class="btg"><button class="btn btn-danger btn-xs right" data-toggle="modal" data-target="#deleteSource"  titleId="'+o.titleId+'" onclick="del(this)">删除</button><button class="btn btn-success btn-xs right" titleName="'+o.titleName+'" data-toggle="modal" data-target="#changeSource" titleId="'+o.titleId+'" titleDisplaySeq="'+o.titleDisplaySeq+'" onclick="beforeSave(this,false,true)">修改</button><add class="btn btn-add btn-xs right" data-toggle="modal" data-target="#changeSource" titleId="'+o.titleId+'" onclick="beforeSave(this,true,false)">添加</add></div><a href="/admin/title/article/'+o.titleId+'.html" class="btn btn-success btn-xs right" >查看此类目下的所有文章</a></div><div class="accordion-body collapse" id="accordion-element-'+o.titleId+'" value="1"></div></div>';
         			obj.append(t);
         		}
         	}
@@ -65,6 +77,7 @@
         <a class="toggle-btn" id="nimei">
             <i class="glyphicon glyphicon-align-justify"></i>
         </a>
+        
         <!-- Tab panes -->
         <div class="tab-content">
             <!-- 资源管理模块 -->
@@ -77,10 +90,11 @@
                         <div class="col-lg-11 col-md-11 col-sm-11 col-xs-11">
                             名称
                         </div>
-                        <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1">
+                        <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1 ">
                             操作
                         </div>
                     </div>
+                    
             
                 </div>
             </div>
@@ -105,9 +119,9 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="sName" id="titleDisplaySeq" class="col-xs-3 control-label">排序顺序</label>
+                                    <label for="sName" class="col-xs-3 control-label">排序顺序</label>
                                     <div class="col-xs-8 ">
-                                        <input type="text" titleName="titleDisplaySeq" class="form-control input-sm duiqi" id="xName" name="titleDisplaySeq"
+                                        <input type="text" titleName="titleDisplaySeq" id="titleDisplaySeq" class="form-control input-sm duiqi" id="xName" name="titleDisplaySeq"
                                                placeholder="">
                                     </div>
                                 </div>
@@ -153,35 +167,7 @@
     </div>
 
 </div>
-<script>
-  
-	
-	function del(obj){
-		var titleId=$(obj).attr("titleId");
-		jQuery.get('/api/v1/title/delete.html',{"titleId":titleId},function(data,textStatus,jqXHR){
-			alert(data.msg);
-			location.reload();
-		});
-	}
-    function beforeSave(obj,isAddChild,isUpdate){
-    	if(isUpdate){
-    		$("#titleId").val($(obj).attr("titleId"));
-    		$("#titleParentId").val("");
-    	}
-    	if(isAddChild){
-    		$("#titleParentId").val($(obj).attr("titleId"));
-    		$("#titleId").val("");
-    	}
-    }
-    function addOrUpdate(){
-    	var params=$("#titleForm").serialize();
-    	jQuery.post('/api/v1/admin/title/addOrUpdate.html',params,function(data,textStatus,jqXHR){
-			alert(data.msg);    
-			location.reload();	
-    	},'json'); 
-    }
-    
-</script>
+<script type="text/javascript" src="/js/title.js"></script>
 </body>
 
 </html>

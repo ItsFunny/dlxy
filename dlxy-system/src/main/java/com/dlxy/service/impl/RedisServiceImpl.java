@@ -13,6 +13,7 @@ import com.dlxy.service.IRedisService;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.exceptions.JedisException;
 
 /**
  * 
@@ -26,17 +27,40 @@ public class RedisServiceImpl implements IRedisService
 {
 	@Autowired
 	private JedisPool jedisPool;
-
+	
+	public synchronized Jedis getJedis() {
+		Jedis jedis =null;
+		if(null!=jedisPool)
+		{
+			try
+			{
+				jedis = jedisPool.getResource();
+			} catch (JedisException e)
+			{
+				if(null!=jedis)
+				{
+					jedis.close();
+				}
+				throw e;
+			}
+		}
+		return jedis;
+	}
 	@Override
 	public String get(String key)
 	{
-		Jedis jedis = null;
+		Jedis jedis = getJedis();
 		try
 		{
-			jedis = jedisPool.getResource();
 			String json = jedis.get(key);
 			return json;
-		} finally
+		} catch (JedisException e) {
+			if(null!=jedis)
+			{
+				jedis.close();
+			}
+			throw e;
+		}finally
 		{
 			if (null != jedis)
 			{
@@ -49,12 +73,17 @@ public class RedisServiceImpl implements IRedisService
 	@Override
 	public void del(String key)
 	{
-		Jedis jedis = null;
+		Jedis jedis = getJedis();
 		try
 		{
-			jedis = jedisPool.getResource();
 			jedis.del(key);
-		} finally
+		} catch (JedisException e) {
+			if(null!=jedis)
+			{
+				jedis.close();
+			}
+			throw e;
+		}finally
 		{
 			if (null != jedis)
 			{
@@ -62,6 +91,67 @@ public class RedisServiceImpl implements IRedisService
 			}
 		}
 
+	}
+
+	@Override
+	public void set(String key,String value, Integer mills)
+	{
+		Jedis jedis = getJedis();
+		try
+		{
+			jedis.set(key, value);
+			jedis.expire(key, mills);
+		} catch (JedisException e) {
+			if(null!=jedis)
+			{
+				jedis.close();
+			}
+			throw e;
+		}finally
+		{
+			if(null!=jedis)
+			{
+				jedis.close();
+			}
+		}
+	}
+
+	@Override
+	public void set(String key, String value)
+	{
+		Jedis jedis = getJedis();
+		try
+		{
+			jedis.set(key, value);
+		} catch (Exception e) {
+			if(null!=jedis)
+			{
+				jedis.close();
+			}
+			throw e;
+		}finally
+		{
+			if(null!=jedis)
+			{
+				jedis.close();
+			}
+		}
+	}
+	@Override
+	public boolean isAvaliable()
+	{
+		if(null!=jedisPool)
+		{
+			try
+			{
+				jedisPool.getResource().close();
+				return true;
+			} catch (Exception e)
+			{
+				return false;
+			}
+		}
+		return false;
 	}
 
 }

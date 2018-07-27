@@ -6,7 +6,7 @@
  	function initkindEditor() {
           editor = K.create('#edit_articleContent', {
              themeType: "simple",
-             uploadJson: '/api/v1/file/upload.html?articleId='+$("#edit_articleId").val(),
+             uploadJson: '/api/v1/admin/file/upload.html?articleId='+$("#edit_articleId").val(),
              resizeType: 1,
              pasteType: 2,
              syncType: "",
@@ -29,8 +29,10 @@
                   K('.word_count1').html("最多20000个字符,已输入" + this.count() + "个字符");
              },
              afterUpload:function(url){
+             	
              	var t=url.substring(url.lastIndexOf("/")+1,url.indexOf("."));
              	var pictureId=url.substring(url.lastIndexOf("=")+1);
+             	alert(pictureId);
              	$("#hiddenBlock").append('<input type="hidden" name="pictureId" value='+pictureId+'>');
              },
              allowFileManager: false,
@@ -52,7 +54,7 @@
 		    	<input value="" id="searchText" placeholder="可通过文章id,文章标题,文章作者搜索" class="layui-input search_input" type="text">
 		    </div>
 		    <input type="button" id="searchButton" class="layui-btn search_btn"  value="查询">
-		    <input type="button" class="layui-btn search_btn" value="显示所有,非查询" onclick="javascript:window.location.href = 'http://localhost:8000/article/all.html'">
+		    <input type="button" class="layui-btn search_btn" value="刷新" onclick="JavaScript:location.reload();">
 		    若出现unknown ,则对应的类目或者操作人已被删除
 		</div>
 	</blockquote>
@@ -77,7 +79,7 @@
 							</th>
 							<th>文章编号</th>
 							<th>所属分类</th>
-							<th style="text-align:left;">文章标题</th>
+							<th style="text-align:left;"><a href="javascript:void(0)" onclick="">文章标题</a></th>
 							<th>作者</th>
 							<th>处理人</th>
 							<th>发布时间</th>
@@ -109,7 +111,7 @@
 								unknown
 								</#if>
 							</td>
-							<td align="left">${item.articleName}</td>
+							<td align="left"><a href="javascript:void(0)" data-toggle="modal" data-target="#changeSource" style="text-decoration:underline;" onclick="loadArticle(this);" articleId="${item.articleId?c}">${item.articleName}</a></td>
 							<td>${item.articleAuthor}</td>
 							<td><a href="/admin/articles.html?userId=${item.userId}" style="text-decoration:underline;">${item.realname!"unknow"}</a></td>
 							<td>
@@ -149,11 +151,9 @@
 									<#elseif item.articleType==2>
 										<a class="layui-btn layui-btn-mini "  onclick="changeType(this,0)" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i> 设置为普通文章</a>
 										<a class="layui-btn layui-btn-mini "  onclick="changeType(this,1)" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i> 设置为推荐新闻</a>
-									</#if>
-									<a class="layui-btn layui-btn-danger layui-btn-mini news_del" data-id="1" articleId="${item.articleId?c}" onclick="changeStatus(this,2)"><i class="layui-icon"></i> 放至回收站</a>
-									<#if type='picArticles'>
 										<a class="layui-btn layui-btn-mini" data-id="1" articleId="${item.articleId?c}" data-toggle="modal" data-target="#changeDescPic" onclick="changeDescPic(this)"><i class="layui-icon"></i> 更换描述图</a>
 									</#if>
+									<a class="layui-btn layui-btn-danger layui-btn-mini news_del" data-id="1" articleId="${item.articleId?c}" onclick="changeStatus(this,2)"><i class="layui-icon"></i> 放至回收站</a>
 							</td>
 							<#elseif item.articleStatus ==1 >
 							<td>上线</td>
@@ -169,11 +169,9 @@
 									<#elseif item.articleType==2>
 										<a class="layui-btn layui-btn-mini "  onclick="changeType(this,0)" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i> 设置为普通文章</a>
 										<a class="layui-btn layui-btn-mini "  onclick="changeType(this,1)" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i> 设置为推荐新闻</a>
-									</#if>
-									<a class="layui-btn layui-btn-danger layui-btn-mini news_del" data-id="1" articleId="${item.articleId?c}" onclick="changeStatus(this,2)"><i class="layui-icon"></i> 放至回收站</a>
-									<#if type='picArticles'>
 										<a class="layui-btn layui-btn-mini" data-id="1" articleId="${item.articleId?c}" data-toggle="modal" data-target="#changeDescPic" onclick="changeDescPic(this)"><i class="layui-icon"></i>更换描述图</a>
 									</#if>
+									<a class="layui-btn layui-btn-danger layui-btn-mini news_del" data-id="1" articleId="${item.articleId?c}" onclick="changeStatus(this,2)"><i class="layui-icon"></i> 放至回收站</a>
 							</td>
 							<#elseif item.articleStatus == 2>
 							<td>回收站</td>
@@ -189,11 +187,9 @@
 									<#elseif item.articleType==2>
 										<a class="layui-btn layui-btn-mini "  onclick="changeType(this,0)" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i> 设置为普通文章</a>
 										<a class="layui-btn layui-btn-mini "  onclick="changeType(this,1)" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i> 设置为推荐新闻</a>
-									</#if>
-									<a class="layui-btn layui-btn-danger layui-btn-mini news_del "  onclick="singleDelIndeed(this);" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i> 彻底删除</a>
-									<#if type='picArticles'>
 										<a class="layui-btn layui-btn-mini" data-id="1" articleId="${item.articleId?c}" data-toggle="modal" data-target="#changeDescPic" onclick="changeDescPic(this)"><i class="layui-icon"></i> 更换描述图</a>
 									</#if>
+								<a class="layui-btn layui-btn-danger layui-btn-mini news_del "  onclick="singleDelIndeed(this);" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i> 彻底删除</a>
 							</td>
 							</#if>
 						</tr>
@@ -289,7 +285,7 @@
 						
 					</div>
 				</div>
-				<div class="modal-footer">
+				<div class="modal-footer" id="hiddenBlock">
 					<input type="hidden" name="articleId" id="edit_articleId">
 					<button type="button" class="btn btn-xs btn-white" data-dismiss="modal">取 消</button>
 					<input type="button" id="editSaveButton" onclick="editSaveUpdate();" class="btn btn-xs btn-green"  value="保 存">
@@ -304,7 +300,7 @@
 
 function editSaveUpdate(){
 		var d=$("#editForm").serialize();
-		jQuery.post('/api/v1/article/update.html',d,function(data,textStatus,jqXHR){
+		jQuery.post('/api/v1/admin/article/update.html',d,function(data,textStatus,jqXHR){
 			if(data.code==1){
 				alert('sucess');
 				window.location.reload();
@@ -322,7 +318,7 @@ function editSaveUpdate(){
 				ids+=$(this).val()+",";
 			})
 			var params={"ids":ids};
-			jQuery.post('/api/v1/article/del/batch.html',params,function(data,textStatus,jqXHR){
+			jQuery.post('/api/v1/admin/article/del/batch.html',params,function(data,textStatus,jqXHR){
 				if(data.code==1){
 					alert('删除成功');
 					location.reload();
@@ -351,7 +347,7 @@ function editSaveUpdate(){
 			ids+=$(this).val()+",";
 		})
 		var params={"articleId":ids};
-		jQuery.post('/api/v1/article/delete.html',params,function(data,textStatus,jqXHR){
+		jQuery.post('/api/v1/admin/article/delete.html',params,function(data,textStatus,jqXHR){
 			if(data.code==1){
 				alert('删除成功');
 				location.reload();
@@ -364,7 +360,7 @@ function editSaveUpdate(){
 	}
 	function changeStatus(obj,status){
 		var articleId=$(obj).attr("articleId");
-		jQuery.get('/api/v1/article/update/typeOrStatus.html',{"key":"status","articleId":articleId,"articleStatus":status},function(data,textStatus,jqXHR){
+		jQuery.get('/api/v1/admin/article/update/typeOrStatus.html',{"key":"status","articleId":articleId,"articleStatus":status},function(data,textStatus,jqXHR){
 			if(data.code==1){
 				alert('sucess');
 				window.location.reload();
@@ -375,7 +371,7 @@ function editSaveUpdate(){
 	}
 	function changeType(obj,type){
 		var articleId=$(obj).attr("articleId");
-		jQuery.get('/api/v1/article/update/typeOrStatus.html',{"key":"type","articleId":articleId,"articleType":type},function(data,textStatus,jqXHR){
+		jQuery.get('/api/v1/admin/article/update/typeOrStatus.html',{"key":"type","articleId":articleId,"articleType":type},function(data,textStatus,jqXHR){
 			if(data.code==1){
 				alert('sucess');
 				window.location.reload();
@@ -387,9 +383,11 @@ function editSaveUpdate(){
 	$("#searchButton").click(function(){
 		var q=$("#searchText").val();
 		$("input[name='q']").val(q);
+		var titleId=null;
+	
 		$.ajax({
 			type:'get',
-			url:'/api/v1/search/article.html',
+			url:'/api/v1/admin/search/article.html',
 			data:$("#pageForm").serialize(),
 			success:function(data,str){
 				if(data.code==1){
@@ -400,7 +398,8 @@ function editSaveUpdate(){
 					for(var i=0;i<data.data.data.length;i++){
 						var p=data.data.data[i];
 						var m='';
-						var t='<tr><td><input name="checked" lay-skin="primary" lay-filter="choose" type="checkbox" value="'+p.articleId+'"><div class="layui-unselect layui-form-checkbox" lay-skin="primary"><i class="layui-icon"></i></div></td><td>'+p.articleId+'</td><td><a style="text-decoration:underline;" href="/admin/title/article/'+p.titleId+'.html">'+p.titleName+'</a></td><td align="left">'+p.articleName+'</td><td>'+p.articleAuthor+'</td>	<td> <a href="/admin/articles.html?userId='+p.userId+'" style="text-decoration:underline;" >'+p.realname+'</a></td><td>'+p.createDateStr+'</td><td>'+p.updateDateStr+'</td>'
+						var date=$.format.date(p.createDate,'yyyy-MM-dd mm:HH:ss');
+						var t='<tr><td><input name="checked" lay-skin="primary" lay-filter="choose" type="checkbox" value="'+p.articleId+'"><div class="layui-unselect layui-form-checkbox" lay-skin="primary"><i class="layui-icon"></i></div></td><td>'+p.articleId+'</td><td><a style="text-decoration:underline;" href="/admin/title/article/'+p.titleId+'.html">'+p.titleName+'</a></td><td align="left"><a href="javascript:void(0)" data-toggle="modal" data-target="#changeSource" style="text-decoration:underline;" onclick="loadArticle(this);" articleId="'+p.articleId+'">'+p.articleName+'</a></td><td>'+p.articleAuthor+'</td><td> <a href="/admin/articles.html?userId='+p.userId+'" style="text-decoration:underline;" >'+p.realname+'</a></td><td>'+date+'</td><td>'+p.updateDateStr+'</td>'
 						if(p.articleType==0){
 							t+='<td>普通文章</td>';
 							m='<a class="layui-btn layui-btn-mini "  onclick="changeType(this,1)" articleId="'+p.articleId+'"><i class="iconfont icon-edit"></i> 设为推荐新闻</a><a class="layui-btn layui-btn-mini "  onclick="changeType(this,1)" articleId="'+p.articleId+'"><i class="iconfont icon-edit"></i> 设置为首页图片文章</a>';
@@ -471,13 +470,12 @@ function editSaveUpdate(){
 		},'json');
 	}
 	
-		
 	
 	function loadArticle(obj){
 		var articleId=$(obj).attr("articleId");
 		$("#edit_articleId").val(articleId);
 		initkindEditor();
-		jQuery.get('/api/v1/article/detail/'+articleId+'.html',function(data,textStatus,jqXHR){
+		jQuery.get('/api/v1/admin/article/detail/'+articleId+'.html',function(data,textStatus,jqXHR){
 			if(data.code==1){
 				var article=data.data;
 				$("#edit_articleName").val(article.articleName);
@@ -514,13 +512,12 @@ function editSaveUpdate(){
 					}
 				}
 				$("#leimu0").append(str);
-				showChild($("#leimu0"));
+				showChild(titleId,$("#leimu0"));
  			}
  		})
  	}
- 	function showChild(obj){
+ 	function showChild(titleId,obj){
  	 $("#leimu1").empty();
- 		var titleId=$("#edit_articleId").val();
         var parentId=$(obj).val();
             $.ajax({
                 url:'/api/v1/title/'+parentId+'.html',
@@ -552,7 +549,7 @@ function editSaveUpdate(){
  
  	function singleDelIndeed(obj){
  		var articleId=$(obj).attr("articleId");
- 		jQuery.get('/api/v1/article/delete.html',{"articleId":articleId},function(data,textStatus,jqXHR){
+ 		jQuery.get('/api/v1/admin/article/delete.html',{"articleId":articleId},function(data,textStatus,jqXHR){
  			alert(data.msg);
  		},'json');
  	}
@@ -579,7 +576,7 @@ function editSaveUpdate(){
  				'Accept':'application/json',
  				'Content-type':'application/json'
  			},
- 			url:'/api/v1/article/update/descpic.html',
+ 			url:'/api/v1/admin/article/update/descpic.html',
  			type:'post',
  			data:formData,
  			dataType:'json',

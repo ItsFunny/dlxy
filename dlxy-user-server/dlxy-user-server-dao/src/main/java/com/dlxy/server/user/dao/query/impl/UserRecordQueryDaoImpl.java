@@ -62,7 +62,7 @@ public class UserRecordQueryDaoImpl implements UserRecordQueryDao
 				userRecordDTO.setRecordId(rs.getLong(1));
 				userRecordDTO.setUserId(rs.getLong(2));
 				System.out.println(rs.getString(3));
-				userRecordDTO.setUsername(rs.getString(3));
+				userRecordDTO.setRealname(rs.getString(3));
 				System.out.println(rs.getString(4));
 				userRecordDTO.setRecordDetail(rs.getString(4));
 				System.out.println(rs.getObject(5));
@@ -130,7 +130,7 @@ public class UserRecordQueryDaoImpl implements UserRecordQueryDao
 	public Collection<UserRecordDTO> findRecordsByPage(int start, int end, Map<String, Object> params)
 			throws SQLException
 	{
-		String sql = "select a.record_id,a.user_id,b.username,a.record_detail,a.create_date from dlxy_record a ,dlxy_user b where a.user_id = b.user_id ";
+		String sql = "select a.record_id,a.user_id,b.realname,a.record_detail,a.create_date from dlxy_record a ,dlxy_user b where a.user_id = b.user_id ";
 		List<Object> l = new LinkedList<Object>();
 		String key = null;
 //		try
@@ -146,7 +146,7 @@ public class UserRecordQueryDaoImpl implements UserRecordQueryDao
 //		{
 		if(params.containsKey("q"))
 		{
-			sql += " and b.username like ? ";
+			sql += " and b.realname like ? ";
 			key=params.get("q").toString();
 			l.add("%" + key + "%");
 		}else if(params.containsKey("userId"))
@@ -155,7 +155,7 @@ public class UserRecordQueryDaoImpl implements UserRecordQueryDao
 			l.add(params.get("userId"));
 		}
 //		}
-		sql += "order by a.create_date limit ?,?";
+		sql += "order by a.create_date desc limit ?,?";
 		l.add(start);
 		l.add(end);
 		Collection<UserRecordDTO> collection = queryRunner.query(sql, new UserRecordResultSetHandler(), l.toArray());
@@ -173,7 +173,7 @@ public class UserRecordQueryDaoImpl implements UserRecordQueryDao
 		List<Object> l = new LinkedList<>();
 		if(params.containsKey("q"))
 		{
-			sql+=" and  user_id in (select b.user_id from dlxy_user b where b.username like ? ) ";
+			sql+=" and  user_id in (select b.user_id from dlxy_user b where b.realname like ? ) ";
 			l.add("%"+params.get("q").toString()+"%");
 		}else if (params.containsKey("userId"))
 		{

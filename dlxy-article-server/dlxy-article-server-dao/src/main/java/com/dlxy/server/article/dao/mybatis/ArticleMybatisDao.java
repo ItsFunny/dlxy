@@ -29,7 +29,7 @@ import com.dlxy.common.dto.ArticleDTO;
  * @date 创建时间：2018年6月28日 上午10:29:02
  */
 @Mapper
-public interface ArticleMybatisDao
+public interface ArticleMybatisDao extends DlxyArticleDao
 {
 
 	/**
@@ -52,7 +52,7 @@ public interface ArticleMybatisDao
 	@Update("update dlxy_article set article_status=#{status} where article_id=#{articleId}")
 	void updateArticleStatus(@Param("articleId") Long articleId, @Param("status") Integer status);
 
-	void updateInBatch(Map<String, Object> params);
+	void updateStatusInBatch(Map<String, Object> params);
 
 	void changeArticlesTypeInBatch(Map<String, Object> params);
 
@@ -76,7 +76,7 @@ public interface ArticleMybatisDao
 	// ,a.article_status ,c.realname ,c.user_id,a.delete_date,a.article_content from
 	// dlxy_article a,dlxy_title b ,dlxy_user_article c where a.title_id=b.title_id
 	// and a.article_id= c.article_id and a.article_id=#{articleId}")
-	@Select("select a.article_id,a.title_id,a.article_name,a.article_author,a.article_type,a.create_date,a.update_date ,a.article_status,a.article_content,c.realname ,c.user_id,a.delete_date,b.title_parent_id,b.title_name "
+	@Select("select a.article_id,a.visit_count,a.title_id,a.article_name,a.article_author,a.article_type,a.create_date,a.update_date ,a.article_status,a.article_content,c.realname ,c.user_id,c.realname,a.delete_date,b.title_parent_id,b.title_name "
 			+ "from dlxy_article a left join dlxy_title b  on a.title_id=b.title_id "
 			+ "left join dlxy_user_article c on a.article_id=c.article_id " + "where 1=1 and "
 			+ " a.article_id=#{articleId}")
@@ -108,7 +108,8 @@ public interface ArticleMybatisDao
 	// Collection<ArticleDTO>findArticlesInTitleIds(@Param("list")List<Integer>
 	// titelIds,@Param("limit")int limit);
 
-	@Select("SELECT a.article_id,a.title_id,(SELECT b.title_parent_id FROM dlxy_title b WHERE b.title_id=a.title_id) titleParentId,a.article_name,a.article_author,a.article_content,a.article_type,a.article_status,a.create_date,a.update_date FROM dlxy_article a WHERE article_id=#{articleId}")
+	@Deprecated  //用自动生成的代替  取消代替
+	@Select("SELECT a.article_id,a.title_id,a.visit_count,(SELECT b.title_parent_id FROM dlxy_title b WHERE b.title_id=a.title_id) titleParentId,a.article_name,a.article_author,a.article_content,a.article_type,a.article_status,a.create_date,a.update_date FROM dlxy_article a WHERE article_id=#{articleId}")
 	ArticleDTO findByArticleId(Long articleId);
 
 	Long countArticleByTitleIds(Integer[] ids);
@@ -122,7 +123,7 @@ public interface ArticleMybatisDao
 	 * @author joker
 	 * @date 创建时间：2018年7月19日 上午7:57:11
 	 */
-	@Select("select article_id,title_id,article_name,article_author,article_type,article_status,create_date,update_date from dlxy_article order by create_date desc limit #{count}")
+	@Select("select article_id,title_id,article_name,article_author,article_type,article_status,create_date,update_date from dlxy_article where article_status=1 order by create_date desc limit #{count}")
 	Collection<ArticleDTO> findLatestArticleLimited(int count);
 
 	/*
@@ -146,7 +147,7 @@ public interface ArticleMybatisDao
 	/*
 	 * 查询文章的上一篇和下一篇
 	 */
-	@Select("(select a.article_id,a.article_name,a.create_date from dlxy_article a where a.article_id <#{articleId} order by a.create_date desc limit 1 ) union all (select b.article_id,b.article_name,b.create_date from dlxy_article b where b.article_id> #{articleId} order by b.create_date desc limit 1 )")
+	@Select("(SELECT a.article_id,a.article_name,a.create_date FROM dlxy_article a WHERE a.article_id< #{articleId} AND a.article_status=1 ORDER BY a.article_id DESC LIMIT 1) UNION ALL (SELECT b.article_id,b.article_name,b.create_date FROM dlxy_article b WHERE b.article_id> #{articleId} AND b.article_status=1 ORDER BY b.create_date ASC LIMIT 1)")
 	Collection<ArticleDTO> findArticlePrevAndNext(Long articleId);
 
 	@Select("select count(1) from dlxy_article  a left join dlxy_title b on a.title_id=b.title_id left join dlxy_user_article c on a.article_id=c.article_id ")
@@ -159,6 +160,7 @@ public interface ArticleMybatisDao
 			+ "left join dlxy_user_article c on a.article_id=c.article_id order by a.create_date desc limit #{start},#{end}")
 	Collection<ArticleDTO> findAllArtilcesByPage(@Param("start") int start, @Param("end") int end);
 
+	@Deprecated
 	@Select("select a.article_id,a.title_id,a.article_name,a.article_author,a.article_type,a.create_date,a.update_date,a.article_status ,c.realname,c.user_id,a.delete_date,b.title_name from dlxy_article  a left join dlxy_title b on a.title_id=b.title_id  left join dlxy_user_article c on a.article_id=c.article_id   WHERE article_type= 1 and article_status=1 order by a.create_date desc ")
 	Collection<ArticleDTO> findAllRecommedArticles();
 

@@ -73,7 +73,7 @@ public class ArticleServiceImpl implements IArticleService ,IUserArticleService
 		}
 		params.put("status", status);
 		params.put("list", Arrays.asList(articleIds));
-		articleDao.updateInBatch(params);
+		articleDao.updateStatusInBatch(params);
 	}
 
 	@Override
@@ -83,7 +83,7 @@ public class ArticleServiceImpl implements IArticleService ,IUserArticleService
 		params.put("updateDate", new Date());
 		params.put("type", type);
 		params.put("list", Arrays.asList(articleIds));
-		articleDao.updateInBatch(params);
+		articleDao.updateStatusInBatch(params);
 	}
 
 	
@@ -150,6 +150,7 @@ public class ArticleServiceImpl implements IArticleService ,IUserArticleService
 	@Override
 	public ArticleDTO findByArticleId(Long articleId)
 	{
+//		return articleDao.selectByPrimaryKey(articleId);
 		return articleDao.findByArticleId(articleId);
 	}
 
@@ -218,6 +219,17 @@ public class ArticleServiceImpl implements IArticleService ,IUserArticleService
 	{
 		return articleDao.findArticlesByParentTitleId((pageNum-1)*pageSize,pageSize, titleParentId, status);
 	}
+
+	@Override
+	public void updateArticleVisitCount(Long articleId, Integer visitCount)
+	{
+		ArticleDTO articleDTO=new ArticleDTO();
+		articleDTO.setArticleId(articleId);
+		articleDTO.setVisitCount(visitCount);
+		articleDao.updateByPrimaryKeySelective(articleDTO);
+		
+	}
+
 
 	
 //	@Override

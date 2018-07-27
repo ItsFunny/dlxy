@@ -5,8 +5,16 @@
 <web-app>
 	<display-name>Archetype Created Web Application</display-name>
 
-
-
+	<filter>
+		<filter-class>
+			org.springframework.web.filter.DelegatingFilterProxy
+		</filter-class>
+		<filter-name>shiroFilter</filter-name>
+	</filter>
+	<filter-mapping>
+		<filter-name>shiroFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
 	<filter>
 		<filter-class>com.dlxy.filter.CharsetFilter</filter-class>
 		<filter-name>CharsetFilter</filter-name>
@@ -15,7 +23,7 @@
 			<param-value>utf-8</param-value>
 		</init-param>
 	</filter>
-	
+
 	<filter-mapping>
 		<filter-name>CharsetFilter</filter-name>
 		<url-pattern>/*</url-pattern>
@@ -29,12 +37,12 @@
 		<param-name>spring.profiles.active</param-name>
 		<param-value>dev</param-value>
 	</context-param>
-
-
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>classpath:/spring/*.xml</param-value>
 	</context-param>
+
+
 	<servlet>
 		<servlet-name>dlxySystemDispatchServlet</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
@@ -49,4 +57,8 @@
 		<servlet-name>dlxySystemDispatchServlet</servlet-name>
 		<url-pattern>*.html</url-pattern>
 	</servlet-mapping>
+	<error-page>
+		<error-code>404</error-code>
+		<location>/404.html</location>
+	</error-page>
 </web-app>

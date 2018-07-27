@@ -56,7 +56,19 @@ public class ResultUtil
 	{
 		return sucess(null,"sucess");
 	}
-
+	
+	public static <T> ResultDTO<T>fail(T data)
+	{
+		return fail("fail",data);
+	}
+	public static <T> ResultDTO<T> fail(String msg,T data)
+	{
+		ResultDTO<T> resultDTO = new ResultDTO<T>();
+		resultDTO.setMsg(msg);
+		resultDTO.setCode(RestAPIStatus.FAIL.ordinal());
+		resultDTO.setData(data);
+		return resultDTO;
+	}
 	public static <T> ResultDTO<T>fail()
 	{
 		return fail("fail");

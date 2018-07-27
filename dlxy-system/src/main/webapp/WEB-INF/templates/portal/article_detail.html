@@ -1,32 +1,34 @@
 <#include "header.html">
-<script>
-	loadLatestArticles();
-	$(document).ready(function(){
-		jQuery.get('/api/v1/aboutTitles.html',function(data){
-			 if(data.code==1){
-				var str='<li class="bbb" ><a href="/index.html"><i class="icon-home"></i>首页</a></li>';
-				titleIdArray=new Array(data.data.length);
-			  	for(var i=0;i<data.data.length;i++){
-			  		var o=data.data[i];
-			  		titleIdArray[i]=o.titleId;
-			  		str+='<li class="aaa" id="li_'+o.titleId+'" titleId="'+o.titleId+'""><a href="/title/detail/'+o.titleId+'.html"><i class="icon-home"></i>'+o.titleName+'</a>';
-			  		str+='</li>';
-			  	}
-			  	$("#above_titles").append(str);
-			  	$(".aaa").mouseenter(function(obj){
-			  		var t=obj.currentTarget;
-					loadChildTitles(t);
-				})	
-				$(".aaa").mouseleave(function(obj){
-					var t=obj.currentTarget;
-					changeChildsStatus(t,"none");
-				})
-			  }
-		},'json');
-		loadNews(8,1);
-		setTimeout("loadLatestArticles()",1000);
-	});
+
+<script type="text/javascript" src="/js/portal_article.js"></script>
+<script> 
 	
+	$(document).ready(function(){
+		loadTitles();
+		setTimeout("loadNews(8,1)",700);
+		setTimeout("loadLatestArticles()",1000);
+		loadVisitCount();
+	});
+	function loadVisitCount(){
+		$.ajax({
+			url:'/api/v1/article/visitCount.html?articleId=${article.articleId?c}',
+			dataType:'json',
+			 contentType: "application/json; charset=utf-8",
+			type:'get',
+			success:function(data){
+				if(data.code==1){
+				$("#visitCount").html("访问量:"+data.data);
+				}else{
+					alert("加载文章访问量失败");
+						$("#visitCount").html("访问量:"+data.data);
+				}
+			},
+			error:function(){
+				alert("加载文章访问量失败");
+					$("#visitCount").html("访问量:"+data.data);
+			}
+		})
+	}
 	function loadChildTitles(obj){
 		var titleId=$(obj).attr("titleId");
 		var childs=$(".belong_"+titleId);
@@ -91,7 +93,7 @@
 	function loadNews(pageSize,pageNum){
     	$("#article_news").empty();
    	 	var params={"type":"news","pageSize":pageSize,"pageNum":pageNum};
-    	jQuery.get('/api/v1/article.html',params,function(data,textStatus,jqXHR){
+    	jQuery.get('/api/v1/articles.html',params,function(data,textStatus,jqXHR){
     		var pageVO=data.data;
     		if(data.code==1){
     			var str='';
@@ -177,7 +179,7 @@
            
             <#if belongTo.parent??>
  				<#assign title=belongTo.parent>		
-          	 	 <a href="index.html">${title.titleName} </a>> <a href="qyjs.html">${belongTo.titleName} </a> </span>
+          	 	 <a href="/title/detail/${title.titleId}.html">${title.titleName} </a>> <a href="/title/detail/${belongTo.titleId}.html">${belongTo.titleName} </a> </span>
             <#else>
              	<#assign title=article.belongTo>
             	 <a href="index.html">${belongTo.titleName} </a>> 
@@ -185,13 +187,17 @@
         </div>
         <!--nr-->
         <div class="xw_xq">
-	            <h1>${article.articleName}<span>创建时间:${article.createDate?string('yyyy-MM-dd HH:mm:ss')} 
+	            <h1>
+	            	${article.articleName}<span>发布时间:${article.createDate?string('yyyy-MM-dd HH:mm:ss')} 作者:${article.articleAuthor}
 	            <#if article.updateDate??>
-		            最近一次更新时间:${article.updateDate?string('yyyy-MM-dd HH:mm:ss')}</span></h1>
+		            最近一次更新时间:${article.updateDate?string('yyyy-MM-dd HH:mm:ss')}        </span>
+		         </h1> 
 	            </#if>
-	            ${article.articleContent!"暂无内容"}
+	            <em id="visitCount"></em>
+	            <p>
+	            	${article.articleContent!"暂无内容"}
+	            </p>
         </div>
-
 
         <div class="fy">
             <div class="shangxiaye">

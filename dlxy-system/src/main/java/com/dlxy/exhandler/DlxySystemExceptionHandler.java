@@ -7,6 +7,7 @@
 */
 package com.dlxy.exhandler;
 
+import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
@@ -29,8 +30,12 @@ public class DlxySystemExceptionHandler
 	{
 		//返回404 界面
 		ModelAndView modelAndView=new ModelAndView("404");
-		
 		return modelAndView;
+	}
+	@ExceptionHandler(value=UnauthorizedException.class)
+	public ModelAndView unAuth()
+	{
+		return new ModelAndView("no_permission");
 	}
 
 }

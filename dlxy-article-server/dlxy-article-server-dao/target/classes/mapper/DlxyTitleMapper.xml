@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dlxy.server.article.dao.mybatis.TitleMybatisDao" >
+  <resultMap id="BaseResultMap" type="com.dlxy.common.dto.DlxyTitleDTO" >
+    <id column="title_id" property="titleId" jdbcType="INTEGER" />
+    <result column="title_name" property="titleName" jdbcType="VARCHAR" />
+    <result column="title_parent_id" property="titleParentId" jdbcType="INTEGER" />
+    <result column="title_type" property="titleType" jdbcType="INTEGER" />
+    <result column="title_display_seq" property="titleDisplaySeq" jdbcType="INTEGER" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    title_id, title_name, title_parent_id, title_type, title_display_seq, create_date, 
+    update_date
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.dlxy.server.article.model.DlxyTitleExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from dlxy_title
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dlxy_title
+    where title_id = #{titleId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dlxy_title
+    where title_id = #{titleId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.dlxy.server.article.model.DlxyTitleExample" >
+    delete from dlxy_title
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.dlxy.common.dto.DlxyTitleDTO" >
+    insert into dlxy_title (title_id, title_name, title_parent_id, 
+      title_type, title_display_seq, create_date, 
+      update_date)
+    values (#{titleId,jdbcType=INTEGER}, #{titleName,jdbcType=VARCHAR}, #{titleParentId,jdbcType=INTEGER}, 
+      #{titleType,jdbcType=INTEGER}, #{titleDisplaySeq,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{updateDate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.dlxy.common.dto.DlxyTitleDTO" >
+    insert into dlxy_title
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="titleId != null" >
+        title_id,
+      </if>
+      <if test="titleName != null" >
+        title_name,
+      </if>
+      <if test="titleParentId != null" >
+        title_parent_id,
+      </if>
+      <if test="titleType != null" >
+        title_type,
+      </if>
+      <if test="titleDisplaySeq != null" >
+        title_display_seq,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      <if test="updateDate != null" >
+        update_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="titleId != null" >
+        #{titleId,jdbcType=INTEGER},
+      </if>
+      <if test="titleName != null" >
+        #{titleName,jdbcType=VARCHAR},
+      </if>
+      <if test="titleParentId != null" >
+        #{titleParentId,jdbcType=INTEGER},
+      </if>
+      <if test="titleType != null" >
+        #{titleType,jdbcType=INTEGER},
+      </if>
+      <if test="titleDisplaySeq != null" >
+        #{titleDisplaySeq,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDate != null" >
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.dlxy.server.article.model.DlxyTitleExample" resultType="java.lang.Integer" >
+    select count(*) from dlxy_title
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update dlxy_title
+    <set >
+      <if test="record.titleId != null" >
+        title_id = #{record.titleId,jdbcType=INTEGER},
+      </if>
+      <if test="record.titleName != null" >
+        title_name = #{record.titleName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.titleParentId != null" >
+        title_parent_id = #{record.titleParentId,jdbcType=INTEGER},
+      </if>
+      <if test="record.titleType != null" >
+        title_type = #{record.titleType,jdbcType=INTEGER},
+      </if>
+      <if test="record.titleDisplaySeq != null" >
+        title_display_seq = #{record.titleDisplaySeq,jdbcType=INTEGER},
+      </if>
+      <if test="record.createDate != null" >
+        create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateDate != null" >
+        update_date = #{record.updateDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update dlxy_title
+    set title_id = #{record.titleId,jdbcType=INTEGER},
+      title_name = #{record.titleName,jdbcType=VARCHAR},
+      title_parent_id = #{record.titleParentId,jdbcType=INTEGER},
+      title_type = #{record.titleType,jdbcType=INTEGER},
+      title_display_seq = #{record.titleDisplaySeq,jdbcType=INTEGER},
+      create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      update_date = #{record.updateDate,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.dlxy.common.dto.DlxyTitleDTO" >
+    update dlxy_title
+    <set >
+      <if test="titleName != null" >
+        title_name = #{titleName,jdbcType=VARCHAR},
+      </if>
+      <if test="titleParentId != null" >
+        title_parent_id = #{titleParentId,jdbcType=INTEGER},
+      </if>
+      <if test="titleType != null" >
+        title_type = #{titleType,jdbcType=INTEGER},
+      </if>
+      <if test="titleDisplaySeq != null" >
+        title_display_seq = #{titleDisplaySeq,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDate != null" >
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where title_id = #{titleId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.dlxy.common.dto.DlxyTitleDTO" >
+    update dlxy_title
+    set title_name = #{titleName,jdbcType=VARCHAR},
+      title_parent_id = #{titleParentId,jdbcType=INTEGER},
+      title_type = #{titleType,jdbcType=INTEGER},
+      title_display_seq = #{titleDisplaySeq,jdbcType=INTEGER},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      update_date = #{updateDate,jdbcType=TIMESTAMP}
+    where title_id = #{titleId,jdbcType=INTEGER}
+  </update>
+</mapper>

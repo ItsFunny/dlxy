@@ -13,9 +13,6 @@
 				,delete_date =#{deleteDate}
 			</if>
 		</if>
-		<if test="null!=type">
-			article_type=#{type}
-		</if>
 
 		where 1=1
 		<if test="null!=titleId and titleId >0">

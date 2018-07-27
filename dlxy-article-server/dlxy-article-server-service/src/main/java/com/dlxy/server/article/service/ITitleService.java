@@ -41,5 +41,5 @@ public interface ITitleService
 	
 	void insertOrUpdate(DlxyTitleDTO dlxyTitleDTO);
 	
-	void deleteByTitleId(Integer titleId);
+	Integer deleteByTitleId(Integer titleId);
 }

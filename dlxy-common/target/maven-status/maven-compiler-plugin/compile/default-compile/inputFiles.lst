@@ -17,10 +17,11 @@
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/utils/RSAUtils.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/dto/PageDTO.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/enums/ArticleTypeEnum.java
-/Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/dto/AbstractDlxyTreeComponent.java
+/Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/vo/UserRecordUrlVO.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/model/VisitUserManager.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/enums/ArticlePictureTypeEnum.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/annotation/UserRecordAnnotation.java
+/Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/dto/AbstractDlxyTreeComposite.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/dto/PictureUploadResponseDTO.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/dto/AbstractDlxyArticleComposite.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/dto/UserRoleDTO.java
@@ -34,5 +35,7 @@
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/enums/ArticleStatusEnum.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/event/AppEventPublisher.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/service/IdWorkerService.java
+/Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/vo/CreaterAndConsumer.java
+/Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/dto/AbstractDlxyUserRecordComposite.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/utils/PageResultUtil.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/enums/DlxyTitleEnum.java

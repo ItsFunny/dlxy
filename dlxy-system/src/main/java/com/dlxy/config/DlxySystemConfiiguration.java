@@ -23,6 +23,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -47,6 +48,7 @@ import com.dlxy.common.service.IdWorkerService;
 import com.dlxy.common.service.IdWorkerServiceTwitter;
 import com.dlxy.service.IArticleManagementWrappedService;
 import com.dlxy.service.IPictureManagementWrappedService;
+import com.dlxy.service.IRedisService;
 import com.dlxy.service.ITitleManagementWrappedService;
 import com.dlxy.service.IUserMangementWrappedService;
 import com.dlxy.service.ManagementUserRecordObserver;
@@ -58,9 +60,13 @@ import com.dlxy.service.impl.ManagemeentTitleServiceImpl;
 import com.dlxy.service.impl.ManagementArticleServiceObservableImpl;
 import com.dlxy.service.impl.ManagementPictureServiceObservableImpl;
 import com.dlxy.service.impl.ManagementUserServiceImpl;
+import com.dlxy.service.impl.RedisServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 
 /**
  * 
@@ -78,6 +84,7 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 { @ComponentScan.Filter(type = FilterType.ANNOTATION, value = Mapper.class) })
 @MapperScan(annotationClass = Mapper.class, basePackages =
 { "com.dlxy" })
+@Import(DlxySystemShiroConfiguration.class)
 public class DlxySystemConfiiguration implements WebMvcConfigurer
 {
 	@Autowired
@@ -85,6 +92,50 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer
 
 	
 	
+//	@Bean
+//	public JedisPoolConfig poolConfig()
+//	{
+//		JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
+//		jedisPoolConfig.setMaxIdle(5);
+//		jedisPoolConfig.setMaxTotal(1024);
+//		jedisPoolConfig.setMaxWaitMillis(10000);
+//		jedisPoolConfig.setTestOnBorrow(true);
+//		return jedisPoolConfig;
+//	}
+//	@Bean
+//	public JedisPool jedisPool()
+//	{
+////		JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
+////		jedisPoolConfig.setMaxIdle(5);
+////		jedisPoolConfig.setMaxTotal(1024);
+////		jedisPoolConfig.setMaxWaitMillis(10000);
+////		jedisPoolConfig.setTestOnBorrow(true);
+////		JedisPool jedisPool=new jedispool
+//		// JedisPool jedisPool=new
+////		 JedisPool jedisPool =new JedisPool(poolConfig(),dlxyProperty.getRedisHost(),dlxyProperty.getRedisPort(),10000,dlxyProperty.getRedisPassword());
+//		JedisPool jedisPool = new JedisPool(poolConfig(),"localhost", 6379);
+//		return jedisPool;
+//	}
+	@Bean
+	public JedisPool jedisPool()
+	{
+		JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
+		jedisPoolConfig.setMaxIdle(5);
+		jedisPoolConfig.setMaxTotal(1024);
+		jedisPoolConfig.setMaxWaitMillis(10000);
+		jedisPoolConfig.setTestOnBorrow(true);
+		// JedisPool jedisPool=new
+		JedisPool jedisPool = new JedisPool(jedisPoolConfig, dlxyProperty.getRedisHost(), dlxyProperty.getRedisPort(),
+				10000, dlxyProperty.getRedisPassword());
+		// JedisPool jedisPool = new JedisPool("localhost", 6379);
+		return jedisPool;
+	}
+
+	@Bean
+	public IRedisService redisService()
+	{
+		return new  RedisServiceImpl();
+	}
 	@Bean
 	public CommonsMultipartResolver multipartResolver()
 	{
@@ -256,6 +307,7 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer
 	{
 		RabbitTemplate rabbitTemplate = new RabbitTemplate();
 		rabbitTemplate.setConnectionFactory(connectionFactory());
+		rabbitTemplate.setExchange("dlxy");
 		// rabbitTemplate.setMessageConverter(messageConverter);
 		return rabbitTemplate;
 	}
@@ -279,6 +331,7 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer
 		registry.addResourceHandler("/js/**").addResourceLocations("/static/js/**").setCachePeriod(1056000);
 		registry.addResourceHandler("/css/**").addResourceLocations("/static/css/**").setCachePeriod(1056000);
 		registry.addResourceHandler("/imgs/**").addResourceLocations("/static/imgs/**").setCachePeriod(1056000);
+		registry.addResourceHandler("/404.html").addResourceLocations("/WEB-INF/templates/404.html").setCachePeriod(1056000);
 	}
 
 	@Override

@@ -3,6 +3,7 @@
 	var error="";
 $(document).ready(function(){
 
+<#-- 
 	jQuery.get('/api/v1/user/roles/all.html',function(data,textStatus,jqXHR){
 		if(data.code==1){
 			var str='';
@@ -16,6 +17,8 @@ $(document).ready(function(){
 			error=data.msg;
 		}
 	},'json');
+  -->
+
 })
 </script>
 <section class="layui-larry-box">
@@ -46,6 +49,8 @@ $(document).ready(function(){
 				    <label class="layui-form-label">角色</label>
 				    <div class="layui-input-block">
 				      <select name="roleId"  id="edit_role">
+				      	<option value="0">超级管理员</option>
+				      	<option value="1">管理员</option>
 				      </select>
 				    </div>
 				  </div>

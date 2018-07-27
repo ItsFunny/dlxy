@@ -69,6 +69,7 @@ public interface IArticleService
 	/*
 	 * 查询所有推荐文章
 	 */
+	@Deprecated
 	Collection<ArticleDTO>findAllRecommendArticles();
 	
 	
@@ -103,6 +104,8 @@ public interface IArticleService
 	void insertOrUpdate(ArticleDTO articleDTO);
 	
 	void update(ArticleDTO articleDTO) throws SQLException;
+	
+	void updateArticleVisitCount(Long articleId,Integer visitCount);
 	
 	void deleteArticlesInBatch(Long[] articleIds);
 	

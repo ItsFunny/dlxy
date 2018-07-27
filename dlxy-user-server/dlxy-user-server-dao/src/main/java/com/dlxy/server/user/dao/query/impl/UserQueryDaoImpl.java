@@ -132,8 +132,13 @@ public class UserQueryDaoImpl implements UserQueryDao
 	public Long countUserByParam(Map<String, Object> params) throws SQLException
 	{
 		String sql = "select count(1) from dlxy_user where 1=1 ";
-
-		Object count = queryRunner.query(sql, new ScalarHandler<Object>());
+		List<Object>l=new LinkedList<>();
+		if(params.containsKey("realname"))
+		{
+			sql+=" and realname like ? ";
+			l.add("%"+params.get("realaname")+"%");
+		}
+		Object count = queryRunner.query(sql, new ScalarHandler<Object>(),l.toArray());
 		if (null == count)
 		{
 			return 0l;

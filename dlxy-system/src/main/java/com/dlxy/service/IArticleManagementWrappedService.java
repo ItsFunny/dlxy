@@ -16,6 +16,7 @@ import com.dlxy.common.dto.ArticleDTO;
 import com.dlxy.common.dto.DlxyTitleDTO;
 import com.dlxy.common.dto.PageDTO;
 import com.dlxy.common.dto.UserDTO;
+import com.dlxy.model.ArticleVisitInfo;
 import com.dlxy.vo.ArticleVO;
 import com.dlxy.vo.TitleDetailVO;
 
@@ -32,6 +33,11 @@ public interface IArticleManagementWrappedService
 	// PageDTO<Collection<ArticleDTO>>findArticles(int start,int end,Map<String,
 	// Object>params) throws SQLException;
 	
+	/*
+	 * 查询谋篇文章的访问人数
+	 */
+	Integer findArticleVisitCount(Long articleId,String ip);
+	
 	//显示所有的,包括异常的那些文章
 	PageDTO<Collection<ArticleDTO>>findAllArticles(int start,int end);
 	
@@ -44,7 +50,7 @@ public interface IArticleManagementWrappedService
 	 */
 	TitleDetailVO findTitleArticles(int pageSize,int pageNum,int titleId) throws SQLException;
 
-	ArticleDTO findByArticleId(Long articleId) throws SQLException;
+	ArticleDTO findArticleDetailByArticleId(Long articleId) throws SQLException;
 	
 	ArticleDTO showArticleDetail(Long articleId) throws SQLException;
 //	void updateArticleStatusInBatch(Long[] articleIds, int status);
@@ -64,7 +70,7 @@ public interface IArticleManagementWrappedService
 	
 	void addTitleOrUpdate(UserDTO  userDTO,DlxyTitleDTO dlxyTitleDTO);
 	
-	void deleteByTitleId(UserDTO userDTO,Integer titleId);	
+	Integer deleteByTitleId(UserDTO userDTO,Integer titleId);	
 	
 	void deleteInBatch(UserDTO userDTO,Long[] articleIds);
 	

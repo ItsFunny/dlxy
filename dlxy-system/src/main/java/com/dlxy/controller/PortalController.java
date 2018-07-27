@@ -7,6 +7,7 @@
 */
 package com.dlxy.controller;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.dlxy.annotation.CheckIllegalFormat;
 import com.dlxy.common.dto.ArticleDTO;
 import com.dlxy.common.dto.DlxyTitleDTO;
 import com.dlxy.common.dto.IllegalLogDTO;
@@ -33,6 +35,7 @@ import com.dlxy.common.enums.ArticleStatusEnum;
 import com.dlxy.common.enums.ArticleTypeEnum;
 import com.dlxy.common.enums.DlxyTitleEnum;
 import com.dlxy.common.enums.IllegalLevelEnum;
+import com.dlxy.common.event.AppEventPublisher;
 import com.dlxy.common.vo.PageVO;
 import com.dlxy.constant.TitleArticleConstant;
 import com.dlxy.exception.DlxySuspicionException;
@@ -65,6 +68,8 @@ public class PortalController
 	@Autowired
 	private IArticleService articleService;
 	
+	@Autowired
+	private AppEventPublisher appeventPublisher;
 	
 	
 	@RequestMapping("/index")
@@ -90,6 +95,7 @@ public class PortalController
 		return modelAndView;
 	}
 	
+	@CheckIllegalFormat
 	@RequestMapping("/title/detail/{titleId}")
 	public ModelAndView showTitleDetail(@PathVariable("titleId")String titleIdStr,HttpServletRequest request,HttpServletResponse response)
 	{
@@ -99,7 +105,6 @@ public class PortalController
 			Integer titleId=Integer.parseInt(titleIdStr);
 			int pageSize=Integer.parseInt(StringUtils.defaultString(request.getParameter("pageSize"), "10"));
 			int pageNum=Integer.parseInt(StringUtils.defaultString(request.getParameter("pageNum"),"1"));
-			
 			//显示文章:
 			TitleDetailVO titleDetailVO = articleManagementWrappedService.findTitleArticles(pageSize, pageNum, titleId);
 			PageVO<Collection<ArticleDTO>>pageVO=new PageVO<Collection<ArticleDTO>>(titleDetailVO.getArticlePage().getData(), pageSize, pageNum, titleDetailVO.getArticlePage().getTotalCount());
@@ -108,18 +113,14 @@ public class PortalController
 			modelAndView.addObject("parent",titleDetailVO.getParentAndChilds());
 			modelAndView.addObject("title",titleDetailVO.getTitleSelf());
 			return modelAndView;
-		} catch (NumberFormatException e)
-		{
-			//抛异常
-//			throw new DlxySystemIllegalException(l)
-			SuspicionDTO suspicionDTO=new SuspicionDTO(CommonUtils.getRemortIP(request), IllegalLevelEnum.Suspicious.ordinal(), request.getRequestURI());
-			throw new DlxySuspicionException("", suspicionDTO);
-		}catch (Exception e) {
+		} 
+		catch (Exception e) {
 			logger.error("[show title articles] error:{}",e.getMessage());
 			
 		}
 		return modelAndView;
 	}
+	@CheckIllegalFormat
 	@RequestMapping("/article/detail/{articleId}")
 	public ModelAndView showArticleDetail(@PathVariable("articleId")String articleIdStr,HttpServletRequest request,HttpServletResponse response)
 	{
@@ -144,7 +145,7 @@ public class PortalController
 			modelAndView=new ModelAndView("portal/article_detail",params);
 		} catch (Exception e)
 		{
-			params.put("error", "参数错误:");//记录消息
+			params.put("error", e.getMessage());//记录消息
 			logger.error("[show article detail] error:{}",e.getMessage());
 			modelAndView=new ModelAndView("error",params);
 		}

@@ -7,9 +7,6 @@
 */
 package com.dlxy.common.dto;
 
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
 * 
@@ -19,13 +16,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 * @author joker 
 * @date 创建时间：2018年7月19日 上午7:17:12
 */
-public abstract class AbstractDlxyArticleComposite extends AbstractDlxyTreeComponent
+public abstract class AbstractDlxyArticleComposite extends AbstractDlxyTreeComposite
 {
-	
 	private AbstractDlxyArticleComposite previous;
-	
 	private AbstractDlxyArticleComposite next;
-	
 	private AbstractDlxyTitleComposite belongTo;
 
 	public AbstractDlxyTitleComposite getBelongTo()

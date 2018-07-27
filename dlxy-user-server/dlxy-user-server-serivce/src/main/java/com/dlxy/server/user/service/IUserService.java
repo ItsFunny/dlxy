@@ -9,9 +9,12 @@ package com.dlxy.server.user.service;
 
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import com.dlxy.common.dto.UserDTO;
+import com.dlxy.server.user.model.DlxyUser;
+import com.dlxy.server.user.model.DlxyUserExample;
 
 /**
 * 
@@ -32,7 +35,15 @@ public interface IUserService
 	
 	UserDTO findByUsername(String username);
 	
+	Integer deleteUser(List<Long> userIds);
+	
+	Integer deleteUseByUserId(Long userId);
+	
 	void updateUserStatusByUserId(Long userId,Integer status);
+	
+	int updateUserByUserId(DlxyUser user);
+	
+	void updateUserByExample(DlxyUser user);
 	
 	Long countUsersByParam(Map<String, Object>params) throws SQLException;
 	

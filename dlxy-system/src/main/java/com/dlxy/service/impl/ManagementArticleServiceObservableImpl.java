@@ -12,13 +12,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -31,27 +27,30 @@ import com.dlxy.common.dto.ArticleDTO;
 import com.dlxy.common.dto.DlxyTitleDTO;
 import com.dlxy.common.dto.IllegalLogDTO;
 import com.dlxy.common.dto.PageDTO;
-import com.dlxy.common.dto.PictureDTO;
 import com.dlxy.common.dto.UserDTO;
 import com.dlxy.common.dto.UserRecordDTO;
 import com.dlxy.common.enums.ArticleStatusEnum;
 import com.dlxy.common.enums.IllegalLevelEnum;
 import com.dlxy.common.enums.PictureStatusEnum;
-import com.dlxy.common.event.AppEvent;
 import com.dlxy.common.event.AppEventPublisher;
-import com.dlxy.common.event.Events;
 import com.dlxy.common.utils.PageResultUtil;
 import com.dlxy.exception.DlxySystemIllegalException;
+import com.dlxy.model.ArticleVisitCountFactory;
+import com.dlxy.model.ArticleVisitInfo;
 import com.dlxy.server.article.service.IArticleCountService;
 import com.dlxy.server.article.service.IArticleService;
 import com.dlxy.server.article.service.ITitleService;
 import com.dlxy.server.picture.service.IPictureService;
+import com.dlxy.service.AbstractRecordDetailHandler;
+import com.dlxy.service.ArticleVisitCountContext;
+import com.dlxy.service.DbVisitCountStrategy;
 import com.dlxy.service.IArticleManagementWrappedService;
+import com.dlxy.service.IRedisService;
+import com.dlxy.service.RedisArticleVIsitCountStrategy;
 import com.dlxy.utils.FileUtil;
-import com.dlxy.vo.ArticleVO;
 import com.dlxy.vo.TitleDetailVO;
 import com.joker.library.utils.CommonUtils;
-import com.rabbitmq.client.Return;
+
 
 /**
  * 
@@ -76,6 +75,92 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 	private AppEventPublisher appEventPublisher;
 	@Autowired
 	private IPictureService pictureService;
+
+	@Autowired
+	private IRedisService redisService;
+	@Autowired
+	private ArticleVisitCountContext articleVisitCountContext;
+	
+//	{
+//		//这样似乎不太好,但是又不想放到ioc中  ,还是放到ioc中吧,还是改为静态类了,因为将flyweight和strategy整到一起去了,
+		//放到ioc中得话context也需要注册
+//		ArticleVisitCountFactory.init(redisService, articleService);
+//	}
+
+	@Override
+	public Integer findArticleVisitCount(Long articleId, String ip)
+	{
+		int result = 0;
+//		ArticleVisitInfo visitInfo = null;
+//		ArticleVisitCountContext context = new ArticleVisitCountContext(articleService,redisService);
+//		visitInfo = articleVisitCountFactory.get(articleId);
+//		if(redisService.isAvaliable())
+//		{
+//			context = new ArticleVisitCountContext(new RedisArticleVIsitCountStrategy(redisService, articleService));
+//		}else {
+//			context=new ArticleVisitCountContext(new DbVisitCountStrategy(articleService));
+//		}
+		result = articleVisitCountContext.visitCount(articleId);
+		// String key = String.format(IRedisService.ARTICLE_VISIT_COUNT, articleId);
+		// String json = redisService.get(key);
+		// ArticleVisitInfo visitInfo = null;
+		// if (StringUtils.isEmpty(json))
+		// {
+		// try
+		// {
+		// ArticleDTO articleDTO = articleService.findByArticleId(articleId);
+		//// visitInfo = ArticleVisitCountFactory.create();
+		// if (null == articleDTO)
+		// {
+		// visitInfo=ArticleVisitCountFactory.create(0);
+		// throw new RuntimeException("文章不存在");
+		// } else
+		// {
+		// visitInfo=ArticleVisitCountFactory.create(articleDTO.getVisitCount());
+		// }
+		// // redisService.set(key, JsonUtil.obj2Json(visitInfo));
+		// }catch (Exception e) {
+		// e.printStackTrace();
+		// throw new JedisException("redis服务器挂了");
+		// }
+		// } else
+		// {
+		// visitInfo = JsonUtil.json2Object(json, ArticleVisitInfo.class);
+		// }
+		// synchronized (visitInfo)
+		// {
+		// Map<String, Long> visitors = visitInfo.getVisitors();
+		// boolean needIncr = true;
+		// if (null != visitors)
+		// {
+		// Long lastVisitTime = visitors.get(ip);
+		// if (null != lastVisitTime && (System.currentTimeMillis() - lastVisitTime) <
+		// 1000*90 )
+		// {
+		// needIncr = false;
+		// }
+		//
+		// } else
+		// {
+		// visitors = new HashMap<>();
+		// }
+		// if (needIncr)
+		// {
+		// visitors.put(ip, System.currentTimeMillis());
+		// visitInfo.incr();
+		// }
+		// result=visitInfo.get();
+		// }
+		// try
+		// {
+		// redisService.set(key, JsonUtil.obj2Json(visitInfo));
+		// } catch (Exception e)
+		// {
+		// e.printStackTrace();
+		// throw new JedisException("redis服务器挂了");
+		// }
+		return result;
+	}
 
 	@Override
 	public PageDTO<Collection<ArticleDTO>> findByParams(int pageSize, int pageNum, Map<String, Object> params)
@@ -102,6 +187,7 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 		return new PageDTO<Collection<ArticleDTO>>(totalCount, datas);
 	}
 
+	@Transactional
 	@Override
 	public void updateArticlesInBatch(UserDTO userDTO, Long[] articleIds, int status)
 	{
@@ -111,9 +197,10 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 		{
 			sBuilder.append(long1 + ",");
 		}
-		execute(userDTO, "update:article:" + sBuilder + ":status to " + status);
+		execute(userDTO, "修改文章状态:" + AbstractRecordDetailHandler.ARTICLE + ":" + sBuilder + ": 状态->" + status);
 	}
 
+	@Transactional
 	@Override
 	public void updateArticleTypeInBatch(UserDTO userDTO, Long[] articleIds, int type)
 	{
@@ -123,11 +210,11 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 		{
 			sBuilder.append(long1 + ",");
 		}
-		execute(userDTO, "update:article:" + sBuilder + ":type to " + type);
+		execute(userDTO, "修改文章类型:" + AbstractRecordDetailHandler.ARTICLE + ":" + sBuilder + ":类型-> " + type);
 	}
 
 	@Override
-	public ArticleDTO findByArticleId(Long articleId) throws SQLException
+	public ArticleDTO findArticleDetailByArticleId(Long articleId) throws SQLException
 	{
 
 		return articleService.findArticleDetailByArticleId(articleId);
@@ -156,6 +243,7 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 		return articleDTO;
 	}
 
+	@Transactional
 	@Override
 	public int rollBackArticle(UserDTO userDTO, int status, Long articleId, int titleId)
 	{
@@ -163,11 +251,11 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 		try
 		{
 			count = articleService.rollBackArticle(status, articleId, titleId);
-			String detail = "rollback:article:" + articleId + ":status to " + status;
+			String detail = "回收站中恢复文章:" + AbstractRecordDetailHandler.ARTICLE + ":" + articleId;
 			execute(userDTO, detail);
 		} catch (SQLException e)
 		{
-			e.printStackTrace();
+			throw new RuntimeException("sql错误");
 		}
 		return count;
 	}
@@ -216,11 +304,11 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 	public void addTitleOrUpdate(UserDTO userDTO, DlxyTitleDTO dlxyTitleDTO)
 	{
 		titleService.insertOrUpdate(dlxyTitleDTO);
-		execute(userDTO, "addOrUpdate:title:" + dlxyTitleDTO.getTitleId());
+		execute(userDTO, "添加或者更新标题:" + AbstractRecordDetailHandler.TITLE + ":" + dlxyTitleDTO.getTitleId());
 	}
-
+	@Transactional
 	@Override
-	public void deleteByTitleId(UserDTO userDTO, Integer titleId)
+	public Integer deleteByTitleId(UserDTO userDTO, Integer titleId)
 	{
 		DlxyTitleDTO dlxyTitleDTO = titleService.findById(titleId);
 		if (null == dlxyTitleDTO)
@@ -230,13 +318,15 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 			HttpServletRequest request = attributes.getRequest();
 			IllegalLogDTO illegalLogDTO = new IllegalLogDTO(CommonUtils.getRemortIP(request), userDTO.getUserId(),
 					"试图删除不存在的标题", IllegalLevelEnum.Suspicious.ordinal());
-			throw new DlxySystemIllegalException(illegalLogDTO);
+			throw new DlxySystemIllegalException("试图删除不存在的标题", illegalLogDTO);
 		}
-		titleService.deleteByTitleId(dlxyTitleDTO.getTitleId());
-		String detail = "delete:title:" + titleId + dlxyTitleDTO.getTitleName();
+		Integer count = titleService.deleteByTitleId(dlxyTitleDTO.getTitleId());
+		String detail = "删除标题:" + AbstractRecordDetailHandler.TITLE + ":" + titleId + ":" + dlxyTitleDTO.getTitleName();
 		execute(userDTO, detail);
+		return count;
 	}
-
+	
+	@Transactional
 	@Override
 	public void deleteInBatch(UserDTO userDTO, Long[] articleIds)
 	{
@@ -256,7 +346,7 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 		}
 		// Collection<PictureDTO> collection =
 		// pictureService.findByArticleIdArray(articleIds);
-		String detail = "delete:article:";
+		String detail = "删除文章:" + AbstractRecordDetailHandler.ARTICLE+":";
 		for (Long long1 : articleIds)
 		{
 			detail += long1 + ",";
@@ -267,7 +357,9 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 	private void execute(UserDTO userDTO, String detail)
 	{
 		setChanged();
-		notifyObservers(UserRecordDTO.getUserRecordDTO(userDTO.getUserId(), detail));
+		UserRecordDTO recordDTO = UserRecordDTO.getUserRecordDTO(userDTO.getUserId(), detail);
+		recordDTO.valid();
+		notifyObservers(recordDTO);
 	}
 
 	@Override
@@ -299,9 +391,9 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 		/*
 		 * 这个接口需要好好修改逻辑
 		 */
-		TitleDetailVO titleDetailVO=new TitleDetailVO();
+		TitleDetailVO titleDetailVO = new TitleDetailVO();
 		DlxyTitleDTO dlxyTitleDTO = titleService.findById(titleId);
-		DlxyTitleDTO parentTitleDTO=dlxyTitleDTO;
+		DlxyTitleDTO parentTitleDTO = dlxyTitleDTO;
 		if (null == dlxyTitleDTO)
 		{
 			titleDetailVO.setArticlePage(PageResultUtil.emptyPage());
@@ -318,16 +410,17 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 		int status = ArticleStatusEnum.UP.ordinal();
 		Integer tId = dlxyTitleDTO.getTitleId();
 		Integer tpId = dlxyTitleDTO.getTitleParentId();
-		Integer childKey=tpId;
-		List<DlxyTitleDTO> childs =Collections.emptyList();
+		Integer childKey = tpId;
+		List<DlxyTitleDTO> childs = Collections.emptyList();
 		Long totalCount = articleCountService.countTitleArticles(tId, tpId, status);
-		if(tpId!=0)
+		if (tpId != 0)
 		{
-			parentTitleDTO=titleService.findById(tpId);
-		}else {
-			childKey=tId;
+			parentTitleDTO = titleService.findById(tpId);
+		} else
+		{
+			childKey = tId;
 		}
-		childs =  (List<DlxyTitleDTO>) titleService.findChildsByParentId(childKey);
+		childs = (List<DlxyTitleDTO>) titleService.findChildsByParentId(childKey);
 		parentTitleDTO.setChilds(childs);
 		titleDetailVO.setTitleSelf(dlxyTitleDTO);
 		if (totalCount <= 0)
@@ -337,22 +430,22 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 			titleDetailVO.setTitleSelf(dlxyTitleDTO);
 			return titleDetailVO;
 		}
-	
+
 		// 需要的数据:1.顶级父类 2.所有子类 3.所有子类对应的文章
 		List<ArticleDTO> collection = new ArrayList<>();
 		if (tpId == 0)
 		{
-			//说明这个就是一个顶级父类
+			// 说明这个就是一个顶级父类
 			collection = (List<ArticleDTO>) articleService.findArticlesByParentTitleId(pageSize, pageNum, tId, status);
-			parentTitleDTO=dlxyTitleDTO;
+			parentTitleDTO = dlxyTitleDTO;
 		} else
 		{
-			//说明只是一个普通的标题类,有父类,只需要显示自己旗下的文章即可
-			collection =  (List<ArticleDTO>) articleService.findArticlesByTitleId(pageSize, pageNum, tId, status);
+			// 说明只是一个普通的标题类,有父类,只需要显示自己旗下的文章即可
+			collection = (List<ArticleDTO>) articleService.findArticlesByTitleId(pageSize, pageNum, tId, status);
 		}
-		
-//		dlxyTitleDTO.setArticles(collection);
-//		parentTitleDTO.setChilds(childs);
+
+		// dlxyTitleDTO.setArticles(collection);
+		// parentTitleDTO.setChilds(childs);
 		PageDTO<Collection<ArticleDTO>> pageDTO = new PageDTO<Collection<ArticleDTO>>(totalCount, collection);
 		titleDetailVO.setParentAndChilds(parentTitleDTO);
 		titleDetailVO.setArticlePage(pageDTO);

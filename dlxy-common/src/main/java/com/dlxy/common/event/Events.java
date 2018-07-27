@@ -24,4 +24,6 @@ public enum Events
 	//用于白名单,黑名单的设置
 	IpCheck,
 	PicDelete,
+	
+	ArticleVisitCount,//用于更新article中的访问人数记录
 }

@@ -1,5 +1,10 @@
+
 <#include "header.html">
+<link rel="stylesheet" type="text/css" href="/css/adminstyle.css" media="all">
+<body>
+<#include "top_menu.html">
 <#include "left_menu.html">
+
 <section class="larry-wrapper">
     <!-- overview -->
 	<div class="row state-overview">
@@ -213,8 +218,13 @@
              </section>
 		</div>
 	</div>
+	
 </section>
-<#include "footer.html">
+	<script type="text/javascript" src="/common/layui/layui.js"></script> 
+
+	<script type="text/javascript" src="/js/larry.js"></script>
+	<script type="text/javascript" src="/js/index.js"></script>
+
 <script type="text/javascript">
 	layui.use(['jquery','layer','element'],function(){
 		window.jQuery = window.$ = layui.jquery;
@@ -234,4 +244,5 @@
 
 	});
 </script>
+	
 <#include "footer.html">

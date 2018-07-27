@@ -24,6 +24,7 @@ import com.dlxy.common.dto.UserRecordDTO;
 import com.dlxy.common.enums.ArticlePictureTypeEnum;
 import com.dlxy.common.enums.PictureStatusEnum;
 import com.dlxy.server.picture.service.IPictureService;
+import com.dlxy.service.AbstractRecordDetailHandler;
 import com.dlxy.service.IPictureManagementWrappedService;
 
 /**
@@ -51,24 +52,26 @@ public class ManagementPictureServiceObservableImpl extends Observable implement
 		});
 		pictureService.addPictureWithArticleId(pictureDTOs);
 		setChanged();
-		String string ="";
+		StringBuilder sb=new StringBuilder();
 		for (PictureDTO pictureDTO : pictureDTOs)
 		{
 			pictureDTO.setArticleId(articleId);
-			string+=pictureDTO.getPictureId();
+//			String suffix = pictureDTO.getPictureUrl().substring(pictureDTO.getPictureUrl().lastIndexOf("."));
+			sb.append(pictureDTO.getPictureUrl().replaceAll(":", "%")+",");
 		}
-		UserRecordDTO userRecordDTO=UserRecordDTO.getUserRecordDTO(userDTO.getUserId(), "add:picture:"+string);
+		UserRecordDTO userRecordDTO=UserRecordDTO.getUserRecordDTO(userDTO.getUserId(), "添加图片:"+AbstractRecordDetailHandler.PICTURE+":"+sb+":"+articleId);
 		notifyObservers(userRecordDTO);
 		return idList;
 	}
+	@Transactional
 	@Override
 	public Long addPictureWithArticleIdSingel(UserDTO userDTO, Long articleId, PictureDTO pictureDTO)
 	{
 		pictureService.addPicture(pictureDTO);
 		Long pictureId=pictureDTO.getPictureId();
 		pictureService.addPictureWithArticleIdSingle(pictureDTO);
-		String detail="add:picture:"+pictureId;
-		UserRecordDTO userRecordDTO=UserRecordDTO.getUserRecordDTO(userDTO.getUserId(), "add:picture:"+detail);
+//		String detail="add:picture:"+pictureId;
+		UserRecordDTO userRecordDTO=UserRecordDTO.getUserRecordDTO(userDTO.getUserId(), "添加图片:picture:"+pictureId);
 		setChanged();
 		notifyObservers(userRecordDTO);
 		return pictureId;
@@ -86,9 +89,9 @@ public class ManagementPictureServiceObservableImpl extends Observable implement
 		StringBuilder detail=null;
 		if(type==ArticlePictureTypeEnum.DETAIL_PICTURE.ordinal())
 		{
-			detail=new StringBuilder("delete:detail-picture:");
+			detail=new StringBuilder("删除图片:picture:");
 		}else {
-			detail=new StringBuilder("delete:description-picture:");
+			detail=new StringBuilder("删除图片文章图片:picture:");
 		}
 		for (Long long1 : pictureIds)
 		{
@@ -105,7 +108,7 @@ public class ManagementPictureServiceObservableImpl extends Observable implement
 	{
 		pictureService.addPicture(new PictureDTO[] {pictureDTO});
 		setChanged();
-		String detail="add:portal-picture:"+pictureDTO.getPictureId();
+		String detail="添加首页文章图片:picture:"+pictureDTO.getPictureId();
 		UserRecordDTO recordDTO=UserRecordDTO.getUserRecordDTO(userDTO.getUserId(), detail);
 		notifyObservers(recordDTO);
 	}

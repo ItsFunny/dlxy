@@ -17,7 +17,6 @@ import java.util.Observable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.dlxy.common.dto.AbstractDlxyTitleComposite;
-import com.dlxy.common.dto.AbstractDlxyTreeComponent;
 import com.dlxy.common.dto.ArticleDTO;
 import com.dlxy.common.dto.DlxyTitleDTO;
 import com.dlxy.common.enums.ArticleStatusEnum;

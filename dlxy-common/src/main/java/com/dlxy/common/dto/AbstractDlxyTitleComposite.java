@@ -19,10 +19,9 @@ import java.util.List;
 * @author joker 
 * @date 创建时间：2018年7月19日 上午7:15:31
 */
-public abstract class AbstractDlxyTitleComposite extends AbstractDlxyTreeComponent
+public abstract class AbstractDlxyTitleComposite extends AbstractDlxyTreeComposite
 {
-	private List<? super AbstractDlxyArticleComposite> articles;
-
+	private List<AbstractDlxyArticleComposite> articles;
 	
 	public AbstractDlxyTitleComposite()
 	{

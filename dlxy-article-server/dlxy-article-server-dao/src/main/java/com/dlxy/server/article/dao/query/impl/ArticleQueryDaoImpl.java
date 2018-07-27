@@ -114,7 +114,7 @@ public class ArticleQueryDaoImpl implements ArticleQueryDao
 				&& Integer.parseInt(params.get("articleType").toString()) == ArticleTypeEnum.PICTURE_ARTICLE.ordinal())
 		{
 			sql.append(
-					"SELECT a.article_id,a.title_id,a.article_name,a.article_author,a.article_type,a.create_date,a.update_date,a.article_status,c.realname,c.user_id,a.delete_date,b.title_name,e.picture_url FROM dlxy_article a LEFT JOIN dlxy_title b ON a.title_id=b.title_id LEFT JOIN dlxy_user_article c ON a.article_id=c.article_id LEFT JOIN dlxy_article_picture d ON d.article_id=a.article_id AND d.picture_type=1 AND d.picture_status =1 LEFT JOIN dlxy_picture e ON d.picture_id=e.picture_id WHERE 1=1 AND a.article_type=2");
+					"SELECT a.article_id,a.title_id,a.article_name,a.article_author,a.article_type,a.create_date,a.update_date,a.article_status,c.realname,c.user_id,a.delete_date,b.title_name,e.picture_url FROM dlxy_article a LEFT JOIN dlxy_title b ON a.title_id=b.title_id LEFT JOIN dlxy_user_article c ON a.article_id=c.article_id LEFT JOIN dlxy_article_picture d ON d.article_id=a.article_id AND d.picture_type=1 AND d.picture_status =1 LEFT JOIN dlxy_picture e ON d.picture_id=e.picture_id WHERE 1=1 ");
 			isTypeFind = true;
 			resultSetHandler = new ArticleTypeResultSetHandler();
 		} else
@@ -161,6 +161,10 @@ public class ArticleQueryDaoImpl implements ArticleQueryDao
 				set.add("%" + params.get("searchParam") + "%");
 				set.add("%" + params.get("searchParam") + "%");
 			}
+		}else if(params.containsKey("articleId"))
+		{
+			sql.append(" and a.article_id = ? ");
+			set.add(params.get("articleId"));
 		}
 		if (params.containsKey("titleId"))
 		{
@@ -219,7 +223,8 @@ public class ArticleQueryDaoImpl implements ArticleQueryDao
 		{
 			throw new RuntimeException("article id is required ");
 		}
-		ArticleDTO dbArticleDTO = articleDao.findArticleDetailByArticleId(articleDTO.getArticleId());
+//		ArticleDTO dbArticleDTO = articleDao.findArticleDetailByArticleId(articleDTO.getArticleId());
+		ArticleDTO dbArticleDTO=articleDao.selectByPrimaryKey(articleDTO.getArticleId());
 		StringBuilder sb = new StringBuilder();
 		List<Object> l = new LinkedList<>();
 		sb.append("update dlxy_article set update_date=?");

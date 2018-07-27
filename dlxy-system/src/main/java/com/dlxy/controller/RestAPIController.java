@@ -7,9 +7,9 @@
 */
 package com.dlxy.controller;
 
-
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -41,6 +42,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.parser.ParserConfig;
+import com.alibaba.fastjson.serializer.SerializeConfig;
+import com.alibaba.fastjson.serializer.ToStringSerializer;
 import com.dlxy.common.dto.ArticleDTO;
 import com.dlxy.common.dto.DlxyTitleDTO;
 import com.dlxy.common.dto.IllegalLogDTO;
@@ -57,6 +61,8 @@ import com.dlxy.common.enums.DlxyTitleEnum;
 import com.dlxy.common.enums.IllegalLevelEnum;
 import com.dlxy.common.enums.PictureStatusEnum;
 import com.dlxy.common.event.AppEvent;
+import com.dlxy.common.event.AppEventPublisher;
+import com.dlxy.common.event.Events;
 import com.dlxy.common.utils.JsonUtil;
 import com.dlxy.common.utils.ResultUtil;
 import com.dlxy.common.vo.PageVO;
@@ -67,6 +73,8 @@ import com.dlxy.model.FormTitle;
 import com.dlxy.model.FormUser;
 import com.dlxy.server.article.service.IArticleService;
 import com.dlxy.server.article.service.ITitleService;
+import com.dlxy.server.user.dao.mybatis.UserIllegalLogDao;
+import com.dlxy.server.user.model.DlxyUser;
 import com.dlxy.server.user.service.IUserRoleService;
 import com.dlxy.server.user.service.IUserService;
 import com.dlxy.service.IArticleManagementWrappedService;
@@ -77,6 +85,10 @@ import com.dlxy.service.command.AddOrUpdateArtilceCommand;
 import com.dlxy.utils.AdminUtil;
 import com.dlxy.utils.FileUtil;
 import com.joker.library.utils.CommonUtils;
+import com.joker.library.utils.KeyUtils;
+import com.sun.tools.classfile.StackMap_attribute.stack_map_frame;
+
+import redis.clients.jedis.exceptions.JedisException;
 
 /**
  * 
@@ -112,15 +124,51 @@ public class RestAPIController
 	private IUserRoleService userRoleService;
 	@Autowired
 	private ITitleManagementWrappedService titleManagementWrappedService;
+	@Autowired
+	private AppEventPublisher appeventPublisher;
+
+	@RequestMapping(value = "/article/visitCount", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResultDTO<Integer> getArticleVisitCount(HttpServletRequest request, HttpServletResponse response)
+	{
+		String articleIdStr = request.getParameter("articleId");
+		String ip = CommonUtils.getRemortIP(request);
+		Integer res = 0;
+		try
+		{
+			res = articleManagementWrappedService.findArticleVisitCount(Long.parseLong(articleIdStr), ip);
+			HashMap<String, Object>map=new HashMap<>();
+			map.put("articleId", articleIdStr);
+			appeventPublisher.publish(new AppEvent(map, Events.ArticleVisitCount.name()));
+			return ResultUtil.sucess(res);
+		} catch (JedisException e)
+		{
+			logger.error("[查询文章的访问人数]redis服务器挂了");
+			e.printStackTrace();
+			// 发送邮箱提示redis服务器挂了
+			return ResultUtil.fail(res);
+		} catch (Exception e)
+		{
+			logger.error("[查询文章的访问人数]detail:{} location:{}", e.getMessage(), e.getCause());
+			e.printStackTrace();
+			return ResultUtil.fail(e.getMessage(), res);
+		}
+	}
 
 	@RequestMapping(value = "/admin/title/addOrUpdate", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResultDTO<String> addOrUpdateTitle(FormTitle formTitle, HttpServletRequest request,
 			HttpServletResponse response)
 	{
-		Map<String, String> params = new HashMap<String, String>();
-		if (CommonUtils.validString(formTitle.getTitleName()))
+		String error = null;
+		if (!CommonUtils.validString(formTitle.getTitleName()))
 		{
-			params.put("error", "类型名称不合法,请重新输入");
+			error = "类型名称不合法,请重新输入,不能有<>!等";
+		} else if (formTitle.getTitleDisplaySeq() > 100 || formTitle.getTitleDisplaySeq() < 0)
+		{
+			error = "排序号范围为0-100";
+		}
+		if (!StringUtils.isEmpty(error))
+		{
+			return ResultUtil.fail(error);
 		}
 		DlxyTitleDTO titleDTO = new DlxyTitleDTO();
 		formTitle.to(titleDTO);
@@ -140,7 +188,7 @@ public class RestAPIController
 	 * limited condition: username,articleId,articleName,titleId searchCondition:
 	 * userName,articleName
 	 */
-	@RequestMapping("/search/article")
+	@RequestMapping("/admin/search/article")
 	public ResultDTO<PageVO<Collection<ArticleDTO>>> searchArticle(HttpServletRequest request,
 			HttpServletResponse response) throws IOException
 	{
@@ -189,30 +237,35 @@ public class RestAPIController
 		}
 		try
 		{
-			ArticleDTO findByArticleId = articleManagementWrappedService.findByArticleId(Long.parseLong(searchQuery));
-			return ResultUtil
-					.sucess(new PageVO<Collection<ArticleDTO>>(Arrays.asList(findByArticleId), pageSize, pageNum, 1L));
+//			ArticleDTO findByArticleId = articleManagementWrappedService
+//					.findArticleDetailByArticleId(Long.parseLong(searchQuery));
+//			return ResultUtil
+//					.sucess(new PageVO<Collection<ArticleDTO>>(Arrays.asList(findByArticleId), pageSize, pageNum, 1L));
+			Long articleId=Long.parseLong(searchQuery);
+			params.put("articleId", articleId);
 		} catch (NumberFormatException e)
 		{
 
 			params.put("searchParam", searchQuery);
-			try
-			{
-				PageDTO<Collection<ArticleDTO>> pageRes = articleManagementWrappedService.findByParams(pageSize,
-						pageNum, params);
-				return ResultUtil.sucess(new PageVO<Collection<ArticleDTO>>(pageRes.getData(), pageSize, pageNum,
-						pageRes.getTotalCount()), "sucess");
-			} catch (SQLException e1)
-			{
-				logger.error("[rest api :search 查询文章] find articleByParam occur sql exception");
-				e1.printStackTrace();
-				return ResultUtil.fail(e1.getMessage());
-			}
-		} catch (SQLException e)
+			
+		}
+//		catch (SQLException e)
+//		{
+//			logger.error("[rest api :search 查询文章] find articleById occur sql exception");
+//			e.printStackTrace();
+//			return ResultUtil.fail(e.getMessage());
+//		}
+		try
 		{
-			logger.error("[rest api :search 查询文章] find articleById occur sql exception");
-			e.printStackTrace();
-			return ResultUtil.fail(e.getMessage());
+			PageDTO<Collection<ArticleDTO>> pageRes = articleManagementWrappedService.findByParams(pageSize,
+					pageNum, params);
+			return ResultUtil.sucess(new PageVO<Collection<ArticleDTO>>(pageRes.getData(), pageSize, pageNum,
+					pageRes.getTotalCount()), "sucess");
+		} catch (SQLException e1)
+		{
+			logger.error("[rest api :search 查询文章] find articleByParam occur sql exception");
+			e1.printStackTrace();
+			return ResultUtil.fail(e1.getMessage());
 		}
 	}
 
@@ -225,7 +278,8 @@ public class RestAPIController
 		 */
 		try
 		{
-			Collection<ArticleDTO> articles = articleService.findLatestArticleLimited(TitleArticleConstant.MAX_NUMBER_ARTICLES);
+			Collection<ArticleDTO> articles = articleService
+					.findLatestArticleLimited(TitleArticleConstant.MAX_NUMBER_ARTICLES);
 			return ResultUtil.sucess(articles);
 		} catch (Exception e)
 		{
@@ -233,7 +287,7 @@ public class RestAPIController
 		}
 	}
 
-	@RequestMapping(value = "/article", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "/articles", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResultDTO<PageVO<Collection<ArticleDTO>>> findNews(HttpServletRequest request, HttpServletResponse response)
 	{
 		int pageSize = Integer.parseInt(StringUtils.defaultString(request.getParameter("pageSize"), "8"));
@@ -246,10 +300,12 @@ public class RestAPIController
 		} else if (type.equals("news"))
 		{
 			params.put("articleType", ArticleTypeEnum.INTRODUCE_ARTICLE.ordinal());
+			params.put("articleStatus", ArticleStatusEnum.UP.ordinal());
 		} else if (type.equals("picArticle"))
 		{
 			params.put("articleType", ArticleTypeEnum.PICTURE_ARTICLE.ordinal());
-		} 
+			params.put("articleStatus", ArticleStatusEnum.UP.ordinal());
+		}
 		try
 		{
 			PageDTO<Collection<ArticleDTO>> pageDTO = articleManagementWrappedService.findByParams(pageSize, pageNum,
@@ -279,11 +335,11 @@ public class RestAPIController
 	public ResultDTO<Collection<DlxyTitleDTO>> findTitles(@PathVariable Integer parentId, HttpServletRequest request,
 			HttpServletResponse response)
 	{
-		Collection<DlxyTitleDTO> collection =  titleService.findChildsByParentId(parentId);
-//		if (null == collection || collection.isEmpty())
-//		{
-//			return ResultUtil.needMoreOp(collection, "无子类目");
-//		}
+		Collection<DlxyTitleDTO> collection = titleService.findChildsByParentId(parentId);
+		// if (null == collection || collection.isEmpty())
+		// {
+		// return ResultUtil.needMoreOp(collection, "无子类目");
+		// }
 		return ResultUtil.sucess(collection);
 	}
 
@@ -301,23 +357,27 @@ public class RestAPIController
 			return ResultUtil.fail(e.getMessage());
 		}
 	}
-	
-	@RequestMapping(value="/scrollLoadTitle/{titleId}",method=RequestMethod.GET,produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public void scrollLoadTitles(@PathVariable("titleId")String titleIdStr,HttpServletRequest request,HttpServletResponse response)
+
+	@RequestMapping(value = "/scrollLoadTitle/{titleId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public void scrollLoadTitles(@PathVariable("titleId") String titleIdStr, HttpServletRequest request,
+			HttpServletResponse response)
 	{
 		try
 		{
-			Integer titleId=Integer.parseInt(titleIdStr);
-			DlxyTitleDTO dto = titleManagementWrappedService.findChildsAndArticles(titleId, ITitleManagementWrappedService.MAX_SHOW_ARTICLE_NUMBER);
-//			String json = JsonUtil.obj2Json(ResultUtil.sucess(dto));
-			String json=JSON.toJSONString(ResultUtil.sucess(dto));
+			Integer titleId = Integer.parseInt(titleIdStr);
+			DlxyTitleDTO dto = titleManagementWrappedService.findChildsAndArticles(titleId,
+					ITitleManagementWrappedService.MAX_SHOW_ARTICLE_NUMBER);
+			// String json = JsonUtil.obj2Json(ResultUtil.sucess(dto));
+			SerializeConfig serializeConfig = new SerializeConfig();
+			serializeConfig.put(Long.class, ToStringSerializer.instance);
+			String json = JSON.toJSONString(ResultUtil.sucess(dto), serializeConfig);
 			System.out.println(json);
 			response.getWriter().write(json);
-//			return ResultUtil.sucess(dto);
+			// return ResultUtil.sucess(dto);
 		} catch (Exception e)
 		{
 			e.printStackTrace();
-			logger.error("[下拉加载信息]error:{}",e.getMessage());
+			logger.error("[下拉加载信息]error:{}", e.getMessage());
 			try
 			{
 				response.getWriter().write(JSON.toJSONString(ResultUtil.fail()));
@@ -328,9 +388,7 @@ public class RestAPIController
 			}
 		}
 	}
-	
-	
-	
+
 	/*
 	 * 显示新闻相关的类目 这里的数据结构需要重新设置一下
 	 */
@@ -366,7 +424,7 @@ public class RestAPIController
 		}
 	}
 
-	@RequestMapping(value = "/title/delete", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "/admin/title/delete", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResultDTO<String> deleteTitle(HttpServletRequest request, HttpServletResponse response)
 	{
 		String titleIdStr = request.getParameter("titleId");
@@ -378,8 +436,14 @@ public class RestAPIController
 		try
 		{
 			titleId = Integer.parseInt(titleIdStr);
-			articleManagementWrappedService.deleteByTitleId(AdminUtil.getLoginUser(), titleId);
-			return ResultUtil.sucess();
+			Integer count = articleManagementWrappedService.deleteByTitleId(AdminUtil.getLoginUser(), titleId);
+			if (count > 0)
+			{
+				return ResultUtil.sucess();
+			} else
+			{
+				return ResultUtil.fail("标题不存在");
+			}
 		} catch (Exception e)
 		{
 			logger.error("[delete title] error: {}", e.getMessage());
@@ -391,7 +455,7 @@ public class RestAPIController
 	/*
 	 * 放到回收站中
 	 */
-	@RequestMapping(value = "/article/del/batch")
+	@RequestMapping(value = "/admin/article/del/batch")
 	@ResponseBody
 	public ResultDTO<String> delArticles(HttpServletRequest request, HttpServletResponse response)
 	{
@@ -418,13 +482,15 @@ public class RestAPIController
 		}
 	}
 
-	@RequestMapping(value = "/article/detail/{articleId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "/admin/article/detail/{articleId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResultDTO<ArticleDTO> showArticleDetail(@PathVariable Long articleId, HttpServletRequest request,
 			HttpServletResponse response)
 	{
 		try
 		{
-			ArticleDTO articleDTO = articleService.findArticleDetailByArticleId(articleId);
+			// ArticleDTO articleDTO =
+			// articleService.findArticleDetailByArticleId(articleId);
+			ArticleDTO articleDTO = articleService.findByArticleId(articleId);
 			return ResultUtil.sucess(articleDTO);
 		} catch (Exception e)
 		{
@@ -434,7 +500,7 @@ public class RestAPIController
 		}
 	}
 
-	@RequestMapping(value = "/article/delete", method =
+	@RequestMapping(value = "/admin/article/delete", method =
 	{ RequestMethod.POST, RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResultDTO<String> deleteArticleInBatch(HttpServletRequest request, HttpServletResponse response)
 	{
@@ -473,7 +539,7 @@ public class RestAPIController
 		}
 	}
 
-	@RequestMapping(value = "/article/update/typeOrStatus", method =
+	@RequestMapping(value = "/admin/article/update/typeOrStatus", method =
 	{ RequestMethod.POST, RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResultDTO<String> updateArticleStatus(HttpServletRequest request, HttpServletResponse response)
 	{
@@ -530,7 +596,7 @@ public class RestAPIController
 		}
 	}
 
-	@RequestMapping(value = "/article/update", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, method = RequestMethod.POST)
+	@RequestMapping(value = "/admin/article/update", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, method = RequestMethod.POST)
 	public ResultDTO<String> updateArticle(FormArticle formArticle, BindingResult result, HttpServletRequest request,
 			HttpServletResponse response)
 	{
@@ -585,33 +651,36 @@ public class RestAPIController
 			return ResultUtil.fail(e.getMessage());
 		}
 	}
-//	@RequestMapping(value="/article/update/descpic",method=RequestMethod.POST,produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-//	public ResultDTO<String>updateArticleDescPic( @RequestParam Map<String, Object>params,MultipartFile imgFile,HttpServletRequest request,HttpServletResponse response)
-//	{
-//		String articleIdStr=request.getParameter("articleId");
-//		if(StringUtils.isEmpty(articleIdStr) || imgFile==null || imgFile.isEmpty())
-//		{
-//			return ResultUtil.fail("缺失参数");
-//		}
-//		try
-//		{
-//			Long articleId=Long.parseLong(articleIdStr);
-//			String url = FileUtil.saveFile(imgFile, articleId, request);
-//			PictureDTO pictureDTO=new PictureDTO();
-//			pictureDTO.setArticleId(articleId);
-//			pictureDTO.setPictureUrl(url);
-//			pictureDTO.setPictureType(ArticlePictureTypeEnum.DESCRIPTION_PICTURE.ordinal());
-//			pictureManagementWrappedService.addPciture(AdminUtil.getLoginUser(), articleId, new PictureDTO[] {pictureDTO});
-//			return ResultUtil.sucess();
-//		} catch (Exception e)
-//		{
-//			logger.error("[update article desc pic] error : {}" ,e.getMessage());
-//			return ResultUtil.fail(e.getMessage());
-//		}
-//		
-//	}
-	
-	@RequestMapping(value = "/file/upload")
+	// @RequestMapping(value="/article/update/descpic",method=RequestMethod.POST,produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	// public ResultDTO<String>updateArticleDescPic( @RequestParam Map<String,
+	// Object>params,MultipartFile imgFile,HttpServletRequest
+	// request,HttpServletResponse response)
+	// {
+	// String articleIdStr=request.getParameter("articleId");
+	// if(StringUtils.isEmpty(articleIdStr) || imgFile==null || imgFile.isEmpty())
+	// {
+	// return ResultUtil.fail("缺失参数");
+	// }
+	// try
+	// {
+	// Long articleId=Long.parseLong(articleIdStr);
+	// String url = FileUtil.saveFile(imgFile, articleId, request);
+	// PictureDTO pictureDTO=new PictureDTO();
+	// pictureDTO.setArticleId(articleId);
+	// pictureDTO.setPictureUrl(url);
+	// pictureDTO.setPictureType(ArticlePictureTypeEnum.DESCRIPTION_PICTURE.ordinal());
+	// pictureManagementWrappedService.addPciture(AdminUtil.getLoginUser(),
+	// articleId, new PictureDTO[] {pictureDTO});
+	// return ResultUtil.sucess();
+	// } catch (Exception e)
+	// {
+	// logger.error("[update article desc pic] error : {}" ,e.getMessage());
+	// return ResultUtil.fail(e.getMessage());
+	// }
+	//
+	// }
+
+	@RequestMapping(value = "/admin/file/upload")
 	public PictureUploadResponseDTO uploadFile(@RequestParam("imgFile") MultipartFile file, HttpServletRequest request,
 			HttpServletResponse response)
 	{
@@ -681,7 +750,7 @@ public class RestAPIController
 	// @RequiresRoles(value= {
 	// "admin"
 	// })
-	@RequestMapping(value = "/user/updateStatus", method =
+	@RequestMapping(value = "/admin/user/updateStatus", method =
 	{ RequestMethod.POST, RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResultDTO<String> banUser(HttpServletRequest request, HttpServletResponse response)
 	{
@@ -707,7 +776,7 @@ public class RestAPIController
 
 	// @RequiresRoles(value= { "admin","subAdmin"
 	// })
-	@RequestMapping(value = "/user/find", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "/admin/user/find", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResultDTO<UserDTO> findUser(HttpServletRequest request, HttpServletResponse response)
 	{
 		String keyStr = request.getParameter("q");
@@ -729,12 +798,112 @@ public class RestAPIController
 		}
 	}
 
+	@RequestMapping(value = "/admin/user/update", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResultDTO<String> updateUserInfo(DlxyUser user, HttpServletRequest request, HttpServletResponse response)
+	{
+		UserDTO loginUser = AdminUtil.getLoginUser();
+		String able = request.getParameter("able");
+		// 或者直接属性初始化为null
+		if (able.equals("0"))
+		{
+			user.setAble(false);
+		} else
+		{
+			user.setAble(true);
+		}
+		String error = null;
+		if (null == user.getUserId() || user.getUserId() < 0)
+		{
+			error = "用户id不存在";
+		} else if (!user.getUserId().equals(loginUser.getUserId()) && !loginUser.isAdmin())
+		{
+			// params.put("error", "无权修改他人信息");
+			logger.error("[更新用户信息]用户:{} 试图修改他人信息", loginUser.getRealname());
+			IllegalLogDTO illegalLogDTO = new IllegalLogDTO(CommonUtils.getRemortIP(request), loginUser.getUserId(),
+					"试图修改他人信息", IllegalLevelEnum.Serious.ordinal());
+			throw new DlxySystemIllegalException(illegalLogDTO);
+		}
+
+		// if(!passwrodPattern.matcher(user.getPassword()).matches())
+		// {
+		// params.put("error", "密码格式不正确,密码长度为6-16位,且包含字母和数字");
+		// }else
+		// if(!realNamePattern.matcher(user.getRealname()).matches())
+		// {
+		// params.put("error", "真实姓名格式不正确,王大二或者Justain Bieber 格式");
+		// }
+		// else if(!phonePattern.matcher(mobilePhone).matches())
+		// {
+		// params.put("error", "手机格式不正确");
+		// }
+		if (!StringUtils.isEmpty(error))
+		{
+			return ResultUtil.fail(error);
+		}
+		try
+		{
+			error = userManagementWrappedService.updateUser(loginUser, user);
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+			logger.error("[更新用户信息] error:{} cause:{}", e.getMessage(), e.getCause());
+			error = e.getMessage();
+		}
+		if (StringUtils.isEmpty(error))
+		{
+			return ResultUtil.sucess();
+		}
+		return ResultUtil.fail(error);
+
+	}
+
+	@RequiresRoles("admin")
+	@RequestMapping(value = "/admin/user/delete", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResultDTO<String> deleteUser(HttpServletRequest request, HttpServletResponse response)
+	{
+		String ids=request.getParameter("ids");
+		
+		if(StringUtils.isEmpty(ids))
+		{
+			return ResultUtil.fail("参数不能为空");
+		}
+		String[] userIdArray = ids.split(",");
+		UserDTO userDTO = AdminUtil.getLoginUser();
+//		if (!userDTO.isAdmin())
+//		{
+//			IllegalLogDTO illegalLogDTO = new IllegalLogDTO(CommonUtils.getRemortIP(request), userDTO.getUserId(),
+//					"试图删除用户", IllegalLevelEnum.Serious.ordinal());
+//			PrintWriter writer = null;
+//			try
+//			{
+//				writer = response.getWriter();
+//				writer.write(JsonUtil.obj2Json(ResultUtil.fail("无权删除,记录你的信息了")));
+//			} catch (IOException e)
+//			{
+//				e.printStackTrace();
+//			}
+//			throw new DlxySystemIllegalException("无权删除用户",illegalLogDTO);
+//		}
+		List<Long> userIdS = new LinkedList<Long>();
+		for (String string : userIdArray)
+		{
+			userIdS.add(Long.parseLong(string));
+		}
+		if(userIdS.size()==1)
+		{
+			userManagementWrappedService.deleteUserSingle(userDTO, userIdS.iterator().next());
+		}else {
+			userManagementWrappedService.deleteUser(userDTO, userIdS);
+		}
+		return ResultUtil.sucess();
+	}
+
 	/*
 	 * 列出所有的角色
 	 */
 	// @RequiresRoles(value= { "admin","subAdmin"
 	// })
-	@RequestMapping(value = "/user/roles/all", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "/admin/user/roles/all", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResultDTO<Collection<UserRoleDTO>> findRoles(HttpServletRequest request, HttpServletResponse response)
 	{
 		try
@@ -797,5 +966,6 @@ public class RestAPIController
 	/*
 	 * 搜索用户
 	 */
+	
 
 }

@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dlxy.server.article.dao.mybatis.ArticleMybatisDao" >
+  <resultMap id="BaseResultMap" type="com.dlxy.common.dto.ArticleDTO" >
+    <id column="article_id" property="articleId" jdbcType="BIGINT" />
+    <result column="title_id" property="titleId" jdbcType="INTEGER" />
+    <result column="article_name" property="articleName" jdbcType="VARCHAR" />
+    <result column="article_author" property="articleAuthor" jdbcType="VARCHAR" />
+    <result column="article_type" property="articleType" jdbcType="INTEGER" />
+    <result column="article_status" property="articleStatus" jdbcType="INTEGER" />
+    <result column="visit_count" property="visitCount" jdbcType="INTEGER" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+    <result column="delete_date" property="deleteDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.dlxy.common.dto.ArticleDTO" extends="BaseResultMap" >
+    <result column="article_content" property="articleContent" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    article_id, title_id, article_name, article_author, article_type, article_status, 
+    visit_count, create_date, update_date, delete_date
+  </sql>
+  <sql id="Blob_Column_List" >
+    article_content
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.dlxy.server.article.model.DlxyArticleExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from dlxy_article
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.dlxy.server.article.model.DlxyArticleExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from dlxy_article
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from dlxy_article
+    where article_id = #{articleId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from dlxy_article
+    where article_id = #{articleId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.dlxy.server.article.model.DlxyArticleExample" >
+    delete from dlxy_article
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.dlxy.common.dto.ArticleDTO" >
+    insert into dlxy_article (article_id, title_id, article_name, 
+      article_author, article_type, article_status, 
+      visit_count, create_date, update_date, 
+      delete_date, article_content)
+    values (#{articleId,jdbcType=BIGINT}, #{titleId,jdbcType=INTEGER}, #{articleName,jdbcType=VARCHAR}, 
+      #{articleAuthor,jdbcType=VARCHAR}, #{articleType,jdbcType=INTEGER}, #{articleStatus,jdbcType=INTEGER}, 
+      #{visitCount,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}, 
+      #{deleteDate,jdbcType=TIMESTAMP}, #{articleContent,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.dlxy.common.dto.ArticleDTO" >
+    insert into dlxy_article
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="articleId != null" >
+        article_id,
+      </if>
+      <if test="titleId != null" >
+        title_id,
+      </if>
+      <if test="articleName != null" >
+        article_name,
+      </if>
+      <if test="articleAuthor != null" >
+        article_author,
+      </if>
+      <if test="articleType != null" >
+        article_type,
+      </if>
+      <if test="articleStatus != null" >
+        article_status,
+      </if>
+      <if test="visitCount != null" >
+        visit_count,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      <if test="updateDate != null" >
+        update_date,
+      </if>
+      <if test="deleteDate != null" >
+        delete_date,
+      </if>
+      <if test="articleContent != null" >
+        article_content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="articleId != null" >
+        #{articleId,jdbcType=BIGINT},
+      </if>
+      <if test="titleId != null" >
+        #{titleId,jdbcType=INTEGER},
+      </if>
+      <if test="articleName != null" >
+        #{articleName,jdbcType=VARCHAR},
+      </if>
+      <if test="articleAuthor != null" >
+        #{articleAuthor,jdbcType=VARCHAR},
+      </if>
+      <if test="articleType != null" >
+        #{articleType,jdbcType=INTEGER},
+      </if>
+      <if test="articleStatus != null" >
+        #{articleStatus,jdbcType=INTEGER},
+      </if>
+      <if test="visitCount != null" >
+        #{visitCount,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDate != null" >
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleteDate != null" >
+        #{deleteDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="articleContent != null" >
+        #{articleContent,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.dlxy.server.article.model.DlxyArticleExample" resultType="java.lang.Integer" >
+    select count(*) from dlxy_article
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update dlxy_article
+    <set >
+      <if test="record.articleId != null" >
+        article_id = #{record.articleId,jdbcType=BIGINT},
+      </if>
+      <if test="record.titleId != null" >
+        title_id = #{record.titleId,jdbcType=INTEGER},
+      </if>
+      <if test="record.articleName != null" >
+        article_name = #{record.articleName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.articleAuthor != null" >
+        article_author = #{record.articleAuthor,jdbcType=VARCHAR},
+      </if>
+      <if test="record.articleType != null" >
+        article_type = #{record.articleType,jdbcType=INTEGER},
+      </if>
+      <if test="record.articleStatus != null" >
+        article_status = #{record.articleStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.visitCount != null" >
+        visit_count = #{record.visitCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.createDate != null" >
+        create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateDate != null" >
+        update_date = #{record.updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.deleteDate != null" >
+        delete_date = #{record.deleteDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.articleContent != null" >
+        article_content = #{record.articleContent,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update dlxy_article
+    set article_id = #{record.articleId,jdbcType=BIGINT},
+      title_id = #{record.titleId,jdbcType=INTEGER},
+      article_name = #{record.articleName,jdbcType=VARCHAR},
+      article_author = #{record.articleAuthor,jdbcType=VARCHAR},
+      article_type = #{record.articleType,jdbcType=INTEGER},
+      article_status = #{record.articleStatus,jdbcType=INTEGER},
+      visit_count = #{record.visitCount,jdbcType=INTEGER},
+      create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      update_date = #{record.updateDate,jdbcType=TIMESTAMP},
+      delete_date = #{record.deleteDate,jdbcType=TIMESTAMP},
+      article_content = #{record.articleContent,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update dlxy_article
+    set article_id = #{record.articleId,jdbcType=BIGINT},
+      title_id = #{record.titleId,jdbcType=INTEGER},
+      article_name = #{record.articleName,jdbcType=VARCHAR},
+      article_author = #{record.articleAuthor,jdbcType=VARCHAR},
+      article_type = #{record.articleType,jdbcType=INTEGER},
+      article_status = #{record.articleStatus,jdbcType=INTEGER},
+      visit_count = #{record.visitCount,jdbcType=INTEGER},
+      create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      update_date = #{record.updateDate,jdbcType=TIMESTAMP},
+      delete_date = #{record.deleteDate,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.dlxy.common.dto.ArticleDTO" >
+    update dlxy_article
+    <set >
+      <if test="titleId != null" >
+        title_id = #{titleId,jdbcType=INTEGER},
+      </if>
+      <if test="articleName != null" >
+        article_name = #{articleName,jdbcType=VARCHAR},
+      </if>
+      <if test="articleAuthor != null" >
+        article_author = #{articleAuthor,jdbcType=VARCHAR},
+      </if>
+      <if test="articleType != null" >
+        article_type = #{articleType,jdbcType=INTEGER},
+      </if>
+      <if test="articleStatus != null" >
+        article_status = #{articleStatus,jdbcType=INTEGER},
+      </if>
+      <if test="visitCount != null" >
+        visit_count = #{visitCount,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDate != null" >
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleteDate != null" >
+        delete_date = #{deleteDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="articleContent != null" >
+        article_content = #{articleContent,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where article_id = #{articleId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.dlxy.common.dto.ArticleDTO" >
+    update dlxy_article
+    set title_id = #{titleId,jdbcType=INTEGER},
+      article_name = #{articleName,jdbcType=VARCHAR},
+      article_author = #{articleAuthor,jdbcType=VARCHAR},
+      article_type = #{articleType,jdbcType=INTEGER},
+      article_status = #{articleStatus,jdbcType=INTEGER},
+      visit_count = #{visitCount,jdbcType=INTEGER},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      delete_date = #{deleteDate,jdbcType=TIMESTAMP},
+      article_content = #{articleContent,jdbcType=LONGVARCHAR}
+    where article_id = #{articleId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.dlxy.common.dto.ArticleDTO" >
+    update dlxy_article
+    set title_id = #{titleId,jdbcType=INTEGER},
+      article_name = #{articleName,jdbcType=VARCHAR},
+      article_author = #{articleAuthor,jdbcType=VARCHAR},
+      article_type = #{articleType,jdbcType=INTEGER},
+      article_status = #{articleStatus,jdbcType=INTEGER},
+      visit_count = #{visitCount,jdbcType=INTEGER},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      delete_date = #{deleteDate,jdbcType=TIMESTAMP}
+    where article_id = #{articleId,jdbcType=BIGINT}
+  </update>
+</mapper>

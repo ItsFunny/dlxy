@@ -37,7 +37,7 @@ public class ArticleDTO extends AbstractDlxyArticleComposite
 	private String updateDateStr;
 	// 2018-06-30 11:30 add
 	private Long userId;
-	@JsonIgnore
+//	@JsonIgnore
 	private String realname;
 	// 2018-06-30 22:02 add
 	private Date deleteDate;
@@ -50,6 +50,9 @@ public class ArticleDTO extends AbstractDlxyArticleComposite
 	private Integer titleParentId=0;
 	//2018-07-18 19:58 add
 	private String pictureUrl;
+	//2018-07-22 13:40 add
+	private Integer visitCount;
+	
 	
 	
 	
@@ -259,6 +262,16 @@ public class ArticleDTO extends AbstractDlxyArticleComposite
 	public void setPictureUrl(String pictureUrl)
 	{
 		this.pictureUrl = pictureUrl;
+	}
+
+	public Integer getVisitCount()
+	{
+		return visitCount;
+	}
+
+	public void setVisitCount(Integer visitCount)
+	{
+		this.visitCount = visitCount;
 	}
 
 }

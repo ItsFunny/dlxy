@@ -68,8 +68,9 @@
                     <div class="tablebody">
                         <div class="accordion" id="accordion-38202">
                         ${item.titleName}
+                         <em style="padding-left:200px">排序码:${item.titleDisplaySeq}</em>
                         </div>
-                       
+                      
                         <div class="btg">
                         	<button class="btn btn-danger btn-xs right" data-toggle="modal" data-target="#deleteSource"  titleId="${item.titleId}" onclick="del(this)">删除</button>
                         	<button class="btn btn-success btn-xs right" data-toggle="modal" data-target="#changeSource" titleId="${item.titleId}" onclick="beforeSave(this,false,true)">修改</button>
@@ -149,36 +150,7 @@
     </div>
 
 </div>
-<script>
-  
-	
-	function del(obj){
-		var titleId=$(obj).attr("titleId");
-		alert(titleId);
-		jQuery.get('/api/title/delete.html',{"titleId":titleId},function(data,textStatus,jqXHR){
-			alert(data.msg);
-			location.reload();
-		});
-	}
-    function beforeSave(obj,isAddChild,isUpdate){
-    	if(isUpdate){
-    		$("#titleId").val($(obj).attr("titleId"));
-    		$("#titleParentId").val("");
-    	}
-    	if(isAddChild){
-    		$("#titleParentId").val($(obj).attr("titleId"));
-    		$("#titleId").val("");
-    	}
-    }
-    function addOrUpdate(){
-    	var params=$("#titleForm").serialize();
-    	jQuery.post('/api/admin/title/addOrUpdate.html',params,function(data,textStatus,jqXHR){
-			alert(data.msg);
-			location.reload();
-    	},'json'); 
-    }
-    
-</script>
+	<script type="text/javascript" src="/js/title.js"></script>
 </body>
 
 </html>

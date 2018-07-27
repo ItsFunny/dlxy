@@ -7,18 +7,16 @@
 */
 package com.dlxy.server.article.service.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.dlxy.common.dto.AbstractDlxyTitleComposite;
-import com.dlxy.common.dto.ArticleDTO;
 import com.dlxy.common.dto.DlxyTitleDTO;
-import com.dlxy.common.enums.DlxyTitleEnum;
 import com.dlxy.server.article.dao.mybatis.TitleMybatisDao;
+import com.dlxy.server.article.model.DlxyTitleExample;
+import com.dlxy.server.article.model.DlxyTitleExample.Criteria;
 import com.dlxy.server.article.service.ITitleService;
 
 /**
@@ -38,7 +36,11 @@ public class TitleServiceImpl implements ITitleService
 	@Override
 	public Collection<DlxyTitleDTO> findChildsByParentId(int titleParentId)
 	{
-		List<DlxyTitleDTO> all = (List<DlxyTitleDTO>) titleDao.findParentAllChilds(titleParentId);
+		DlxyTitleExample example=new DlxyTitleExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andTitleParentIdEqualTo(titleParentId);
+		List<DlxyTitleDTO> all=titleDao.selectByExample(example);
+//		List<DlxyTitleDTO> all = (List<DlxyTitleDTO>) titleDao.findParentAllChilds(titleParentId);
 //		DlxyTitleDTO dlxyTitleDTO=null;
 //		if(all==null || all.isEmpty())
 //		{
@@ -86,7 +88,8 @@ public class TitleServiceImpl implements ITitleService
 	@Override
 	public DlxyTitleDTO findById(int titleId)
 	{
-		return titleDao.findById(titleId);
+		return titleDao.selectByPrimaryKey(titleId);
+//		return titleDao.findById(titleId);
 	}
 
 	@Override
@@ -96,9 +99,15 @@ public class TitleServiceImpl implements ITitleService
 	}
 
 	@Override
-	public void deleteByTitleId(Integer titleId)
+	public Integer deleteByTitleId(Integer titleId)
 	{
-		titleDao.deleteByTitleId(titleId);
+		DlxyTitleExample example=new DlxyTitleExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andTitleIdNotEqualTo(0);
+		criteria.andTitleIdEqualTo(titleId);
+		int count = titleDao.deleteByExample(example);
+		return count;
+//		titleDao.deleteByTitleId(titleId);
 	}
 
 //	@Override
@@ -116,7 +125,17 @@ public class TitleServiceImpl implements ITitleService
 	@Override
 	public Collection<DlxyTitleDTO> findTitlesByType(Integer type)
 	{
-		return titleDao.findByType(type);
+		DlxyTitleExample example=new DlxyTitleExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andTitleIdNotEqualTo(0);
+		criteria.andTitleParentIdEqualTo(0);
+		if(type>=0)
+		{
+			criteria.andTitleTypeEqualTo(type);
+		}
+		example.setOrderByClause("title_display_seq desc");
+		return titleDao.selectByExample(example);
+//		return titleDao.findByType(type);
 	}
 
 	

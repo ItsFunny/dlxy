@@ -9,7 +9,7 @@ $(function(){
      KindEditor.ready(function (K) {
          var editor = K.create('#demo', {
              themeType: "simple",
-             uploadJson: '/api/v1/file/upload.html?articleId=${articleId}',
+             uploadJson: '/api/v1/admin/file/upload.html?articleId=${articleId}',
              resizeType: 1,
              pasteType: 2,
              syncType: "",
@@ -125,6 +125,7 @@ $(function(){
 		</div>
 		<div class="layui-form-item">
 			<div class="layui-input-block" id="hiddenBlock">
+				<input type="hidden" name="articleType" value="${articleType!""}">
 				<input type="hidden" name="articleId" id="articleId" value="${articleId?c}">
 				<button class="layui-btn" lay-submit="" lay-filter="addNews" onclick='javascript:$("#articleId").val($("#articleId").val().replace(/[,]+/g, ""));document.articleForm.submit();'>立即提交</button> 
 				<button type="reset" class="layui-btn layui-btn-primary">重置</button>

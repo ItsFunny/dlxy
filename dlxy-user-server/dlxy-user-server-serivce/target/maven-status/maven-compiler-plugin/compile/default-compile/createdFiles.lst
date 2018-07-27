@@ -1,3 +1,9 @@
+com/dlxy/server/user/service/IUserRoleService.class
+com/dlxy/server/user/service/impl/UserRoleServiceImpl.class
+com/dlxy/server/user/service/impl/UserServiceImpl.class
+com/dlxy/server/user/service/IUserIllegalLogService.class
+com/dlxy/server/user/service/impl/UserIllegalLogServiceImpl.class
 com/dlxy/server/user/service/IUserRecordService.class
 com/dlxy/server/user/service/App.class
 com/dlxy/server/user/service/IUserService.class
+com/dlxy/server/user/service/IUserArticleService.class

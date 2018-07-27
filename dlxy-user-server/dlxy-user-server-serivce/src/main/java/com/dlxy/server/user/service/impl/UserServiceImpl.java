@@ -10,18 +10,24 @@ package com.dlxy.server.user.service.impl;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dlxy.common.dto.UserDTO;
 import com.dlxy.common.dto.UserRecordDTO;
+import com.dlxy.server.user.dao.mybatis.DlxyUserDao;
 import com.dlxy.server.user.dao.mybatis.UserMybatisDao;
 import com.dlxy.server.user.dao.mybatis.UserRecordMybatisDao;
 import com.dlxy.server.user.dao.query.UserArticleQueryDao;
 import com.dlxy.server.user.dao.query.UserQueryDao;
 import com.dlxy.server.user.dao.query.UserRecordQueryDao;
+import com.dlxy.server.user.model.DlxyUser;
+import com.dlxy.server.user.model.DlxyUserExample;
+import com.dlxy.server.user.model.DlxyUserExample.Criteria;
 import com.dlxy.server.user.service.IUserArticleService;
 import com.dlxy.server.user.service.IUserRecordService;
 import com.dlxy.server.user.service.IUserService;
@@ -108,13 +114,22 @@ public class UserServiceImpl implements IUserArticleService, IUserService, IUser
 	@Override
 	public UserDTO findByUsername(String username)
 	{
-		return userMybatisDao.findByUsername(username);
+		DlxyUserExample example = new DlxyUserExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andRealnameEqualTo(username);
+		List<UserDTO> users = userMybatisDao.selectByExample(example);
+		if(null==users || users.isEmpty())
+		{
+			return null;
+		}
+		return users.iterator().next();
 	}
 
 	@Override
 	public UserDTO findByUserId(Long userId) throws SQLException
 	{
-		return userMybatisDao.findByUserId(userId);
+//		return userMybatisDao.findByUserId(userId);
+		return userMybatisDao.selectByPrimaryKey(userId);
 	}
 
 	@Override
@@ -154,7 +169,8 @@ public class UserServiceImpl implements IUserArticleService, IUserService, IUser
 	public Long addUser(UserDTO userDTO) throws SQLException
 	{
 		userDTO.setCreateDate(new Date());
-		userMybatisDao.addUser(userDTO);
+//		userMybatisDao.addUser(userDTO);
+		userMybatisDao.insertSelective(userDTO);
 		return userDTO.getUserId();
 	}
 
@@ -162,6 +178,42 @@ public class UserServiceImpl implements IUserArticleService, IUserService, IUser
 	public void updateUserStatusByUserId(Long userId, Integer status)
 	{
 		userMybatisDao.updateUserStatusByUserId(userId, status);
+	}
+
+	@Override
+	public int updateUserByUserId(DlxyUser user)
+	{
+//		UserDTO dbUser = findByUserId(user.getUserId());
+//		if(StringUtils.isBlank(user.getRealname()) || user.getRealname().equals(dbUser.getRealname()))
+//		{
+//			
+//		}
+		return userMybatisDao.updateByPrimaryKeySelective(user);
+	}
+
+	@Override
+	public void updateUserByExample(DlxyUser user)
+	{
+		DlxyUserExample example=new DlxyUserExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andUserIdEqualTo(user.getUserId());
+		userMybatisDao.updateByPrimaryKeySelective(user);
+	}
+
+	@Override
+	public Integer deleteUser(List<Long> userIds)
+	{
+		DlxyUserExample example=new DlxyUserExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andUserIdIn(userIds);
+		int i=userMybatisDao.deleteByExample(example);
+		return i;
+	}
+
+	@Override
+	public Integer deleteUseByUserId(Long userId)
+	{
+		return userMybatisDao.deleteByPrimaryKey(userId);
 	}
 
 }

@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.dlxy.common.dto.ArticleDTO;
 import com.dlxy.common.dto.PictureDTO;
 import com.dlxy.common.dto.UserRecordDTO;
+import com.dlxy.service.AbstractRecordDetailHandler;
 
 /**
  * 
@@ -45,11 +46,11 @@ public class AddOrUpdateArtilceCommand extends Command
 			if(param.containsKey("update"))
 			{
 				this.articleGroup.update(param);
-				detail="update:article:"+a.getArticleAuthor();
+				detail="更新文章:"+AbstractRecordDetailHandler.ARTICLE+":"+a.getArticleId();
 			}else {
 				this.articleGroup.add(param);
 				this.userArticleGroup.add(param);
-				detail="add:article:"+a.getArticleId();
+				detail="添加文章:"+AbstractRecordDetailHandler.ARTICLE+":"+a.getArticleId();
 			}
 			if(param.containsKey("pictureStatus"))
 			{

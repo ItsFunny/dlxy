@@ -17,6 +17,6 @@ package com.dlxy.common.enums;
 */
 public enum IllegalLevelEnum
 {
-	Suspicious,
+	Suspicious,Serious
 	
 }

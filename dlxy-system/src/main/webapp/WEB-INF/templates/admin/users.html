@@ -7,13 +7,15 @@
 	    <div class="layui-tab">
             <blockquote class="layui-elem-quote news_search">
 		
+		<form action="/admin/user/search.html" method="get">
 		<div class="layui-inline">
 		    <div class="layui-input-inline">
-		    	<input value="" id="searchText" placeholder="请输入关键字" class="layui-input search_input" type="text">
+		    	<input value="" id="searchText" placeholder="请输入关键字" class="layui-input search_input" type="text" name="q">
 		    </div>
-		    <input type="button" id="searchButton" class="layui-btn search_btn"  value="查询">
+		    <input type="submit"  class="layui-btn search_btn"  value="查询">
 		    
 		</div>
+		</form>
 	</blockquote>
 		         <!-- 操作日志 -->
                 <div class="layui-form news_list">
@@ -50,7 +52,7 @@
 							<tr>
 							<td>
 								<input name="checked" lay-skin="primary" lay-filter="choose" type="checkbox" value="${item.userId}">
-								
+							
 								<div class="layui-unselect layui-form-checkbox" lay-skin="primary">
 								<i class="layui-icon"></i>
 								</div>
@@ -60,7 +62,12 @@
 								<a href="/admin/articles.html?userId=${item.userId}" style="text-decoration:underline;" >${item.realname}</a>
 							</td>
 							<td>
-								${item.roleDescription}
+								<#if item.roleId==1>
+									普通管理员
+								<#else>
+									超级管理员
+								</#if>
+							
 							</td>
 							<td>
 							<#if item.able>
@@ -91,7 +98,7 @@
 								<a class="layui-btn layui-btn-mini "  userId="${item.userId?c}" onclick="updateUserStatus(this,1)"><i class="iconfont icon-edit"></i> 允许登录</a>
 								</#if>
 								
-								<input class="layui-btn layui-btn-danger layui-btn-mini" onclick="singleDelButton(this)" value="删除" articleId="${item.userId?c}">
+								<input class="layui-btn layui-btn-danger layui-btn-mini" onclick="singleDel(this)" value="删除" userId="${item.userId?c}">
 							</td>
 						</tr>
 						</#list>
@@ -99,7 +106,7 @@
 					</tbody>
 					</table>
                      <div class="larry-table-page clearfix">
-                          <input type="button" id="batchDelButton" class="layui-btn layui-btn-small" value="删除">
+                          <input type="button" id="batchDelButton" onclick="delUser()" class="layui-btn layui-btn-small" value="删除">
                            <#if pageVO??>
 						      <form name="pageForm" action="/admin/users.html" method="get">
 							      	<input type="hidden" name="pageNum" value="${pageVO.pageNum}">
@@ -123,7 +130,7 @@
 			    </div>
 		    </div>
 		</div>
-	<form method="post" action="/api/v1/user/update.html" id="editForm">
+	<form method="post" action="/admin/user/doUpdate.html" id="editUserForm">
 		<div class="modal fade" id="changeSource" role="dialog" aria-labelledby="gridSystemModalLabel">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
@@ -151,24 +158,28 @@
 								<div class="col-xs-3 ">
 									<input type="text" name="password" class="form-control input-sm duiqi" id="edit_password" placeholder="">
 								</div>
-								<div class="col-xs-3 ">
+								<#-- 	<div class="col-xs-3 ">
 									<select name="able"  style="width:100px;height: 30px">
 										<option value ="0">允许登录</option>
 										<option value="1">禁止登录</option>
 									</select>
-								</div>
+								</div> -->
+							
 								<label class="col-xs-2 control-label">用户角色:</label>
 								<div class="col-xs-3 " >
 									<select name="roleId"  style="width:100px;height: 30px" id="role_select">
+										<option value="0">超级管理员</option>
+										<option value="1">管理员</option>
 									</select>
 								</div>
-								
 							</div>
-							<input type="hidden" name="articleId" value="" id="edit_articleId">
+							<input type="hidden" name="userId" value="" id="edit_userId">
+							<input type="hidden" name="able" value="" id="edit_status">
 					</div>
 				</div>
+				
 				<div class="modal-footer" >
-					<button type="button" class="btn btn-xs btn-white" data-dismiss="modal">取 消</button>
+					<input type="button" class="btn btn-xs btn-white" data-dismiss="modal" value="取 消">
 					<input type="button" id="editSaveButton" onclick="editSaveUpdate();" class="btn btn-xs btn-green"  value="保 存">
 				</div>
 			</div>
@@ -180,22 +191,58 @@
 <#include "wrapper_down.html">
 <script type="text/javascript">
 	
+	function singleDel(obj){
+		var ids="";
+		ids=$(obj).attr("userId");
+		
+	}
+	function delUser(){
+			var ids="";
+			$("input:checkbox[name=checked]:checked").each(function(){
+				ids+=$(this).val()+",";
+			})
+			alert(ids);
+			jQuery.get('/api/v1/admin/user/delete.html',{ids:ids},function(data){
+				alert(data.msg);
+				location.reload();
+			},'json');
 	
+	}
+	function editSaveUpdate(){
+	
+		var data=$("#editUserForm").serialize();
+		jQuery.post('/api/v1/admin/user/update.html',data,function(data,textStatus,jqXHR){
+			alert(data.msg);
+			if(data.code==1){location.reload();}
+		},'json');
+	}
 	function updateUserStatus(obj,status){
 		var userId=$(obj).attr("userId");
 		
-		jQuery.get('/api/v1/user/updateStatus.html',{"userId":userId,"status":status},function(data){
+		jQuery.get('/api/v1/admin/user/updateStatus.html',{"userId":userId,"status":status},function(data){
 					alert(data.msg);
 					location.reload();		
 		},'json');
 	}
 	function loadUser(obj){
 		var userId=$(obj).attr("userId");
-		jQuery.get('/api/v1/user/find.html',{"q":userId},function(data,textStatus,jqXHR){
+		jQuery.get('/api/v1/admin/user/find.html',{"q":userId},function(data,textStatus,jqXHR){
 			if(data.code==1){
 				$("#edit_realname").val(data.data.realname);
-				var roleId=data.data.roleId;
-				loadRoles(roleId);
+				<#-- 		var roleId=data.data.roleId;
+				loadRoles(roleId); -->
+				$("#edit_userId").val(data.data.userId);
+				alert(data.data.able);
+				if(data.data.able){
+				alert("1");
+				$("#edit_status").val(1);
+					alert($("#edit_status").val());
+				}else{
+				alert("2");
+				$("#edit_status").val(0);
+				alert($("#edit_status").val());
+				}
+				
 			}else{
 				alert(data.msg);
 			}		
