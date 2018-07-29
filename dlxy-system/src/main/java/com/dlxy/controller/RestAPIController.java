@@ -127,6 +127,17 @@ public class RestAPIController
 	@Autowired
 	private AppEventPublisher appeventPublisher;
 
+	@RequestMapping(value="/address/images",method=RequestMethod.GET,produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResultDTO<String>getImagesAddress(HttpServletRequest request,HttpServletResponse response)
+	{
+		String token=request.getParameter("token");
+		if(StringUtils.isEmpty(token))
+		{
+			return ResultUtil.fail("缺少参数token");
+		}
+		return ResultUtil.fail();
+	}
+	
 	@RequestMapping(value = "/article/visitCount", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResultDTO<Integer> getArticleVisitCount(HttpServletRequest request, HttpServletResponse response)
 	{

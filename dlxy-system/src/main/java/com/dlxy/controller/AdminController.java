@@ -25,12 +25,14 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.LogoutAware;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -139,6 +141,7 @@ public class AdminController
 			return modelAndView;
 		}
 		UserDTO dbUser = userService.findByUsername(realname);
+
 		if (null == dbUser || !dbUser.getPassword().equals(KeyUtils.md5Encrypt(passwrod)))
 		{
 			params.put("error", "用户不存在,或者密码错误,忘记密码请联系管理员");
@@ -166,7 +169,23 @@ public class AdminController
 			{
 				modelAndView = new ModelAndView("redirect:/admin/index.html");
 			}
+			dlxyUser = null;
 		}
+		return modelAndView;
+	}
+
+	public static void main(String[] args)
+	{
+		String string = "202cb962ac59075b964b07152d234b70";
+		String string2 = "202cb962ac59075b964b07152d234b70";
+		System.out.println(string.equals(string2));
+	}
+
+	@RequestMapping("/logout")
+	public ModelAndView LogoutAware(HttpServletRequest request, HttpServletResponse response)
+	{
+		SecurityUtils.getSubject().logout();
+		ModelAndView modelAndView = new ModelAndView("login");
 		return modelAndView;
 	}
 
@@ -601,13 +620,23 @@ public class AdminController
 	}
 
 	@RequestMapping("/user/doAddUser")
-	public ModelAndView doAddUser(FormUser formUser, HttpServletRequest request, HttpServletResponse response)
+	public ModelAndView doAddUser(@Valid FormUser formUser, BindingResult result, HttpServletRequest request,
+			HttpServletResponse response)
 	{
 		ModelAndView modelAndView = null;
 		UserDTO user = AdminUtil.getLoginUser();
 		Map<String, Object> params = new HashMap<>();
 		params.put("user", AdminUtil.getLoginUser());
-		if (!realNamePattern.matcher(formUser.getRealname()).matches()
+
+		if (result.hasErrors())
+		{
+			String e="";
+			for( ObjectError error: result.getAllErrors())
+			{
+				e+=error.getDefaultMessage();
+			}
+			params.put("error", e);
+		} else if (!realNamePattern.matcher(formUser.getRealname()).matches()
 				|| !CommonUtils.validString(formUser.getRealname()))
 		{
 			params.put("error", "姓名格式不正确,正确格式:吕小聪 或者Justin Bieber,请不要包含特殊字符<>? 等");
@@ -733,9 +762,8 @@ public class AdminController
 		return modelAndView;
 	}
 
-	@RequiresRoles(value= {
-			"admin"
-	})
+	@RequiresRoles(value =
+	{ "admin" })
 	@RequestMapping("/user/search")
 	public ModelAndView searchUser(@RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
 			@RequestParam(name = "pageNum", defaultValue = "1") Integer pageNum, HttpServletRequest request,
@@ -750,30 +778,31 @@ public class AdminController
 			params.put("error", "查询参数不能为空");
 		} else
 		{
-			PageDTO<Collection<UserDTO>>pageDTO=null;
+			PageDTO<Collection<UserDTO>> pageDTO = null;
 			try
 			{
 				Long userId = Long.parseLong(q);
 				UserDTO userDTO = userService.findByUserId(userId);
-				pageDTO=new PageDTO<Collection<UserDTO>>(1L, Arrays.asList(userDTO));
+				pageDTO = new PageDTO<Collection<UserDTO>>(1L, Arrays.asList(userDTO));
 			} catch (NumberFormatException e)
 			{
 				params.put("realname", q);
 				try
 				{
-					pageDTO=userManagementWrappedService.findUsersByPage(pageSize, pageNum, params);
+					pageDTO = userManagementWrappedService.findUsersByPage(pageSize, pageNum, params);
 				} catch (SQLException e1)
 				{
 					e1.printStackTrace();
-					logger.error("[查询用户]sql error {},{}",e.getMessage(),e.getCause());
+					logger.error("[查询用户]sql error {},{}", e.getMessage(), e.getCause());
 				}
 			} catch (Exception e)
 			{
 				e.printStackTrace();
-				logger.error("[查询用户]error {},{}",e.getMessage(),e.getCause());
-				pageDTO=PageResultUtil.emptyPage();
+				logger.error("[查询用户]error {},{}", e.getMessage(), e.getCause());
+				pageDTO = PageResultUtil.emptyPage();
 			}
-			PageVO<Collection<UserDTO>>pageVO=new PageVO<Collection<UserDTO>>(pageDTO.getData(), pageSize, pageNum, pageDTO.getTotalCount());
+			PageVO<Collection<UserDTO>> pageVO = new PageVO<Collection<UserDTO>>(pageDTO.getData(), pageSize, pageNum,
+					pageDTO.getTotalCount());
 			params.put("pageVO", pageVO);
 			// try
 			// {

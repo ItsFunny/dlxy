@@ -7,11 +7,13 @@
 */
 package com.dlxy.model;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
+
+import org.hibernate.validator.constraints.NotBlank;
 
 import com.dlxy.common.dto.UserDTO;
 import com.joker.library.utils.CommonUtils;
+import com.joker.library.utils.KeyUtils;
 
 /**
  * 
@@ -23,12 +25,13 @@ import com.joker.library.utils.CommonUtils;
  */
 public class FormUser
 {
-	@NotNull
+	@NotBlank(message="姓名不能为空")
 	private String realname;
-	@NotNull
+	@NotBlank(message="密码不能为空")
 	private String password;
-	@Max(2)
+//	@Max(value=2,message="权限id最大不能超过2")
 	private Integer roleId;
+	
 	
 	public void valid()
 	{
@@ -43,7 +46,8 @@ public class FormUser
 	{
 		userDTO.setRealname(this.realname);
 		userDTO.setRoleId(this.roleId);
-		userDTO.setPassword(this.password);
+		userDTO.setPassword(KeyUtils.md5Encrypt(this.password));
+		userDTO.setAble(true);
 	}
 	public String getRealname()
 	{
