@@ -146,9 +146,10 @@ public class RestAPIController
 		Integer res = 0;
 		try
 		{
-			res = articleManagementWrappedService.findArticleVisitCount(Long.parseLong(articleIdStr), ip);
+			Long articleId=Long.parseLong(articleIdStr);
+			res = articleManagementWrappedService.findArticleVisitCount(articleId, ip);
 			HashMap<String, Object>map=new HashMap<>();
-			map.put("articleId", articleIdStr);
+			map.put("articleId", articleId);
 			appeventPublisher.publish(new AppEvent(map, Events.ArticleVisitCount.name()));
 			return ResultUtil.sucess(res);
 		} catch (JedisException e)

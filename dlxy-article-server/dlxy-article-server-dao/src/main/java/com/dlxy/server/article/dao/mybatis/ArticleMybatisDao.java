@@ -53,6 +53,8 @@ public interface ArticleMybatisDao extends DlxyArticleDao
 	void updateArticleStatus(@Param("articleId") Long articleId, @Param("status") Integer status);
 
 	void updateStatusInBatch(Map<String, Object> params);
+	
+	Integer updateInBatchSelective(Collection<ArticleDTO> articleDTOs);
 
 	void changeArticlesTypeInBatch(Map<String, Object> params);
 

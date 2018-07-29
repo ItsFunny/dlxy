@@ -25,13 +25,18 @@
     },
     {
       "sourceType": "com.dlxy.system.batch.config.DlxyProperty",
+      "name": "dlxy.config.amqp-port",
+      "type": "java.lang.Integer"
+    },
+    {
+      "sourceType": "com.dlxy.system.batch.config.DlxyProperty",
       "name": "dlxy.config.amqp-username",
       "type": "java.lang.String"
     },
     {
       "sourceType": "com.dlxy.system.batch.config.DlxyProperty",
-      "name": "dlxy.config.db-driver-class-name",
-      "type": "java.lang.String"
+      "name": "dlxy.config.datacenter-id",
+      "type": "java.lang.Long"
     },
     {
       "sourceType": "com.dlxy.system.batch.config.DlxyProperty",
@@ -47,6 +52,31 @@
       "sourceType": "com.dlxy.system.batch.config.DlxyProperty",
       "name": "dlxy.config.db-username",
       "type": "java.lang.String"
+    },
+    {
+      "sourceType": "com.dlxy.system.batch.config.DlxyProperty",
+      "name": "dlxy.config.driver-class-name",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "com.dlxy.system.batch.config.DlxyProperty",
+      "name": "dlxy.config.redis-host",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "com.dlxy.system.batch.config.DlxyProperty",
+      "name": "dlxy.config.redis-password",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "com.dlxy.system.batch.config.DlxyProperty",
+      "name": "dlxy.config.redis-port",
+      "type": "java.lang.Integer"
+    },
+    {
+      "sourceType": "com.dlxy.system.batch.config.DlxyProperty",
+      "name": "dlxy.config.worker-id",
+      "type": "java.lang.Long"
     }
   ]
 }

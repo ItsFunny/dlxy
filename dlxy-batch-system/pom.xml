@@ -17,6 +17,7 @@
 		<dlxy-user-server-service.version>0.0.1-SNAPSHOT</dlxy-user-server-service.version>
 		<dlxy-picture-server-service.version>0.0.1-SNAPSHOT</dlxy-picture-server-service.version>
 		<dlxy-common.version>0.0.1-SNAPSHOT</dlxy-common.version>
+		<dlxy-article-server-service.version>0.0.1-SNAPSHOT</dlxy-article-server-service.version>
 	</properties>
 
 	<parent>
@@ -26,6 +27,11 @@
 	</parent>
 	<dependencies>
 
+		<dependency>
+			<groupId>com.dlxy</groupId>
+			<artifactId>dlxy-article-server-service</artifactId>
+			<version>${dlxy-article-server-service.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-beans</artifactId>
@@ -128,6 +134,12 @@
 			<artifactId>spring-boot-configuration-processor</artifactId>
 			<optional>true</optional>
 		</dependency>
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+			<version>2.9.0</version>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<plugins>

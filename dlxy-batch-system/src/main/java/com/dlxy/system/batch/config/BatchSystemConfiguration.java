@@ -8,10 +8,12 @@
 package com.dlxy.system.batch.config;
 
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
 import org.apache.commons.collections.functors.FalsePredicate;
@@ -20,6 +22,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
@@ -38,6 +42,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.dlxy.common.event.AmqpListener;
@@ -49,6 +54,11 @@ import com.dlxy.system.batch.consumer.FacadedAmqpListener;
 import com.dlxy.system.batch.consumer.detail.ArticleVistitCountListener;
 import com.dlxy.system.batch.consumer.detail.UserIllegalLogListener;
 import com.dlxy.system.batch.consumer.detail.UserRecordListener;
+import com.dlxy.system.batch.service.IRedisService;
+import com.dlxy.system.batch.service.impl.RedisServiceImpl;
+
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 
 /**
  * 
@@ -69,9 +79,29 @@ import com.dlxy.system.batch.consumer.detail.UserRecordListener;
 },annotationClass=Mapper.class)
 public class BatchSystemConfiguration
 {
+	private Logger logger=LoggerFactory.getLogger(BatchSystemConfiguration.class);
 	@Autowired
 	private DlxyProperty dlxyProperty;
-	
+	@Bean
+	public JedisPool jedisPool()
+	{
+		JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
+		jedisPoolConfig.setMaxIdle(10);
+		jedisPoolConfig.setMaxTotal(1024);
+		jedisPoolConfig.setMaxWaitMillis(10000);
+		jedisPoolConfig.setTestOnBorrow(true);
+		// JedisPool jedisPool=new
+		JedisPool jedisPool = new JedisPool(jedisPoolConfig, dlxyProperty.getRedisHost(), dlxyProperty.getRedisPort(),
+				10000, dlxyProperty.getRedisPassword());
+		// JedisPool jedisPool = new JedisPool("localhost", 6379);
+		return jedisPool;
+	}
+
+	@Bean
+	public IRedisService redisService()
+	{
+		return new  RedisServiceImpl();
+	}
 	@Bean
 	public DataSource dataSource()
 	{
@@ -79,7 +109,7 @@ public class BatchSystemConfiguration
 		dataSource.setUsername(dlxyProperty.getDbUsername());
 		dataSource.setPassword(dlxyProperty.getDbPassword());
 		dataSource.setUrl(dlxyProperty.getDbUrl());
-		dataSource.setDriverClassName(dlxyProperty.getDbDriverClassName());
+		dataSource.setDriverClassName(dlxyProperty.getDriverClassName());
 		return dataSource;
 	}
 	@Bean
@@ -88,14 +118,14 @@ public class BatchSystemConfiguration
 		return new QueryRunner(dataSource());
 	}
 	@Bean
-	public SqlSessionFactoryBean sqlSessionFactory()
+	public SqlSessionFactoryBean sqlSessionFactory() throws IOException
 	{
 		SqlSessionFactoryBean sqlSessionFactoryBean=new SqlSessionFactoryBean();
 		sqlSessionFactoryBean.setDataSource(dataSource());
 		org.apache.ibatis.session.Configuration configuration=new org.apache.ibatis.session.Configuration();
 		configuration.setMapUnderscoreToCamelCase(true);
 		sqlSessionFactoryBean.setConfiguration(configuration);
-//		sqlSessionFactoryBean.setMapperLocations(mapperLocations);
+		sqlSessionFactoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath*:mapper/*.xml"));
 		return sqlSessionFactoryBean;
 	}
 	@ConditionalOnProperty(prefix="dlxy.config",name="amqp-enabled",matchIfMissing=false)
@@ -232,5 +262,9 @@ public class BatchSystemConfiguration
 			return new AppEventLogPubliher();
 		}
 	}
-	
+	@PostConstruct
+	public void initLog()
+	{
+		logger.info("{}",dlxyProperty);
+	}
 }

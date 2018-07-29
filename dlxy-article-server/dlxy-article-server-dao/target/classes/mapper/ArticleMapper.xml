@@ -85,14 +85,37 @@
 	</select>
 	<select id="findArticlesInTitleIdsLimited"
 		resultType="com.dlxy.common.dto.ArticleDTO">
-		select a.article_id,a.article_name,a.article_author,a.create_date ,a.title_id from
+		select a.article_id,a.article_name,a.article_author,a.create_date
+		,a.title_id from
 		dlxy_article a
-		where (select count(*) from dlxy_article b where a.title_id=b.title_id and
-		<![CDATA[ b.create_date >a.create_date ]]>) <![CDATA[<#{limit} ]]> and a.title_id in
-		<foreach collection="list" index="index" item="titleId" open="(" close=")" separator=",">
-			 #{titleId}
+		where (select count(*) from dlxy_article
+		b where a.title_id=b.title_id and
+		<![CDATA[ b.create_date >a.create_date ]]>) <![CDATA[<#{limit} ]]>
+		and a.title_id in
+		<foreach collection="list" index="index" item="titleId"
+			open="(" close=")" separator=",">
+			#{titleId}
 		</foreach>
 		and a.article_status =#{status}
 		order by a.create_date,a.title_id desc
 	</select>
+	<update id="updateInBatchSelective">
+		update dlxy_article
+		<trim prefix="set" suffixOverrides=",">
+			<trim prefix="visit_count=case" suffix="end,">
+				<foreach collection="collection" item="item" index="index">
+					<if test="item.visitCount!=null and item.visitCount>=0">
+						when article_id=#{item.articleId} then
+						#{item.visitCount}
+					</if>
+				</foreach>
+			</trim>
+		</trim>
+		where
+		article_id in
+		<foreach collection="collection" index="index" open="(" close=")"
+			separator="," item="item">
+			#{item.articleId}
+		</foreach>
+	</update>
 </mapper>

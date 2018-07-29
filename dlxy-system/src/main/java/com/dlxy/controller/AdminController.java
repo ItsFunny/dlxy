@@ -627,7 +627,6 @@ public class AdminController
 		UserDTO user = AdminUtil.getLoginUser();
 		Map<String, Object> params = new HashMap<>();
 		params.put("user", AdminUtil.getLoginUser());
-
 		if (result.hasErrors())
 		{
 			String e="";

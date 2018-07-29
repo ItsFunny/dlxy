@@ -230,6 +230,12 @@ public class ArticleServiceImpl implements IArticleService ,IUserArticleService
 		
 	}
 
+	@Override
+	public Integer updateInBatchSelective(Collection<ArticleDTO> articleDTOs)
+	{
+		return articleDao.updateInBatchSelective(articleDTOs);
+	}
+
 
 	
 //	@Override

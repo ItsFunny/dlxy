@@ -38,6 +38,8 @@ public interface IArticleService
 	//修改文章类型
 	void updateArticleTypeInbatch(Long[] articleIds,int type);
 	
+	Integer updateInBatchSelective(Collection<ArticleDTO>articleDTOs);
+	
 //	void updateArticleStatusInBatch(Long[] articleIds,int status);
 	
 	/*

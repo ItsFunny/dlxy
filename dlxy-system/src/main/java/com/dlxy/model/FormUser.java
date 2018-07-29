@@ -7,6 +7,7 @@
 */
 package com.dlxy.model;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.NotEmpty;
 
 import org.hibernate.validator.constraints.NotBlank;
@@ -29,7 +30,7 @@ public class FormUser
 	private String realname;
 	@NotBlank(message="密码不能为空")
 	private String password;
-//	@Max(value=2,message="权限id最大不能超过2")
+	@Max(value=2,message="权限id最大不能超过2")
 	private Integer roleId;
 	
 	
