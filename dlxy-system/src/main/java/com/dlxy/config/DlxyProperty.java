@@ -6,9 +6,17 @@
 */
 package com.dlxy.config;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Base64;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 /**
  * 
@@ -54,7 +62,118 @@ public class DlxyProperty implements InitializingBean
 	@Value("${dlxy.datacenterId}")
 	private long datacenterId;
 	
+	
+	@Value("${dlxy.key.property-private-key-path}")
+	private String privateKeyPath;
+	
+	@Value("${dlxy.key.property-public-key-path}")
+	private String publicKeyPath;
+	
+	
+	private byte[] privateKeyBytes;
+	private byte[] publicKeyBytes;
 
+	
+	
+	public void loadPublicKey() throws IOException
+	{
+		if(null!=publicKeyBytes)
+		{
+			return;
+		}
+		if(StringUtils.isEmpty(publicKeyPath))
+		{
+			return;
+		}
+		PathMatchingResourcePatternResolver resolver=new PathMatchingResourcePatternResolver();
+		Resource resource = resolver.getResource(publicKeyPath);
+		InputStream inputStream=null;
+		try
+		{
+			inputStream=resource.getInputStream();
+			int index = 0;
+			StringBuilder sb = new StringBuilder();
+			while ((index = inputStream.read()) != -1)
+			{
+				sb.append((char) index);
+			}
+//			publicKeyBytes=Base64.getDecoder().decode(sb.toString());
+			this.publicKeyBytes=sb.toString().getBytes();
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}finally {
+			inputStream.close();
+		}
+	}
+	public void loadPrivateKey() throws IOException
+	{
+		if(null!=privateKeyBytes)
+		{
+			return;
+		}
+		if(StringUtils.isEmpty(privateKeyPath))
+		{
+			return;
+		}
+		PathMatchingResourcePatternResolver resolver=new PathMatchingResourcePatternResolver();
+		Resource resource = resolver.getResource(privateKeyPath);
+		InputStream inputStream=null;
+		try
+		{
+			inputStream=resource.getInputStream();
+			int index = 0;
+			StringBuilder sb = new StringBuilder();
+			while ((index = inputStream.read()) != -1)
+			{
+				sb.append((char) index);
+			}
+			this.privateKeyBytes=sb.toString().getBytes();
+//			this.privateKeyBytes=Base64.getEncoder().encode(sb.toString());
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}finally {
+			inputStream.close();
+		}
+	}
+	public void init() throws IOException
+	{
+		loadPrivateKey();
+		loadPublicKey();
+	}
+	public void loadKey(byte[] keys,String keyPath) throws IOException
+	{
+		if(null!=keys)
+		{
+			return;
+		}
+		if(StringUtils.isEmpty(keyPath))
+		{
+			return;
+		}
+		PathMatchingResourcePatternResolver resolver=new PathMatchingResourcePatternResolver();
+		Resource resource = resolver.getResource(keyPath);
+		InputStream inputStream=null;
+		try
+		{
+			inputStream=resource.getInputStream();
+			int index = 0;
+			StringBuilder sb = new StringBuilder();
+			while ((index = inputStream.read()) != -1)
+			{
+				sb.append((char) index);
+			}
+//			keys=Base64.getEncoder().encode();
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}finally {
+			inputStream.close();
+		}
+		
+	}
+	 
 	public String getUsername()
 	{
 		return username;
@@ -105,7 +224,12 @@ public class DlxyProperty implements InitializingBean
 	public String toString()
 	{
 		return "DlxyProperty [username=" + username + ", password=" + password + ", driverClassName=" + driverClassName
-				+ ", url=" + url + "]";
+				+ ", url=" + url + ", amqpHost=" + amqpHost + ", amqpUsername=" + amqpUsername + ", amqpPassword="
+				+ amqpPassword + ", amqpEnabled=" + amqpEnabled + ", amqpPort=" + amqpPort + ", redisHost=" + redisHost
+				+ ", redisPort=" + redisPort + ", redisPassword=" + redisPassword + ", workerId=" + workerId
+				+ ", datacenterId=" + datacenterId + ", privateKeyPath=" + privateKeyPath + ", publicKeyPath="
+				+ publicKeyPath + ", privateKeyBytes=" + Arrays.toString(privateKeyBytes) + ", publicKeyBytes="
+				+ Arrays.toString(publicKeyBytes) + "]";
 	}
 
 	public String getAmqpHost()
@@ -206,6 +330,46 @@ public class DlxyProperty implements InitializingBean
 	public void setDatacenterId(long datacenterId)
 	{
 		this.datacenterId = datacenterId;
+	}
+
+	public String getPrivateKeyPath()
+	{
+		return privateKeyPath;
+	}
+
+	public void setPrivateKeyPath(String privateKeyPath)
+	{
+		this.privateKeyPath = privateKeyPath;
+	}
+
+	public String getPublicKeyPath()
+	{
+		return publicKeyPath;
+	}
+
+	public void setPublicKeyPath(String publicKeyPath)
+	{
+		this.publicKeyPath = publicKeyPath;
+	}
+
+	public byte[] getPrivateKeyBytes()
+	{
+		return privateKeyBytes;
+	}
+
+	public void setPrivateKeyBytes(byte[] privateKeyBytes)
+	{
+		this.privateKeyBytes = privateKeyBytes;
+	}
+
+	public byte[] getPublicKeyBytes()
+	{
+		return publicKeyBytes;
+	}
+
+	public void setPublicKeyBytes(byte[] publicKeyBytes)
+	{
+		this.publicKeyBytes = publicKeyBytes;
 	}
 
 }

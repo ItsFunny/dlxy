@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -64,8 +65,10 @@ import com.dlxy.common.event.AppEvent;
 import com.dlxy.common.event.AppEventPublisher;
 import com.dlxy.common.event.Events;
 import com.dlxy.common.utils.JsonUtil;
+import com.dlxy.common.utils.RSAUtils;
 import com.dlxy.common.utils.ResultUtil;
 import com.dlxy.common.vo.PageVO;
+import com.dlxy.config.DlxyProperty;
 import com.dlxy.constant.TitleArticleConstant;
 import com.dlxy.exception.DlxySystemIllegalException;
 import com.dlxy.model.FormArticle;
@@ -126,14 +129,31 @@ public class RestAPIController
 	private ITitleManagementWrappedService titleManagementWrappedService;
 	@Autowired
 	private AppEventPublisher appeventPublisher;
+	@Autowired
+	private DlxyProperty dlxyProperty;
 
 	@RequestMapping(value="/address/images",method=RequestMethod.GET,produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResultDTO<String>getImagesAddress(HttpServletRequest request,HttpServletResponse response)
+	public ResultDTO<String>getImagesAddress(HttpServletRequest request,HttpServletResponse response) throws UnsupportedEncodingException
 	{
 		String token=request.getParameter("token");
+		token=URLDecoder.decode(token, "utf-8");
 		if(StringUtils.isEmpty(token))
 		{
 			return ResultUtil.fail("缺少参数token");
+		}
+		try
+		{
+			RSAUtils.decryptByPrivate(token, dlxyProperty.getPrivateKeyBytes());
+			String path = request.getServletContext().getRealPath("");
+			return ResultUtil.sucess(path, "sucess");
+		} catch (UnsupportedEncodingException e)
+		{
+			e.printStackTrace();
+			
+//			IllegalLogDTO illegalLogDTO=new IllegalLogDTO(CommonUtils.getRemortIP(request), userid, detail, level)
+		}catch (Exception e) {
+			logger.error("[解析token出错],error :{}",e.getMessage());
+			return ResultUtil.fail("解析错误"+e.getMessage());
 		}
 		return ResultUtil.fail();
 	}

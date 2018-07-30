@@ -20,12 +20,14 @@
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/vo/UserRecordUrlVO.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/model/VisitUserManager.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/enums/ArticlePictureTypeEnum.java
+/Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/utils/FileUtil.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/annotation/UserRecordAnnotation.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/dto/AbstractDlxyTreeComposite.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/dto/PictureUploadResponseDTO.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/dto/AbstractDlxyArticleComposite.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/dto/UserRoleDTO.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/dto/DlxyTitleDTO.java
+/Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/model/ArticleVisitInfo.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/event/Events.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/dto/IllegalLogDTO.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/dto/SuspicionDTO.java

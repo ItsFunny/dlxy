@@ -6,9 +6,18 @@
 */
 package com.dlxy.system.batch.config;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Base64;
+
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 /**
  * 
@@ -41,6 +50,47 @@ public class DlxyProperty implements InitializingBean
 	
 	private long workerId;
 	private long datacenterId;
+	
+	private String propertyPublicKeyPath;
+	private byte[] publicKeyBytes;
+	
+	public void init() throws IOException
+	{
+		loadPublicKey();
+	}
+	public void loadPublicKey() throws IOException
+	{
+		if(null!=publicKeyBytes)
+		{
+			return;
+		}
+		if(StringUtils.isEmpty(propertyPublicKeyPath))
+		{
+			return;
+		}
+		PathMatchingResourcePatternResolver resolver=new PathMatchingResourcePatternResolver();
+		Resource resource = resolver.getResource(propertyPublicKeyPath);
+		InputStream inputStream=null;
+		try
+		{
+			inputStream=resource.getInputStream();
+			int index = 0;
+			StringBuilder sb = new StringBuilder();
+			while ((index = inputStream.read()) != -1)
+			{
+				sb.append((char) index);
+			}
+//			publicKeyBytes=Base64.getDecoder().decode(sb.toString());
+			this.publicKeyBytes=sb.toString().getBytes();
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}finally {
+			inputStream.close();
+		}
+	}
+	
+	
 	public String getDbUsername()
 	{
 		return dbUsername;
@@ -158,6 +208,23 @@ public class DlxyProperty implements InitializingBean
 	{
 		
 	}
+	
+	public String getPropertyPublicKeyPath()
+	{
+		return propertyPublicKeyPath;
+	}
+	public void setPropertyPublicKeyPath(String propertyPublicKeyPath)
+	{
+		this.propertyPublicKeyPath = propertyPublicKeyPath;
+	}
+	public byte[] getPublicKeyBytes()
+	{
+		return publicKeyBytes;
+	}
+	public void setPublicKeyBytes(byte[] publicKeyBytes)
+	{
+		this.publicKeyBytes = publicKeyBytes;
+	}
 	@Override
 	public String toString()
 	{
@@ -165,7 +232,8 @@ public class DlxyProperty implements InitializingBean
 				+ driverClassName + ", dbUrl=" + dbUrl + ", amqpHost=" + amqpHost + ", amqpUsername=" + amqpUsername
 				+ ", amqpPassword=" + amqpPassword + ", amqpEnabled=" + amqpEnabled + ", amqpPort=" + amqpPort
 				+ ", redisHost=" + redisHost + ", redisPort=" + redisPort + ", redisPassword=" + redisPassword
-				+ ", workerId=" + workerId + ", datacenterId=" + datacenterId + "]";
+				+ ", workerId=" + workerId + ", datacenterId=" + datacenterId + ", propertyPublicKeyPath="
+				+ propertyPublicKeyPath + ", publicKeyBytes=" + Arrays.toString(publicKeyBytes) + "]";
 	}
 	
 

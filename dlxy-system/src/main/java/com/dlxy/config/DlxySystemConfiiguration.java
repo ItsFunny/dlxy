@@ -7,6 +7,7 @@ import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Observer;
 
+import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbutils.QueryRunner;
@@ -14,6 +15,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.connection.RabbitConnectionFactoryBean;
@@ -90,8 +93,7 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer
 	@Autowired
 	private DlxyProperty dlxyProperty;
 
-	
-	
+	private Logger logger=LoggerFactory.getLogger(DlxySystemConfiiguration.class);	
 //	@Bean
 //	public JedisPoolConfig poolConfig()
 //	{
@@ -353,6 +355,15 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer
 		jackson2HttpMessageConverter.setObjectMapper(objectMapper);
 		converters.add(jackson2HttpMessageConverter);
 		converters.add(new StringHttpMessageConverter(Charset.forName("UTF-8")));
+	}
+	
+	@PostConstruct
+	public void init() throws IOException
+	{
+//		dlxyProperty.loadKey(dlxyProperty.getPrivateKeyBytes(), dlxyProperty.getPrivateKeyPath());
+//		dlxyProperty.loadKey(dlxyProperty.getPublicKeyBytes(), dlxyProperty.getPublicKeyPath());
+		dlxyProperty.init();
+		logger.info("{}",dlxyProperty);
 	}
 
 }

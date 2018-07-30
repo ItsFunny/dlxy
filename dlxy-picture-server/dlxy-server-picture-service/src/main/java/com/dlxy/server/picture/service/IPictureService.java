@@ -54,7 +54,8 @@ public interface IPictureService
 	
 	void addPictureWithArticleIdSingle(PictureDTO pictureDTO);
 	
-	Collection<PictureDTO>findByStatus(int status);
+	@Deprecated
+	Collection<PictureDTO> findByStatus(int status);
 	
 	//无用的方法
 //	int deleteByPictureIdAndStatus(String pictureId,int pictureType);

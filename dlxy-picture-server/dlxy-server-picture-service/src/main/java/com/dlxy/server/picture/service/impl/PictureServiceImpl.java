@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dlxy.common.dto.PictureDTO;
+import com.dlxy.server.picture.dao.mybatis.DlxyArticlePictureDao;
 import com.dlxy.server.picture.dao.mybatis.PictureMybatisDao;
 import com.dlxy.server.picture.dao.query.PictureQueryDao;
 import com.dlxy.server.picture.service.IPictureService;
@@ -36,6 +37,10 @@ public class PictureServiceImpl implements IPictureService
 
 	@Autowired
 	private PictureMybatisDao pictureMybatisDao;
+	
+	@Autowired
+	private DlxyArticlePictureDao articlePictureDao;
+	
 	/*
 	 * batch insert
 	 */

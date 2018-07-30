@@ -54,7 +54,7 @@ public class ArticleVisitCountJob implements JobRunner
 	private Logger logger = LoggerFactory.getLogger(ArticleVisitCountJob.class);
 
 	//每隔9天执行一次
-	@Scheduled(cron = "0 0 0 1/9 * ? *")
+	@Scheduled(cron = "0/10 0 0 1-12 * ? ")
 	@Override
 	public void run()
 	{

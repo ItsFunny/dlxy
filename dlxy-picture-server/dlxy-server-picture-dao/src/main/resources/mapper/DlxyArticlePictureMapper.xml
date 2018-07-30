@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dlxy.server.picture.dao.mybatis.DlxyArticlePictureDao" >
+  <resultMap id="BaseResultMap" type="com.dlxy.server.picture.model.DlxyArticlePicture" >
+    <result column="article_id" property="articleId" jdbcType="BIGINT" />
+    <result column="picture_id" property="pictureId" jdbcType="BIGINT" />
+    <result column="picture_status" property="pictureStatus" jdbcType="BIT" />
+    <result column="picture_type" property="pictureType" jdbcType="INTEGER" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    article_id, picture_id, picture_status, picture_type, create_date
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.dlxy.server.picture.model.DlxyArticlePictureExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from dlxy_article_picture
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <delete id="deleteByExample" parameterType="com.dlxy.server.picture.model.DlxyArticlePictureExample" >
+    delete from dlxy_article_picture
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.dlxy.server.picture.model.DlxyArticlePicture" >
+    insert into dlxy_article_picture (article_id, picture_id, picture_status, 
+      picture_type, create_date)
+    values (#{articleId,jdbcType=BIGINT}, #{pictureId,jdbcType=BIGINT}, #{pictureStatus,jdbcType=BIT}, 
+      #{pictureType,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.dlxy.server.picture.model.DlxyArticlePicture" >
+    insert into dlxy_article_picture
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="articleId != null" >
+        article_id,
+      </if>
+      <if test="pictureId != null" >
+        picture_id,
+      </if>
+      <if test="pictureStatus != null" >
+        picture_status,
+      </if>
+      <if test="pictureType != null" >
+        picture_type,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="articleId != null" >
+        #{articleId,jdbcType=BIGINT},
+      </if>
+      <if test="pictureId != null" >
+        #{pictureId,jdbcType=BIGINT},
+      </if>
+      <if test="pictureStatus != null" >
+        #{pictureStatus,jdbcType=BIT},
+      </if>
+      <if test="pictureType != null" >
+        #{pictureType,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.dlxy.server.picture.model.DlxyArticlePictureExample" resultType="java.lang.Integer" >
+    select count(*) from dlxy_article_picture
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update dlxy_article_picture
+    <set >
+      <if test="record.articleId != null" >
+        article_id = #{record.articleId,jdbcType=BIGINT},
+      </if>
+      <if test="record.pictureId != null" >
+        picture_id = #{record.pictureId,jdbcType=BIGINT},
+      </if>
+      <if test="record.pictureStatus != null" >
+        picture_status = #{record.pictureStatus,jdbcType=BIT},
+      </if>
+      <if test="record.pictureType != null" >
+        picture_type = #{record.pictureType,jdbcType=INTEGER},
+      </if>
+      <if test="record.createDate != null" >
+        create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update dlxy_article_picture
+    set article_id = #{record.articleId,jdbcType=BIGINT},
+      picture_id = #{record.pictureId,jdbcType=BIGINT},
+      picture_status = #{record.pictureStatus,jdbcType=BIT},
+      picture_type = #{record.pictureType,jdbcType=INTEGER},
+      create_date = #{record.createDate,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+</mapper>

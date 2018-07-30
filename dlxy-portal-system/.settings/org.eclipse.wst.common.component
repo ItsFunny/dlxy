@@ -13,6 +13,9 @@
         <dependent-module archiveName="dlxy-common-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/dlxy-common/dlxy-common">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="library-0.0.2-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/library/library">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <dependent-module archiveName="dlxy-article-server-service-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/dlxy-article-server-service/dlxy-article-server-service">
             <dependency-type>uses</dependency-type>
         </dependent-module>
