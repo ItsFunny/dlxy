@@ -172,6 +172,6 @@ public interface ArticleMybatisDao extends DlxyArticleDao
 	int rollBackArticle(@Param("status") int status, @Param("articleId") Long articleId,
 			@Param("titleId") Integer titleId);
 
-	void deleteInBatch(Long[] articleIds);
+	Integer deleteInBatch(Long[] articleIds);
 
 }

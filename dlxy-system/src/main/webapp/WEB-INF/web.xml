@@ -4,7 +4,18 @@
 
 <web-app>
 	<display-name>Archetype Created Web Application</display-name>
-
+	<context-param>
+		<param-name>log4jConfigLocation</param-name>
+		<param-value>classpath:log4j.properties</param-value>
+	</context-param>
+	<context-param>
+		<param-name>spring.profiles.active</param-name>
+		<param-value>dev</param-value>
+	</context-param>
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:spring/*.xml</param-value>
+	</context-param>
 	<filter>
 		<filter-class>
 			org.springframework.web.filter.DelegatingFilterProxy
@@ -29,18 +40,7 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
-	<context-param>
-		<param-name>log4jConfigLocation</param-name>
-		<param-value>classpath:log4j.properties</param-value>
-	</context-param>
-	<context-param>
-		<param-name>spring.profiles.active</param-name>
-		<param-value>dev</param-value>
-	</context-param>
-	<context-param>
-		<param-name>contextConfigLocation</param-name>
-		<param-value>classpath:/spring/*.xml</param-value>
-	</context-param>
+
 
 
 	<servlet>

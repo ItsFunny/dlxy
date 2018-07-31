@@ -109,7 +109,7 @@ public interface IArticleService
 	
 	void updateArticleVisitCount(Long articleId,Integer visitCount);
 	
-	void deleteArticlesInBatch(Long[] articleIds);
+	Integer deleteArticlesInBatch(Long[] articleIds);
 	
 	
 }

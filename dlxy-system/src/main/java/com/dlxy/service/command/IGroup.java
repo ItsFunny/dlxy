@@ -23,4 +23,7 @@ public interface IGroup
 	void add(Map<String, Object>map) throws SQLException;
 	
 	void update(Map<String, Object>params) throws SQLException;
+	
+	
+	void delete(Map<String, Object>params);
 }

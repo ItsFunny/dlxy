@@ -36,7 +36,7 @@ import com.dlxy.system.batch.service.IRedisService;
  * @author joker
  * @date 创建时间：2018年7月27日 下午3:07:25
  */
-@Component
+//@Component
 public class ArticleVisitCountJob implements JobRunner
 {
 	public static final LinkedBlockingQueue<String> ARTICLEIDS = new LinkedBlockingQueue<>();

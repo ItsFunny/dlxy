@@ -381,6 +381,18 @@ public class AdminController
 		String[] pictureIds = request.getParameterValues("pictureId");
 		String url = null;
 		PictureDTO descPic = null;
+		Map<String, Object> params = new HashMap<>();
+		if (bindingResult.hasErrors())
+		{
+			String error = "";
+			for (ObjectError objectError : bindingResult.getAllErrors())
+			{
+				error += objectError.getDefaultMessage();
+			}
+			params.put("error", error);
+			modelAndView = new ModelAndView("error", params);
+			return modelAndView;
+		}
 		// 需要事务
 		if (null != imgFile && !imgFile.isEmpty())
 		{
@@ -410,11 +422,7 @@ public class AdminController
 				e1.printStackTrace();
 			}
 		}
-		Map<String, Object> params = new HashMap<>();
-		if (bindingResult.hasErrors())
-		{
-			params.put("error", bindingResult.getAllErrors().toString());
-		}
+
 		String[] titleIds = request.getParameterValues("titleId");
 		Arrays.sort(titleIds, new Comparator<String>()
 		{
@@ -629,10 +637,10 @@ public class AdminController
 		params.put("user", AdminUtil.getLoginUser());
 		if (result.hasErrors())
 		{
-			String e="";
-			for( ObjectError error: result.getAllErrors())
+			String e = "";
+			for (ObjectError error : result.getAllErrors())
 			{
-				e+=error.getDefaultMessage();
+				e += error.getDefaultMessage();
 			}
 			params.put("error", e);
 		} else if (!realNamePattern.matcher(formUser.getRealname()).matches()

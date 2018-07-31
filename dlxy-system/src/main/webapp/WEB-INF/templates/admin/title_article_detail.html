@@ -234,7 +234,7 @@
 								</div>
 								<label class="col-xs-2 control-label">类目：</label>
 								<div class="col-xs-3 ">
-									<select id="leimu0" onchange="showChild(this)" style="width:100px;height: 30px" name="titleId">
+									<select id="leimu0" onchange="changeChild(this)" style="width:100px;height: 30px" name="titleId">
 									</select>
 								</div>
 								<div class="col-xs-3 " id="leimu1_div">
@@ -442,6 +442,31 @@
 				showChild(titleId,$("#leimu0"));
  			}
  		})
+ 	}
+ 	function changeChild(obj){
+ 		 $("#leimu1").empty();
+        var parentId=$(obj).val();
+            $.ajax({
+                url:'/api/v1/title/'+parentId+'.html',
+                type:'post',
+                dataType:'json',
+                success:function (data) {
+					var o=data.data;
+                    var str="";
+                    if(o.length<1){
+                    	 $("#leimu1").remove();
+                    }else{
+                     $("#leimu1").remove();
+                    	str+='<select id="leimu1" style="width:100px;height: 30px" name="titleId"> ';
+                     for(i=0;i<o.length;i++){
+                    	var t=o[i].titleId;
+	                    	str+="<option value="+o[i].titleId+">"+o[i].titleName+"</option>"
+                    }
+                    str+='</select>';
+                    $("#leimu1_div").append(str);
+                    }
+                }
+          })
  	}
  	function showChild(titleId,obj){
  	 $("#leimu1").empty();

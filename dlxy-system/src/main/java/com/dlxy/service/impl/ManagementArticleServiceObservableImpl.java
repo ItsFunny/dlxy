@@ -10,6 +10,7 @@ package com.dlxy.service.impl;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -18,6 +19,8 @@ import java.util.Observable;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -51,7 +54,6 @@ import com.dlxy.utils.FileUtil;
 import com.dlxy.vo.TitleDetailVO;
 import com.joker.library.utils.CommonUtils;
 
-
 /**
  * 
  * @When
@@ -63,6 +65,7 @@ import com.joker.library.utils.CommonUtils;
 public class ManagementArticleServiceObservableImpl extends Observable implements IArticleManagementWrappedService
 {
 
+	private Logger logger = LoggerFactory.getLogger(ManagemeentTitleServiceImpl.class);
 	@Autowired
 	private IArticleService articleService;
 	@Autowired
@@ -80,26 +83,29 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 	private IRedisService redisService;
 	@Autowired
 	private ArticleVisitCountContext articleVisitCountContext;
-	
-//	{
-//		//这样似乎不太好,但是又不想放到ioc中  ,还是放到ioc中吧,还是改为静态类了,因为将flyweight和strategy整到一起去了,
-		//放到ioc中得话context也需要注册
-//		ArticleVisitCountFactory.init(redisService, articleService);
-//	}
+
+	// {
+	// //这样似乎不太好,但是又不想放到ioc中 ,还是放到ioc中吧,还是改为静态类了,因为将flyweight和strategy整到一起去了,
+	// 放到ioc中得话context也需要注册
+	// ArticleVisitCountFactory.init(redisService, articleService);
+	// }
 
 	@Override
 	public Integer findArticleVisitCount(Long articleId, String ip)
 	{
 		int result = 0;
-//		ArticleVisitInfo visitInfo = null;
-//		ArticleVisitCountContext context = new ArticleVisitCountContext(articleService,redisService);
-//		visitInfo = articleVisitCountFactory.get(articleId);
-//		if(redisService.isAvaliable())
-//		{
-//			context = new ArticleVisitCountContext(new RedisArticleVIsitCountStrategy(redisService, articleService));
-//		}else {
-//			context=new ArticleVisitCountContext(new DbVisitCountStrategy(articleService));
-//		}
+		// ArticleVisitInfo visitInfo = null;
+		// ArticleVisitCountContext context = new
+		// ArticleVisitCountContext(articleService,redisService);
+		// visitInfo = articleVisitCountFactory.get(articleId);
+		// if(redisService.isAvaliable())
+		// {
+		// context = new ArticleVisitCountContext(new
+		// RedisArticleVIsitCountStrategy(redisService, articleService));
+		// }else {
+		// context=new ArticleVisitCountContext(new
+		// DbVisitCountStrategy(articleService));
+		// }
 		result = articleVisitCountContext.visitCount(articleId);
 		// String key = String.format(IRedisService.ARTICLE_VISIT_COUNT, articleId);
 		// String json = redisService.get(key);
@@ -306,6 +312,7 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 		titleService.insertOrUpdate(dlxyTitleDTO);
 		execute(userDTO, "添加或者更新标题:" + AbstractRecordDetailHandler.TITLE + ":" + dlxyTitleDTO.getTitleId());
 	}
+
 	@Transactional
 	@Override
 	public Integer deleteByTitleId(UserDTO userDTO, Integer titleId)
@@ -325,28 +332,46 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 		execute(userDTO, detail);
 		return count;
 	}
-	
+
 	@Transactional
 	@Override
 	public void deleteInBatch(UserDTO userDTO, Long[] articleIds)
 	{
+		List<Long> ids = Arrays.asList(articleIds);
+		List<Long> backUpdateIds = new ArrayList<>();
+		List<Long>deleteIds=new ArrayList<>();
 		articleService.deleteArticlesInBatch(articleIds);
-		// 修改图片状态,或者发布信息,最后还是选择只修改状态,防止瞬间进行io操作 2018-07-09
-		// 不需要了,直接数据库自动设置为null即可,因为url中存放着路径
-		pictureService.updateArticlePictureStatusByArticleIdsInbatch(articleIds, PictureStatusEnum.Invalid.ordinal());
-		// 直接全部删除 采用发布消息的方式
 		ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 		HttpServletRequest request = attributes.getRequest();
 		String realPath = request.getServletContext().getRealPath("imgs");
-		for (Long long1 : articleIds)
+		for (int i = ids.size() - 1; i >= 0; i--)
 		{
-			System.out.println(realPath + File.separator + long1);
-			File file = new File(realPath + File.separator + long1);
-			FileUtil.delFileOrDir(file);
+			File file = new File(realPath + File.separator + ids.get(i));
+			try
+			{
+				boolean res = FileUtil.delFileOrDir(file);
+				if(res)
+				{
+					deleteIds.add(ids.get(i));
+				}else {
+					backUpdateIds.add(ids.get(i));
+				}
+			} catch (Exception e)
+			{
+				logger.error("[删除文章旗下的图片失败],file:{}", file);
+				backUpdateIds.add(ids.get(i));
+			}
 		}
-		// Collection<PictureDTO> collection =
-		// pictureService.findByArticleIdArray(articleIds);
-		String detail = "删除文章:" + AbstractRecordDetailHandler.ARTICLE+":";
+		if(!deleteIds.isEmpty())
+		{
+			pictureService.deleteByPictureIds(deleteIds);
+		}
+		if (!backUpdateIds.isEmpty())
+		{
+			pictureService.updateArticlePictureStatusByArticleIdsInbatch(
+					backUpdateIds.toArray(new Long[backUpdateIds.size()]), PictureStatusEnum.Invalid.ordinal());
+		}
+		String detail = "删除文章:" + AbstractRecordDetailHandler.ARTICLE + ":";
 		for (Long long1 : articleIds)
 		{
 			detail += long1 + ",";

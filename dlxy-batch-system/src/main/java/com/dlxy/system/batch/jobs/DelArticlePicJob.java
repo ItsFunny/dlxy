@@ -45,7 +45,7 @@ import com.dlxy.system.batch.config.DlxyProperty;
  * @author joker
  * @date 创建时间：2018年7月9日 上午8:35:01
  */
-@Component
+ @Component
 public class DelArticlePicJob implements JobRunner
 {
 	private Logger logger = LoggerFactory.getLogger(DelArticlePicJob.class);
@@ -63,7 +63,39 @@ public class DelArticlePicJob implements JobRunner
 	@Autowired
 	private AppEventPublisher eventPublisher;
 
-	@Scheduled(cron = "0/10 * * * * ?")
+	private String getStoreUrl()
+	{
+		if (StringUtils.isEmpty(picStoreUrl))
+		{
+			try
+			{
+				String token = RSAUtils.encryptByPublic("getImgsAddress", dlxyProperty.getPublicKeyBytes());
+				@SuppressWarnings("rawtypes")
+				ResultDTO resultDTO = restTemplate.getForObject(
+						"http://localhost:8000/api/v1/address/images.html?token=" + URLEncoder.encode(token, "utf-8"),
+						ResultDTO.class);
+				if (resultDTO.getCode() == 1)
+				{
+					picStoreUrl = (String) resultDTO.getData();
+					return picStoreUrl;
+				} else
+				{
+					logger.error("[rest请求存放图片地址出错]error:{}", resultDTO.getMsg());
+					return null;
+				}
+			} catch (Exception e)
+			{
+				logger.error("[获取图片存储地址错误]error:{}", e.getMessage());
+				return null;
+			}
+		} else
+		{
+			return picStoreUrl;
+		}
+
+	}
+
+	 @Scheduled(cron = "0/10 * * * * ?")
 	@Override
 	public void run()
 	{
@@ -76,85 +108,80 @@ public class DelArticlePicJob implements JobRunner
 			List<Map<String, Object>> list = queryRunner.query(sql, new MapListHandler(),
 					PictureStatusEnum.Invalid.ordinal());
 			List<Long> pictureIdList = new ArrayList<Long>();
-//			List<Map<String, Object>> list = new LinkedList<>();
-//			Map<String, Object> map2 = new HashMap<String, Object>();
-//			map2.put("pictureUrl", "http://localhost:8000/imgs/7/608d59bc-290d-4691-9d46-602b2a77726a.JPG");
-//			map2.put("pictureId", 29);
-//			list.add(map2);
-			if (StringUtils.isEmpty(picStoreUrl))
+
+			String storeUrl = getStoreUrl();
+			if (StringUtils.isEmpty(storeUrl))
 			{
-				String token = RSAUtils.encryptByPublic("getImgsAddress", dlxyProperty.getPublicKeyBytes());
-				@SuppressWarnings("rawtypes")
-				ResultDTO resultDTO = restTemplate.getForObject(
-						"http://localhost:8000/api/v1/address/images.html?token=" + URLEncoder.encode(token, "utf-8"),
-						ResultDTO.class);
-				if (resultDTO.getCode() == 1)
+				logger.error("[DeleteInvalidPics] finished unexpectedlly ,error:{}");
+				return;
+			}
+			try
+			{
+				Integer size = list.size() - 1;
+				for (int i = size; i >= 0; i--)
 				{
-					this.picStoreUrl = (String) resultDTO.getData();
-				} else
-				{
-					logger.error("[rest请求存放图片地址出错]error:{}", resultDTO.getMsg());
-					return;
-				}
-				try
-				{
-					Integer size=list.size()-1;
-					for (int i = size; i >= 0; i--)
+					Map<String, Object> map = list.get(i);
+					String url = (String) map.get("pictureUrl");
+					String fileUrl = storeUrl + url.substring(url.indexOf("/imgs"));
+					File file = new File(fileUrl);
+					// boolean isDel = FileUtil.delFileOrDir(file);
+					// if (isDel)
+					// {
+					// count++;
+					// Long pictureId = Long.parseLong(map.get("pictureId").toString());
+					// pictureIdList.add(pictureId);
+					// list.remove(i);
+					// logger.info("[删除图片]sucess,pictureId:{}", pictureId);
+					// } else
+					// {
+					// Long pictureId = Long.parseLong(map.get("pictureId").toString());
+					// pictureIdList.add(pictureId);
+					// list.remove(i);
+					// }
+					if (file.exists())
 					{
-						Map<String, Object> map = list.get(i);
-						// }
-						// for (Map<String, Object> map : list)
-						// {
-						String url = (String) map.get("pictureUrl");
-						String fileUrl = picStoreUrl + url.substring(url.indexOf("/imgs"));
-						File file = new File(fileUrl);
-						if (file.exists())
+						boolean delete = file.delete();
+						if (delete)
 						{
-							boolean delete = file.delete();
-							if (delete)
-							{
-								count++;
-								Long pictureId = Long.parseLong(map.get("pictureId").toString());
-								pictureIdList.add(pictureId);
-								list.remove(i);
-								logger.info("[删除图片]sucess,pictureId:{}",pictureId);
-							} else
-							{
-								logger.error("[删除图片发生错误],错误未知");
-							}
-						}else {
+							count++;
 							Long pictureId = Long.parseLong(map.get("pictureId").toString());
 							pictureIdList.add(pictureId);
 							list.remove(i);
-						}
-					}
-					if(!list.isEmpty())
-					{
-						StringBuilder sb=new StringBuilder();
-						for (Map<String, Object> map : list)
+							logger.info("[删除图片]sucess,pictureId:{}", pictureId);
+						} else
 						{
-							sb.append(map.get("pictureId")+",");
+							logger.error("[删除图片发生错误],错误未知");
 						}
-						logger.error("[删除无效图片]some pics cant delete ,pictureIds detail:{}"+sb);
-					}
-					if(!pictureIdList.isEmpty())
+					} else
 					{
-						Integer dbCount = deleteRecordInDb(pictureIdList);
-						logger.info("[删除数据库中图片记录]delete {} records ",dbCount);
+						Long pictureId = Long.parseLong(map.get("pictureId").toString());
+						pictureIdList.add(pictureId);
+						list.remove(i);
 					}
-				} catch (IllegalStateException | SecurityException e)
-				{
-					logger.error("[删除图片出现错误],error : {},cause:{}", e.getMessage(), e.getCause());
 				}
+				if (!list.isEmpty())
+				{
+					StringBuilder sb = new StringBuilder();
+					for (Map<String, Object> map : list)
+					{
+						sb.append(map.get("pictureId") + ",");
+					}
+					logger.error("[删除无效图片]some pics cant delete ,pictureIds detail:{}" + sb);
+				}
+				if (!pictureIdList.isEmpty())
+				{
+					Integer dbCount = deleteRecordInDb(pictureIdList);
+					logger.info("[删除数据库中图片记录]delete {} records ", dbCount);
+				}
+			} catch (IllegalStateException | SecurityException e)
+			{
+				logger.error("[删除图片出现系统错误]可能是权限问题,error : {},cause:{}", e.getMessage(), e.getCause());
 			}
+			pictureIdList=null;
+			list=null;
 		} catch (SQLException e)
 		{
-			e.printStackTrace();
 			logger.error("[查询下线图片时候发生sql错误] error:{} cause:{}", e.getMessage(), e.getCause());
-		} catch (UnsupportedEncodingException e)
-		{
-			e.printStackTrace();
-			logger.error("[删除无效图片]rsa加密的时候出错,error:{}", e.getMessage());
 		}
 		logger.info("[DelArtucleInvalidPicJob] finish the job,consume {} reords,consume {} millseconds", count,
 				System.currentTimeMillis() - beginTime);
@@ -179,7 +206,7 @@ public class DelArticlePicJob implements JobRunner
 		sb.append(StringUtils.repeat("?,", pictureIdList.size() - 1));
 		sb.append(" ? )");
 		int count = queryRunner.update(sb.toString(), pictureIdList.toArray());
-		
+
 		return count;
 	}
 

@@ -4,7 +4,7 @@
 
 <mapper
 	namespace="com.dlxy.server.article.dao.mybatis.ArticleMybatisDao">
-	<update id="updateInBatch" parameterType="java.util.Map">
+	<update id="updateStatusInBatch" parameterType="java.util.Map">
 		update dlxy_article set update_date=#{updateDate} ,
 
 		<if test="null!=status">

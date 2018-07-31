@@ -14,19 +14,20 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.apache.ibatis.annotations.Mapper;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
-import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.connection.RabbitConnectionFactoryBean;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.aop.aspectj.annotation.AnnotationAwareAspectJAutoProxyCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -47,8 +48,6 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.dlxy.common.event.AppEventLogPubliher;
 import com.dlxy.common.event.AppEventPublisher;
 import com.dlxy.common.event.AppEventRabbitMQPublisher;
-import com.dlxy.common.service.IdWorkerService;
-import com.dlxy.common.service.IdWorkerServiceTwitter;
 import com.dlxy.service.IArticleManagementWrappedService;
 import com.dlxy.service.IPictureManagementWrappedService;
 import com.dlxy.service.IRedisService;
@@ -87,37 +86,15 @@ import redis.clients.jedis.JedisPoolConfig;
 { @ComponentScan.Filter(type = FilterType.ANNOTATION, value = Mapper.class) })
 @MapperScan(annotationClass = Mapper.class, basePackages =
 { "com.dlxy" })
-@Import(DlxySystemShiroConfiguration.class)
+@Import(DlxySystemSpringConfiguration.class)
+@Order(2)
 public class DlxySystemConfiiguration implements WebMvcConfigurer
 {
 	@Autowired
 	private DlxyProperty dlxyProperty;
-
+	
 	private Logger logger=LoggerFactory.getLogger(DlxySystemConfiiguration.class);	
-//	@Bean
-//	public JedisPoolConfig poolConfig()
-//	{
-//		JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
-//		jedisPoolConfig.setMaxIdle(5);
-//		jedisPoolConfig.setMaxTotal(1024);
-//		jedisPoolConfig.setMaxWaitMillis(10000);
-//		jedisPoolConfig.setTestOnBorrow(true);
-//		return jedisPoolConfig;
-//	}
-//	@Bean
-//	public JedisPool jedisPool()
-//	{
-////		JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
-////		jedisPoolConfig.setMaxIdle(5);
-////		jedisPoolConfig.setMaxTotal(1024);
-////		jedisPoolConfig.setMaxWaitMillis(10000);
-////		jedisPoolConfig.setTestOnBorrow(true);
-////		JedisPool jedisPool=new jedispool
-//		// JedisPool jedisPool=new
-////		 JedisPool jedisPool =new JedisPool(poolConfig(),dlxyProperty.getRedisHost(),dlxyProperty.getRedisPort(),10000,dlxyProperty.getRedisPassword());
-//		JedisPool jedisPool = new JedisPool(poolConfig(),"localhost", 6379);
-//		return jedisPool;
-//	}
+//	
 	@Bean
 	public JedisPool jedisPool()
 	{
@@ -364,6 +341,15 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer
 //		dlxyProperty.loadKey(dlxyProperty.getPublicKeyBytes(), dlxyProperty.getPublicKeyPath());
 		dlxyProperty.init();
 		logger.info("{}",dlxyProperty);
+	}
+	public DlxyProperty getDlxyProperty()
+	{
+		return dlxyProperty;
+	}
+	@Autowired
+	public void setDlxyProperty(DlxyProperty dlxyProperty)
+	{
+		this.dlxyProperty = dlxyProperty;
 	}
 
 }

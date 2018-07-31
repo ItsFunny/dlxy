@@ -1,6 +1,0 @@
-JvmtiExport can_access_local_variables 1
-JvmtiExport can_hotswap_or_post_breakpoint 1
-JvmtiExport can_post_on_exceptions 1
-# 105 ciObject found
-ciMethod java/util/regex/Pattern$CharProperty$1 isSatisfiedBy (I)Z 4097 1 17189 0 -1
-ciMethodData java/util/regex/Pattern$CharProperty$1 isSatisfiedBy (I)Z 0 0 orig 264 144 159 141 14 1 0 0 0 248 205 38 20 1 0 0 0 184 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 77 68 79 32 101 120 116 114 97 32 100 97 116 97 32 108 111 99 107 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 0 0 41 9 2 0 1 0 0 0 0 0 0 0 0 0 0 0 2 0 0 0 0 0 6 0 2 0 0 0 104 0 0 0 255 255 255 255 5 0 5 0 0 0 0 0 data 13 0x50005 0x0 0x7fa97d91b230 0x409b 0x7fa97d91b2e0 0x8a 0x0 0x109 0x38 0x401c 0xc0003 0x401c 0x18

@@ -268,12 +268,12 @@
 								</div>
 								<label class="col-xs-2 control-label">类目：</label>
 								<div class="col-xs-3 ">
-									<select id="leimu0" style="width:100px;height: 30px" onchange="showChild(this)">
+									<select id="leimu0" name="titleId" style="width:100px;height: 30px" onchange="changeChild(this)">
 
 									</select>
 								</div>
 								<div class="col-xs-3 " id="leimu1_div">
-									<select id="leimu1" style="width:100px;height: 30px">
+									<select id="leimu1" name="titleId" style="width:100px;height: 30px">
 
 									</select>
 								</div>
@@ -516,6 +516,31 @@ function editSaveUpdate(){
  			}
  		})
  	}
+ 	function changeChild(obj){
+ 		 $("#leimu1").empty();
+        var parentId=$(obj).val();
+            $.ajax({
+                url:'/api/v1/title/'+parentId+'.html',
+                type:'post',
+                dataType:'json',
+                success:function (data) {
+					var o=data.data;
+                    var str="";
+                    if(o.length<1){
+                    	 $("#leimu1").remove();
+                    }else{
+                     $("#leimu1").remove();
+                    	str+='<select id="leimu1" style="width:100px;height: 30px" name="titleId"> ';
+                     for(i=0;i<o.length;i++){
+                    	var t=o[i].titleId;
+	                    	str+="<option value="+o[i].titleId+">"+o[i].titleName+"</option>"
+                    }
+                    str+='</select>';
+                    $("#leimu1_div").append(str);
+                    }
+                }
+          })
+ 	}
  	function showChild(titleId,obj){
  	 $("#leimu1").empty();
         var parentId=$(obj).val();
@@ -551,6 +576,7 @@ function editSaveUpdate(){
  		var articleId=$(obj).attr("articleId");
  		jQuery.get('/api/v1/admin/article/delete.html',{"articleId":articleId},function(data,textStatus,jqXHR){
  			alert(data.msg);
+ 			location.reload();
  		},'json');
  	}
  	

@@ -136,9 +136,9 @@ public class ArticleServiceImpl implements IArticleService ,IUserArticleService
 	}
 
 	@Override
-	public void deleteArticlesInBatch(Long[] articleIds)
+	public Integer deleteArticlesInBatch(Long[] articleIds)
 	{
-		articleDao.deleteInBatch(articleIds);
+		return articleDao.deleteInBatch(articleIds);
 	}
 
 	@Override

@@ -10,6 +10,8 @@ package com.dlxy.service.command;
 import java.sql.SQLException;
 import java.util.Map;
 
+import javax.swing.text.html.HTMLDocument.HTMLReader.ParagraphAction;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -42,6 +44,13 @@ public class ArticleGroup implements IGroup
 	{
 		ArticleDTO articleDTO=(ArticleDTO) params.get("articleDTO");
 		articleServiceImpl.update(articleDTO);
+	}
+
+	@Override
+	public void delete(Map<String, Object> params)
+	{
+		Long[] articleIds=(Long[]) params.get("articleIds");
+		articleServiceImpl.deleteArticlesInBatch(articleIds);
 	}
 
 }

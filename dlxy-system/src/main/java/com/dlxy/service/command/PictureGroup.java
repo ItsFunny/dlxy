@@ -8,6 +8,7 @@
 package com.dlxy.service.command;
 
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,13 @@ public class PictureGroup implements IGroup
 		Object status = params.get("pictureStatus");
 //		pictureService.updateArticlePictureStatus(pictureDTO.getArticleId(), pictureDTO.getPictureStatus());
 		pictureService.updateArticlePictureStatusByArticleIdLimited(Integer.parseInt(status.toString()), articleDTO.getArticleId(),articleDTO.getPictureIds());
+	}
+
+	@Override
+	public void delete(Map<String, Object> params)
+	{
+		Long[] pictureIds = (Long[]) params.get("pictureIds");
+		pictureService.deleteByPictureIds(Arrays.asList(pictureIds));
 	}
 
 	

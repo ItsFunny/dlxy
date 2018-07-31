@@ -7,14 +7,14 @@
 */
 package com.dlxy.model;
 
+
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.lang.NonNull;
+import org.hibernate.validator.constraints.NotBlank;
 
 import com.dlxy.common.dto.ArticleDTO;
 import com.joker.library.utils.CommonUtils;
-import com.sun.tools.javac.resources.compiler;
 
 /**
  * 
@@ -26,21 +26,21 @@ import com.sun.tools.javac.resources.compiler;
  */
 public class FormArticle
 {
-	@NonNull
+	@NotNull
 	private Long articleId;
-	@NonNull
+	@NotNull
 	private Integer titleId;
-	@NotNull
+	@NotBlank(message="文章名称不能为空")
 	private String articleName;
-	@NotNull
+	@NotBlank(message="文章作者不能为空")
 	private String articleAuthor;
-	@NotNull
+	@NotBlank(message="文章内容不能为空")
 	private String articleContent;
 	// private Integer articleIsRecommend;
-	@Max(2)
+	@Max(value=2,message="文章状态最大为2")
 	private Integer articleStatus;
 	
-	@Max(5)
+	@Max(value=5,message="文章类型最大为5")
 	private Integer articleType;
 
 	public void to(ArticleDTO articleDTO)

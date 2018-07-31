@@ -43,4 +43,12 @@ public class UserArticleGroup implements IGroup
 		
 	}
 
+
+	@Override
+	public void delete(Map<String, Object> params)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
 }
