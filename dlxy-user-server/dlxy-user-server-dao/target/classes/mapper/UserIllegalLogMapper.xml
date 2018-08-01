@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dlxy.server.user.dao.mybatis.UserIllegalLogDao">
+  <resultMap id="BaseResultMap" type="com.dlxy.server.user.model.DlxyUserIllegalLog">
+    <id column="illegal_log_id" jdbcType="BIGINT" property="illegalLogId" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="ip" jdbcType="VARCHAR" property="ip" />
+    <result column="illegal_detail" jdbcType="VARCHAR" property="illegalDetail" />
+    <result column="illegal_level" jdbcType="BIT" property="illegalLevel" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    illegal_log_id, user_id, ip, illegal_detail, illegal_level, create_date, update_date
+  </sql>
+  <select id="selectByExample" parameterType="com.dlxy.server.user.model.DlxyUserIllegalLogExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from dlxy_user_illegal_log
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from dlxy_user_illegal_log
+    where illegal_log_id = #{illegalLogId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from dlxy_user_illegal_log
+    where illegal_log_id = #{illegalLogId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.dlxy.server.user.model.DlxyUserIllegalLogExample">
+    delete from dlxy_user_illegal_log
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.dlxy.server.user.model.DlxyUserIllegalLog">
+    insert into dlxy_user_illegal_log (illegal_log_id, user_id, ip, 
+      illegal_detail, illegal_level, create_date, 
+      update_date)
+    values (#{illegalLogId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{ip,jdbcType=VARCHAR}, 
+      #{illegalDetail,jdbcType=VARCHAR}, #{illegalLevel,jdbcType=BIT}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{updateDate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.dlxy.server.user.model.DlxyUserIllegalLog">
+    insert into dlxy_user_illegal_log
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="illegalLogId != null">
+        illegal_log_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="ip != null">
+        ip,
+      </if>
+      <if test="illegalDetail != null">
+        illegal_detail,
+      </if>
+      <if test="illegalLevel != null">
+        illegal_level,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="updateDate != null">
+        update_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="illegalLogId != null">
+        #{illegalLogId,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="ip != null">
+        #{ip,jdbcType=VARCHAR},
+      </if>
+      <if test="illegalDetail != null">
+        #{illegalDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="illegalLevel != null">
+        #{illegalLevel,jdbcType=BIT},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDate != null">
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.dlxy.server.user.model.DlxyUserIllegalLogExample" resultType="java.lang.Long">
+    select count(*) from dlxy_user_illegal_log
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update dlxy_user_illegal_log
+    <set>
+      <if test="record.illegalLogId != null">
+        illegal_log_id = #{record.illegalLogId,jdbcType=BIGINT},
+      </if>
+      <if test="record.userId != null">
+        user_id = #{record.userId,jdbcType=BIGINT},
+      </if>
+      <if test="record.ip != null">
+        ip = #{record.ip,jdbcType=VARCHAR},
+      </if>
+      <if test="record.illegalDetail != null">
+        illegal_detail = #{record.illegalDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="record.illegalLevel != null">
+        illegal_level = #{record.illegalLevel,jdbcType=BIT},
+      </if>
+      <if test="record.createDate != null">
+        create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateDate != null">
+        update_date = #{record.updateDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update dlxy_user_illegal_log
+    set illegal_log_id = #{record.illegalLogId,jdbcType=BIGINT},
+      user_id = #{record.userId,jdbcType=BIGINT},
+      ip = #{record.ip,jdbcType=VARCHAR},
+      illegal_detail = #{record.illegalDetail,jdbcType=VARCHAR},
+      illegal_level = #{record.illegalLevel,jdbcType=BIT},
+      create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      update_date = #{record.updateDate,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.dlxy.server.user.model.DlxyUserIllegalLog">
+    update dlxy_user_illegal_log
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="ip != null">
+        ip = #{ip,jdbcType=VARCHAR},
+      </if>
+      <if test="illegalDetail != null">
+        illegal_detail = #{illegalDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="illegalLevel != null">
+        illegal_level = #{illegalLevel,jdbcType=BIT},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where illegal_log_id = #{illegalLogId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.dlxy.server.user.model.DlxyUserIllegalLog">
+    update dlxy_user_illegal_log
+    set user_id = #{userId,jdbcType=BIGINT},
+      ip = #{ip,jdbcType=VARCHAR},
+      illegal_detail = #{illegalDetail,jdbcType=VARCHAR},
+      illegal_level = #{illegalLevel,jdbcType=BIT},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      update_date = #{updateDate,jdbcType=TIMESTAMP}
+    where illegal_log_id = #{illegalLogId,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -45,7 +45,7 @@ import com.dlxy.system.batch.config.DlxyProperty;
  * @author joker
  * @date 创建时间：2018年7月31日 下午12:41:25
  */
-@Component
+//@Component
 public class DelInvalidArticleJob implements JobRunner
 {
 	@Autowired
@@ -151,7 +151,7 @@ public class DelInvalidArticleJob implements JobRunner
 			}
 			if (!deleteIds.isEmpty())
 			{
-				count = articleService.deleteArticlesInBatch(ids.toArray(new Long[ids.size()]));
+				count = articleService.deleteArticlesInBatch(new ArrayList<Long>(ids));
 				try
 				{
 					delPicsByArticleIds(deleteIds);

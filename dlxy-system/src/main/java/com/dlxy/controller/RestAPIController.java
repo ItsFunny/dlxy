@@ -13,6 +13,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -500,10 +501,10 @@ public class RestAPIController
 		String[] idArr = ids.split(",");
 		try
 		{
-			Long[] idA = new Long[idArr.length];
+			List<Long>idA=new ArrayList<>();
 			for (int i = 0; i < idArr.length; i++)
 			{
-				idA[i] = Long.valueOf(idArr[i]);
+				idA.add(Long.valueOf(idArr[i]));
 			}
 			articleManagementWrappedService.updateArticlesInBatch(user, idA, ArticleStatusEnum.DELETE.ordinal());
 			return ResultUtil.sucess();
@@ -543,12 +544,14 @@ public class RestAPIController
 			params.put("erro", "missing argument:articleId");
 		}
 		String[] ids = articleIds.split(",");
-		Long[] idArr = new Long[ids.length];
+		List<Long>idArr=new ArrayList<>();
+//		Long[] idArr = new Long[ids.length];
 		try
 		{
 			for (int i = 0; i < ids.length; i++)
 			{
-				idArr[i] = Long.parseLong(ids[i]);
+//				idArr[i] = Long.parseLong(ids[i]);
+				idArr.add(Long.parseLong(ids[i]));
 			}
 		} catch (Exception e)
 		{
@@ -591,10 +594,11 @@ public class RestAPIController
 		{
 			try
 			{
-				Long[] ids = new Long[articleIds.length];
+				List<Long>ids=new ArrayList<Long>();
+//				Long[] ids = new Long[articleIds.length];
 				for (int i = 0; i < articleIds.length; i++)
 				{
-					ids[i] = Long.parseLong(articleIds[i]);
+					ids.add(Long.parseLong(articleIds[i]));
 				}
 
 				if (key.equals("status"))

@@ -45,7 +45,7 @@ import com.dlxy.system.batch.config.DlxyProperty;
  * @author joker
  * @date 创建时间：2018年7月9日 上午8:35:01
  */
- @Component
+// @Component
 public class DelArticlePicJob implements JobRunner
 {
 	private Logger logger = LoggerFactory.getLogger(DelArticlePicJob.class);

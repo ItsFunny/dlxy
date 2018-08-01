@@ -3,8 +3,10 @@
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-user-server/dlxy-user-server-dao/src/main/java/com/dlxy/server/user/dao/mybatis/UserRoleMybatisDao.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-user-server/dlxy-user-server-dao/src/main/java/com/dlxy/server/user/dao/mybatis/UserIllegalLogDao.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-user-server/dlxy-user-server-dao/src/main/java/com/dlxy/server/user/dao/App.java
+/Users/joker/Java/oxygen_workspace/dlxy/dlxy-user-server/dlxy-user-server-dao/src/main/java/com/dlxy/server/user/model/DlxyUserIllegalLog.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-user-server/dlxy-user-server-dao/src/main/java/com/dlxy/server/user/dao/query/impl/UserRecordQueryDaoImpl.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-user-server/dlxy-user-server-dao/src/main/java/com/dlxy/server/user/dao/mybatis/UserRecordMybatisDao.java
+/Users/joker/Java/oxygen_workspace/dlxy/dlxy-user-server/dlxy-user-server-dao/src/main/java/com/dlxy/server/user/model/DlxyUserIllegalLogExample.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-user-server/dlxy-user-server-dao/src/main/java/com/dlxy/server/user/dao/mybatis/UserMybatisDao.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-user-server/dlxy-user-server-dao/src/main/java/com/dlxy/server/user/model/DlxyUser.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-user-server/dlxy-user-server-dao/src/main/java/com/dlxy/server/user/dao/query/UserQueryDao.java

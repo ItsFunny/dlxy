@@ -28,6 +28,7 @@ public interface UserQueryDao
 	
 //	Collection<UserDTO>findUsersByPage(int start,int end ,Map<String, Object>params) throws SQLException;
 	
+	@Deprecated
 	UserDTO findByNameOrId(String key) throws SQLException;
 	
 //	UserDTO findByUserId(Long userId) throws SQLException;

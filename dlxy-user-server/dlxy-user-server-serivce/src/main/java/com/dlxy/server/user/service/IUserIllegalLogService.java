@@ -7,6 +7,8 @@
 */
 package com.dlxy.server.user.service;
 
+import com.dlxy.server.user.model.DlxyUserIllegalLog;
+
 /**
 * 
 * @When
@@ -17,5 +19,5 @@ package com.dlxy.server.user.service;
 */
 public interface IUserIllegalLogService
 {
-	void addIllegalLog(Long userId,String detail,int level);
+	void addIllegalLog(DlxyUserIllegalLog illegalLog);
 }

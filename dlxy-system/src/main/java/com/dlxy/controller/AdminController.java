@@ -336,7 +336,7 @@ public class AdminController
 		}
 		if (isIllegal)
 		{
-			IllegalLogDTO illegalLogDTO = new IllegalLogDTO(CommonUtils.getRemortIP(request), user.getUserId(),
+			IllegalLogDTO illegalLogDTO = new IllegalLogDTO(CommonUtils.getIpAddr(request), user.getUserId(),
 					"试图跨权访问所有文章", IllegalLevelEnum.Suspicious.ordinal());
 			throw new DlxySystemIllegalException(illegalLogDTO);
 		}

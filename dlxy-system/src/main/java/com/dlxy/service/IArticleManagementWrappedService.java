@@ -38,6 +38,7 @@ public interface IArticleManagementWrappedService
 	 */
 	Integer findArticleVisitCount(Long articleId,String ip);
 	
+	@Deprecated
 	//显示所有的,包括异常的那些文章
 	PageDTO<Collection<ArticleDTO>>findAllArticles(int start,int end);
 	
@@ -56,9 +57,9 @@ public interface IArticleManagementWrappedService
 //	void updateArticleStatusInBatch(Long[] articleIds, int status);
 //	void delArticle(UserDTO userDTO,Long articleId);
 
-	void updateArticlesInBatch(UserDTO userDTO, Long[] articleIds, int status);
+	void updateArticlesInBatch(UserDTO userDTO, List<Long> articleIds, int status);
 	
-	void updateArticleTypeInBatch(UserDTO userDTO,Long[] articleIds,int type);
+	void updateArticleTypeInBatch(UserDTO userDTO,List<Long> articleIds,int type);
 	
 	void updateArticleByArticleId(ArticleDTO articleId) throws SQLException;
 	
@@ -72,7 +73,7 @@ public interface IArticleManagementWrappedService
 	
 	Integer deleteByTitleId(UserDTO userDTO,Integer titleId);	
 	
-	void deleteInBatch(UserDTO userDTO,Long[] articleIds);
+	void deleteInBatch(UserDTO userDTO,List<Long> articleIds);
 	
 
 }

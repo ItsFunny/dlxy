@@ -26,10 +26,6 @@ import com.dlxy.common.dto.UserRecordDTO;
 */
 public interface UserRecordQueryDao
 {
-//	Long countByParam(Map<String, Object>params) throws SQLException;
-//	//seems to wrong place here
-//	Collection<Map<String, Object>>findByPage(Map<String, Object>params) throws SQLException;
-	
 	Long coutRecords(Map<String, Object>params) throws SQLException;
 	
 	/*

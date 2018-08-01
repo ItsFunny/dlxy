@@ -27,7 +27,7 @@ public class DlxyProperty implements InitializingBean
 	private String url;
 
 	/*
-	 * rabbitMQ
+	 * sssss rabbitMQ
 	 */
 	@Value("${dlxy.amqp.amqpHost}")
 	private String amqpHost;
@@ -48,12 +48,11 @@ public class DlxyProperty implements InitializingBean
 	private Integer redisPort;
 	@Value("${dlxy.redis.password}")
 	private String redisPassword;
-	
+
 	@Value("${dlxy.workerId}")
 	private long workerId;
 	@Value("${dlxy.datacenterId}")
 	private long datacenterId;
-	
 
 	public String getUsername()
 	{

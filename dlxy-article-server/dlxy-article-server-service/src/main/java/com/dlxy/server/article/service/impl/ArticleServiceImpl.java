@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 
+import org.apache.ibatis.javassist.expr.NewArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,8 @@ import com.dlxy.server.article.dao.mybatis.ArticleMybatisDao;
 import com.dlxy.server.article.dao.mybatis.TitleMybatisDao;
 import com.dlxy.server.article.dao.mybatis.count.UserArticleDao;
 import com.dlxy.server.article.dao.query.ArticleQueryDao;
+import com.dlxy.server.article.model.DlxyArticleExample;
+import com.dlxy.server.article.model.DlxyArticleExample.Criteria;
 import com.dlxy.server.article.service.IArticleService;
 import com.dlxy.server.article.service.IUserArticleService;
 
@@ -58,32 +61,51 @@ public class ArticleServiceImpl implements IArticleService ,IUserArticleService
 	@Override
 	public void updateArticleStatus(Long articleId, int status)
 	{
+		ArticleDTO articleDTO=new ArticleDTO();
+		articleDTO.setArticleId(articleId);
+		articleDTO.setArticleStatus(status);
+		articleDao.updateByPrimaryKeySelective(articleDTO);
 		articleDao.updateArticleStatus(articleId, status);
 	}
 
 //	@UserRecordAnnotation(dealWay="update(delete):article")
 	@Override
-	public void updateArticleStatusInBatch(Long[] articleIds, int status)
+	public void updateArticleStatusInBatch(List<Long> articleIds, int status)
 	{
-		Map<String, Object>params=new HashMap<String, Object>();
-		params.put("updateDate", new Date());
+//		Map<String, Object>params=new HashMap<String, Object>();
+		DlxyArticleExample example=new DlxyArticleExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andArticleIdIn(articleIds);
+		ArticleDTO articleDTO=new ArticleDTO();
+		articleDTO.setArticleStatus(status);
+//		params.put("updateDate", new Date());
 		if(status==ArticleStatusEnum.DELETE.ordinal())
 		{
-			params.put("deleteDate", new Date());
+//			params.put("deleteDate", new Date());
+			articleDTO.setDeleteDate(new Date());
 		}
-		params.put("status", status);
-		params.put("list", Arrays.asList(articleIds));
-		articleDao.updateStatusInBatch(params);
+//		params.put("status", status);
+//		params.put("list", Arrays.asList(articleIds));
+//		articleDao.updateStatusInBatch(params);
+		articleDao.updateByExampleSelective(articleDTO, example);
 	}
 
 	@Override
-	public void updateArticleTypeInbatch(Long[] articleIds, int type)
+	public void updateArticleTypeInbatch(List<Long>articleIds, int type)
 	{
-		Map<String, Object>params=new HashMap<String, Object>();
-		params.put("updateDate", new Date());
-		params.put("type", type);
-		params.put("list", Arrays.asList(articleIds));
-		articleDao.updateStatusInBatch(params);
+//		Map<String, Object>params=new HashMap<String, Object>();
+		DlxyArticleExample example=new DlxyArticleExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andArticleIdIn(articleIds);
+		ArticleDTO articleDTO=new ArticleDTO();
+		articleDTO.setArticleType(type);
+		articleDTO.setUpdateDate(new Date());
+		int count = articleDao.updateByExampleSelective(articleDTO, example);
+		
+//		params.put("updateDate", new Date());
+//		params.put("type", type);
+//		params.put("list", Arrays.asList(articleIds));
+//		articleDao.updateStatusInBatch(params);
 	}
 
 	
@@ -136,9 +158,14 @@ public class ArticleServiceImpl implements IArticleService ,IUserArticleService
 	}
 
 	@Override
-	public Integer deleteArticlesInBatch(Long[] articleIds)
+	public Integer deleteArticlesInBatch(List<Long> articleIds)
 	{
-		return articleDao.deleteInBatch(articleIds);
+		DlxyArticleExample example=new DlxyArticleExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andArticleIdIn(articleIds);
+		int count = articleDao.deleteByExample(example);
+		return count;
+//		return articleDao.deleteInBatch(articleIds);
 	}
 
 	@Override

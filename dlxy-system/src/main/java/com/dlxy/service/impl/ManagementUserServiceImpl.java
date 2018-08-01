@@ -89,10 +89,6 @@ public class ManagementUserServiceImpl extends Observable implements IUserMangem
 		}
 		Collection<UserRecordDTO> collection = userRecordService.findRecordByPage(pageSize, pageNum, params);
 		AbstractRecordDetailHandler handler = UserRecordHandlerFactory.create();
-//		for (UserRecordDTO userRecordDTO : collection)
-//		{
-//			
-//		}
 		collection.forEach(r->{
 			handler.handler(r);
 		});
@@ -136,7 +132,7 @@ public class ManagementUserServiceImpl extends Observable implements IUserMangem
 	{
 		userService.updateUserStatusByUserId(userId, status);
 //		String detail="update:user:"+userId+"|用户"+loginUser.getRealname()+"修改了userId为"+userId+"的状态,更改为了:"+status;
-		String detail="更新用户状态|update:user:"+userId;
+		String detail="更新用户状态|update:"+AbstractRecordDetailHandler.USER+":"+userId;
 		setChanged();
 		UserRecordDTO recordDTO=UserRecordDTO.getUserRecordDTO(loginUser.getUserId(), detail);
 		notifyObservers(recordDTO);

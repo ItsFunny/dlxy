@@ -195,7 +195,7 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 
 	@Transactional
 	@Override
-	public void updateArticlesInBatch(UserDTO userDTO, Long[] articleIds, int status)
+	public void updateArticlesInBatch(UserDTO userDTO, List<Long> articleIds, int status)
 	{
 		articleService.updateArticleStatusInBatch(articleIds, status);
 		StringBuilder sBuilder = new StringBuilder();
@@ -208,7 +208,7 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 
 	@Transactional
 	@Override
-	public void updateArticleTypeInBatch(UserDTO userDTO, Long[] articleIds, int type)
+	public void updateArticleTypeInBatch(UserDTO userDTO, List<Long>articleIds, int type)
 	{
 		articleService.updateArticleTypeInbatch(articleIds, type);
 		StringBuilder sBuilder = new StringBuilder();
@@ -335,12 +335,12 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 
 	@Transactional
 	@Override
-	public void deleteInBatch(UserDTO userDTO, Long[] articleIds)
+	public void deleteInBatch(UserDTO userDTO, List<Long> ids)
 	{
-		List<Long> ids = Arrays.asList(articleIds);
+//		List<Long> ids = Arrays.asList(articleIds);
 		List<Long> backUpdateIds = new ArrayList<>();
 		List<Long>deleteIds=new ArrayList<>();
-		articleService.deleteArticlesInBatch(articleIds);
+		articleService.deleteArticlesInBatch(ids);
 		ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 		HttpServletRequest request = attributes.getRequest();
 		String realPath = request.getServletContext().getRealPath("imgs");
@@ -372,7 +372,7 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 					backUpdateIds.toArray(new Long[backUpdateIds.size()]), PictureStatusEnum.Invalid.ordinal());
 		}
 		String detail = "删除文章:" + AbstractRecordDetailHandler.ARTICLE + ":";
-		for (Long long1 : articleIds)
+		for (Long long1 : ids)
 		{
 			detail += long1 + ",";
 		}

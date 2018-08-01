@@ -39,6 +39,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
@@ -48,6 +49,8 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.dlxy.common.event.AppEventLogPubliher;
 import com.dlxy.common.event.AppEventPublisher;
 import com.dlxy.common.event.AppEventRabbitMQPublisher;
+import com.dlxy.filter.CharsetFilter;
+import com.dlxy.interceptor.IPInterceptor;
 import com.dlxy.service.IArticleManagementWrappedService;
 import com.dlxy.service.IPictureManagementWrappedService;
 import com.dlxy.service.IRedisService;
@@ -95,6 +98,12 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer
 	
 	private Logger logger=LoggerFactory.getLogger(DlxySystemConfiiguration.class);	
 //	
+	
+	@Bean("charsetFilter")
+	public CharsetFilter charSetfilter()
+	{
+		return new CharsetFilter();
+	}
 	@Bean
 	public JedisPool jedisPool()
 	{
@@ -310,7 +319,7 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer
 		registry.addResourceHandler("/js/**").addResourceLocations("/static/js/**").setCachePeriod(1056000);
 		registry.addResourceHandler("/css/**").addResourceLocations("/static/css/**").setCachePeriod(1056000);
 		registry.addResourceHandler("/imgs/**").addResourceLocations("/static/imgs/**").setCachePeriod(1056000);
-		registry.addResourceHandler("/404.html").addResourceLocations("/WEB-INF/templates/404.html").setCachePeriod(1056000);
+		registry.addResourceHandler("/public/404.html").addResourceLocations("/WEB-INF/templates/404.html").setCachePeriod(1056000);
 	}
 
 	@Override
@@ -337,14 +346,19 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer
 	@PostConstruct
 	public void init() throws IOException
 	{
-//		dlxyProperty.loadKey(dlxyProperty.getPrivateKeyBytes(), dlxyProperty.getPrivateKeyPath());
-//		dlxyProperty.loadKey(dlxyProperty.getPublicKeyBytes(), dlxyProperty.getPublicKeyPath());
 		dlxyProperty.init();
 		logger.info("{}",dlxyProperty);
 	}
-	public DlxyProperty getDlxyProperty()
+	@Bean
+	public IPInterceptor ipInterceptor()
 	{
-		return dlxyProperty;
+		return new IPInterceptor();
+	}
+	@Override
+	public void addInterceptors(InterceptorRegistry registry)
+	{
+//		registry.addInterceptor(ipInterceptor()).addPathPatterns("/*").excludePathPatterns("/public/*");
+		registry.addInterceptor(ipInterceptor()).excludePathPatterns("/public/**","/api/**","/admin/**").addPathPatterns("/**");
 	}
 	@Autowired
 	public void setDlxyProperty(DlxyProperty dlxyProperty)

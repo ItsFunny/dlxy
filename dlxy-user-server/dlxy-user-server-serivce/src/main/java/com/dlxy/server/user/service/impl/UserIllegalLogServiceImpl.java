@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dlxy.server.user.dao.mybatis.UserIllegalLogDao;
+import com.dlxy.server.user.model.DlxyUserIllegalLog;
 import com.dlxy.server.user.service.IUserIllegalLogService;
 
 /**
@@ -28,8 +29,8 @@ public class UserIllegalLogServiceImpl implements IUserIllegalLogService
 	@Autowired
 	private UserIllegalLogDao userIllegalLogDao;
 	@Override
-	public void addIllegalLog(Long userId, String detail, int level)
+	public void addIllegalLog(DlxyUserIllegalLog illeglog)
 	{
-		userIllegalLogDao.addLogDetail(userId, detail, level);
+		userIllegalLogDao.insertSelective(illeglog);
 	}
 }

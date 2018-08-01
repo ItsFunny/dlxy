@@ -7,6 +7,8 @@
 */
 package com.dlxy.service;
 
+import org.apache.http.annotation.ThreadSafe;
+
 /**
 * 
 * @When
@@ -15,6 +17,7 @@ package com.dlxy.service;
 * @author joker 
 * @date 创建时间：2018年7月24日 下午3:53:28
 */
+@ThreadSafe
 public class UserRecordHandlerFactory
 {
 	private static AbstractRecordDetailHandler useRecordDetailHandler=new ArticleRecordDetailHandler(AbstractRecordDetailHandler.ARTICLE);

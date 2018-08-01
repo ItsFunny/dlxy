@@ -33,10 +33,10 @@ public interface IArticleService
 	void updateArticleStatus(Long articleId,int status);
 	
 	//修改文章状态
-	void updateArticleStatusInBatch(Long[] articleIds,int status);
+	void updateArticleStatusInBatch(List<Long> articleIds,int status);
 	
 	//修改文章类型
-	void updateArticleTypeInbatch(Long[] articleIds,int type);
+	void updateArticleTypeInbatch(List<Long>articleIds,int type);
 	
 	Integer updateInBatchSelective(Collection<ArticleDTO>articleDTOs);
 	
@@ -109,7 +109,7 @@ public interface IArticleService
 	
 	void updateArticleVisitCount(Long articleId,Integer visitCount);
 	
-	Integer deleteArticlesInBatch(Long[] articleIds);
+	Integer deleteArticlesInBatch(List<Long> articleIds);
 	
 	
 }

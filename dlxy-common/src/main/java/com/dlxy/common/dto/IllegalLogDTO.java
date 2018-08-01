@@ -7,6 +7,7 @@
 */
 package com.dlxy.common.dto;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -17,8 +18,14 @@ import java.util.Date;
  * @author joker
  * @date 创建时间：2018年7月9日 下午8:32:17
  */
-public class IllegalLogDTO
+public class IllegalLogDTO implements Serializable
 {
+	/**
+	* 
+	* @author joker 
+	* @date 创建时间：2018年8月1日 下午5:23:03
+	*/
+	private static final long serialVersionUID = -2254027437347592384L;
 	private String ip;
 	private Long userId;
 	private String illegalDetail;

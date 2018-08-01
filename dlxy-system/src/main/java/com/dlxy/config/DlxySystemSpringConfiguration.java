@@ -7,47 +7,29 @@
 */
 package com.dlxy.config;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.shiro.cache.CacheManager;
-import org.apache.shiro.cache.ehcache.EhCacheManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
-import org.springframework.aop.aspectj.annotation.AnnotationAwareAspectJAutoProxyCreator;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.MethodInvokingFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.web.multipart.MultipartResolver;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
-
 import com.dlxy.common.service.IdWorkerService;
 import com.dlxy.common.service.IdWorkerServiceTwitter;
-import com.dlxy.model.ArticleVisitCountFactory;
-import com.dlxy.server.article.service.IArticleService;
-import com.dlxy.service.IRedisService;
 import com.dlxy.shiro.DlxyShiroRealm;
 import com.google.code.kaptcha.Constants;
 import com.google.code.kaptcha.Producer;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.util.Config;
-
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
 
 /**
  * 
@@ -59,47 +41,52 @@ import redis.clients.jedis.JedisPoolConfig;
  */
 @Configuration
 @Order(1)
-public class DlxySystemSpringConfiguration  implements InitializingBean
+public class DlxySystemSpringConfiguration implements InitializingBean
 {
 	private BeanFactory beanFactory;
-	
-//	@Profile("dev")
+
+	// @Profile("dev")
+	// @Bean
+	// public DlxyPropertyPlaceholderConfigurer devPropertyPlaceholder() throws
+	// IOException
+	// {
+	// DlxyPropertyPlaceholderConfigurer configurer=new
+	// DlxyPropertyPlaceholderConfigurer();
+	// configurer.setLocations(new ClassPathResource("application-dev.properties"));
+	// return configurer;
+	// }
+	// @Profile("pro")
+	// @Bean
+	// public DlxyPropertyPlaceholderConfigurer proPropertyPlaceholder() throws
+	// IOException
+	// {
+	// DlxyPropertyPlaceholderConfigurer configurer=new
+	// DlxyPropertyPlaceholderConfigurer();
+	// configurer.setLocations(new ClassPathResource("application-pro.properties"));
+	// return configurer;
+	// }
+
+	// @Bean
+	// public AnnotationAwareAspectJAutoProxyCreator ajcDeclareAnnotation()
+	// {
+	// AnnotationAwareAspectJAutoProxyCreator creator=new
+	// AnnotationAwareAspectJAutoProxyCreator();
+	// creator.setProxyTargetClass(true);
+	// return creator;
+	// }
 //	@Bean
-//	public DlxyPropertyPlaceholderConfigurer devPropertyPlaceholder() throws IOException
+//	public CacheManager cacheManager()
 //	{
-//		DlxyPropertyPlaceholderConfigurer configurer=new DlxyPropertyPlaceholderConfigurer();
-//		configurer.setLocations(new ClassPathResource("application-dev.properties"));
-//		return configurer;
+//		EhCacheManager ehCacheManager = new EhCacheManager();
+//		ehCacheManager.setCacheManagerConfigFile("classpath:shiro/cacheManager.xml");
+//		return ehCacheManager;
 //	}
-//	@Profile("pro")
-//	@Bean
-//	public DlxyPropertyPlaceholderConfigurer proPropertyPlaceholder() throws IOException
-//	{
-//		DlxyPropertyPlaceholderConfigurer configurer=new DlxyPropertyPlaceholderConfigurer();
-//		configurer.setLocations(new ClassPathResource("application-pro.properties"));
-//		return configurer;
-//	}
-	
-//	@Bean
-//	public AnnotationAwareAspectJAutoProxyCreator ajcDeclareAnnotation()    
-//	{
-//		AnnotationAwareAspectJAutoProxyCreator creator=new AnnotationAwareAspectJAutoProxyCreator();
-//		creator.setProxyTargetClass(true);
-//		return creator;
-//	}
-	@Bean
-	public CacheManager cacheManager()
-	{
-		EhCacheManager ehCacheManager=new EhCacheManager();
-		ehCacheManager.setCacheManagerConfigFile("classpath:shiro/cacheManager.xml");
-		return ehCacheManager;
-	}
 	@Bean
 	public SecurityManager securityManager()
 	{
 		DefaultWebSecurityManager defaultWebSecurityManager = new DefaultWebSecurityManager();
 		defaultWebSecurityManager.setRealm(dlxyShiroRealm());
-		defaultWebSecurityManager.setCacheManager(cacheManager());
+//		defaultWebSecurityManager.setCacheManager(cacheManager());
 		return defaultWebSecurityManager;
 	}
 
@@ -138,9 +125,9 @@ public class DlxySystemSpringConfiguration  implements InitializingBean
 		// filterChainDefinitionMap.put("/api/**", "authc");
 		// filterChainDefinitionMap.put("/user/**","authc");
 		filterChainDefinitionMap.put("/api/v1/admin/**", "authc");
-		filterChainDefinitionMap.put("/admin/login.html","authc");
+		filterChainDefinitionMap.put("/admin/login.html", "authc");
 		filterChainDefinitionMap.put("/admin/**", "authc");
-		
+
 		return shiroFilterFactoryBean;
 	}
 
@@ -153,14 +140,15 @@ public class DlxySystemSpringConfiguration  implements InitializingBean
 	// /*
 	// * 将securityManger绑定
 	// */
-	// @Bean
-	// public MethodInvokingFactoryBean methodInvokingFactoryBean()
-	// {
-	// MethodInvokingFactoryBean factoryBean = new MethodInvokingFactoryBean();
-	// factoryBean.setStaticMethod("org.apache.shiro.SecurityUtils.setSecurityManager");
-	// factoryBean.setArguments(securityManager());
-	// return factoryBean;
-	// }
+	@Bean
+	public MethodInvokingFactoryBean methodInvokingFactoryBean()
+	{
+		MethodInvokingFactoryBean factoryBean = new MethodInvokingFactoryBean();
+		factoryBean.setStaticMethod("org.apache.shiro.SecurityUtils.setSecurityManager");
+		factoryBean.setArguments(securityManager());
+		return factoryBean;
+	}
+
 	// /*
 	// * 开启注解支持
 	// */
@@ -174,7 +162,6 @@ public class DlxySystemSpringConfiguration  implements InitializingBean
 		return defaultAdvisorAutoProxyCreator;
 	}
 
-	//
 	@Bean
 	public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(SecurityManager securityManager)
 	{
@@ -206,20 +193,21 @@ public class DlxySystemSpringConfiguration  implements InitializingBean
 	{
 		return new IdWorkerServiceTwitter(0, 1);
 	}
+
 	@Override
 	public void afterPropertiesSet() throws Exception
 	{
-//		ArticleVisitCountFactory.init(this.beanFactory.getBean(IRedisService.class), this.beanFactory.getBean(IArticleService.class));
+		// ArticleVisitCountFactory.init(this.beanFactory.getBean(IRedisService.class),
+		// this.beanFactory.getBean(IArticleService.class));
 	}
 
-//	@Bean
-//	public MultipartResolver multipartResolver()
-//	{
-//		CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver();
-//		commonsMultipartResolver.setMaxInMemorySize(1000000);
-//		return commonsMultipartResolver;
-//	}
-
-
+	// @Bean
+	// public MultipartResolver multipartResolver()
+	// {
+	// CommonsMultipartResolver commonsMultipartResolver = new
+	// CommonsMultipartResolver();
+	// commonsMultipartResolver.setMaxInMemorySize(1000000);
+	// return commonsMultipartResolver;
+	// }
 
 }

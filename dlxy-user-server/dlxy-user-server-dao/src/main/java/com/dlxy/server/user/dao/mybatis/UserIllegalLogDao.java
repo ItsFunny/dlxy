@@ -1,27 +1,35 @@
-/**
-*
-* @Description
-* @author joker 
-* @date 创建时间：2018年7月1日 上午8:11:03
-* 
-*/
 package com.dlxy.server.user.dao.mybatis;
 
-import org.apache.ibatis.annotations.Insert;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-/**
-* 
-* @When
-* @Description
-* @Detail
-* @author joker 
-* @date 创建时间：2018年7月1日 上午8:11:03
-*/
+import com.dlxy.server.user.model.DlxyUserIllegalLog;
+import com.dlxy.server.user.model.DlxyUserIllegalLogExample;
+
+
 @Mapper
-public interface UserIllegalLogDao
-{
-	@Insert("insert into dlxy_user_illegal_log  (user_id,illegal_detail,illegal_level) values (#{userId},#{illegalDetail},#{illegalLevel})")
-	void addLogDetail(@Param("userId")Long userId,@Param("illegalDetail")String illegalDetail,@Param("illegalLevel")int illegalLevel);
+public interface UserIllegalLogDao {
+    long countByExample(DlxyUserIllegalLogExample example);
+
+    int deleteByExample(DlxyUserIllegalLogExample example);
+
+    int deleteByPrimaryKey(Long illegalLogId);
+
+    int insert(DlxyUserIllegalLog record);
+
+    int insertSelective(DlxyUserIllegalLog record);
+
+    List<DlxyUserIllegalLog> selectByExample(DlxyUserIllegalLogExample example);
+
+    DlxyUserIllegalLog selectByPrimaryKey(Long illegalLogId);
+
+    int updateByExampleSelective(@Param("record") DlxyUserIllegalLog record, @Param("example") DlxyUserIllegalLogExample example);
+
+    int updateByExample(@Param("record") DlxyUserIllegalLog record, @Param("example") DlxyUserIllegalLogExample example);
+
+    int updateByPrimaryKeySelective(DlxyUserIllegalLog record);
+
+    int updateByPrimaryKey(DlxyUserIllegalLog record);
 }

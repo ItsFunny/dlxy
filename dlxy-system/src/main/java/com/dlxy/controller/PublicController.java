@@ -8,6 +8,7 @@
 package com.dlxy.controller;
 
 import java.awt.image.BufferedImage;
+import java.io.UnsupportedEncodingException;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
@@ -19,9 +20,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.alibaba.druid.util.StringUtils;
+import com.dlxy.common.dto.IllegalLogDTO;
 import com.dlxy.common.dto.UserDTO;
+import com.dlxy.common.enums.IllegalLevelEnum;
+import com.dlxy.exception.DlxySystemIllegalException;
 import com.dlxy.utils.AdminUtil;
 import com.google.code.kaptcha.Producer;
+import com.joker.library.utils.CommonUtils;
 
 /**
  * 
@@ -36,6 +42,14 @@ public class PublicController
 {
 	@Autowired
 	Producer captchaProducer;
+
+	@RequestMapping("/public/test")
+	public ModelAndView test(HttpServletRequest request)
+	{
+		IllegalLogDTO illegalLogDTO = new IllegalLogDTO(CommonUtils.getIpAddr(request), 1L, "试图跨权访问所有文章",
+				IllegalLevelEnum.Suspicious.ordinal());
+		throw new DlxySystemIllegalException(illegalLogDTO);
+	}
 
 	@RequestMapping("/login")
 	public ModelAndView login(HttpServletRequest request, HttpServletResponse response)
@@ -88,6 +102,17 @@ public class PublicController
 	{
 		ModelAndView modelAndView = new ModelAndView("no_permission");
 		modelAndView.addObject("user", AdminUtil.getLoginUser());
+		return modelAndView;
+	}
+
+	@RequestMapping("/public/banned")
+	public ModelAndView error(HttpServletRequest request, HttpServletResponse response)
+			throws UnsupportedEncodingException
+	{
+		ModelAndView modelAndView = new ModelAndView("error");
+		String error = request.getParameter("error");
+		error = StringUtils.isEmpty(error) ? "" : new String(error.getBytes("iso-8859-1"), "utf-8");
+		modelAndView.addObject("error", error);
 		return modelAndView;
 	}
 

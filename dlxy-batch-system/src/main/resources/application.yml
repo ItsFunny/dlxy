@@ -11,7 +11,7 @@ dlxy:
     amqp-host: localhost
     amqp-username: guest
     amqp-password: guest
-    amqp-enabled: false
+    amqp-enabled: true
     redis-host: 127.0.0.1
     redis-port: 6379
     redis-password: 123456

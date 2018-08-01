@@ -49,14 +49,15 @@ public interface ArticleMybatisDao extends DlxyArticleDao
 	// Collection<ArticleDTO> findAllExpectRecommendByPage(@Param("start") int
 	// start, @Param("end") int end);
 
+	@Deprecated
 	@Update("update dlxy_article set article_status=#{status} where article_id=#{articleId}")
 	void updateArticleStatus(@Param("articleId") Long articleId, @Param("status") Integer status);
 
+	@Deprecated
 	void updateStatusInBatch(Map<String, Object> params);
 	
 	Integer updateInBatchSelective(Collection<ArticleDTO> articleDTOs);
 
-	void changeArticlesTypeInBatch(Map<String, Object> params);
 
 	@Insert("insert into dlxy_article (article_id,title_id,article_name,article_author,article_content,article_status,article_type ) "
 			+ "values (#{articleId},#{titleId},#{articleName},#{articleAuthor},#{articleContent},#{articleStatus},#{articleType} ) "
@@ -85,11 +86,13 @@ public interface ArticleMybatisDao extends DlxyArticleDao
 	ArticleDTO findArticleDetailByArticleId(Long articleId);
 
 	/*
+	 * 保留
 	 * 查询某个类目下的所有文章,要分页
 	 */
 	Collection<ArticleDTO> findArticlesInTitleIdsByPage(@Param("start") int start, @Param("end") int end,
 			@Param("ids") List<Integer> ids);
 
+	//保留
 	// 查询单个的,为什么要单个,因为可以根据索引查,快,in查询不走索引
 	@Select("select "
 			+ "	a.article_id,a.title_id,a.article_name,a.article_author,a.article_type,a.create_date,a.update_date,a.article_status"
@@ -100,7 +103,8 @@ public interface ArticleMybatisDao extends DlxyArticleDao
 	Collection<ArticleDTO> findArticlesByTitleId(@Param("start") int start, @Param("end") int end,
 			@Param("titleId") int titleId, @Param("status") int status);
 
-	// 通过parentId查询旗下的文章 添加了这个后感觉上上面这个就不需要了
+	
+	//保留
 	@Select("( SELECT a.article_id,a.title_id,a.article_name,a.article_author,a.article_type,a.create_date,a.update_date,a.article_status FROM dlxy_article a WHERE a.article_status=#{status} AND a.title_id IN ( "
 			+ "SELECT b.title_id FROM dlxy_title b WHERE b.title_parent_id=#{titleParentId})) UNION ALL ( "
 			+ "SELECT c.article_id,c.title_id,c.article_name,c.article_author,c.article_type,c.create_date,c.update_date,c.article_status FROM dlxy_article c WHERE c.article_status=#{status} AND c.title_id=#{titleParentId} ORDER BY c.create_date DESC)  limit #{start},#{end}")
@@ -158,6 +162,7 @@ public interface ArticleMybatisDao extends DlxyArticleDao
 	/*
 	 * 这个没用了,准备删除
 	 */
+	@Deprecated
 	@Select("select a.article_id,a.title_id,a.article_name,a.article_author,a.article_type,a.create_date,a.update_date,a.article_status ,c.realname,c.user_id,a.delete_date,b.title_name from dlxy_article  a left join dlxy_title b on a.title_id=b.title_id "
 			+ "left join dlxy_user_article c on a.article_id=c.article_id order by a.create_date desc limit #{start},#{end}")
 	Collection<ArticleDTO> findAllArtilcesByPage(@Param("start") int start, @Param("end") int end);
@@ -172,6 +177,7 @@ public interface ArticleMybatisDao extends DlxyArticleDao
 	int rollBackArticle(@Param("status") int status, @Param("articleId") Long articleId,
 			@Param("titleId") Integer titleId);
 
+	@Deprecated
 	Integer deleteInBatch(Long[] articleIds);
 
 }
