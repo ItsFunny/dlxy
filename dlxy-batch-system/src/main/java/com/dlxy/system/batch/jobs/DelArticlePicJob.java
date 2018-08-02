@@ -141,16 +141,16 @@ public class DelArticlePicJob implements JobRunner
 					if (file.exists())
 					{
 						boolean delete = file.delete();
+						Long pictureId= Long.parseLong(map.get("pictureId").toString());;
 						if (delete)
 						{
 							count++;
-							Long pictureId = Long.parseLong(map.get("pictureId").toString());
 							pictureIdList.add(pictureId);
 							list.remove(i);
 							logger.info("[删除图片]sucess,pictureId:{}", pictureId);
 						} else
 						{
-							logger.error("[删除图片发生错误],错误未知");
+							logger.error("[删除图片发生错误],错误未知,图片编号:{}",pictureId);
 						}
 					} else
 					{

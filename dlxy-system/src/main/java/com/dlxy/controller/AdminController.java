@@ -378,6 +378,7 @@ public class AdminController
 			HttpServletResponse response)
 	{
 		ModelAndView modelAndView = null;
+		List<Long>pictureIdList=new ArrayList<>();
 		String[] pictureIds = request.getParameterValues("pictureId");
 		String url = null;
 		PictureDTO descPic = null;
@@ -393,6 +394,15 @@ public class AdminController
 			modelAndView = new ModelAndView("error", params);
 			return modelAndView;
 		}
+		
+		if(null!=pictureIds && pictureIds.length>0)
+		{
+			for (String string : pictureIds)
+			{
+				pictureIdList.add(Long.parseLong(string));
+			}
+		}
+	
 		// 需要事务
 		if (null != imgFile && !imgFile.isEmpty())
 		{
@@ -408,18 +418,20 @@ public class AdminController
 				pictureManagementWrappedService.addPciture(AdminUtil.getLoginUser(), formArticle.getArticleId(),
 						new PictureDTO[]
 						{ descPic });
-				if (null == pictureIds || pictureIds.length <= 0)
-				{
-					pictureIds = new String[1];
-					pictureIds[0] = descPic.getPictureId().toString();
-				} else
-				{
-					pictureIds = new String[pictureIds.length + 1];
-					pictureIds[pictureIds.length - 1] = descPic.getPictureId().toString();
-				}
+				pictureIdList.add(descPic.getPictureId());
+//				if (null == pictureIds || pictureIds.length <= 0)
+//				{
+//					pictureIds = new String[1];
+//					pictureIds[0] = descPic.getPictureId().toString();
+//				} else
+//				{
+//					pictureIds = new String[pictureIds.length + 1];
+//					pictureIds[pictureIds.length - 1] = descPic.getPictureId().toString();
+//				}
 			} catch (Exception e1)
 			{
 				e1.printStackTrace();
+				params.put("error", e1.getMessage());
 			}
 		}
 
@@ -451,13 +463,18 @@ public class AdminController
 
 		articleDTO.setUserId(AdminUtil.getLoginUser().getUserId());
 		articleDTO.setRealname(AdminUtil.getLoginUser().getRealname());
-		articleDTO.setPictureIds(pictureIds);
+//		articleDTO.setPictureIds(pictureIds);
 		// PictureDTO pictureDTO=new PictureDTO();
 		// pictureDTO.setArticleId(articleDTO.getArticleId());
 		// pictureDTO.setPictureStatus(PictureStatusEnum.Effective.ordinal());
 		params.put("articleDTO", articleDTO);
 		// params.put("pictureDTO", pictureDTO);
-		params.put("pictureStatus", PictureStatusEnum.Effective.ordinal());
+		if(pictureIdList.size()>0)
+		{
+			params.put("pictureStatus", PictureStatusEnum.Effective.ordinal());
+			params.put("pictureIdList", pictureIdList);
+		}
+		
 		try
 		{
 			articleCommand.execute(params);

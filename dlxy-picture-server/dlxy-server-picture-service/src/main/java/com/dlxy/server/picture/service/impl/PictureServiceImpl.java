@@ -19,6 +19,10 @@ import com.dlxy.common.dto.PictureDTO;
 import com.dlxy.server.picture.dao.mybatis.DlxyArticlePictureDao;
 import com.dlxy.server.picture.dao.mybatis.PictureMybatisDao;
 import com.dlxy.server.picture.dao.query.PictureQueryDao;
+import com.dlxy.server.picture.model.DlxyArticlePicture;
+import com.dlxy.server.picture.model.DlxyArticlePictureExample;
+import com.dlxy.server.picture.model.DlxyPictureExample;
+import com.dlxy.server.picture.model.DlxyPictureExample.Criteria;
 import com.dlxy.server.picture.service.IPictureService;
 
 /**
@@ -38,8 +42,6 @@ public class PictureServiceImpl implements IPictureService
 	@Autowired
 	private PictureMybatisDao pictureMybatisDao;
 	
-	@Autowired
-	private DlxyArticlePictureDao articlePictureDao;
 	
 	/*
 	 * batch insert
@@ -77,9 +79,19 @@ public class PictureServiceImpl implements IPictureService
 	}
 
 	@Override
-	public void updateArticlePictureStatusByArticleIdLimited(int status,Long articleId,String[] ids) throws SQLException
+	public void updateArticlePictureStatusByArticleIdLimited(int status,Long articleId,List<Long> ids) 
 	{
 		pictureMybatisDao.updatePictureStausInBatch(status, articleId, ids);
+	}
+	@Override
+	public Integer updatePictureStatusInPictureIds(Integer status, List<Long> pictureIdList)
+	{
+		DlxyArticlePictureExample example=new DlxyArticlePictureExample();
+		com.dlxy.server.picture.model.DlxyArticlePictureExample.Criteria criteria = example.createCriteria();
+		criteria.andPictureIdIn(pictureIdList);
+		DlxyArticlePicture picture=new DlxyArticlePicture();
+		picture.setPictureStatus(status);
+		return pictureMybatisDao.updateByExampleSelective(picture, example);
 	}
 
 	@Override

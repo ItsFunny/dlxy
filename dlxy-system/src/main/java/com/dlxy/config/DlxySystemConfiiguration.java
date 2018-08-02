@@ -221,6 +221,11 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer
 	public DataSource dataSource()
 	{
 		DruidDataSource dataSource = new DruidDataSource();
+		
+		dataSource.setTestOnBorrow(false);
+		dataSource.setTestWhileIdle(true);
+		dataSource.setTimeBetweenEvictionRunsMillis(10000);
+		dataSource.setValidationQuery("SELECT 1");
 		dataSource.setUsername(dlxyProperty.getUsername());
 		dataSource.setDriverClassName(dlxyProperty.getDriverClassName());
 		dataSource.setPassword(dlxyProperty.getPassword());

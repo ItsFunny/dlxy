@@ -9,6 +9,7 @@ package com.dlxy.service.command;
 
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.text.html.HTMLDocument.HTMLReader.ParagraphAction;
@@ -50,8 +51,8 @@ public class ArticleGroup implements IGroup
 	@Override
 	public void delete(Map<String, Object> params)
 	{
-		Long[] articleIds=(Long[]) params.get("articleIds");
-		articleServiceImpl.deleteArticlesInBatch(Arrays.asList(articleIds));
+		List<Long>articleIds=(List<Long>) params.get("ids");
+		articleServiceImpl.deleteArticlesInBatch(articleIds);
 	}
 
 }

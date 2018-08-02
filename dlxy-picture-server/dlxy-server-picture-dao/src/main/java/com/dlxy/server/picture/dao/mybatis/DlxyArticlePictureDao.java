@@ -9,7 +9,6 @@ import com.dlxy.server.picture.model.DlxyArticlePicture;
 import com.dlxy.server.picture.model.DlxyArticlePictureExample;
 
 
-@Mapper
 public interface DlxyArticlePictureDao {
     int countByExample(DlxyArticlePictureExample example);
 

@@ -651,6 +651,7 @@ public class RestAPIController
 		ArticleDTO articleDTO = new ArticleDTO();
 		articleDTO.setUserId(AdminUtil.getLoginUser().getUserId());
 		Map<String, Object> params = new HashMap<>();
+		List<Long>pictureIdList=new ArrayList<>();
 		String[] pictureIds = request.getParameterValues("pictureId");
 		String error = null;
 		if (result.hasErrors())
@@ -671,11 +672,15 @@ public class RestAPIController
 		formArticle.to(articleDTO);
 		if (null != pictureIds && pictureIds.length > 0)
 		{
-			articleDTO.setPictureIds(pictureIds);
+			for (String string : pictureIds)
+			{
+				pictureIdList.add(Long.parseLong(string));
+			}
+			articleDTO.setPictureIds(pictureIdList);
 			params.put("pictureStatus", PictureStatusEnum.Effective.ordinal());
+			params.put("pictureIdList", pictureIdList);
 		}
 		params.put("articleDTO", articleDTO);
-
 		params.put("update", true);
 		try
 		{

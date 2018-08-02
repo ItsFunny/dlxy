@@ -48,7 +48,11 @@ public interface IPictureService
 	 * @author joker 
 	 * @date 创建时间：2018年7月9日 上午9:35:30
 	 */
-	void updateArticlePictureStatusByArticleIdLimited(int status,Long articleId,String[] ids) throws SQLException;
+	@Deprecated
+	void updateArticlePictureStatusByArticleIdLimited(int status,Long articleId,List<Long> pictureIds) ;
+	
+	Integer updatePictureStatusInPictureIds(Integer status,List<Long>pictureIdList);
+	
 	
 	void addPictureWithArticleId(PictureDTO[] pictureDTOs) throws SQLException;
 	

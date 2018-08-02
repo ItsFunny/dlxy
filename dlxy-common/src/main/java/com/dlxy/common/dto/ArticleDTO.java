@@ -8,6 +8,7 @@
 package com.dlxy.common.dto;
 
 import java.util.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.joker.library.utils.CommonUtils;
@@ -43,7 +44,7 @@ public class ArticleDTO extends AbstractDlxyArticleComposite
 	private Date deleteDate;
 	private String deleteDateStr;
 	//2018-07-05 17:33 add
-	private String[] pictureIds;
+	private List<Long> pictureIds;
 	//2018-07-06 17:27 add
 	private String titleName;
 	//2018-07-07 15:02 add
@@ -204,15 +205,6 @@ public class ArticleDTO extends AbstractDlxyArticleComposite
 		this.deleteDateStr = deleteDateStr;
 	}
 
-	public String[] getPictureIds()
-	{
-		return pictureIds;
-	}
-
-	public void setPictureIds(String[] pictureIds)
-	{
-		this.pictureIds = pictureIds;
-	}
 
 	public String getTitleName()
 	{
@@ -272,6 +264,16 @@ public class ArticleDTO extends AbstractDlxyArticleComposite
 	public void setVisitCount(Integer visitCount)
 	{
 		this.visitCount = visitCount;
+	}
+
+	public List<Long> getPictureIds()
+	{
+		return pictureIds;
+	}
+
+	public void setPictureIds(List<Long> pictureIds)
+	{
+		this.pictureIds = pictureIds;
 	}
 
 }

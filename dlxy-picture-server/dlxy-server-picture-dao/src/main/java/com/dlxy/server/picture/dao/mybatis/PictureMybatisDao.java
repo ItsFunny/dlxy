@@ -29,7 +29,7 @@ import com.dlxy.common.dto.PictureDTO;
  * @date 创建时间：2018年7月1日 下午8:46:39
  */
 @Mapper
-public interface PictureMybatisDao
+public interface PictureMybatisDao  extends DlxyArticlePictureDao
 {
 	// @Insert("insert into dlxy_picture
 	// (picture_id,picture_url,picture_type,picture_status) values
@@ -51,8 +51,11 @@ public interface PictureMybatisDao
 
 	void addPictureWithArticleIdSingle(PictureDTO pictureDTO);
 
+	@Deprecated
+	// 这条语句有问题,如果二次更新文章,第一次更新的时候添加图片,但是并没有保存,第二次添加没有添加
+	// 图片,则会将这个文章下的所有图片的状态都改为上线了,这是个bug
 	void updatePictureStausInBatch(@Param("status") int status, @Param("articleId") Long articleId,
-			@Param("ids") String[] pictureIds);
+			@Param("ids") List<Long> pictureIds);
 
 	// 无用的方法
 	@Delete("delete from dlxy_picture where picture_id=#{pictureId} and picture_type=#{pictureType}")

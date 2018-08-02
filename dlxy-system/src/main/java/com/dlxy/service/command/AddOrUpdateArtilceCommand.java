@@ -8,6 +8,7 @@
 package com.dlxy.service.command;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,29 +33,32 @@ public class AddOrUpdateArtilceCommand extends Command
 	
 	@Transactional
 	@Override
-	public void execute(Map<String, Object> param)
+	public void execute(Map<String, Object> p)
 	{
 		String detail=null;
-		if (!param.containsKey("articleDTO"))
+		Map<String, Object>params=new HashMap<String, Object>();
+		if (!p.containsKey("articleDTO"))
 		{
 			throw new RuntimeException("missing argument articleDTO");
 		}
-		ArticleDTO a = (ArticleDTO) param.get("articleDTO");
+		ArticleDTO a = (ArticleDTO) p.get("articleDTO");
 		try
 		{
 			
-			if(param.containsKey("update"))
+			if(p.containsKey("update"))
 			{
-				this.articleGroup.update(param);
+				this.articleGroup.update(p);
 				detail="更新文章:"+AbstractRecordDetailHandler.ARTICLE+":"+a.getArticleId();
 			}else {
-				this.articleGroup.add(param);
-				this.userArticleGroup.add(param);
+				this.articleGroup.add(p);
+				this.userArticleGroup.add(p);
 				detail="添加文章:"+AbstractRecordDetailHandler.ARTICLE+":"+a.getArticleId();
 			}
-			if(param.containsKey("pictureStatus"))
+			if(p.containsKey("pictureStatus"))
 			{
-				this.pictureGroup.update(param);
+				params.clear();
+				params.put("pictureIdList", params.get("pictureIdList"));
+				this.pictureGroup.update(p);
 			}
 			setChanged();
 			 UserRecordDTO userRecordDTO = UserRecordDTO.getUserRecordDTO(a.getUserId(), detail);
