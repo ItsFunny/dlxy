@@ -19,9 +19,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.dlxy.common.enums.ArticlePictureTypeEnum;
 import com.dlxy.common.enums.PictureStatusEnum;
 import com.dlxy.utils.FileUtil;
 
@@ -37,16 +40,16 @@ public class DeleteArticleCommand extends Command
 {
 
 	private Logger logger=LoggerFactory.getLogger(DeleteArticleCommand.class);
+	@Transactional
 	@Override
 	public void execute(Map<String, Object> p)
 	{
 		@SuppressWarnings("unchecked")
-		List<Long> ids = (List<Long>) p.get("ids");
+		List<Long> ids = (List<Long>) p.get("articleIdList");
 		List<Long> backUpdateIds = new ArrayList<>();
-		List<Long>deleteIds=new ArrayList<>();
+		List<Long>deletedArticleIdlist=new ArrayList<>();
 		Map<String, Object>params=new HashMap<String, Object>();
-		params.put("articleIds", ids);
-		articleGroup.delete(params);
+//		articleGroup.delete(params);
 		
 		ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 		HttpServletRequest request = attributes.getRequest();
@@ -57,10 +60,12 @@ public class DeleteArticleCommand extends Command
 			File file = new File(realPath + File.separator + artileId);
 			try
 			{
+				//如果这样做的话,下面就无法得到具体的pictureId了,如果想得到具体的id,则需要double for loop 
+				//如果改为那种方式的话记得pictureGroup的delete也需要更改
 				boolean isOk = FileUtil.delFileOrDir(file);
 				if(isOk)
 				{
-					deleteIds.add(artileId);
+					deletedArticleIdlist.add(artileId);
 				}else {
 					backUpdateIds.add(artileId);
 				}
@@ -70,19 +75,29 @@ public class DeleteArticleCommand extends Command
 				backUpdateIds.add(ids.get(i));
 			}
 		}
-		if(!deleteIds.isEmpty())
+		if(!deletedArticleIdlist.isEmpty())
 		{
-			params.clear(); 
-			params.put("pictureIds", deleteIds);
+			params.clear();
+			params.put("articleIdList", deletedArticleIdlist);
+			articleGroup.delete(params);
 			pictureGroup.delete(params);
-//			pictureService.deleteByPictureIds(deleteIds);
 		}
+//		if(!deletedArticleIdlist.isEmpty())
+//		{
+//			params.clear(); 
+//			params.put("pictureIds", deletedArticleIdlist);
+//			pictureGroup.delete(params);
+////			pictureService.deleteByPictureIds(deleteIds);
+//		}
 		if (!backUpdateIds.isEmpty())
 		{
 			params.clear();
 			try
 			{
-				params.put("pictureIdList", backUpdateIds);
+				//说明有部分文章下的图片删除不成功,也就意味着需要将这些文章下的图片状态全修改为无效
+				params.put("type", "article");
+				params.put("articleIdList", backUpdateIds);
+				params.put("pictureStatus", PictureStatusEnum.Invalid.ordinal());
 				pictureGroup.update(params);
 			} catch (SQLException e)
 			{
@@ -91,5 +106,27 @@ public class DeleteArticleCommand extends Command
 			}
 		}
 	}
+	@Autowired
+	@Override
+	protected void setArticleGroup(ArticleGroup articleGroup)
+	{
+		// TODO Auto-generated method stub
+		super.setArticleGroup(articleGroup);
+	}
+	@Autowired
+	@Override
+	protected void setPictureGroup(PictureGroup pictureGroup)
+	{
+		// TODO Auto-generated method stub
+		super.setPictureGroup(pictureGroup);
+	}
+	@Autowired
+	@Override
+	protected void setUserArticleGroup(UserArticleGroup userArticleGroup)
+	{
+		// TODO Auto-generated method stub
+		super.setUserArticleGroup(userArticleGroup);
+	}
+	
 
 }

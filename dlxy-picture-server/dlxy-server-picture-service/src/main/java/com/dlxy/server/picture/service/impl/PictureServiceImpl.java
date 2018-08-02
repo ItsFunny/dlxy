@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dlxy.common.dto.PictureDTO;
+import com.dlxy.common.enums.ArticlePictureTypeEnum;
 import com.dlxy.server.picture.dao.mybatis.DlxyArticlePictureDao;
 import com.dlxy.server.picture.dao.mybatis.PictureMybatisDao;
 import com.dlxy.server.picture.dao.query.PictureQueryDao;
@@ -61,7 +62,7 @@ public class PictureServiceImpl implements IPictureService
 	}
 
 	@Override
-	public void updateArticlePictureStatusByArticleIdsInbatch(Long[] articleIds, int status)
+	public void updateArticlePictureStatusByArticleIdsInbatch(List<Long> articleIds, int status)
 	{
 		pictureMybatisDao.updatePicStatusByArticleIdInBatch(articleIds, status);
 	}
@@ -93,6 +94,17 @@ public class PictureServiceImpl implements IPictureService
 		picture.setPictureStatus(status);
 		return pictureMybatisDao.updateByExampleSelective(picture, example);
 	}
+	@Override
+	public int updateDescPicStatus(Long articleId, Integer status)
+	{
+		DlxyArticlePictureExample example=new DlxyArticlePictureExample();
+		com.dlxy.server.picture.model.DlxyArticlePictureExample.Criteria criteria = example.createCriteria();
+		criteria.andArticleIdEqualTo(articleId);
+		criteria.andPictureTypeEqualTo(ArticlePictureTypeEnum.DESCRIPTION_PICTURE.ordinal());
+		DlxyArticlePicture articlePicture=new DlxyArticlePicture();
+		articlePicture.setPictureStatus(status);
+		return pictureMybatisDao.updateByExampleSelective(articlePicture, example);
+	}
 
 	@Override
 	public Collection<PictureDTO> findByStatus(int status)
@@ -117,6 +129,12 @@ public class PictureServiceImpl implements IPictureService
 	{
 		return pictureMybatisDao.findByArticleIdArray(articleIds);
 	}
+	@Override
+	public int deleteByArticleIdList(List<Long> articleIdList)
+	{
+		return pictureMybatisDao.deleteByArticleIdList(articleIdList);
+	}
+	
 
 	
 }

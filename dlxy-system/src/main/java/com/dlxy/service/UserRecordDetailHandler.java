@@ -15,14 +15,6 @@ import java.util.Map;
 import com.dlxy.common.dto.UserRecordDTO;
 import com.dlxy.common.vo.UserRecordUrlVO;
 
-/**
-* 
-* @When
-* @Description
-* @Detail
-* @author joker 
-* @date 创建时间：2018年7月24日 下午6:10:12
-*/
 public class UserRecordDetailHandler extends AbstractRecordDetailHandler
 {
 
@@ -34,16 +26,14 @@ public class UserRecordDetailHandler extends AbstractRecordDetailHandler
 	@Override
 	protected Map<String, Object> parse(UserRecordDTO userRecordDTO)
 	{
-		Map<String, Object>params=new HashMap<String, Object>();
-		
+		Map<String, Object> params = new HashMap<String, Object>();
 		String[] detail = userRecordDTO.getRecordDetail().split(":");
-		
-		String userId=detail[2];
+		String userId = detail[2];
 		String[] strings = userId.split(",");
-		List<UserRecordUrlVO>urls=new LinkedList<UserRecordUrlVO>();
+		List<UserRecordUrlVO> urls = new LinkedList<UserRecordUrlVO>();
 		for (String string : strings)
 		{
-			UserRecordUrlVO vo=new UserRecordUrlVO(string, "/admin/user/records.html?userId="+string);
+			UserRecordUrlVO vo = new UserRecordUrlVO(string, "/admin/user/records.html?userId=" + string);
 			urls.add(vo);
 		}
 		params.put("urls", urls);

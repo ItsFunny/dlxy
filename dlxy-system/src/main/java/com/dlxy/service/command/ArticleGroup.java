@@ -51,7 +51,8 @@ public class ArticleGroup implements IGroup
 	@Override
 	public void delete(Map<String, Object> params)
 	{
-		List<Long>articleIds=(List<Long>) params.get("ids");
+		@SuppressWarnings("unchecked")
+		List<Long>articleIds=(List<Long>) params.get("articleIdList");
 		articleServiceImpl.deleteArticlesInBatch(articleIds);
 	}
 

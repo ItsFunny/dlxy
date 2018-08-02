@@ -59,7 +59,7 @@ public abstract class  AbstractRecordDetailHandler
 		}else if(null!=this.nextHandler){
 			this.nextHandler.handler(userRecordDTO);
 		}else {
-			throw new RuntimeException("没找到任何匹配的处理等级");
+			throw new RuntimeException("cant found  any matchable handlers");
 		}
 	}
 

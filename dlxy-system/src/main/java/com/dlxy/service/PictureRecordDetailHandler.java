@@ -7,8 +7,6 @@
 */
 package com.dlxy.service;
 
-import java.io.File;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,7 +21,7 @@ import com.dlxy.common.vo.UserRecordUrlVO;
 * @Description
 * @Detail
 * @author joker 
-* @date 创建时间：2018年7月24日 下午3:19:28
+* @date 创建时间：2018年7月09日 下午3:19:28
 */
 public class PictureRecordDetailHandler extends AbstractRecordDetailHandler
 {

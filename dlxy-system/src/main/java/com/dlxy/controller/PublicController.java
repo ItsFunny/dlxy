@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.alibaba.druid.util.StringUtils;
@@ -25,6 +26,8 @@ import com.dlxy.common.dto.IllegalLogDTO;
 import com.dlxy.common.dto.UserDTO;
 import com.dlxy.common.enums.IllegalLevelEnum;
 import com.dlxy.exception.DlxySystemIllegalException;
+import com.dlxy.factory.WrappedServiceFactory;
+import com.dlxy.service.IUserWrappedService;
 import com.dlxy.utils.AdminUtil;
 import com.google.code.kaptcha.Producer;
 import com.joker.library.utils.CommonUtils;
@@ -42,7 +45,17 @@ public class PublicController
 {
 	@Autowired
 	Producer captchaProducer;
+	@Autowired
+	private WrappedServiceFactory serviceFactory;
 
+	@RequestMapping("/public/test2")
+	@ResponseBody
+	public String test2()
+	{
+		IUserWrappedService service=serviceFactory.create(IUserWrappedService.class.getName());
+		return service.toString();
+	}
+	
 	@RequestMapping("/public/test")
 	public ModelAndView test(HttpServletRequest request)
 	{

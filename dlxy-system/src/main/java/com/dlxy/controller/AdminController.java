@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -65,9 +66,9 @@ import com.dlxy.server.article.service.ITitleService;
 import com.dlxy.server.user.model.DlxyUser;
 import com.dlxy.server.user.service.IUserRoleService;
 import com.dlxy.server.user.service.IUserService;
-import com.dlxy.service.IArticleManagementWrappedService;
-import com.dlxy.service.IPictureManagementWrappedService;
-import com.dlxy.service.IUserMangementWrappedService;
+import com.dlxy.service.IArticleWrappedService;
+import com.dlxy.service.IPictureWrappedService;
+import com.dlxy.service.IUserWrappedService;
 import com.dlxy.service.command.AddOrUpdateArtilceCommand;
 import com.dlxy.shiro.DlxyShiroAuthToken;
 import com.dlxy.utils.AdminUtil;
@@ -94,13 +95,13 @@ public class AdminController
 	@Autowired
 	private ITitleService titleService;
 	@Autowired
-	private IArticleManagementWrappedService articleManagementWrappedService;
+	private IArticleWrappedService articleManagementWrappedService;
 	@Autowired
 	private AddOrUpdateArtilceCommand articleCommand;
 	@Autowired
-	private IUserMangementWrappedService userManagementWrappedService;
+	private IUserWrappedService userManagementWrappedService;
 	@Autowired
-	private IPictureManagementWrappedService pictureManagementWrappedService;
+	private IPictureWrappedService pictureManagementWrappedService;
 
 	@Autowired
 	private IdWorkerService idWorkService;
@@ -378,6 +379,7 @@ public class AdminController
 			HttpServletResponse response)
 	{
 		ModelAndView modelAndView = null;
+		UserDTO user = AdminUtil.getLoginUser();
 		List<Long>pictureIdList=new ArrayList<>();
 		String[] pictureIds = request.getParameterValues("pictureId");
 		String url = null;
@@ -461,8 +463,8 @@ public class AdminController
 		ArticleDTO articleDTO = new ArticleDTO();
 		formArticle.to(articleDTO);
 
-		articleDTO.setUserId(AdminUtil.getLoginUser().getUserId());
-		articleDTO.setRealname(AdminUtil.getLoginUser().getRealname());
+		articleDTO.setUserId(user.getUserId());
+		articleDTO.setRealname(user.getRealname());
 //		articleDTO.setPictureIds(pictureIds);
 		// PictureDTO pictureDTO=new PictureDTO();
 		// pictureDTO.setArticleId(articleDTO.getArticleId());

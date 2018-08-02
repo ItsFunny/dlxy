@@ -81,11 +81,12 @@ import com.dlxy.server.user.dao.mybatis.UserIllegalLogDao;
 import com.dlxy.server.user.model.DlxyUser;
 import com.dlxy.server.user.service.IUserRoleService;
 import com.dlxy.server.user.service.IUserService;
-import com.dlxy.service.IArticleManagementWrappedService;
-import com.dlxy.service.IPictureManagementWrappedService;
-import com.dlxy.service.ITitleManagementWrappedService;
-import com.dlxy.service.IUserMangementWrappedService;
+import com.dlxy.service.IArticleWrappedService;
+import com.dlxy.service.IPictureWrappedService;
+import com.dlxy.service.ITitleWrappedService;
+import com.dlxy.service.IUserWrappedService;
 import com.dlxy.service.command.AddOrUpdateArtilceCommand;
+import com.dlxy.service.command.DeleteArticleCommand;
 import com.dlxy.utils.AdminUtil;
 import com.dlxy.utils.FileUtil;
 import com.joker.library.utils.CommonUtils;
@@ -111,7 +112,7 @@ public class RestAPIController
 
 	private Logger logger = LoggerFactory.getLogger(RestAPIController.class);
 	@Autowired
-	private IArticleManagementWrappedService articleManagementWrappedService;
+	private IArticleWrappedService articleManagementWrappedService;
 	@Autowired
 	private IUserService userService;
 	@Autowired
@@ -119,19 +120,21 @@ public class RestAPIController
 	@Autowired
 	private IArticleService articleService;
 	@Autowired
-	private IPictureManagementWrappedService pictureManagementWrappedService;
+	private IPictureWrappedService pictureManagementWrappedService;
 	@Autowired
-	private IUserMangementWrappedService userManagementWrappedService;
+	private IUserWrappedService userManagementWrappedService;
 	@Autowired
 	private AddOrUpdateArtilceCommand addOrUpdateArtilceCommand;
 	@Autowired
 	private IUserRoleService userRoleService;
 	@Autowired
-	private ITitleManagementWrappedService titleManagementWrappedService;
+	private ITitleWrappedService titleManagementWrappedService;
 	@Autowired
 	private AppEventPublisher appeventPublisher;
 	@Autowired
 	private DlxyProperty dlxyProperty;
+	@Autowired
+	private DeleteArticleCommand deleteArticleCommand;
 
 	@RequestMapping(value="/address/images",method=RequestMethod.GET,produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResultDTO<String>getImagesAddress(HttpServletRequest request,HttpServletResponse response) throws UnsupportedEncodingException
@@ -399,7 +402,7 @@ public class RestAPIController
 		{
 			Integer titleId = Integer.parseInt(titleIdStr);
 			DlxyTitleDTO dto = titleManagementWrappedService.findChildsAndArticles(titleId,
-					ITitleManagementWrappedService.MAX_SHOW_ARTICLE_NUMBER);
+					ITitleWrappedService.MAX_SHOW_ARTICLE_NUMBER);
 			// String json = JsonUtil.obj2Json(ResultUtil.sucess(dto));
 			SerializeConfig serializeConfig = new SerializeConfig();
 			serializeConfig.put(Long.class, ToStringSerializer.instance);
@@ -544,14 +547,14 @@ public class RestAPIController
 			params.put("erro", "missing argument:articleId");
 		}
 		String[] ids = articleIds.split(",");
-		List<Long>idArr=new ArrayList<>();
+		List<Long>articleIdList=new ArrayList<>();
 //		Long[] idArr = new Long[ids.length];
 		try
 		{
 			for (int i = 0; i < ids.length; i++)
 			{
 //				idArr[i] = Long.parseLong(ids[i]);
-				idArr.add(Long.parseLong(ids[i]));
+				articleIdList.add(Long.parseLong(ids[i]));
 			}
 		} catch (Exception e)
 		{
@@ -564,7 +567,10 @@ public class RestAPIController
 		}
 		try
 		{
-			articleManagementWrappedService.deleteInBatch(AdminUtil.getLoginUser(), idArr);
+			Map<String, Object>p=new HashMap<>();
+			p.put("articleIdList", articleIdList);
+			deleteArticleCommand.execute(p);
+//			articleManagementWrappedService.deleteInBatch(AdminUtil.getLoginUser(), articleIdList);
 			return ResultUtil.sucess();
 		} catch (Exception e)
 		{

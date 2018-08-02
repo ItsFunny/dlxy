@@ -47,7 +47,7 @@ import com.dlxy.server.picture.service.IPictureService;
 import com.dlxy.service.AbstractRecordDetailHandler;
 import com.dlxy.service.ArticleVisitCountContext;
 import com.dlxy.service.DbVisitCountStrategy;
-import com.dlxy.service.IArticleManagementWrappedService;
+import com.dlxy.service.IArticleWrappedService;
 import com.dlxy.service.IRedisService;
 import com.dlxy.service.RedisArticleVIsitCountStrategy;
 import com.dlxy.utils.FileUtil;
@@ -62,7 +62,7 @@ import com.joker.library.utils.CommonUtils;
  * @author joker
  * @date 创建时间：2018年7月2日 上午9:27:47
  */
-public class ManagementArticleServiceObservableImpl extends Observable implements IArticleManagementWrappedService
+public class ManagementArticleServiceObservableImpl extends Observable implements IArticleWrappedService
 {
 
 	private Logger logger = LoggerFactory.getLogger(ManagemeentTitleServiceImpl.class);
@@ -208,7 +208,7 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 
 	@Transactional
 	@Override
-	public void updateArticleTypeInBatch(UserDTO userDTO, List<Long>articleIds, int type)
+	public void updateArticleTypeInBatch(UserDTO userDTO, List<Long> articleIds, int type)
 	{
 		articleService.updateArticleTypeInbatch(articleIds, type);
 		StringBuilder sBuilder = new StringBuilder();
@@ -337,9 +337,9 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 	@Override
 	public void deleteInBatch(UserDTO userDTO, List<Long> ids)
 	{
-//		List<Long> ids = Arrays.asList(articleIds);
+		// List<Long> ids = Arrays.asList(articleIds);
 		List<Long> backUpdateIds = new ArrayList<>();
-		List<Long>deleteIds=new ArrayList<>();
+		List<Long> deleteIds = new ArrayList<>();
 		articleService.deleteArticlesInBatch(ids);
 		ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 		HttpServletRequest request = attributes.getRequest();
@@ -350,10 +350,11 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 			try
 			{
 				boolean res = FileUtil.delFileOrDir(file);
-				if(res)
+				if (res)
 				{
 					deleteIds.add(ids.get(i));
-				}else {
+				} else
+				{
 					backUpdateIds.add(ids.get(i));
 				}
 			} catch (Exception e)
@@ -362,14 +363,14 @@ public class ManagementArticleServiceObservableImpl extends Observable implement
 				backUpdateIds.add(ids.get(i));
 			}
 		}
-		if(!deleteIds.isEmpty())
+		if (!deleteIds.isEmpty())
 		{
 			pictureService.deleteByPictureIds(deleteIds);
 		}
 		if (!backUpdateIds.isEmpty())
 		{
-			pictureService.updateArticlePictureStatusByArticleIdsInbatch(
-					backUpdateIds.toArray(new Long[backUpdateIds.size()]), PictureStatusEnum.Invalid.ordinal());
+			pictureService.updateArticlePictureStatusByArticleIdsInbatch(backUpdateIds,
+					PictureStatusEnum.Invalid.ordinal());
 		}
 		String detail = "删除文章:" + AbstractRecordDetailHandler.ARTICLE + ":";
 		for (Long long1 : ids)

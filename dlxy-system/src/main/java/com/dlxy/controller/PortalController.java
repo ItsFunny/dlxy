@@ -42,8 +42,8 @@ import com.dlxy.exception.DlxySuspicionException;
 import com.dlxy.exception.DlxySystemIllegalException;
 import com.dlxy.server.article.service.IArticleService;
 import com.dlxy.server.article.service.ITitleService;
-import com.dlxy.service.IArticleManagementWrappedService;
-import com.dlxy.service.ITitleManagementWrappedService;
+import com.dlxy.service.IArticleWrappedService;
+import com.dlxy.service.ITitleWrappedService;
 import com.dlxy.vo.TitleDetailVO;
 import com.joker.library.utils.CommonUtils;
 
@@ -62,9 +62,9 @@ public class PortalController
 	@Autowired
 	private ITitleService titleService;
 	@Autowired
-	private ITitleManagementWrappedService titleManagementWrappedService;
+	private ITitleWrappedService titleManagementWrappedService;
 	@Autowired
-	private IArticleManagementWrappedService articleManagementWrappedService;
+	private IArticleWrappedService articleManagementWrappedService;
 	@Autowired
 	private IArticleService articleService;
 	
@@ -84,7 +84,7 @@ public class PortalController
 		DlxyTitleDTO dlxyTitleDTO=null;
 		try
 		{
-			dlxyTitleDTO = titleManagementWrappedService.findDlxyDetailTitles(ITitleManagementWrappedService.MAX_SHOW_ARTICLE_NUMBER);
+			dlxyTitleDTO = titleManagementWrappedService.findDlxyDetailTitles(ITitleWrappedService.MAX_SHOW_ARTICLE_NUMBER);
 		} catch (Exception e)
 		{
 			e.printStackTrace();

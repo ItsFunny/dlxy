@@ -23,7 +23,7 @@ import com.dlxy.common.enums.ArticleStatusEnum;
 import com.dlxy.common.enums.DlxyTitleEnum;
 import com.dlxy.server.article.service.IArticleService;
 import com.dlxy.server.article.service.ITitleService;
-import com.dlxy.service.ITitleManagementWrappedService;
+import com.dlxy.service.ITitleWrappedService;
 
 /**
 * 
@@ -33,7 +33,7 @@ import com.dlxy.service.ITitleManagementWrappedService;
 * @author joker 
 * @date 创建时间：2018年7月8日 上午8:29:52
 */
-public class ManagemeentTitleServiceImpl extends Observable implements ITitleManagementWrappedService
+public class ManagemeentTitleServiceImpl extends Observable implements ITitleWrappedService
 {
 	@Autowired
 	private ITitleService titleService;

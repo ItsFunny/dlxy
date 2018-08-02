@@ -31,7 +31,7 @@ public class FileUtil
 	{
 		if (!file.exists())
 		{
-			return false;
+			return true;
 		}
 		if (file.isDirectory())
 		{

@@ -45,7 +45,7 @@ import com.dlxy.system.batch.config.DlxyProperty;
  * @author joker
  * @date 创建时间：2018年7月31日 下午12:41:25
  */
-//@Component
+// @Component
 public class DelInvalidArticleJob implements JobRunner
 {
 	@Autowired
@@ -164,8 +164,8 @@ public class DelInvalidArticleJob implements JobRunner
 			}
 			if (!backUpdateIds.isEmpty())
 			{
-				pictureService.updateArticlePictureStatusByArticleIdsInbatch(
-						backUpdateIds.toArray(new Long[backUpdateIds.size()]), PictureStatusEnum.Invalid.ordinal());
+				pictureService.updateArticlePictureStatusByArticleIdsInbatch(backUpdateIds,
+						PictureStatusEnum.Invalid.ordinal());
 			}
 		} catch (SQLException e)
 		{

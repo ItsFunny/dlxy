@@ -25,7 +25,7 @@ import com.dlxy.common.enums.ArticlePictureTypeEnum;
 import com.dlxy.common.enums.PictureStatusEnum;
 import com.dlxy.server.picture.service.IPictureService;
 import com.dlxy.service.AbstractRecordDetailHandler;
-import com.dlxy.service.IPictureManagementWrappedService;
+import com.dlxy.service.IPictureWrappedService;
 
 /**
 * 
@@ -35,7 +35,7 @@ import com.dlxy.service.IPictureManagementWrappedService;
 * @author joker 
 * @date 创建时间：2018年7月2日 下午1:04:20
 */
-public class ManagementPictureServiceObservableImpl extends Observable implements IPictureManagementWrappedService
+public class ManagementPictureServiceObservableImpl extends Observable implements IPictureWrappedService
 {
 
 	@Autowired
@@ -116,8 +116,11 @@ public class ManagementPictureServiceObservableImpl extends Observable implement
 	@Override
 	public void updateDescPicture(UserDTO userDTO, Long articleId, PictureDTO pictureDTO) throws SQLException
 	{
+		List<Long>ids=new ArrayList<>();
+		ids.add(articleId);
 		//更新原先图片的状态
-		pictureService.updateArticlePictureStatusByArticleIdsInbatch(new Long[] {articleId}, PictureStatusEnum.Invalid.ordinal());
+//		pictureService.updateArticlePictureStatusByArticleIdsInbatch(ids, PictureStatusEnum.Invalid.ordinal());
+		pictureService.updateDescPicStatus(articleId, PictureStatusEnum.Invalid.ordinal());
 		//查询新的图片
 		addPciture(userDTO,articleId,new PictureDTO[] {pictureDTO});
 	}

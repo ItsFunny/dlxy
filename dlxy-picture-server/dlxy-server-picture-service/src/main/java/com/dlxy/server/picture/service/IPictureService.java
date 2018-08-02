@@ -36,7 +36,17 @@ public interface IPictureService
 	 * @author joker 
 	 * @date 创建时间：2018年7月9日 上午9:33:23
 	 */
-	void updateArticlePictureStatusByArticleIdsInbatch(Long[] articleIds,int status);
+	void updateArticlePictureStatusByArticleIdsInbatch(List<Long> articleIds,int status);
+	
+	/**
+	 * 用于当更换轮播图的时候,修改原先的图片的状态为0,batch自动删除,当然也可以自己直接在这里删除了
+	 * @param articleId
+	 * @param status
+	 * @return
+	 * @author joker 
+	 * @date 创建时间：2018年8月2日 下午12:10:07
+	 */
+	int updateDescPicStatus(Long articleId,Integer status);
 	
 	
 	/**
@@ -65,5 +75,15 @@ public interface IPictureService
 //	int deleteByPictureIdAndStatus(String pictureId,int pictureType);
 	
 	int deleteByPictureIds(List<Long> pictureIds);
+	
+	
+	/**
+	 * 删除文章下的所有的图片记录
+	 * @param articleIdList
+	 * @return
+	 * @author joker 
+	 * @date 创建时间：2018年8月2日 下午1:15:50
+	 */
+	int deleteByArticleIdList(List<Long>articleIdList);
 	
 }

@@ -27,6 +27,7 @@ import com.dlxy.server.picture.service.IPictureService;
  * @author joker
  * @date 创建时间：2018年7月2日 上午11:40:57
  */
+@SuppressWarnings("unchecked")
 public class PictureGroup implements IGroup
 {
 	@Autowired
@@ -38,18 +39,28 @@ public class PictureGroup implements IGroup
 		pictureService.addPicture(new PictureDTO[]
 		{ (PictureDTO) map.get("pictureDTO") });
 	}
-
 	@Override
 	public void update(Map<String, Object> params) throws SQLException
 	{
 //		ArticleDTO articleDTO = (ArticleDTO) params.get("articleDTO");
-		List<Long>pictureIdList=(List<Long>) params.get("pictureIdList");
+		
+		String updateBy=(String) params.get("type");
 		Integer status = Integer.parseInt(params.get("pictureStatus").toString());
+		if(updateBy.equals("article"))
+		{
+			List<Long>articleIdList=(List<Long>) params.get("articleIdList");
+			pictureService.updateArticlePictureStatusByArticleIdsInbatch(articleIdList, status);
+		}else if(updateBy.equals("picture"))
+		{
+			List<Long>pictureIdList=(List<Long>) params.get("pictureIdList");
+			pictureService.updatePictureStatusInPictureIds(status, pictureIdList);
+		}
+		
 		// pictureService.updateArticlePictureStatus(pictureDTO.getArticleId(),
 		// pictureDTO.getPictureStatus());
 		
 
-		pictureService.updatePictureStatusInPictureIds(status, pictureIdList);
+		
 //		pictureService.updateArticlePictureStatusByArticleIdLimited(Integer.parseInt(status.toString()),
 //				articleDTO.getArticleId(), articleDTO.getPictureIds());
 	}
@@ -57,8 +68,17 @@ public class PictureGroup implements IGroup
 	@Override
 	public void delete(Map<String, Object> params)
 	{
-		Long[] pictureIds = (Long[]) params.get("pictureIds");
-		pictureService.deleteByPictureIds(Arrays.asList(pictureIds));
+//		String type=(String) params.get("type");
+//		
+//		if(type.equals("article"))
+//		{
+//			
+//		}else if(type.equals("picture"))
+//		{
+//			
+//		}
+		List<Long>articleIdList=(List<Long>) params.get("articleIdList");
+		pictureService.deleteByArticleIdList(articleIdList);
 	}
 
 }

@@ -29,7 +29,7 @@ import com.dlxy.common.dto.PictureDTO;
  * @date 创建时间：2018年7月1日 下午8:46:39
  */
 @Mapper
-public interface PictureMybatisDao  extends DlxyArticlePictureDao
+public interface PictureMybatisDao  extends DlxyArticlePictureDao,DlxyPictureDao
 {
 	// @Insert("insert into dlxy_picture
 	// (picture_id,picture_url,picture_type,picture_status) values
@@ -41,7 +41,7 @@ public interface PictureMybatisDao  extends DlxyArticlePictureDao
 	// void updatePicStatusByArticleId(@Param("articleId") Long articleId,
 	// @Param("status") int status);
 
-	void updatePicStatusByArticleIdInBatch(@Param("ids") Long[] articleIds, @Param("status") int status);
+	void updatePicStatusByArticleIdInBatch(@Param("ids") List<Long> articleIds, @Param("status") int status);
 
 	void addPicturesInBatch(List<PictureDTO> pictureDTOs);
 
@@ -62,7 +62,8 @@ public interface PictureMybatisDao  extends DlxyArticlePictureDao
 	int deleteByPictureId(@Param("pictureId") String pictureId, @Param("pictureType") Integer pictureType);
 
 	int deleteByPictureIdsInBatch(List<Long> pictureIds);
-
+	int deleteByArticleIdList(List<Long>articleIdList);
+	
 	@Deprecated
 	@Select("select picture_id,picture_url,create_date,picture_display_seq from dlxy_picture where picture_type=#{status} order by picture_display_seq desc")
 	Collection<PictureDTO> findByStatus(int status);

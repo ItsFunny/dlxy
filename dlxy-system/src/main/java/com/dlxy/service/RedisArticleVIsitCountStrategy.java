@@ -7,28 +7,13 @@
 */
 package com.dlxy.service;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.locks.ReentrantLock;
 
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.dlxy.common.dto.ArticleDTO;
 import com.dlxy.common.utils.JsonUtil;
-import com.dlxy.model.ArticleVisitCountFactory;
 import com.dlxy.model.ArticleVisitInfo;
 import com.dlxy.server.article.service.IArticleService;
 
-/**
- * 
- * @When
- * @Description
- * @Detail
- * @author joker
- * @date 创建时间：2018年7月26日 上午10:55:55
- */
 public class RedisArticleVIsitCountStrategy extends AbstractArticleVistitCountStrategy
 {
 	private IRedisService redisService;

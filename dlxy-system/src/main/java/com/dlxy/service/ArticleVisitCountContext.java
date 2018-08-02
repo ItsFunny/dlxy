@@ -32,16 +32,6 @@ public class ArticleVisitCountContext
 	@Autowired
 	private IRedisService redisService;
 	
-//	public ArticleVisitCountContext(IArticleService articleService,IRedisService redisService)
-//	{
-//		this.articleService=articleService;
-//		this.redisService=redisService;
-//	}
-//	public void init(IArticleService articleService,IRedisService redisService)
-//	{
-//		this.articleService=articleService;
-//		this.redisService=redisService;
-//	}
 	public Integer visitCount(Long articleId)
 	{
 		ArticleVisitInfo visitInfo = ArticleVisitCountFactory.get(articleId,redisService,articleService);
@@ -53,9 +43,4 @@ public class ArticleVisitCountContext
 		}
 		return this.strategy.visitAndIncr(visitInfo);
 	}
-//	public Integer visitCount(ArticleVisitInfo visitInfo)
-//	{
-//		return this.strategy.visitAndIncr(visitInfo);
-//	}
-	
 }

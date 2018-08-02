@@ -57,9 +57,12 @@ public class AddOrUpdateArtilceCommand extends Command
 			if(p.containsKey("pictureStatus"))
 			{
 				params.clear();
-				params.put("pictureIdList", params.get("pictureIdList"));
-				this.pictureGroup.update(p);
+				params.put("pictureIdList", p.get("pictureIdList"));
+				params.put("type", "picture");
+				params.put("pictureStatus", p.get("pictureStatus"));
+				this.pictureGroup.update(params);
 			}
+			params=null;
 			setChanged();
 			 UserRecordDTO userRecordDTO = UserRecordDTO.getUserRecordDTO(a.getUserId(), detail);
 			notifyObservers(userRecordDTO);

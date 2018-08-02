@@ -1,6 +1,5 @@
 package com.dlxy.config;
 
-
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
@@ -49,16 +48,18 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.dlxy.common.event.AppEventLogPubliher;
 import com.dlxy.common.event.AppEventPublisher;
 import com.dlxy.common.event.AppEventRabbitMQPublisher;
+import com.dlxy.factory.WrappedServiceFactory;
 import com.dlxy.filter.CharsetFilter;
 import com.dlxy.interceptor.IPInterceptor;
-import com.dlxy.service.IArticleManagementWrappedService;
-import com.dlxy.service.IPictureManagementWrappedService;
+import com.dlxy.service.IArticleWrappedService;
+import com.dlxy.service.IPictureWrappedService;
 import com.dlxy.service.IRedisService;
-import com.dlxy.service.ITitleManagementWrappedService;
-import com.dlxy.service.IUserMangementWrappedService;
-import com.dlxy.service.ManagementUserRecordObserver;
+import com.dlxy.service.ITitleWrappedService;
+import com.dlxy.service.IUserWrappedService;
+import com.dlxy.service.UserRecordObserver;
 import com.dlxy.service.command.AddOrUpdateArtilceCommand;
 import com.dlxy.service.command.ArticleGroup;
+import com.dlxy.service.command.DeleteArticleCommand;
 import com.dlxy.service.command.PictureGroup;
 import com.dlxy.service.command.UserArticleGroup;
 import com.dlxy.service.impl.ManagemeentTitleServiceImpl;
@@ -95,15 +96,21 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer
 {
 	@Autowired
 	private DlxyProperty dlxyProperty;
-	
-	private Logger logger=LoggerFactory.getLogger(DlxySystemConfiiguration.class);	
-//	
-	
-	@Bean("charsetFilter")
-	public CharsetFilter charSetfilter()
+
+	private Logger logger = LoggerFactory.getLogger(DlxySystemConfiiguration.class);
+
+	//
+	@Bean
+	public WrappedServiceFactory wrappedServiceFactory(List<Observer> observers)
 	{
-		return new CharsetFilter();
+		WrappedServiceFactory wrappedServiceFactory = new WrappedServiceFactory();
+		wrappedServiceFactory.setOvservers(observers);
+		wrappedServiceFactory.init(IArticleWrappedService.class.getName() + ","
+				+ IUserWrappedService.class.getName() + "," + ITitleWrappedService.class.getName()
+				+ "," + IPictureWrappedService.class.getName());
+		return wrappedServiceFactory;
 	}
+
 	@Bean
 	public JedisPool jedisPool()
 	{
@@ -122,23 +129,25 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer
 	@Bean
 	public IRedisService redisService()
 	{
-		return new  RedisServiceImpl();
+		return new RedisServiceImpl();
 	}
+
 	@Bean
 	public CommonsMultipartResolver multipartResolver()
 	{
-		CommonsMultipartResolver multipartResolver=new CommonsMultipartResolver();
+		CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
 		multipartResolver.setMaxInMemorySize(100000);
 		return multipartResolver;
 	}
-	
+
 	@Bean
 	public DataSourceTransactionManager DataSourceTransactionManager()
 	{
-		DataSourceTransactionManager dataSourceTransactionManager=new DataSourceTransactionManager();
+		DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager();
 		dataSourceTransactionManager.setDataSource(dataSource());
 		return dataSourceTransactionManager;
 	}
+
 	@Bean
 	public PictureGroup pictureGroup()
 	{
@@ -158,6 +167,17 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer
 	}
 
 	@Bean
+	public DeleteArticleCommand DeleteArticleCommand(List<Observer> observers)
+	{
+		DeleteArticleCommand deleteArticleCommand = new DeleteArticleCommand();
+		for (Observer observer : observers)
+		{
+			deleteArticleCommand.addObserver(observer);
+		}
+		return deleteArticleCommand;
+	}
+
+	@Bean
 	public AddOrUpdateArtilceCommand addArtilceCommand(List<Observer> observers)
 	{
 		AddOrUpdateArtilceCommand addArtilceCommand = new AddOrUpdateArtilceCommand();
@@ -169,17 +189,18 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer
 	}
 
 	@Bean
-	public ITitleManagementWrappedService titleMangementWrappedServie(List<Observer> observers)
+	public ITitleWrappedService titleMangementWrappedServie(List<Observer> observers)
 	{
-		ManagemeentTitleServiceImpl iTitleManagementWrappedService=new ManagemeentTitleServiceImpl();
+		ManagemeentTitleServiceImpl iTitleManagementWrappedService = new ManagemeentTitleServiceImpl();
 		for (Observer observer : observers)
 		{
 			iTitleManagementWrappedService.addObserver(observer);
 		}
 		return iTitleManagementWrappedService;
 	}
+
 	@Bean
-	public IUserMangementWrappedService userManagementWrappedservice(List<Observer> observers)
+	public IUserWrappedService userManagementWrappedservice(List<Observer> observers)
 	{
 		ManagementUserServiceImpl userServiceImpl = new ManagementUserServiceImpl();
 		for (Observer observer : observers)
@@ -190,7 +211,7 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer
 	}
 
 	@Bean
-	public IArticleManagementWrappedService articleManagementWrappedservice(List<Observer> observers)
+	public IArticleWrappedService articleManagementWrappedservice(List<Observer> observers)
 	{
 		ManagementArticleServiceObservableImpl managementArticleServiceObservableImpl = new ManagementArticleServiceObservableImpl();
 		for (Observer observer : observers)
@@ -201,7 +222,7 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer
 	}
 
 	@Bean
-	public IPictureManagementWrappedService pictureManagementWrappedService(List<Observer> observers)
+	public IPictureWrappedService pictureManagementWrappedService(List<Observer> observers)
 	{
 		ManagementPictureServiceObservableImpl pictureManagementWrappedService = new ManagementPictureServiceObservableImpl();
 		for (Observer observer : observers)
@@ -212,16 +233,16 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer
 	}
 
 	@Bean
-	public ManagementUserRecordObserver managementUserRecordObserver()
+	public UserRecordObserver managementUserRecordObserver()
 	{
-		return new ManagementUserRecordObserver();
+		return new UserRecordObserver();
 	}
 
 	@Bean
 	public DataSource dataSource()
 	{
 		DruidDataSource dataSource = new DruidDataSource();
-		
+
 		dataSource.setTestOnBorrow(false);
 		dataSource.setTestWhileIdle(true);
 		dataSource.setTimeBetweenEvictionRunsMillis(10000);
@@ -324,7 +345,8 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer
 		registry.addResourceHandler("/js/**").addResourceLocations("/static/js/**").setCachePeriod(1056000);
 		registry.addResourceHandler("/css/**").addResourceLocations("/static/css/**").setCachePeriod(1056000);
 		registry.addResourceHandler("/imgs/**").addResourceLocations("/static/imgs/**").setCachePeriod(1056000);
-		registry.addResourceHandler("/public/404.html").addResourceLocations("/WEB-INF/templates/404.html").setCachePeriod(1056000);
+		registry.addResourceHandler("/public/404.html").addResourceLocations("/WEB-INF/templates/404.html")
+				.setCachePeriod(1056000);
 	}
 
 	@Override
@@ -336,9 +358,9 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer
 	@Override
 	public void configureMessageConverters(List<HttpMessageConverter<?>> converters)
 	{
-		MappingJackson2HttpMessageConverter jackson2HttpMessageConverter=new MappingJackson2HttpMessageConverter();
-		ObjectMapper objectMapper=new ObjectMapper();
-		SimpleModule simpleModule=new SimpleModule();
+		MappingJackson2HttpMessageConverter jackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter();
+		ObjectMapper objectMapper = new ObjectMapper();
+		SimpleModule simpleModule = new SimpleModule();
 		simpleModule.addSerializer(BigInteger.class, ToStringSerializer.instance);
 		simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
 		simpleModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
@@ -347,24 +369,29 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer
 		converters.add(jackson2HttpMessageConverter);
 		converters.add(new StringHttpMessageConverter(Charset.forName("UTF-8")));
 	}
-	
+
 	@PostConstruct
 	public void init() throws IOException
 	{
 		dlxyProperty.init();
-		logger.info("{}",dlxyProperty);
+
+		logger.info("{}", dlxyProperty);
 	}
+
 	@Bean
 	public IPInterceptor ipInterceptor()
 	{
 		return new IPInterceptor();
 	}
+
 	@Override
 	public void addInterceptors(InterceptorRegistry registry)
 	{
-//		registry.addInterceptor(ipInterceptor()).addPathPatterns("/*").excludePathPatterns("/public/*");
-		registry.addInterceptor(ipInterceptor()).excludePathPatterns("/public/**","/api/**","/admin/**").addPathPatterns("/**");
+		// registry.addInterceptor(ipInterceptor()).addPathPatterns("/*").excludePathPatterns("/public/*");
+		registry.addInterceptor(ipInterceptor()).excludePathPatterns("/public/**", "/api/**", "/admin/**")
+				.addPathPatterns("/**");
 	}
+
 	@Autowired
 	public void setDlxyProperty(DlxyProperty dlxyProperty)
 	{

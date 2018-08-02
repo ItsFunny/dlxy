@@ -28,37 +28,22 @@ import com.dlxy.service.IRedisService;
  */
 public class ArticleVisitCountFactory
 {
-	private static Map<Long, ArticleVisitInfo> articleStorage = new HashMap<>();
+	private static Map<Long, ArticleVisitInfo> ARTICLESTORAGE = new HashMap<>();
 
-//	private   IRedisService redisService;
-//	private   IArticleService articleService;
-
-	// 这里最好是IRedisService 继承与某个接口好,因为可能会用mongodb做缓存,但暂时直接这样既可
-	// public ArticleVisitCountFactory(IRedisService redisService)
-	// {
-	// this.redisService=redisService;
-	// }
-//	public  void init(IRedisService redisService,IArticleService articleService)
-//	{
-//		ArticleVisitCountFactory.redisService=redisService;
-//		ArticleVisitCountFactory.articleService=articleService;
-//	}
-
-//	private  ArticleVisitInfo articleVisitInfo = new ArticleVisitInfo();
-
-	public  static synchronized ArticleVisitInfo get(Long articleId,IRedisService redisService,IArticleService articleService)
+	public static synchronized ArticleVisitInfo get(Long articleId, IRedisService redisService,
+			IArticleService articleService)
 	{
 		ArticleVisitInfo visitInfo = null;
-		if (articleStorage.containsKey(articleId))
+		if (ARTICLESTORAGE.containsKey(articleId))
 		{
-			visitInfo = articleStorage.get(articleId);
+			visitInfo = ARTICLESTORAGE.get(articleId);
 			return visitInfo;
 		}
 		String key = String.format(IRedisService.ARTICLE_VISIT_COUNT, articleId);
-		String json =null;
+		String json = null;
 		try
 		{
-			json= redisService.get(key);
+			json = redisService.get(key);
 		} catch (Exception e)
 		{
 		}
@@ -78,28 +63,8 @@ public class ArticleVisitCountFactory
 		{
 			visitInfo = JsonUtil.json2Object(json, ArticleVisitInfo.class);
 		}
-		articleStorage.put(articleId, visitInfo);
+		ARTICLESTORAGE.put(articleId, visitInfo);
 		return visitInfo;
 	}
-
-//	public  synchronized ArticleVisitInfo create(Integer visitCount, Map<String, Long> visitors)
-//	{
-//		articleVisitInfo.setVisitCount(visitCount);
-//		articleVisitInfo.setVisitors(visitors);
-//		return articleVisitInfo;
-//	}
-//
-//	public  synchronized ArticleVisitInfo create(Integer visitCount)
-//	{
-//		articleVisitInfo.setVisitCount(visitCount);
-//		articleVisitInfo.setVisitors(new HashMap<String, Long>());
-//		return articleVisitInfo;
-//	}
-//
-//	public  synchronized ArticleVisitInfo createFromJson(String json)
-//	{
-//		articleVisitInfo = JsonUtil.json2Object(json, ArticleVisitInfo.class);
-//		return articleVisitInfo;
-//	}
 
 }

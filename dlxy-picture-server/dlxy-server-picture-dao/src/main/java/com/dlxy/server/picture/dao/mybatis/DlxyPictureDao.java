@@ -8,7 +8,6 @@ import org.apache.ibatis.annotations.Param;
 import com.dlxy.server.picture.model.DlxyPicture;
 import com.dlxy.server.picture.model.DlxyPictureExample;
 
-@Mapper
 public interface DlxyPictureDao {
     int countByExample(DlxyPictureExample example);
 

@@ -27,7 +27,7 @@ import com.dlxy.server.user.service.IUserArticleService;
 import com.dlxy.server.user.service.IUserRecordService;
 import com.dlxy.server.user.service.IUserService;
 import com.dlxy.service.AbstractRecordDetailHandler;
-import com.dlxy.service.IUserMangementWrappedService;
+import com.dlxy.service.IUserWrappedService;
 import com.dlxy.service.UserRecordHandlerFactory;
 import com.joker.library.utils.KeyUtils;
 
@@ -39,7 +39,7 @@ import com.joker.library.utils.KeyUtils;
  * @author joker
  * @date 创建时间：2018年7月2日 下午5:21:08
  */
-public class ManagementUserServiceImpl extends Observable implements IUserMangementWrappedService
+public class ManagementUserServiceImpl extends Observable implements IUserWrappedService
 {
 	@Autowired
 	private IUserRecordService userRecordService;

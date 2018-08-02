@@ -21,7 +21,7 @@
 	<insert id="addPicture" useGeneratedKeys="true"
 		keyProperty="pictureId">
 		insert into dlxy_picture (
-		picture_id,picture_url,picture_display_seq ) 
+		picture_id,picture_url,picture_display_seq )
 		values
 		(#{pictureId},#{pictureUrl},#{pictureDisplaySeq})
 	</insert>
@@ -35,11 +35,12 @@
 			#{p.articleId},#{p.pictureId},#{p.pictureStatus},#{p.pictureType}
 		</foreach>
 	</insert>
-	
-	<insert id="addPictureWithArticleIdSingle" parameterType="com.dlxy.common.dto.PictureDTO">
-	insert into dlxy_article_picture
+
+	<insert id="addPictureWithArticleIdSingle"
+		parameterType="com.dlxy.common.dto.PictureDTO">
+		insert into dlxy_article_picture
 		(article_id,picture_id,picture_status,picture_type) values
-		
+
 		(#{articleId},#{pictureId},#{pictureStatus},#{pictureType} )
 	</insert>
 
@@ -71,6 +72,18 @@
 			close=")" separator=",">
 			#{id}
 		</foreach>
+	</delete>
+
+	<delete id="deleteByArticleIdList">
+		delete from dlxy_picture
+		where picture_id in
+		(select picture_id from
+		dlxy_article_picture where article_id in
+		<foreach collection="list" index="index" open="(" close=")"
+			separator="," item="id">
+			#{id}
+		</foreach>
+		)
 	</delete>
 
 	<select id="findByArticleIdArray"
