@@ -1,20 +1,5 @@
-/**
-*
-* @Description
-* @author joker 
-* @date 创建时间：2018年7月24日 下午5:11:12
-* 
-*/
 package com.dlxy.vo;
 
-/**
-* 
-* @When
-* @Description
-* @Detail
-* @author joker 
-* @date 创建时间：2018年7月24日 下午5:11:12
-*/
 public class PictureVO
 {
 

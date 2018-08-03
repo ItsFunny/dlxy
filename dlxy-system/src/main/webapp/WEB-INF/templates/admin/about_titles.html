@@ -41,8 +41,8 @@
 				for(var i=0;i<data.data.length;i++){
 					var o=data.data[i];
 					a+='<div class="accordion-inner">';
-					a+='<div class="title">'+o.titleName+'<em style="padding-left:200px">排序码:'+o.titleDisplaySeq+'</em></div> ';
-					a+='<div class="btg"><button class="btn btn-danger btn-xs right" data-toggle="modal" data-target="#deleteSource"  titleId="'+o.titleId+'" onclick="del(this)">删除</button><button class="btn btn-success btn-xs right" data-toggle="modal" data-target="#changeSource" titleId="'+o.titleId+'" titleDisplaySeq="'+o.titleDisplaySeq+'" titleName="'+o.titleName+'" onclick="beforeSave(this,false,true)">修改</button></div></div>';
+					a+='<div class="title">'+o.titleName+'<em style="padding-left:200px">排序码:'+o.titleDisplaySeq+'</em></div><em style="padding-left:200px">缩写名称:'+o.titleAbbName+'</em></div> ';
+					a+='<div class="btg"><button class="btn btn-danger btn-xs right" data-toggle="modal" data-target="#deleteSource"  titleId="'+o.titleId+'" onclick="del(this)">删除</button><button class="btn btn-success btn-xs right" data-toggle="modal" data-target="#changeSource" titleId="'+o.titleId+'" titleDisplaySeq="'+o.titleDisplaySeq+'" titleName="'+o.titleName+'" titleAbbName="'+o.titleAbbName+'"  onclick="beforeSave(this,false,true)">修改</button></div></div>';
 				}
 				a+='</div>';			
 				obj.append(a);
@@ -59,8 +59,8 @@
         		var obj=$(".data-div");
         		for(var i=0;i<data.data.length;i++){
         			var o=data.data[i];
-	        		var t='<div class="accordion-group" state="parent" id="accordion-group'+o.titleId+'"><div class="accordion-heading"><a class="accordion-toggle block"  href="javascript:void(0);" onclick="loadChild('+o.titleId+');">'+o.titleName+' <em style="padding-left:200px">排序码:'+o.titleDisplaySeq+'</em>';
-	        		t+='</a><div class="btg"><button class="btn btn-danger btn-xs right" data-toggle="modal" data-target="#deleteSource"  titleId="'+o.titleId+'" onclick="del(this)">删除</button><button class="btn btn-success btn-xs right" titleName="'+o.titleName+'" data-toggle="modal" data-target="#changeSource" titleId="'+o.titleId+'" titleDisplaySeq="'+o.titleDisplaySeq+'" onclick="beforeSave(this,false,true)">修改</button><add class="btn btn-add btn-xs right" data-toggle="modal" data-target="#changeSource" titleId="'+o.titleId+'" onclick="beforeSave(this,true,false)">添加</add></div><a href="/admin/title/article/'+o.titleId+'.html" class="btn btn-success btn-xs right" >查看此类目下的所有文章</a></div><div class="accordion-body collapse" id="accordion-element-'+o.titleId+'" value="1"></div></div>';
+	        		var t='<div class="accordion-group" state="parent" id="accordion-group'+o.titleId+'"><div class="accordion-heading"><a class="accordion-toggle block"  href="javascript:void(0);" onclick="loadChild('+o.titleId+');">'+o.titleName+' <em style="padding-left:200px">排序码:'+o.titleDisplaySeq+'</em> <em style="padding-left:200px">缩写名称:'+o.titleAbbName+'</em>';
+	        		t+='</a><div class="btg"><button class="btn btn-danger btn-xs right" data-toggle="modal" data-target="#deleteSource"  titleId="'+o.titleId+'" onclick="del(this)">删除</button><button class="btn btn-success btn-xs right" titleName="'+o.titleName+'" titleAbbName="'+o.titleAbbName+'" data-toggle="modal" data-target="#changeSource" titleId="'+o.titleId+'" titleDisplaySeq="'+o.titleDisplaySeq+'" onclick="beforeSave(this,false,true)">修改</button><add class="btn btn-add btn-xs right" data-toggle="modal" data-target="#changeSource" titleId="'+o.titleId+'" titleName="'+o.titleName+'"  onclick="beforeSave(this,true,false)">添加</add></div><a href="/admin/title/article/'+o.titleId+'.html" class="btn btn-success btn-xs right" >查看此类目下的所有文章</a></div><div class="accordion-body collapse" id="accordion-element-'+o.titleId+'" value="1"></div></div>';
         			obj.append(t);
         		}
         	}
@@ -101,7 +101,7 @@
         </div>
  
      <div class="modal fade" id="changeSource" role="dialog" aria-labelledby="gridSystemModalLabel">
-        <form class="form-horizontal" id="titleForm" method="post">
+        <form class="form-horizontal" id="titleForm" method="post" name="editTitleForm">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -113,9 +113,15 @@
                     <div class="modal-body">
                         <div class="container-fluid">
                                 <div class="form-group ">
-                                    <label for="titleName" class="col-xs-3 control-label">名称：</label>
+                                    <label for="" class="col-xs-3 control-label">名称：</label>
                                    <div class="col-xs-8 ">
                                         <input type="text"  class="form-control input-sm duiqi" id="titleName" name="titleName" placeholder="">
+                                    </div>
+                                </div>
+                                <div class="form-group ">
+                                    <label for="" class="col-xs-3 control-label">缩写名称：</label>
+                                   <div class="col-xs-8 ">
+                                        <input type="text" name="titleAbbName" class="form-control input-sm duiqi" id="titleAbbName"  placeholder="如:学院介绍缩写为xyjs">
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -167,7 +173,7 @@
     </div>
 
 </div>
-<script type="text/javascript" src="/js/title.js"></script>
+<script type="text/javascript" src="/js/title-0.1.js"></script>
 </body>
 
 </html>

@@ -1,15 +1,7 @@
-/**
-*
-* @Description
-* @author joker 
-* @date 创建时间：2018年7月14日 下午6:51:17
-* 
-*/
 package com.dlxy.controller;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.sql.SQLException;
@@ -26,6 +18,7 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresRoles;
@@ -34,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -41,10 +35,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
-
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.parser.ParserConfig;
 import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.alibaba.fastjson.serializer.ToStringSerializer;
 import com.dlxy.common.dto.ArticleDTO;
@@ -56,7 +47,6 @@ import com.dlxy.common.dto.PictureUploadResponseDTO;
 import com.dlxy.common.dto.ResultDTO;
 import com.dlxy.common.dto.UserDTO;
 import com.dlxy.common.dto.UserRoleDTO;
-import com.dlxy.common.enums.ArticlePictureTypeEnum;
 import com.dlxy.common.enums.ArticleStatusEnum;
 import com.dlxy.common.enums.ArticleTypeEnum;
 import com.dlxy.common.enums.DlxyTitleEnum;
@@ -65,7 +55,6 @@ import com.dlxy.common.enums.PictureStatusEnum;
 import com.dlxy.common.event.AppEvent;
 import com.dlxy.common.event.AppEventPublisher;
 import com.dlxy.common.event.Events;
-import com.dlxy.common.utils.JsonUtil;
 import com.dlxy.common.utils.RSAUtils;
 import com.dlxy.common.utils.ResultUtil;
 import com.dlxy.common.vo.PageVO;
@@ -74,10 +63,8 @@ import com.dlxy.constant.TitleArticleConstant;
 import com.dlxy.exception.DlxySystemIllegalException;
 import com.dlxy.model.FormArticle;
 import com.dlxy.model.FormTitle;
-import com.dlxy.model.FormUser;
 import com.dlxy.server.article.service.IArticleService;
 import com.dlxy.server.article.service.ITitleService;
-import com.dlxy.server.user.dao.mybatis.UserIllegalLogDao;
 import com.dlxy.server.user.model.DlxyUser;
 import com.dlxy.server.user.service.IUserRoleService;
 import com.dlxy.server.user.service.IUserService;
@@ -88,21 +75,9 @@ import com.dlxy.service.IUserWrappedService;
 import com.dlxy.service.command.AddOrUpdateArtilceCommand;
 import com.dlxy.service.command.DeleteArticleCommand;
 import com.dlxy.utils.AdminUtil;
-import com.dlxy.utils.FileUtil;
 import com.joker.library.utils.CommonUtils;
-import com.joker.library.utils.KeyUtils;
-import com.sun.tools.classfile.StackMap_attribute.stack_map_frame;
-
 import redis.clients.jedis.exceptions.JedisException;
 
-/**
- * 
- * @When
- * @Description
- * @Detail
- * @author joker
- * @date 创建时间：2018年7月14日 下午6:51:17
- */
 @RestController
 @RequestMapping("/api/v1")
 public class RestAPIController
@@ -191,10 +166,17 @@ public class RestAPIController
 	}
 
 	@RequestMapping(value = "/admin/title/addOrUpdate", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResultDTO<String> addOrUpdateTitle(FormTitle formTitle, HttpServletRequest request,
+	public ResultDTO<String> addOrUpdateTitle(@Valid FormTitle formTitle,BindingResult result, HttpServletRequest request,
 			HttpServletResponse response)
 	{
-		String error = null;
+		String error = "";
+		if(result.hasErrors())
+		{
+			for(ObjectError error2:result.getAllErrors())
+			{
+				error+=error2.getDefaultMessage();
+			}
+		}
 		if (!CommonUtils.validString(formTitle.getTitleName()))
 		{
 			error = "类型名称不合法,请重新输入,不能有<>!等";
@@ -211,9 +193,23 @@ public class RestAPIController
 		UserDTO userDTO = AdminUtil.getLoginUser();
 		try
 		{
+			DlxyTitleDTO dbTitle = titleService.findByAbbName(formTitle.getTitleAbbName());
+			if(null==titleDTO.getTitleId())
+			{
+				if(null!=dbTitle)
+				{
+					return ResultUtil.fail("缩写名字重复了,请重新输入,尽量以拼音缩写或全英文代替");
+				}
+			}else {
+				if(null!=dbTitle && !dbTitle.getTitleId().equals(titleDTO.getTitleId()))
+				{
+					return ResultUtil.fail("缩写名字重复了,请重新输入,尽量以拼音缩写或全英文代替");
+				}
+			}
 			articleManagementWrappedService.addTitleOrUpdate(userDTO, titleDTO);
 		} catch (Exception e)
 		{
+			e.printStackTrace();
 			logger.error("[addOrUpdate title ] occur error {}", e.getMessage());
 			return ResultUtil.fail(e.getMessage());
 		}
@@ -509,7 +505,7 @@ public class RestAPIController
 			{
 				idA.add(Long.valueOf(idArr[i]));
 			}
-			articleManagementWrappedService.updateArticlesInBatch(user, idA, ArticleStatusEnum.DELETE.ordinal());
+			articleManagementWrappedService.updateArticleStatusInBatch(user, idA, ArticleStatusEnum.DELETE.ordinal());
 			return ResultUtil.sucess();
 		} catch (Exception e)
 		{
@@ -617,7 +613,7 @@ public class RestAPIController
 						throw new RuntimeException("文章状态超出范围");
 					}
 					{
-						articleManagementWrappedService.updateArticlesInBatch(userDTO, ids, artilceStatus);
+						articleManagementWrappedService.updateArticleStatusInBatch(userDTO, ids, artilceStatus);
 						return ResultUtil.sucess();
 					}
 				} else if (key.equals("type"))

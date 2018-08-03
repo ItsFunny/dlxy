@@ -1,14 +1,6 @@
-/**
-*
-* @Description
-* @author joker 
-* @date 创建时间：2018年7月6日 上午8:18:16
-* 
-*/
 package com.dlxy.model;
 
 import javax.validation.constraints.Max;
-import javax.validation.constraints.NotEmpty;
 
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -16,14 +8,6 @@ import com.dlxy.common.dto.UserDTO;
 import com.joker.library.utils.CommonUtils;
 import com.joker.library.utils.KeyUtils;
 
-/**
- * 
- * @When
- * @Description
- * @Detail
- * @author joker
- * @date 创建时间：2018年7月6日 上午8:18:16
- */
 public class FormUser
 {
 	@NotBlank(message="姓名不能为空")

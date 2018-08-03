@@ -1,10 +1,3 @@
-/**
-*
-* @Description
-* @author joker 
-* @date 创建时间：2018年7月2日 下午5:16:39
-* 
-*/
 package com.dlxy.service;
 
 import java.sql.SQLException;
@@ -17,14 +10,6 @@ import com.dlxy.common.dto.UserDTO;
 import com.dlxy.common.dto.UserRecordDTO;
 import com.dlxy.server.user.model.DlxyUser;
 
-/**
-* 
-* @When
-* @Description
-* @Detail
-* @author joker 
-* @date 创建时间：2018年7月2日 下午5:16:39
-*/
 public interface IUserWrappedService
 {
 	PageDTO<Collection<Map<String, Object>>>findUserArticlesByPage(int pageSize,int pageNum,Map<String, Object>p) throws SQLException;

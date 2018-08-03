@@ -1,10 +1,3 @@
-/**
-*
-* @Description
-* @author joker 
-* @date 创建时间：2018年7月24日 下午3:19:28
-* 
-*/
 package com.dlxy.service;
 
 import java.util.HashMap;
@@ -15,14 +8,6 @@ import java.util.Map;
 import com.dlxy.common.dto.UserRecordDTO;
 import com.dlxy.common.vo.UserRecordUrlVO;
 
-/**
-* 
-* @When
-* @Description
-* @Detail
-* @author joker 
-* @date 创建时间：2018年7月09日 下午3:19:28
-*/
 public class PictureRecordDetailHandler extends AbstractRecordDetailHandler
 {
 

@@ -1,5 +1,5 @@
 <#include "header.html">
-<script type="text/javascript" src="/js/portal_article.js"></script>
+<script type="text/javascript" src="/js/portal-article-0.2.js"></script>
 <script>
 	var titleIdArray=null;
 	 $(window).scroll(function(){
@@ -72,8 +72,8 @@
                 <div id="myModal" class="reveal-modal"><h1><img src="images/IMG_0859.jpg"></h1><h3>扫一扫关注我们</h3>
                 <a class="close-reveal-modal">&#215;</a></div>
             </li>
-            <li><img class="tubiao" src="images/t_05.png">QQ：2239329788</li>
-            <li><img class="tubiao" src="images/t_07.png">0851-83627862</li>
+            <li><img class="tubiao" src="/images/t_05.png">QQ：2239329788</li>
+            <li><img class="tubiao" src="/images/t_07.png">0851-83627862</li>
         </ul>
     </div>
 </div>
@@ -101,7 +101,7 @@
             <H1>${dlxyTitleDTO.titleName}</H1>
             <ul>
             <#list dlxyTitleDTO.childs as item>
-                <li><a href="/title/detail/${item.titleId}.html">${item.titleName}</a></li>
+                <li><a href="/title/detail/${item.titleAbbName}.html">${item.titleName}</a></li>
              </#list>
             </ul>
         </div>
@@ -130,7 +130,7 @@
                   </select>
                 </div>
             </div>
-                <script type="text/javascript" src="js/mF_expo2010.js"></script>
+                <script type="text/javascript" src="/js/mF_expo2010.js"></script>
                 <script type="text/javascript">
                        
                     </script>
@@ -169,11 +169,11 @@
 
 <div id="titles">
 	<div class="kaoshi">
-		 <div class="biaoti"><h2>${dlxyTitleDTO.titleName}</h2><a href="/title/detail/${dlxyTitleDTO.titleId}.html">查看详情 +</a></div>
+		 <div class="biaoti"><h2>${dlxyTitleDTO.titleName}</h2><a href="/title/detail/${dlxyTitleDTO.titleAbbName}.html">查看详情 +</a></div>
 		<#if dlxyTitleDTO.childs??>
 			<#list dlxyTitleDTO.childs as item>
 					<ul class="kemu">
-					   <div class="kemu_bt"><h2>${item.titleName}</h2><a href="xw.html">更多>></a></div>
+					   <div class="kemu_bt"><h2>${item.titleName}</h2><a href="/title/detail/${item.titleAbbName}.html">更多>></a></div>
 						<#if item.articles??>
 							<#list item.articles as article>
 					   			<li><a href="/article/detail/${article.articleId?c}.html"><i></i>${article.articleName}</a>    <span style="margin-left:186px">${article.createDate?string('yyyy-MM-dd')}</span></li>

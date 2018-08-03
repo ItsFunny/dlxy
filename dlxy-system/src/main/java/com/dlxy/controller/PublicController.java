@@ -1,10 +1,3 @@
-/**
-*
-* @Description
-* @author joker 
-* @date 创建时间：2018年7月24日 下午7:06:29
-* 
-*/
 package com.dlxy.controller;
 
 import java.awt.image.BufferedImage;
@@ -27,33 +20,28 @@ import com.dlxy.common.dto.UserDTO;
 import com.dlxy.common.enums.IllegalLevelEnum;
 import com.dlxy.exception.DlxySystemIllegalException;
 import com.dlxy.factory.WrappedServiceFactory;
+import com.dlxy.service.ITitleWrappedService;
 import com.dlxy.service.IUserWrappedService;
 import com.dlxy.utils.AdminUtil;
 import com.google.code.kaptcha.Producer;
 import com.joker.library.utils.CommonUtils;
 
-/**
- * 
- * @When
- * @Description
- * @Detail
- * @author joker
- * @date 创建时间：2018年7月24日 下午7:06:29
- */
 @Controller
 public class PublicController
 {
 	@Autowired
 	Producer captchaProducer;
+	
 	@Autowired
-	private WrappedServiceFactory serviceFactory;
+	private ITitleWrappedService titleWrappedService;
+	@Autowired
+	private IUserWrappedService userWrappedService;
 
 	@RequestMapping("/public/test2")
 	@ResponseBody
 	public String test2()
 	{
-		IUserWrappedService service=serviceFactory.create(IUserWrappedService.class.getName());
-		return service.toString();
+		return "ok";
 	}
 	
 	@RequestMapping("/public/test")

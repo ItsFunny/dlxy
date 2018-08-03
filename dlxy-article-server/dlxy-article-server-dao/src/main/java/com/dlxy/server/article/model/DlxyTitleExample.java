@@ -415,6 +415,76 @@ public class DlxyTitleExample {
             return (Criteria) this;
         }
 
+        public Criteria andTitleAbbNameIsNull() {
+            addCriterion("title_abb_name is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTitleAbbNameIsNotNull() {
+            addCriterion("title_abb_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTitleAbbNameEqualTo(String value) {
+            addCriterion("title_abb_name =", value, "titleAbbName");
+            return (Criteria) this;
+        }
+
+        public Criteria andTitleAbbNameNotEqualTo(String value) {
+            addCriterion("title_abb_name <>", value, "titleAbbName");
+            return (Criteria) this;
+        }
+
+        public Criteria andTitleAbbNameGreaterThan(String value) {
+            addCriterion("title_abb_name >", value, "titleAbbName");
+            return (Criteria) this;
+        }
+
+        public Criteria andTitleAbbNameGreaterThanOrEqualTo(String value) {
+            addCriterion("title_abb_name >=", value, "titleAbbName");
+            return (Criteria) this;
+        }
+
+        public Criteria andTitleAbbNameLessThan(String value) {
+            addCriterion("title_abb_name <", value, "titleAbbName");
+            return (Criteria) this;
+        }
+
+        public Criteria andTitleAbbNameLessThanOrEqualTo(String value) {
+            addCriterion("title_abb_name <=", value, "titleAbbName");
+            return (Criteria) this;
+        }
+
+        public Criteria andTitleAbbNameLike(String value) {
+            addCriterion("title_abb_name like", value, "titleAbbName");
+            return (Criteria) this;
+        }
+
+        public Criteria andTitleAbbNameNotLike(String value) {
+            addCriterion("title_abb_name not like", value, "titleAbbName");
+            return (Criteria) this;
+        }
+
+        public Criteria andTitleAbbNameIn(List<String> values) {
+            addCriterion("title_abb_name in", values, "titleAbbName");
+            return (Criteria) this;
+        }
+
+        public Criteria andTitleAbbNameNotIn(List<String> values) {
+            addCriterion("title_abb_name not in", values, "titleAbbName");
+            return (Criteria) this;
+        }
+
+        public Criteria andTitleAbbNameBetween(String value1, String value2) {
+            addCriterion("title_abb_name between", value1, value2, "titleAbbName");
+            return (Criteria) this;
+        }
+
+        public Criteria andTitleAbbNameNotBetween(String value1, String value2) {
+            addCriterion("title_abb_name not between", value1, value2, "titleAbbName");
+            return (Criteria) this;
+        }
+
         public Criteria andCreateDateIsNull() {
             addCriterion("create_date is null");
             return (Criteria) this;

@@ -1,14 +1,10 @@
-/**
-*
-* @Description
-* @author joker 
-* @date 创建时间：2018年7月8日 上午10:38:26
-* 
-*/
 package com.dlxy.model;
+
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotBlank;
 
 import com.dlxy.common.dto.DlxyTitleDTO;
 
@@ -22,12 +18,15 @@ import com.dlxy.common.dto.DlxyTitleDTO;
 */
 public class FormTitle
 {
-//	@NotNull(message="titleName不可为空")
+	@NotBlank(message="titleName不可为空")
 	private String titleName;
+	private String titleAbbName;
+	
 	@Max(value=100,message="最大不能超过100")
 	private Integer titleDisplaySeq;
 	
 	private Integer titleParentId=0;
+	
 	private Integer titleId;
 	
 	public void to(DlxyTitleDTO dlxyTitleDTO)
@@ -36,6 +35,7 @@ public class FormTitle
 		dlxyTitleDTO.setTitleName(this.titleName);
 		dlxyTitleDTO.setTitleParentId(this.titleParentId);
 		dlxyTitleDTO.setTitleId(this.titleId);
+		dlxyTitleDTO.setTitleAbbName(this.titleAbbName);
 	}
 	
 	public Integer getTitleDisplaySeq()
@@ -77,6 +77,16 @@ public class FormTitle
 	public void setTitleId(Integer titleId)
 	{
 		this.titleId = titleId;
+	}
+
+	public String getTitleAbbName()
+	{
+		return titleAbbName;
+	}
+
+	public void setTitleAbbName(String titleAbbName)
+	{
+		this.titleAbbName = titleAbbName;
 	}
 	
 }

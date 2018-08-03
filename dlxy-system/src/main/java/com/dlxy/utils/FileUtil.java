@@ -1,10 +1,3 @@
-/**
-*
-* @Description
-* @author joker 
-* @date 创建时间：2018年7月9日 上午11:20:36
-* 
-*/
 package com.dlxy.utils;
 
 import java.io.File;
@@ -15,16 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.web.multipart.MultipartFile;
 
-/**
- * if(file2.isDirectory()) // { // delFileOrDir(file2); // }else { //
- * file2.delete(); // }
- * 
- * @When
- * @Description
- * @Detail
- * @author joker
- * @date 创建时间：2018年7月9日 上午11:20:36
- */
 public class FileUtil
 {
 	public static boolean delFileOrDir(File file)
@@ -67,7 +50,6 @@ public class FileUtil
 			StringBuffer reqUrl = request.getRequestURL();
 			String requestURI = request.getRequestURI();
 			String string = reqUrl.substring(0, reqUrl.indexOf(requestURI));
-			// System.out.println(string+File.separator+"imgs"+File.separator+articleId+File.separator+fileName);
 			String url = string + File.separator + "imgs" + File.separator + articleId + File.separator + fileName
 					+ suffix;
 			return url;

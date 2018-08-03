@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="1" failures="0" name="com.dlxy.dlxy_article_server_dao.AppTest" time="0.002" errors="0" skipped="0">
+<testsuite tests="1" failures="0" name="com.dlxy.dlxy_article_server_dao.AppTest" time="0.001" errors="0" skipped="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_171.jdk/Contents/Home/jre/lib"/>
@@ -27,10 +27,10 @@
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="https.proxyHost" value="localhost"/>
     <property name="os.name" value="Mac OS X"/>
-    <property name="classworlds.conf" value="/Users/joker/eclipse-workspace/.metadata/.plugins/org.eclipse.m2e.launching/launches/m2conf4652085530287674297.tmp"/>
+    <property name="classworlds.conf" value="/Users/joker/eclipse-workspace/.metadata/.plugins/org.eclipse.m2e.launching/launches/m2conf281781365848379398.tmp"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
     <property name="java.library.path" value="/Users/joker/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:."/>
-    <property name="http.proxyPort" value="50200"/>
+    <property name="http.proxyPort" value="49442"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.class.version" value="52.0"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
@@ -61,8 +61,8 @@
     <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/"/>
     <property name="sun.cpu.endian" value="little"/>
     <property name="sun.io.unicode.encoding" value="UnicodeBig"/>
-    <property name="https.proxyPort" value="50200"/>
+    <property name="https.proxyPort" value="49442"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase classname="com.dlxy.dlxy_article_server_dao.AppTest" name="testApp" time="0.002"/>
+  <testcase classname="com.dlxy.dlxy_article_server_dao.AppTest" name="testApp" time="0.001"/>
 </testsuite>

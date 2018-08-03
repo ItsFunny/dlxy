@@ -1,10 +1,3 @@
-/**
-*
-* @Description
-* @author joker 
-* @date 创建时间：2018年6月29日 上午9:02:15
-* 
-*/
 package com.dlxy.utils;
 
 
@@ -13,17 +6,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 
 import com.dlxy.common.dto.UserDTO;
-import com.dlxy.enums.DlxytExceptionEnum;
-import com.dlxy.exception.DlxySystemException;
 
-/**
-* 
-* @When
-* @Description
-* @Detail
-* @author joker 
-* @date 创建时间：2018年6月29日 上午9:02:15
-*/
 public class AdminUtil
 {
 	public static UserDTO getLoginUser()

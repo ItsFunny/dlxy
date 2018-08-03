@@ -1,10 +1,3 @@
-/**
-*
-* @Description
-* @author joker 
-* @date 创建时间：2018年7月8日 上午8:29:26
-* 
-*/
 package com.dlxy.service;
 
 import java.sql.SQLException;

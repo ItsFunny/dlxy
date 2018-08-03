@@ -1,35 +1,17 @@
-/**
-*
-* @Description
-* @author joker 
-* @date 创建时间：2018年7月2日 上午9:54:45
-* 
-*/
 package com.dlxy.service;
 
 import java.util.Observable;
 import java.util.Observer;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import com.dlxy.common.dto.UserRecordDTO;
 import com.dlxy.server.user.service.IUserRecordService;
 import com.dlxy.task.DlxyTaskRunner;
 import com.dlxy.task.DlxyThreadTask;
 
-/**
-* 
-* @When
-* @Description
-* @Detail
-* @author joker 
-* @date 创建时间：2018年7月2日 上午9:54:45
-*/
 public class UserRecordObserver implements Observer
 {
 	Logger logger=LoggerFactory.getLogger(UserRecordObserver.class);

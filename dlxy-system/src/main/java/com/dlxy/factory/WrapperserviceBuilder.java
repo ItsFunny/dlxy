@@ -11,12 +11,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observer;
 
+import com.dlxy.defaultp.IWrappedService;
+
 /**
 * 
 * @author joker 
 * @date 创建时间：2018年8月2日 下午3:41:00
 */
-public class WrapperserviceBuilder implements IWrappedServieBuiler
+public class WrapperserviceBuilder implements IWrappedServieFactory
 {
 	private Map<String, IWrappedService>storage=new HashMap<String, IWrappedService>();
 	

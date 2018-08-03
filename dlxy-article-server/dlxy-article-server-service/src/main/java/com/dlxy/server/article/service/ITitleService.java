@@ -39,6 +39,8 @@ public interface ITitleService
 	
 	DlxyTitleDTO findById(int titleId);
 	
+	DlxyTitleDTO findByAbbName(String abbName);
+	
 	void insertOrUpdate(DlxyTitleDTO dlxyTitleDTO);
 	
 	Integer deleteByTitleId(Integer titleId);

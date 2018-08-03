@@ -24,11 +24,11 @@ import java.util.List;
 public class DlxyTitleDTO extends AbstractDlxyTitleComposite implements Serializable
 {
 	/**
-	* 
-	* @Description
-	* @author joker 
-	* @date 创建时间：2018年7月1日 下午4:25:36
-	*/
+	 * 
+	 * @Description
+	 * @author joker
+	 * @date 创建时间：2018年7月1日 下午4:25:36
+	 */
 	private static final long serialVersionUID = 3620272655822405536L;
 	private Integer titleId;
 	private String titleName;
@@ -36,19 +36,20 @@ public class DlxyTitleDTO extends AbstractDlxyTitleComposite implements Serializ
 	private Integer titleDisplaySeq;
 	private Date createDate;
 	private Date updateDate;
-	//2018-07-10 13:07 add 
-//	private List<ArticleDTO>articles;
-	//2018-07-16 20:19 add
+	// 2018-07-10 13:07 add
+	// private List<ArticleDTO>articles;
+	// 2018-07-16 20:19 add
 	private Integer titleType;
-	//这里可以采用组合模式,明天复习一下然后更改,今天先直接这么定死:  2018-07-19 changed
-//	private List<DlxyTitleDTO>childTitles;
-	
-	
-//	public DlxyTitleDTO()
-//	{
-//		this.articles=new ArrayList<ArticleDTO>();
-//	}
-	
+	// 这里可以采用组合模式,明天复习一下然后更改,今天先直接这么定死: 2018-07-19 changed
+	// private List<DlxyTitleDTO>childTitles;
+	// 2018-08-03 13:29 add url上的缩写 abb:abbreviation
+	private String titleAbbName;
+
+	// public DlxyTitleDTO()
+	// {
+	// this.articles=new ArrayList<ArticleDTO>();
+	// }
+
 	public Integer getTitleId()
 	{
 		return titleId;
@@ -74,7 +75,6 @@ public class DlxyTitleDTO extends AbstractDlxyTitleComposite implements Serializ
 		this.titleName = titleName;
 	}
 
-
 	public Integer getTitleDisplaySeq()
 	{
 		return titleDisplaySeq;
@@ -84,7 +84,6 @@ public class DlxyTitleDTO extends AbstractDlxyTitleComposite implements Serializ
 	{
 		this.titleDisplaySeq = titleDisplaySeq;
 	}
-
 
 	public Date getUpdateDate()
 	{
@@ -106,35 +105,37 @@ public class DlxyTitleDTO extends AbstractDlxyTitleComposite implements Serializ
 		this.createDate = createDate;
 	}
 
-//	public List<ArticleDTO> getArticles()
-//	{
-//		return articles;
-//	}
-//
-//	public void setArticles(List<ArticleDTO> articles)
-//	{
-//		this.articles = articles;
-//	}
+	// public List<ArticleDTO> getArticles()
+	// {
+	// return articles;
+	// }
+	//
+	// public void setArticles(List<ArticleDTO> articles)
+	// {
+	// this.articles = articles;
+	// }
 	public Integer getTitleType()
 	{
 		return titleType;
 	}
+
 	public void setTitleType(Integer titleType)
 	{
 		this.titleType = titleType;
 	}
+
 	public static long getSerialversionuid()
 	{
 		return serialVersionUID;
 	}
-//	public List<DlxyTitleDTO> getChildTitles()
-//	{
-//		return childTitles;
-//	}
-//	public void setChildTitles(List<DlxyTitleDTO> childTitles)
-//	{
-//		this.childTitles = childTitles;
-//	}
+	// public List<DlxyTitleDTO> getChildTitles()
+	// {
+	// return childTitles;
+	// }
+	// public void setChildTitles(List<DlxyTitleDTO> childTitles)
+	// {
+	// this.childTitles = childTitles;
+	// }
 
 	public Integer getTitleParentId()
 	{
@@ -156,7 +157,16 @@ public class DlxyTitleDTO extends AbstractDlxyTitleComposite implements Serializ
 	@Override
 	public boolean equals(Object obj)
 	{
-		return ((DlxyTitleDTO)obj).getTitleId().equals(this.titleId);
+		return ((DlxyTitleDTO) obj).getTitleId().equals(this.titleId);
 	}
 
+	public String getTitleAbbName()
+	{
+		return titleAbbName;
+	}
+
+	public void setTitleAbbName(String titleAbbName)
+	{
+		this.titleAbbName = titleAbbName;
+	}
 }

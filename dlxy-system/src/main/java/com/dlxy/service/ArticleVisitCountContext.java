@@ -1,10 +1,3 @@
-/**
-*
-* @Description
-* @author joker 
-* @date 创建时间：2018年7月26日 下午1:21:10
-* 
-*/
 package com.dlxy.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,32 +7,25 @@ import com.dlxy.model.ArticleVisitCountFactory;
 import com.dlxy.model.ArticleVisitInfo;
 import com.dlxy.server.article.service.IArticleService;
 
-/**
-* 
-* @When
-* @Description
-* @Detail
-* @author joker 
-* @date 创建时间：2018年7月26日 下午1:21:10
-*/
 @Component
 public class ArticleVisitCountContext
 {
 	private AbstractArticleVistitCountStrategy strategy;
-	
+
 	@Autowired
 	private IArticleService articleService;
 	@Autowired
 	private IRedisService redisService;
-	
+
 	public Integer visitCount(Long articleId)
 	{
-		ArticleVisitInfo visitInfo = ArticleVisitCountFactory.get(articleId,redisService,articleService);
-		if(redisService.isAvaliable())
+		ArticleVisitInfo visitInfo = ArticleVisitCountFactory.get(articleId, redisService, articleService);
+		if (redisService.isAvaliable())
 		{
-			this.strategy=new RedisArticleVIsitCountStrategy(redisService, articleService);
-		}else {
-			this.strategy=new DbVisitCountStrategy(articleService);
+			this.strategy = new RedisArticleVIsitCountStrategy(redisService, articleService);
+		} else
+		{
+			this.strategy = new DbVisitCountStrategy(articleService);
 		}
 		return this.strategy.visitAndIncr(visitInfo);
 	}

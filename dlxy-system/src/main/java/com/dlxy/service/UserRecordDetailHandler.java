@@ -1,10 +1,3 @@
-/**
-*
-* @Description
-* @author joker 
-* @date 创建时间：2018年7月24日 下午6:10:12
-* 
-*/
 package com.dlxy.service;
 
 import java.util.HashMap;

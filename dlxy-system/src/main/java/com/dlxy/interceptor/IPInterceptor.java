@@ -7,7 +7,6 @@
 package com.dlxy.interceptor;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
@@ -30,14 +29,9 @@ import com.dlxy.service.IRedisService;
 import com.google.gson.reflect.TypeToken;
 import com.joker.library.utils.CommonUtils;
 
-/**
- * 
- * @author joker
- * @date 创建时间：2018年8月1日 下午12:40:45
- */
 public class IPInterceptor implements HandlerInterceptor
 {
-	private Long visitIntervalTime = 1000 * 90L;
+	private Long visitIntervalTime = 1000 * 30L;
 
 	private Integer maxRefreshTimes = 5;
 
@@ -84,7 +78,6 @@ public class IPInterceptor implements HandlerInterceptor
 		if (historyDTO == null)
 		{
 			String json = redisService.get(String.format(IRedisService.USER_VISIT_HISTORY, ip));
-			// JsonUtil.json2Map(json, new TypeToken<Map<String, integ>>)
 			if (StringUtils.isEmpty(json))
 			{
 				result.setFilter(true);

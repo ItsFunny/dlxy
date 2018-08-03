@@ -1,57 +1,44 @@
-/**
-*
-* @Description
-* @author joker 
-* @date 创建时间：2018年7月2日 上午11:21:56
-* 
-*/
 package com.dlxy.service.command;
 
 import java.util.Map;
 import java.util.Observable;
 
-/**
- * 
- * @When
- * @Description
- * @Detail
- * @author joker
- * @date 创建时间：2018年7月2日 上午11:21:56
- */
-public abstract class Command extends Observable
+import com.dlxy.config.DlxyObservervable;
+
+public abstract class Command extends DlxyObservervable
 {
-	protected ArticleGroup articleGroup;
-	protected PictureGroup pictureGroup;
-	protected UserArticleGroup userArticleGroup;
+	protected ArticleReceiver articleGroup;
+	protected PictureReceiver pictureGroup;
+	protected UserArticleReceiver userArticleGroup;
 
 	public abstract void execute(Map<String, Object> param);
 
-	protected ArticleGroup getArticleGroup()
+	protected ArticleReceiver getArticleGroup()
 	{
 		return articleGroup;
 	}
 
-	protected void setArticleGroup(ArticleGroup articleGroup)
+	protected void setArticleGroup(ArticleReceiver articleGroup)
 	{
 		this.articleGroup = articleGroup;
 	}
 
-	protected PictureGroup getPictureGroup()
+	protected PictureReceiver getPictureGroup()
 	{
 		return pictureGroup;
 	}
 
-	protected void setPictureGroup(PictureGroup pictureGroup)
+	protected void setPictureGroup(PictureReceiver pictureGroup)
 	{
 		this.pictureGroup = pictureGroup;
 	}
 
-	protected UserArticleGroup getUserArticleGroup()
+	protected UserArticleReceiver getUserArticleGroup()
 	{
 		return userArticleGroup;
 	}
 
-	protected void setUserArticleGroup(UserArticleGroup userArticleGroup)
+	protected void setUserArticleGroup(UserArticleReceiver userArticleGroup)
 	{
 		this.userArticleGroup = userArticleGroup;
 	}

@@ -58,14 +58,14 @@ import com.dlxy.service.ITitleWrappedService;
 import com.dlxy.service.IUserWrappedService;
 import com.dlxy.service.UserRecordObserver;
 import com.dlxy.service.command.AddOrUpdateArtilceCommand;
-import com.dlxy.service.command.ArticleGroup;
+import com.dlxy.service.command.ArticleReceiver;
 import com.dlxy.service.command.DeleteArticleCommand;
-import com.dlxy.service.command.PictureGroup;
-import com.dlxy.service.command.UserArticleGroup;
-import com.dlxy.service.impl.ManagemeentTitleServiceImpl;
-import com.dlxy.service.impl.ManagementArticleServiceObservableImpl;
-import com.dlxy.service.impl.ManagementPictureServiceObservableImpl;
-import com.dlxy.service.impl.ManagementUserServiceImpl;
+import com.dlxy.service.command.PictureReceiver;
+import com.dlxy.service.command.UserArticleReceiver;
+import com.dlxy.service.impl.TitleWrappedServiceImpl;
+import com.dlxy.service.impl.ArticleWrappedServiceObservableImpl;
+import com.dlxy.service.impl.PictureWrappedServiceObservableImpl;
+import com.dlxy.service.impl.UserWrappedServiceImpl;
 import com.dlxy.service.impl.RedisServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -99,17 +99,16 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer
 
 	private Logger logger = LoggerFactory.getLogger(DlxySystemConfiiguration.class);
 
-	//
-	@Bean
-	public WrappedServiceFactory wrappedServiceFactory(List<Observer> observers)
-	{
-		WrappedServiceFactory wrappedServiceFactory = new WrappedServiceFactory();
-		wrappedServiceFactory.setOvservers(observers);
-		wrappedServiceFactory.init(IArticleWrappedService.class.getName() + ","
-				+ IUserWrappedService.class.getName() + "," + ITitleWrappedService.class.getName()
-				+ "," + IPictureWrappedService.class.getName());
-		return wrappedServiceFactory;
-	}
+//	@Bean
+//	public WrappedServiceFactory wrappedServiceFactory(List<Observer> observers)
+//	{
+//		WrappedServiceFactory wrappedServiceFactory = new WrappedServiceFactory();
+//		wrappedServiceFactory.setOvservers(observers);
+//		wrappedServiceFactory.init(IArticleWrappedService.class.getName() + ","
+//				+ IUserWrappedService.class.getName() + "," + ITitleWrappedService.class.getName()
+//				+ "," + IPictureWrappedService.class.getName());
+//		return wrappedServiceFactory;
+//	}
 
 	@Bean
 	public JedisPool jedisPool()
@@ -149,94 +148,94 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer
 	}
 
 	@Bean
-	public PictureGroup pictureGroup()
+	public PictureReceiver pictureGroup()
 	{
-		return new PictureGroup();
+		return new PictureReceiver();
 	}
 
 	@Bean
-	public ArticleGroup articleGroup()
+	public ArticleReceiver articleGroup()
 	{
-		return new ArticleGroup();
+		return new ArticleReceiver();
 	}
 
 	@Bean
-	public UserArticleGroup userArticleGroup()
+	public UserArticleReceiver userArticleGroup()
 	{
-		return new UserArticleGroup();
+		return new UserArticleReceiver();
 	}
 
-	@Bean
-	public DeleteArticleCommand DeleteArticleCommand(List<Observer> observers)
-	{
-		DeleteArticleCommand deleteArticleCommand = new DeleteArticleCommand();
-		for (Observer observer : observers)
-		{
-			deleteArticleCommand.addObserver(observer);
-		}
-		return deleteArticleCommand;
-	}
+//	@Bean
+//	public DeleteArticleCommand deleteArticleCommand(List<Observer> observers)
+//	{
+//		DeleteArticleCommand deleteArticleCommand = new DeleteArticleCommand();
+//		for (Observer observer : observers)
+//		{
+//			deleteArticleCommand.addObserver(observer);
+//		}
+//		return deleteArticleCommand;
+//	}
 
-	@Bean
-	public AddOrUpdateArtilceCommand addArtilceCommand(List<Observer> observers)
-	{
-		AddOrUpdateArtilceCommand addArtilceCommand = new AddOrUpdateArtilceCommand();
-		for (Observer observer : observers)
-		{
-			addArtilceCommand.addObserver(observer);
-		}
-		return addArtilceCommand;
-	}
+//	@Bean
+//	public AddOrUpdateArtilceCommand addArtilceCommand(List<Observer> observers)
+//	{
+//		AddOrUpdateArtilceCommand addArtilceCommand = new AddOrUpdateArtilceCommand();
+//		for (Observer observer : observers)
+//		{
+//			addArtilceCommand.addObserver(observer);
+//		}
+//		return addArtilceCommand;
+//	}
 
-	@Bean
-	public ITitleWrappedService titleMangementWrappedServie(List<Observer> observers)
-	{
-		ManagemeentTitleServiceImpl iTitleManagementWrappedService = new ManagemeentTitleServiceImpl();
-		for (Observer observer : observers)
-		{
-			iTitleManagementWrappedService.addObserver(observer);
-		}
-		return iTitleManagementWrappedService;
-	}
+//	@Bean
+//	public ITitleWrappedService titleMangementWrappedServie(List<Observer> observers)
+//	{
+//		TitleWrappedServiceImpl iTitleManagementWrappedService = new TitleWrappedServiceImpl();
+//		for (Observer observer : observers)
+//		{
+//			iTitleManagementWrappedService.addObserver(observer);
+//		}
+//		return iTitleManagementWrappedService;
+//	}
 
-	@Bean
-	public IUserWrappedService userManagementWrappedservice(List<Observer> observers)
-	{
-		ManagementUserServiceImpl userServiceImpl = new ManagementUserServiceImpl();
-		for (Observer observer : observers)
-		{
-			userServiceImpl.addObserver(observer);
-		}
-		return userServiceImpl;
-	}
+//	@Bean
+//	public IUserWrappedService userManagementWrappedservice(List<Observer> observers)
+//	{
+//		UserWrappedServiceImpl userServiceImpl = new UserWrappedServiceImpl();
+//		for (Observer observer : observers)
+//		{
+//			userServiceImpl.addObserver(observer);
+//		}
+//		return userServiceImpl;
+//	}
 
-	@Bean
-	public IArticleWrappedService articleManagementWrappedservice(List<Observer> observers)
-	{
-		ManagementArticleServiceObservableImpl managementArticleServiceObservableImpl = new ManagementArticleServiceObservableImpl();
-		for (Observer observer : observers)
-		{
-			managementArticleServiceObservableImpl.addObserver(observer);
-		}
-		return managementArticleServiceObservableImpl;
-	}
+//	@Bean
+//	public IArticleWrappedService articleWrappedservice(List<Observer> observers)
+//	{
+//		ArticleWrappedServiceObservableImpl managementArticleServiceObservableImpl = new ArticleWrappedServiceObservableImpl();
+//		for (Observer observer : observers)
+//		{
+//			managementArticleServiceObservableImpl.addObserver(observer);
+//		}
+//		return managementArticleServiceObservableImpl;
+//	}
 
-	@Bean
-	public IPictureWrappedService pictureManagementWrappedService(List<Observer> observers)
-	{
-		ManagementPictureServiceObservableImpl pictureManagementWrappedService = new ManagementPictureServiceObservableImpl();
-		for (Observer observer : observers)
-		{
-			pictureManagementWrappedService.addObserver(observer);
-		}
-		return pictureManagementWrappedService;
-	}
+//	@Bean
+//	public IPictureWrappedService pictureWrappedService(List<Observer> observers)
+//	{
+//		PictureWrappedServiceObservableImpl pictureManagementWrappedService = new PictureWrappedServiceObservableImpl();
+//		for (Observer observer : observers)
+//		{
+//			pictureManagementWrappedService.addObserver(observer);
+//		}
+//		return pictureManagementWrappedService;
+//	}
 
-	@Bean
-	public UserRecordObserver managementUserRecordObserver()
-	{
-		return new UserRecordObserver();
-	}
+//	@Bean
+//	public UserRecordObserver userRecordObserver()
+//	{
+//		return new UserRecordObserver();
+//	}
 
 	@Bean
 	public DataSource dataSource()

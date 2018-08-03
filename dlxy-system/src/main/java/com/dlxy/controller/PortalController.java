@@ -1,14 +1,5 @@
-/**
-*
-* @Description
-* @author joker 
-* @date 创建时间：2018年7月14日 下午6:52:11
-* 
-*/
 package com.dlxy.controller;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,33 +19,15 @@ import org.springframework.web.servlet.ModelAndView;
 import com.dlxy.annotation.CheckIllegalFormat;
 import com.dlxy.common.dto.ArticleDTO;
 import com.dlxy.common.dto.DlxyTitleDTO;
-import com.dlxy.common.dto.IllegalLogDTO;
-import com.dlxy.common.dto.PageDTO;
-import com.dlxy.common.dto.SuspicionDTO;
 import com.dlxy.common.enums.ArticleStatusEnum;
-import com.dlxy.common.enums.ArticleTypeEnum;
-import com.dlxy.common.enums.DlxyTitleEnum;
-import com.dlxy.common.enums.IllegalLevelEnum;
 import com.dlxy.common.event.AppEventPublisher;
 import com.dlxy.common.vo.PageVO;
-import com.dlxy.constant.TitleArticleConstant;
-import com.dlxy.exception.DlxySuspicionException;
-import com.dlxy.exception.DlxySystemIllegalException;
 import com.dlxy.server.article.service.IArticleService;
 import com.dlxy.server.article.service.ITitleService;
 import com.dlxy.service.IArticleWrappedService;
 import com.dlxy.service.ITitleWrappedService;
 import com.dlxy.vo.TitleDetailVO;
-import com.joker.library.utils.CommonUtils;
 
-/**
-* 
-* @When
-* @Description
-* @Detail
-* @author joker 
-* @date 创建时间：2018年7月14日 下午6:52:11
-*/
 @Controller
 public class PortalController
 {
@@ -68,8 +41,6 @@ public class PortalController
 	@Autowired
 	private IArticleService articleService;
 	
-	@Autowired
-	private AppEventPublisher appeventPublisher;
 	
 	
 	@RequestMapping("/index")
@@ -95,18 +66,43 @@ public class PortalController
 		return modelAndView;
 	}
 	
-	@CheckIllegalFormat
-	@RequestMapping("/title/detail/{titleId}")
-	public ModelAndView showTitleDetail(@PathVariable("titleId")String titleIdStr,HttpServletRequest request,HttpServletResponse response)
+//	@CheckIllegalFormat
+//	@RequestMapping("/title/detail/{titleId}")
+//	public ModelAndView showTitleDetail(@PathVariable("titleId")String titleIdStr,HttpServletRequest request,HttpServletResponse response)
+//	{
+//		ModelAndView modelAndView=null;
+//		try
+//		{
+//			Integer titleId=Integer.parseInt(titleIdStr);
+//			int pageSize=Integer.parseInt(StringUtils.defaultString(request.getParameter("pageSize"), "10"));
+//			int pageNum=Integer.parseInt(StringUtils.defaultString(request.getParameter("pageNum"),"1"));
+//			//显示文章:
+//			TitleDetailVO titleDetailVO = articleManagementWrappedService.findTitleArticles(pageSize, pageNum, titleId);
+//			PageVO<Collection<ArticleDTO>>pageVO=new PageVO<Collection<ArticleDTO>>(titleDetailVO.getArticlePage().getData(), pageSize, pageNum, titleDetailVO.getArticlePage().getTotalCount());
+//			modelAndView=new ModelAndView("portal/title_detail");
+//			modelAndView.addObject("pageVO",pageVO);
+//			modelAndView.addObject("parent",titleDetailVO.getParentAndChilds());
+//			modelAndView.addObject("title",titleDetailVO.getTitleSelf());
+//			return modelAndView;
+//		} 
+//		catch (Exception e) {
+//			logger.error("[show title articles] error:{}",e.getMessage());
+//			
+//		}
+//		return modelAndView;
+//	}
+	
+	@RequestMapping("/title/detail/{titleAbbName}")
+	public ModelAndView showTitleDetail(@PathVariable("titleAbbName")String titleAbbName,HttpServletRequest request,HttpServletResponse response)
 	{
 		ModelAndView modelAndView=null;
 		try
 		{
-			Integer titleId=Integer.parseInt(titleIdStr);
 			int pageSize=Integer.parseInt(StringUtils.defaultString(request.getParameter("pageSize"), "10"));
 			int pageNum=Integer.parseInt(StringUtils.defaultString(request.getParameter("pageNum"),"1"));
 			//显示文章:
-			TitleDetailVO titleDetailVO = articleManagementWrappedService.findTitleArticles(pageSize, pageNum, titleId);
+			TitleDetailVO titleDetailVO = articleManagementWrappedService.findTitleArticlesByTitleAbbName(pageSize, pageNum, titleAbbName);
+//			TitleDetailVO titleDetailVO = articleManagementWrappedService.findTitleArticlesByTitleId(pageSize, pageNum, titleId);
 			PageVO<Collection<ArticleDTO>>pageVO=new PageVO<Collection<ArticleDTO>>(titleDetailVO.getArticlePage().getData(), pageSize, pageNum, titleDetailVO.getArticlePage().getTotalCount());
 			modelAndView=new ModelAndView("portal/title_detail");
 			modelAndView.addObject("pageVO",pageVO);

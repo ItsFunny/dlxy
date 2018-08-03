@@ -7,7 +7,7 @@ import com.dlxy.common.dto.DlxyTitleDTO;
 import com.dlxy.server.article.model.DlxyTitleExample;
 
 public interface DlxyTitleDao {
-    int countByExample(DlxyTitleExample example);
+    long countByExample(DlxyTitleExample example);
 
     int deleteByExample(DlxyTitleExample example);
 

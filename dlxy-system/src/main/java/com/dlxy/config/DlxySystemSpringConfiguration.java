@@ -1,15 +1,10 @@
-/**
-*
-* @Description
-* @author joker 
-* @date 创建时间：2018年7月15日 下午4:13:52
-* 
-*/
 package com.dlxy.config;
 
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.shiro.cache.CacheManager;
+import org.apache.shiro.cache.ehcache.EhCacheManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
@@ -31,14 +26,6 @@ import com.google.code.kaptcha.Producer;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.util.Config;
 
-/**
- * 
- * @When
- * @Description
- * @Detail
- * @author joker
- * @date 创建时间：2018年7月15日 下午4:13:52
- */
 @Configuration
 @Order(1)
 public class DlxySystemSpringConfiguration implements InitializingBean

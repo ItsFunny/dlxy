@@ -1,10 +1,3 @@
-/**
-*
-* @Description
-* @author joker 
-* @date 创建时间：2018年7月20日 下午4:47:37
-* 
-*/
 package com.dlxy.exception;
 
 import com.dlxy.common.dto.SuspicionDTO;
@@ -20,12 +13,6 @@ import com.dlxy.common.dto.SuspicionDTO;
 public class DlxySuspicionException extends RuntimeException
 {
 
-	/**
-	* 
-	* @Description
-	* @author joker 
-	* @date 创建时间：2018年7月20日 下午4:48:31
-	*/
 	private static final long serialVersionUID = 5170460825019109628L;
 	private String msg;
 	private SuspicionDTO suspicionDTO;

@@ -57,12 +57,15 @@ public interface IArticleService
 	
 //	Collection<ArticleDTO>findArtilcesByTilteIds(List<Integer>titleIds,int limit) throws SQLException;
 	
+	
 	//需要更改
 	Collection<ArticleDTO>findArtilcesByTilteIdsAndPage(int pageSize,int pageNum,List<Integer> ids) throws SQLException;
-	//查询单个的,为什么要单个,因为可以根据索引查,快,in查询不走索引
+	//查询单个的,为什么要单个,因为可以根据索引查,快,in查询有时候不走索引
 	Collection<ArticleDTO>findArticlesByTitleId(int pageSize,int pageNum,int titleId,int status);
 	//通过父节点查找 
 	Collection<ArticleDTO>findArticlesByParentTitleId(int pageSize,int pageNum,int titleParentId,int status);
+	
+	
 	
 	/*
 	 * 用于前端展示需要显示多少文章

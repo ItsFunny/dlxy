@@ -43,10 +43,10 @@ import com.dlxy.common.event.AppEventLogPubliher;
 import com.dlxy.common.event.AppEventPublisher;
 import com.dlxy.common.event.AppEventRabbitMQPublisher;
 import com.dlxy.common.event.Events;
+import com.dlxy.system.batch.consumer.ArticleVistitCountListener;
 import com.dlxy.system.batch.consumer.FacadedAmqpListener;
-import com.dlxy.system.batch.consumer.detail.ArticleVistitCountListener;
-import com.dlxy.system.batch.consumer.detail.UserIllegalLogListener;
-import com.dlxy.system.batch.consumer.detail.UserRecordListener;
+import com.dlxy.system.batch.consumer.UserIllegalLogListener;
+import com.dlxy.system.batch.consumer.UserRecordListener;
 import com.dlxy.system.batch.service.IRedisService;
 import com.dlxy.system.batch.service.impl.RedisServiceImpl;
 

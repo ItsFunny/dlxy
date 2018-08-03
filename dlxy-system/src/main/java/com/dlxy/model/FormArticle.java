@@ -1,10 +1,3 @@
-/**
-*
-* @Description
-* @author joker 
-* @date 创建时间：2018年7月1日 下午10:54:55
-* 
-*/
 package com.dlxy.model;
 
 
@@ -16,14 +9,6 @@ import org.hibernate.validator.constraints.NotBlank;
 import com.dlxy.common.dto.ArticleDTO;
 import com.joker.library.utils.CommonUtils;
 
-/**
- * 
- * @When
- * @Description
- * @Detail
- * @author joker
- * @date 创建时间：2018年7月1日 下午10:54:55
- */
 public class FormArticle
 {
 	@NotNull

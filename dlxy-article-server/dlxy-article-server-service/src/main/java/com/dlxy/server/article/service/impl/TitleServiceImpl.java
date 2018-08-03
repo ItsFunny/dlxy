@@ -91,6 +91,24 @@ public class TitleServiceImpl implements ITitleService
 		return titleDao.selectByPrimaryKey(titleId);
 //		return titleDao.findById(titleId);
 	}
+	@Override
+	public DlxyTitleDTO findByAbbName(String abbName)
+	{
+		DlxyTitleExample example=new DlxyTitleExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andTitleAbbNameEqualTo(abbName);
+		List<DlxyTitleDTO> list = titleDao.selectByExample(example);
+		if(null==list || list.isEmpty())
+		{
+			return null;
+		}else if(list.size()>1)
+		{
+			throw new RuntimeException("find multi titles");
+		}else {
+			 return list.iterator().next();
+		}
+	}
+
 
 	@Override
 	public void insertOrUpdate(DlxyTitleDTO dlxyTitleDTO)
@@ -137,7 +155,7 @@ public class TitleServiceImpl implements ITitleService
 		return titleDao.selectByExample(example);
 //		return titleDao.findByType(type);
 	}
-
+	
 	
 
 }

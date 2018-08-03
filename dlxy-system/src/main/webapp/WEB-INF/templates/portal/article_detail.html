@@ -1,6 +1,6 @@
 <#include "header.html">
 
-<script type="text/javascript" src="/js/portal_article.js"></script>
+<script type="text/javascript" src="/js/portal-article-0.2.js"></script>
 <script> 
 	
 	$(document).ready(function(){
@@ -45,7 +45,7 @@
 						str+='<ul id="child_'+titleId+'" style="display: block;">';           			 
            			 for(var i=0;i<data.data.length;i++){
            			 	var o=data.data[i];
-           			 	str+='<li class="belong_'+titleId+'"><a  href="/title/detail/'+o.titleId+'.html">'+o.titleName+'</a></li>';
+           			 	str+='<li class="belong_'+titleId+'"><a  href="/title/detail/'+o.titleAbbName+'.html">'+o.titleName+'</a></li>';
            			 }
            			 str+='</ul>';
            			 $(obj).append(str);
@@ -179,7 +179,7 @@
            
             <#if belongTo.parent??>
  				<#assign title=belongTo.parent>		
-          	 	 <a href="/title/detail/${title.titleId}.html">${title.titleName} </a>> <a href="/title/detail/${belongTo.titleId}.html">${belongTo.titleName} </a> </span>
+          	 	 <a href="/title/detail/${title.titleAbbName}.html">${title.titleName} </a>> <a href="/title/detail/${belongTo.titleAbbName}.html">${belongTo.titleName} </a> </span>
             <#else>
              	<#assign title=article.belongTo>
             	 <a href="index.html">${belongTo.titleName} </a>> 
@@ -242,7 +242,7 @@
             <div class="daohang_biaot">${title.titleName}</div>
             <ul id="">
             	<#list title.childs as item>
-                <li>	<a href="/title/detail/${item.titleId}.html"> ${item.titleName}</a> </li>
+                <li>	<a href="/title/detail/${item.titleAbbName}.html"> ${item.titleName}</a> </li>
                 </#list>>
             </ul>
         </div>

@@ -1,13 +1,5 @@
-/**
-*
-* @Description
-* @author joker 
-* @date 创建时间：2018年7月14日 下午6:52:55
-* 
-*/
 package com.dlxy.exhandler;
 
-import java.util.HashMap;
 
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,17 +11,8 @@ import com.dlxy.common.dto.IllegalLogDTO;
 import com.dlxy.common.event.AppEvent;
 import com.dlxy.common.event.AppEventPublisher;
 import com.dlxy.common.event.Events;
-import com.dlxy.exception.DlxySuspicionException;
 import com.dlxy.exception.DlxySystemIllegalException;
 
-/**
-* 
-* @When
-* @Description
-* @Detail
-* @author joker 
-* @date 创建时间：2018年7月14日 下午6:52:55
-*/
 @ControllerAdvice
 public class DlxySystemExceptionHandler
 {
@@ -38,7 +21,6 @@ public class DlxySystemExceptionHandler
 	@ExceptionHandler(value=DlxySystemIllegalException.class)
 	public ModelAndView recordIp(DlxySystemIllegalException dlxySuspicionException)
 	{
-		//返回404 界面
 		IllegalLogDTO illegalLogDTO = dlxySuspicionException.getIllegalLogDTO();
 		AppEvent event=new AppEvent();
 		event.setEventType(Events.UserIllegalLog.name());
