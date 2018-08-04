@@ -35,10 +35,14 @@ public interface ArticleMybatisDao extends DlxyArticleDao
 			+ "(select article_id from dlxy_article where title_id in "
 			+ "(select title_id from dlxy_title where title_parent_id =#{titleParentId} ) ) ";
 
-	String FIND_ALL_ARTICLES_BY_TITLE_PARENT_ID = "(" + 
-			"SELECT article_id FROM dlxy_article WHERE title_id IN ( " + 
-			"SELECT title_id FROM dlxy_title WHERE title_parent_id=#{titleParentId})) UNION ALL ( " + 
-			"SELECT article_id FROM dlxy_article WHERE title_id=#{titleParentId})";
+	String FIND_ALL_ARTICLES_BY_TITLE_PARENT_ID = "(" + "SELECT article_id FROM dlxy_article WHERE title_id IN ( "
+			+ "SELECT title_id FROM dlxy_title WHERE title_parent_id=#{titleParentId})) UNION ALL ( "
+			+ "SELECT article_id FROM dlxy_article WHERE title_id=#{titleParentId})";
+
+	String FIND_LATEST_ARTICLES = "SELECT a.article_id,a.title_id,a.article_name,a.article_author,a.article_type,a.article_status,a.create_date,a.update_date \n"
+			+ "FROM dlxy_article a "
+			+ "WHERE article_status=1 AND EXISTS (SELECT 1 FROM dlxy_title b WHERE b.title_id=a.title_id) "
+			+ "ORDER BY create_date DESC " + "LIMIT #{count}";
 
 	@Deprecated
 	@Update("update dlxy_article set article_status=#{status} where article_id=#{articleId}")
@@ -124,7 +128,7 @@ public interface ArticleMybatisDao extends DlxyArticleDao
 	 * @author joker
 	 * @date 创建时间：2018年7月19日 上午7:57:11
 	 */
-	@Select("select article_id,title_id,article_name,article_author,article_type,article_status,create_date,update_date from dlxy_article where article_status=1 order by create_date desc limit #{count}")
+	@Select(FIND_LATEST_ARTICLES)
 	Collection<ArticleDTO> findLatestArticleLimited(int count);
 
 	/*
