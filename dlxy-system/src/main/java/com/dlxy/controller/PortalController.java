@@ -99,7 +99,7 @@ public class PortalController
 		ModelAndView modelAndView=null;
 		try
 		{
-			int pageSize=Integer.parseInt(StringUtils.defaultString(request.getParameter("pageSize"), "1"));
+			int pageSize=Integer.parseInt(StringUtils.defaultString(request.getParameter("pageSize"), "10"));
 			int pageNum=Integer.parseInt(StringUtils.defaultString(request.getParameter("pageNum"),"1"));
 			//显示文章:
 			TitleDetailVO titleDetailVO = articleManagementWrappedService.findTitleArticlesByTitleAbbName(pageSize, pageNum, titleAbbName);
