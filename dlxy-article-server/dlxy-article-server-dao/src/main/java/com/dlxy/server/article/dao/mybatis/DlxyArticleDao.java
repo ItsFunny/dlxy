@@ -7,7 +7,7 @@ import com.dlxy.common.dto.ArticleDTO;
 import com.dlxy.server.article.model.DlxyArticleExample;
 
 public interface DlxyArticleDao {
-    int countByExample(DlxyArticleExample example);
+    long countByExample(DlxyArticleExample example);
 
     int deleteByExample(DlxyArticleExample example);
 
@@ -17,21 +17,15 @@ public interface DlxyArticleDao {
 
     int insertSelective(ArticleDTO record);
 
-    List<ArticleDTO> selectByExampleWithBLOBs(DlxyArticleExample example);
-
     List<ArticleDTO> selectByExample(DlxyArticleExample example);
 
     ArticleDTO selectByPrimaryKey(Long articleId);
 
     int updateByExampleSelective(@Param("record") ArticleDTO record, @Param("example") DlxyArticleExample example);
 
-    int updateByExampleWithBLOBs(@Param("record") ArticleDTO record, @Param("example") DlxyArticleExample example);
-
     int updateByExample(@Param("record") ArticleDTO record, @Param("example") DlxyArticleExample example);
 
     int updateByPrimaryKeySelective(ArticleDTO record);
-
-    int updateByPrimaryKeyWithBLOBs(ArticleDTO record);
 
     int updateByPrimaryKey(ArticleDTO record);
 }

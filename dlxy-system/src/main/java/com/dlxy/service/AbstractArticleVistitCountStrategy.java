@@ -15,7 +15,7 @@ public abstract class AbstractArticleVistitCountStrategy
 	{
 		// ArticleVisitInfo visitInfo = getVisiterInfo(articleId);
 		ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-		String ip = CommonUtils.getRemortIP(attributes.getRequest());
+		String ip = CommonUtils.getIpAddr(attributes.getRequest());
 		synchronized (visitInfo)
 		{
 			if (filter(visitInfo, ip))

@@ -1,51 +1,37 @@
 package com.dlxy.service;
 
+import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.dlxy.common.event.AppEvent;
+import com.dlxy.common.event.AppEventPublisher;
+import com.dlxy.common.event.Events;
 import com.dlxy.common.utils.JsonUtil;
 import com.dlxy.model.ArticleVisitInfo;
 import com.dlxy.server.article.service.IArticleService;
 
+import redis.clients.jedis.exceptions.JedisException;
+
 public class RedisArticleVIsitCountStrategy extends AbstractArticleVistitCountStrategy
 {
+	private Logger logger = LoggerFactory.getLogger(RedisArticleVIsitCountStrategy.class);
+
 	private IRedisService redisService;
 
 	private IArticleService articleService;
 
-	public RedisArticleVIsitCountStrategy(IRedisService redisService, IArticleService articleService)
+	private AppEventPublisher appEventPublisher;
+
+	public RedisArticleVIsitCountStrategy(IRedisService redisService, IArticleService articleService,
+			AppEventPublisher eventPublisher)
 	{
 		this.redisService = redisService;
 		this.articleService = articleService;
+		this.appEventPublisher = eventPublisher;
 	}
-	// @Override
-	// public Integer visitAndIncr(Long articleId)
-	// {
-	// String key = String.format(IRedisService.ARTICLE_VISIT_COUNT, articleId);
-	// String json = redisService.get(key);
-	//
-	// return null;
-	// }
-	//
-	// @Override
-	// protected ArticleVisitInfo getVisiterInfo(Long articleId)
-	// {
-	// ArticleVisitInfo info=null;
-	// String key = String.format(IRedisService.ARTICLE_VISIT_COUNT, articleId);
-	// String json = redisService.get(key);
-	// if(StringUtils.isEmpty(json))
-	// {
-	// ArticleDTO articleDTO = articleService.findByArticleId(articleId);
-	// if(null==articleDTO)
-	// {
-	// throw new RuntimeException("文章不存在");
-	// }
-	// info=ArticleVisitCountFactory.create(articleDTO.getVisitCount());
-	// }else {
-	// info=ArticleVisitCountFactory.createFromJson(json);
-	// }
-	// return info;
-	// }
 
 	@Override
 	protected Integer parse(ArticleVisitInfo visitInfo, String ip)
@@ -54,8 +40,42 @@ public class RedisArticleVIsitCountStrategy extends AbstractArticleVistitCountSt
 		visitors.put(ip, System.currentTimeMillis());
 		visitInfo.incr();
 		String key = String.format(IRedisService.ARTICLE_VISIT_COUNT, visitInfo.getArticleId());
-		redisService.set(key, JsonUtil.obj2Json(visitInfo));
+		try
+		{
+			redisService.set(key, JsonUtil.obj2Json(visitInfo));
+		} catch (Exception e)
+		{
+			throw new JedisException(e);
+		}
+		try
+		{
+			HashMap<String, Object> map = new HashMap<>();
+			map.put("articleId", visitInfo.getArticleId());
+			appEventPublisher.publish(new AppEvent(map, Events.ArticleVisitCount.name()));
+		} catch (Exception e)
+		{
+			// 发送邮箱提示rabbitMQ服务挂了
+			logger.error("[获取文章访问记录]rabbitMQ服务器挂了,error:{}", e.getMessage());
+		}
 		return visitInfo.get();
+	}
+
+	public static void main(String[] args)
+	{
+		System.out.println(test());
+	}
+
+	public static Integer test()
+	{
+		System.out.println("aaa");
+		try
+		{
+			System.out.println(1 / 0);
+		} catch (Exception e)
+		{
+			throw e;
+		}
+		return 1;
 	}
 
 }

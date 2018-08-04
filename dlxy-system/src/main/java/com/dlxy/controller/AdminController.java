@@ -65,14 +65,6 @@ import com.dlxy.utils.FileUtil;
 import com.joker.library.utils.CommonUtils;
 import com.joker.library.utils.KeyUtils;
 
-/**
- * 
- * @When
- * @Description
- * @Detail
- * @author joker
- * @date 创建时间：2018年7月14日 下午6:51:43
- */
 @Controller
 @RequestMapping("/admin")
 public class AdminController

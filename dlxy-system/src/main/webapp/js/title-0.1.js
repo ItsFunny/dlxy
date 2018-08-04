@@ -11,6 +11,7 @@ function del(obj){
     		$("#titleId").val($(obj).attr("titleId"));
     		document.editTitleForm.titleName.value=$(obj).attr("titleName");
     		document.editTitleForm.titleAbbName.value=$(obj).attr("titleAbbName");
+    		document.editTitleForm.titleDisplaySeq.value=$(obj).attr("titleDisplaySeq");
     		$("#titleParentId").val("");
     	}
     	if(isAddChild){

@@ -41,6 +41,13 @@ public interface IArticleWrappedService
 	// void updateArticleStatusInBatch(Long[] articleIds, int status);
 	// void delArticle(UserDTO userDTO,Long articleId);
 
+	
+	/*
+	 * 更新某个类目下所有文章的状态
+	 */
+	void updateArticleStatusByTitleId(UserDTO userDTO,DlxyTitleDTO titleDTO,int status);
+	
+	
 	void updateArticleStatusInBatch(UserDTO userDTO, List<Long> articleIds, int status);
 
 	void updateArticleTypeInBatch(UserDTO userDTO, List<Long> articleIds, int type);
@@ -54,8 +61,10 @@ public interface IArticleWrappedService
 	//需要更改,会添加业务字段
 	void addTitleOrUpdate(UserDTO userDTO, DlxyTitleDTO dlxyTitleDTO);
 
-	Integer deleteByTitleId(UserDTO userDTO, Integer titleId);
+	Integer deleteByTitleId(UserDTO userDTO, DlxyTitleDTO titleDTO);
 
 //	void deleteInBatch(UserDTO userDTO, List<Long> articleIds);
+	
+	boolean deleteTitleAndUpdateArticleStatus(UserDTO userDTO,Integer titleId,Integer status);
 
 }

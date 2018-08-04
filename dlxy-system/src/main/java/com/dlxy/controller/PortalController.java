@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.text.html.HTMLDocument.HTMLReader.ParagraphAction;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -98,7 +99,7 @@ public class PortalController
 		ModelAndView modelAndView=null;
 		try
 		{
-			int pageSize=Integer.parseInt(StringUtils.defaultString(request.getParameter("pageSize"), "10"));
+			int pageSize=Integer.parseInt(StringUtils.defaultString(request.getParameter("pageSize"), "1"));
 			int pageNum=Integer.parseInt(StringUtils.defaultString(request.getParameter("pageNum"),"1"));
 			//显示文章:
 			TitleDetailVO titleDetailVO = articleManagementWrappedService.findTitleArticlesByTitleAbbName(pageSize, pageNum, titleAbbName);
@@ -111,8 +112,10 @@ public class PortalController
 			return modelAndView;
 		} 
 		catch (Exception e) {
-			logger.error("[show title articles] error:{}",e.getMessage());
-			
+			e.printStackTrace();
+			logger.error("[show title articles] error:{},cause:{}",e.getMessage(),e.getCause());
+			modelAndView=new ModelAndView("error");
+			modelAndView.addObject("error",e.getMessage());
 		}
 		return modelAndView;
 	}

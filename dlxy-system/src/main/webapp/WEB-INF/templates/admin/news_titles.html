@@ -29,7 +29,7 @@
 				for(var i=0;i<data.data.length;i++){
 					var o=data.data[i];
 					a+='<div class="accordion-inner"><div class="title">'+obj.titleName+'</div><div class="btg1">';
-					a+='<button class="btn btn-danger btn-xs right" data-toggle="modal" data-target="#deleteSource"  titleId="'+o.titleId+'" onclick="del(this)">删除</button><button class="btn btn-success btn-xs right" data-toggle="modal" data-target="#changeSource" titleId="'+o.titleId+'" onclick="beforeSave(this,false,true)">修改</button><add class="btn btn-add btn-xs right" data-toggle="modal" data-target="#changeSource" titleId="'+o.titleId+'" onclick="beforeSave(this,true,false)">添加</add></div></div><div class="accordion-body collapse" id="accordion-element-40" value="1"></div>';
+					a+='<button class="btn btn-danger btn-xs right" data-toggle="modal" data-target="#deleteSource"  titleId="'+o.titleId+'" onclick="del(this)">删除</button><button class="btn btn-success btn-xs right" data-toggle="modal" data-target="#changeSource" titleId="'+o.titleId+'" titleName="'+o.titleName+'" titleAbbName="'+o.titleAbbName+'" onclick="beforeSave(this,false,true)">修改</button><add class="btn btn-add btn-xs right" data-toggle="modal" data-target="#changeSource" titleId="'+o.titleId+'" onclick="beforeSave(this,true,false)">添加</add></div></div><div class="accordion-body collapse" id="accordion-element-40" value="1"></div>';
 				}
 				a+='</div>';			
 				alert(a);
@@ -69,11 +69,14 @@
                         <div class="accordion" id="accordion-38202">
                         ${item.titleName}
                          <em style="padding-left:200px">排序码:${item.titleDisplaySeq}</em>
+                         
+                         
+                          <em style="padding-left:200px">缩写名称:${item.titleAbbName}</em>
                         </div>
                       
                         <div class="btg">
                         	<button class="btn btn-danger btn-xs right" data-toggle="modal" data-target="#deleteSource"  titleId="${item.titleId}" onclick="del(this)">删除</button>
-                        	<button class="btn btn-success btn-xs right" data-toggle="modal" data-target="#changeSource" titleId="${item.titleId}" onclick="beforeSave(this,false,true)">修改</button>
+                        	<button class="btn btn-success btn-xs right" data-toggle="modal" data-target="#changeSource" titleId="${item.titleId}" titleName="${item.titleName}" titleAbbName="${item.titleAbbName}" titleDisplaySeq="${item.titleDisplaySeq}" onclick="beforeSave(this,false,true)">修改</button>
                         	<a class="btn btn-success btn-xs right" data-toggle="modal" href="/admin/title/article/${item.titleId}.html" ">查看旗下的所有文章</a>
                      	</div>
                     </div>
@@ -84,7 +87,7 @@
         </div>
  
      <div class="modal fade" id="changeSource" role="dialog" aria-labelledby="gridSystemModalLabel">
-        <form class="form-horizontal" id="titleForm" method="post">
+        <form class="form-horizontal" id="titleForm" method="post" name="editTitleForm">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -96,15 +99,21 @@
                     <div class="modal-body">
                         <div class="container-fluid">
                                 <div class="form-group ">
-                                    <label for="titleName" class="col-xs-3 control-label">名称：</label>
+                                    <label for="" class="col-xs-3 control-label">名称：</label>
                                    <div class="col-xs-8 ">
                                         <input type="text"  class="form-control input-sm duiqi" id="titleName" name="titleName" placeholder="">
                                     </div>
                                 </div>
+                                <div class="form-group ">
+                                    <label for="" class="col-xs-3 control-label">缩写名称：</label>
+                                   <div class="col-xs-8 ">
+                                        <input type="text" name="titleAbbName" class="form-control input-sm duiqi" id="titleAbbName"  placeholder="如:学院介绍缩写为xyjs">
+                                    </div>
+                                </div>
                                 <div class="form-group">
-                                    <label for="sName" id="titleDisplaySeq" class="col-xs-3 control-label">排序顺序</label>
+                                    <label for="sName" class="col-xs-3 control-label">排序顺序</label>
                                     <div class="col-xs-8 ">
-                                        <input type="text" titleName="titleDisplaySeq" class="form-control input-sm duiqi" id="xName" name="titleDisplaySeq"
+                                        <input type="text"  id="titleDisplaySeq" class="form-control input-sm duiqi" id="xName" name="titleDisplaySeq"
                                                placeholder="">
                                     </div>
                                 </div>
@@ -113,7 +122,6 @@
                     <div class="modal-footer">
                     	<input type="hidden" name="titleId" id="titleId" value="">
                     	<input type="hidden" name="titleParentId" id="titleParentId" value="0">
-                    	
                         <button type="button" class="btn btn-xs btn-white" >取 消</button>
                         <button type="button" class="btn btn-xs btn-green" onclick="addOrUpdate()">保 存</button>
                     </div>
@@ -150,7 +158,7 @@
     </div>
 
 </div>
-	<script type="text/javascript" src="/js/title.js"></script>
+	<script type="text/javascript" src="/js/title-0.1.js"></script>
 </body>
 
 </html>

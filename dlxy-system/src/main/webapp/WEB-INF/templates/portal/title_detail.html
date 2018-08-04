@@ -113,14 +113,15 @@
 	
 	
 	<#-- 如果不存在 freemarker 判断为空忘了-->
-	<#if title.articles?? && ((title.articles)?size==1)>
+	<#if pageVO.totalCount==1>
 		<div class="you_dh">
 	       <div class="erji_dh">
 	            <div class="daohang_biaot">所有文章</div>
 	            <ul id="">
 	            	<#list pageVO.data as item>
-	            	<li class="no"><i class="tt">${item_index}</i><a href="/article/detail/${item.articleId}.html">${item.articleName}</a></li>
+	            	<li class="no"><i class="tt">${item_index}</i><a href="/article/detail/${item.articleId?c}.html">${item.articleName}</a></li>
 	            	</#list>
+	            	
 	            	总共有${pageVO.totalCount-1}条记录
 	            	 <#if pageVO.pageNum<=1>
 			             <a href="javascript:void(0);">首页</a>
@@ -146,7 +147,7 @@
 	   
     <div class="zuo_nr">
         <div class="dqwz">
-            <span><img src="images/xx_03.jpg">您当前的位置：
+            <span><img src="/images/xx_03.jpg">您当前的位置：
             <#if parent.titleId==title.titleId>
             	
           	  <a href="/title/detail/${parent.titleAbbName}.html">${parent.titleName}</a> </span>
@@ -156,7 +157,7 @@
         </div>
         <div class="zybt_a"><h3>${title.titleName}</h3></div>
         
-        <#if title.articles?? && title.articles?size==1>
+        <#if pageVO.totalCount==1>
         	  <#assign article=title.articles[0]>
       		  <div class="xw_xq">
 	            <h1>
@@ -177,17 +178,16 @@
 		    	<#if title.articles??>
 		    			<#list title.articles as item>
 		    			<li><i></i><a href="/article/detail/${item.articleId?c}.html">${item.articleName}</a><span>${item.createDate?string('yyyy-MM-dd')}</span></li>
-		    			</#list>>
+		    			</#list>
 		    		</#if>
 		     <#if (pageVO.data?size>0)>
-		    	
 		    		<#list pageVO.data as item>
 		        		<li><i></i><a href="/article/detail/${item.articleId?c}.html">${item.articleName}</a><span>${item.createDate?string('yyyy-MM-dd')}</span></li>
-		      	 	</#list>>
+		      	 	</#list>
 		      </#if>
 		    </ul>
 		   
-		    <form name="pageForm" method="get" action="/title/detail/${title.titleId}.html">
+		    <form name="pageForm" method="get" action="/title/detail/${title.titleAbbName}.html">
 		    	<input type="hidden" name="pageNum">
 		        <div class="page"><span id="pe100_page_通用信息列表_普通式" class="pagecss"><!--{pe.begin.pagination}-->
 		            <script type="text/javascript" language="javascript">
@@ -223,7 +223,7 @@
 		            </div><!--{pe.end.pagination}--></span>
 		        </div>
 		       </form>
-        </#if>>
+        </#if>
     </div>
     <div class="you_dh">
         <div class="erji_dh">

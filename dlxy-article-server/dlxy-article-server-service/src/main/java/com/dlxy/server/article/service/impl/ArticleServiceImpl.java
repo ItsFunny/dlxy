@@ -33,15 +33,15 @@ import com.dlxy.server.article.service.IArticleService;
 import com.dlxy.server.article.service.IUserArticleService;
 
 /**
-* 
-* @When
-* @Description
-* @Detail
-* @author joker 
-* @date 创建时间：2018年6月28日 下午3:03:45
-*/
+ * 
+ * @When
+ * @Description
+ * @Detail
+ * @author joker
+ * @date 创建时间：2018年6月28日 下午3:03:45
+ */
 @Service
-public class ArticleServiceImpl implements IArticleService ,IUserArticleService
+public class ArticleServiceImpl implements IArticleService, IUserArticleService
 {
 	@Autowired
 	private ArticleMybatisDao articleDao;
@@ -52,63 +52,82 @@ public class ArticleServiceImpl implements IArticleService ,IUserArticleService
 	@Autowired
 	private TitleMybatisDao titleMybatisDao;
 
-//	public Collection<ArticleDTO> findAllArticlesExceptRecommend(int start,int end)
-//	{
-//		Collection<ArticleDTO> collection = articleDao.findAllExpectRecommendByPage(start,end);
-//		return collection;
-//	}
+	// public Collection<ArticleDTO> findAllArticlesExceptRecommend(int start,int
+	// end)
+	// {
+	// Collection<ArticleDTO> collection =
+	// articleDao.findAllExpectRecommendByPage(start,end);
+	// return collection;
+	// }
+	@Override
+	public void updateArticleStatusByParentId(Integer titleParentId, int status)
+	{
+		articleDao.updateArticleStatusByTitleParentId(titleParentId, status);
+	}
+	
+	@Override
+	public void updateArticleStatusByTitleId(Integer titleId, int status)
+	{
+		DlxyArticleExample example=new DlxyArticleExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andTitleIdEqualTo(titleId);
+		
+		ArticleDTO articleDTO=new ArticleDTO();
+		articleDTO.setArticleStatus(status);
+		articleDao.updateByExampleSelective(articleDTO, example);
+	}
 
 	@Override
 	public void updateArticleStatus(Long articleId, int status)
 	{
-		ArticleDTO articleDTO=new ArticleDTO();
+		ArticleDTO articleDTO = new ArticleDTO();
 		articleDTO.setArticleId(articleId);
 		articleDTO.setArticleStatus(status);
 		articleDao.updateByPrimaryKeySelective(articleDTO);
 		articleDao.updateArticleStatus(articleId, status);
 	}
 
-//	@UserRecordAnnotation(dealWay="update(delete):article")
+	// @UserRecordAnnotation(dealWay="update(delete):article")
 	@Override
 	public void updateArticleStatusInBatch(List<Long> articleIds, int status)
 	{
-//		Map<String, Object>params=new HashMap<String, Object>();
-		DlxyArticleExample example=new DlxyArticleExample();
+		// Map<String, Object>params=new HashMap<String, Object>();
+		DlxyArticleExample example = new DlxyArticleExample();
 		Criteria criteria = example.createCriteria();
 		criteria.andArticleIdIn(articleIds);
-		ArticleDTO articleDTO=new ArticleDTO();
+		ArticleDTO articleDTO = new ArticleDTO();
 		articleDTO.setArticleStatus(status);
-//		params.put("updateDate", new Date());
-		if(status==ArticleStatusEnum.DELETE.ordinal())
+		articleDTO.setArticleType(null);
+		// params.put("updateDate", new Date());
+		if (status == ArticleStatusEnum.DELETE.ordinal())
 		{
-//			params.put("deleteDate", new Date());
+			// params.put("deleteDate", new Date());
 			articleDTO.setDeleteDate(new Date());
 		}
-//		params.put("status", status);
-//		params.put("list", Arrays.asList(articleIds));
-//		articleDao.updateStatusInBatch(params);
+		// params.put("status", status);
+		// params.put("list", Arrays.asList(articleIds));
+		// articleDao.updateStatusInBatch(params);
 		articleDao.updateByExampleSelective(articleDTO, example);
 	}
 
 	@Override
-	public void updateArticleTypeInbatch(List<Long>articleIds, int type)
+	public void updateArticleTypeInbatch(List<Long> articleIds, int type)
 	{
-//		Map<String, Object>params=new HashMap<String, Object>();
-		DlxyArticleExample example=new DlxyArticleExample();
+		// Map<String, Object>params=new HashMap<String, Object>();
+		DlxyArticleExample example = new DlxyArticleExample();
 		Criteria criteria = example.createCriteria();
 		criteria.andArticleIdIn(articleIds);
-		ArticleDTO articleDTO=new ArticleDTO();
+		ArticleDTO articleDTO = new ArticleDTO();
 		articleDTO.setArticleType(type);
 		articleDTO.setUpdateDate(new Date());
 		int count = articleDao.updateByExampleSelective(articleDTO, example);
-		
-//		params.put("updateDate", new Date());
-//		params.put("type", type);
-//		params.put("list", Arrays.asList(articleIds));
-//		articleDao.updateStatusInBatch(params);
+
+		// params.put("updateDate", new Date());
+		// params.put("type", type);
+		// params.put("list", Arrays.asList(articleIds));
+		// articleDao.updateStatusInBatch(params);
 	}
 
-	
 	@Override
 	public Collection<ArticleDTO> findByParam(Map<String, Object> params, int pageSize, int pageNum) throws SQLException
 	{
@@ -122,7 +141,7 @@ public class ArticleServiceImpl implements IArticleService ,IUserArticleService
 	}
 
 	@Override
-	public int rollBackArticle(int status,Long articleId,int titleId) throws SQLException
+	public int rollBackArticle(int status, Long articleId, int titleId) throws SQLException
 	{
 		return articleDao.rollBackArticle(status, articleId, titleId);
 	}
@@ -160,12 +179,12 @@ public class ArticleServiceImpl implements IArticleService ,IUserArticleService
 	@Override
 	public Integer deleteArticlesInBatch(List<Long> articleIds)
 	{
-		DlxyArticleExample example=new DlxyArticleExample();
+		DlxyArticleExample example = new DlxyArticleExample();
 		Criteria criteria = example.createCriteria();
 		criteria.andArticleIdIn(articleIds);
 		int count = articleDao.deleteByExample(example);
 		return count;
-//		return articleDao.deleteInBatch(articleIds);
+		// return articleDao.deleteInBatch(articleIds);
 	}
 
 	@Override
@@ -177,32 +196,45 @@ public class ArticleServiceImpl implements IArticleService ,IUserArticleService
 	@Override
 	public ArticleDTO findByArticleId(Long articleId)
 	{
-//		return articleDao.selectByPrimaryKey(articleId);
+		// return articleDao.selectByPrimaryKey(articleId);
 		return articleDao.findByArticleId(articleId);
 	}
 
-//	@Override
-//	public Collection<ArticleDTO> findArtilcesByTilteIds(List<Integer> titleIds, int limit) throws SQLException
-//	{
-//		return articleQueryDao.findArticlesInTitleIds(titleIds, limit);
-//	}
+	// @Override
+	// public Collection<ArticleDTO> findArtilcesByTilteIds(List<Integer> titleIds,
+	// int limit) throws SQLException
+	// {
+	// return articleQueryDao.findArticlesInTitleIds(titleIds, limit);
+	// }
 
 	@Override
-	public Collection<ArticleDTO> findArtilcesByTilteIdsAndPage(int pageSize,int pageNum,List<Integer> ids) throws SQLException
+	public Collection<ArticleDTO> findArtilcesByTilteIdsAndPage(int pageSize, int pageNum, List<Integer> ids)
+			throws SQLException
 	{
-		return articleDao.findArticlesInTitleIdsByPage((pageNum-1)*pageSize, pageSize, ids);
-	}
-	@Override
-	public Collection<ArticleDTO> findArticlesByTitleId(int pageSize, int pageNum, int titleId,int status)
-	{
-		return articleDao.findArticlesByTitleId((pageNum-1)*pageSize,pageSize, titleId,status);
+		return articleDao.findArticlesInTitleIdsByPage((pageNum - 1) * pageSize, pageSize, ids);
 	}
 
+	@Override
+	public List<ArticleDTO> findArticlesByTitleId(int pageSize, int pageNum, int titleId, int status)
+	{
+		return articleDao.findArticlesByTitleId((pageNum - 1) * pageSize, pageSize, titleId, status);
+	}
 
 	@Override
-	public Collection<ArticleDTO> findArticlesInTitleIdsTopNumber(List<Integer> ids, int limit,Integer status) throws SQLException
+	public List<ArticleDTO> findArticlesByTitleId(Integer titleId, Integer status)
 	{
-		Collection<ArticleDTO> articleDTOs = articleDao.findArticlesInTitleIdsLimited(ids, limit,status);
+		DlxyArticleExample example = new DlxyArticleExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andTitleIdEqualTo(titleId);
+		criteria.andArticleStatusEqualTo(status);
+		return articleDao.selectByExample(example);
+	}
+
+	@Override
+	public Collection<ArticleDTO> findArticlesInTitleIdsTopNumber(List<Integer> ids, int limit, Integer status)
+			throws SQLException
+	{
+		Collection<ArticleDTO> articleDTOs = articleDao.findArticlesInTitleIdsLimited(ids, limit, status);
 		return articleDTOs;
 	}
 
@@ -216,45 +248,46 @@ public class ArticleServiceImpl implements IArticleService ,IUserArticleService
 	public ArticleDTO findArticlePrevAndNext(Long articleId)
 	{
 		ArticleDTO articleDTO = findByArticleId(articleId);
-		if(null==articleDTO)
+		if (null == articleDTO)
 		{
 			return null;
 		}
 		Collection<ArticleDTO> collection = articleDao.findArticlePrevAndNext(articleId);
 		for (ArticleDTO articleDTO2 : collection)
 		{
-			if(articleDTO2.getCreateDate().before(articleDTO.getCreateDate()))
+			if (articleDTO2.getCreateDate().before(articleDTO.getCreateDate()))
 			{
 				articleDTO.setPrevious(articleDTO2);
-			}else {
+			} else
+			{
 				articleDTO.setNext(articleDTO2);
 			}
 		}
-//		collection.forEach(a->{
-//			if(a.getCreateDate().before(articleDTO.getCreateDate()))
-//			{
-//				articleDTO.setPrevious(a);
-//			}else {
-//				articleDTO.setNext(a);
-//			}
-//		});
+		// collection.forEach(a->{
+		// if(a.getCreateDate().before(articleDTO.getCreateDate()))
+		// {
+		// articleDTO.setPrevious(a);
+		// }else {
+		// articleDTO.setNext(a);
+		// }
+		// });
 		return articleDTO;
 	}
 
 	@Override
-	public Collection<ArticleDTO> findArticlesByParentTitleId(int pageSize, int pageNum, int titleParentId, int status)
+	public List<ArticleDTO> findArticlesByParentTitleId(int pageSize, int pageNum, int titleParentId, int status)
 	{
-		return articleDao.findArticlesByParentTitleId((pageNum-1)*pageSize,pageSize, titleParentId, status);
+		return articleDao.findArticlesByParentTitleId((pageNum - 1) * pageSize, pageSize, titleParentId, status);
 	}
 
 	@Override
 	public void updateArticleVisitCount(Long articleId, Integer visitCount)
 	{
-		ArticleDTO articleDTO=new ArticleDTO();
+		ArticleDTO articleDTO = new ArticleDTO();
 		articleDTO.setArticleId(articleId);
 		articleDTO.setVisitCount(visitCount);
 		articleDao.updateByPrimaryKeySelective(articleDTO);
-		
+
 	}
 
 	@Override
@@ -263,13 +296,17 @@ public class ArticleServiceImpl implements IArticleService ,IUserArticleService
 		return articleDao.updateInBatchSelective(articleDTOs);
 	}
 
+	@Override
+	public List<ArticleDTO> findAllArticlesByTitleParentId(Integer titleParentId)
+	{
+		return articleDao.findAllArticlesByTitleParentId(titleParentId);
+	}
 
-	
-//	@Override
-//	public Collection<ArticleDTO> findArticlesByTitleIds(Integer[] ids)
-//	{
-//		return articleDao.findByTitleIds(ids);
-//	}
 
+	// @Override
+	// public Collection<ArticleDTO> findArticlesByTitleIds(Integer[] ids)
+	// {
+	// return articleDao.findByTitleIds(ids);
+	// }
 
 }

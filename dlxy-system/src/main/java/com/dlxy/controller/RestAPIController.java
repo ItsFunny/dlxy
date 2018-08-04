@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -111,12 +112,13 @@ public class RestAPIController
 	@Autowired
 	private DeleteArticleCommand deleteArticleCommand;
 
-	@RequestMapping(value="/address/images",method=RequestMethod.GET,produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResultDTO<String>getImagesAddress(HttpServletRequest request,HttpServletResponse response) throws UnsupportedEncodingException
+	@RequestMapping(value = "/address/images", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResultDTO<String> getImagesAddress(HttpServletRequest request, HttpServletResponse response)
+			throws UnsupportedEncodingException
 	{
-		String token=request.getParameter("token");
-		token=URLDecoder.decode(token, "utf-8");
-		if(StringUtils.isEmpty(token))
+		String token = request.getParameter("token");
+		token = URLDecoder.decode(token, "utf-8");
+		if (StringUtils.isEmpty(token))
 		{
 			return ResultUtil.fail("缺少参数token");
 		}
@@ -128,53 +130,38 @@ public class RestAPIController
 		} catch (UnsupportedEncodingException e)
 		{
 			e.printStackTrace();
-			
-//			IllegalLogDTO illegalLogDTO=new IllegalLogDTO(CommonUtils.getRemortIP(request), userid, detail, level)
-		}catch (Exception e) {
-			logger.error("[解析token出错],error :{}",e.getMessage());
-			return ResultUtil.fail("解析错误"+e.getMessage());
+
+			// IllegalLogDTO illegalLogDTO=new
+			// IllegalLogDTO(CommonUtils.getRemortIP(request), userid, detail, level)
+		} catch (Exception e)
+		{
+			logger.error("[解析token出错],error :{}", e.getMessage());
+			return ResultUtil.fail("解析错误" + e.getMessage());
 		}
 		return ResultUtil.fail();
 	}
-	
+
 	@RequestMapping(value = "/article/visitCount", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResultDTO<Integer> getArticleVisitCount(HttpServletRequest request, HttpServletResponse response)
 	{
 		String articleIdStr = request.getParameter("articleId");
 		String ip = CommonUtils.getRemortIP(request);
 		Integer res = 0;
-		try
-		{
-			Long articleId=Long.parseLong(articleIdStr);
-			res = articleManagementWrappedService.findArticleVisitCount(articleId, ip);
-			HashMap<String, Object>map=new HashMap<>();
-			map.put("articleId", articleId);
-			appeventPublisher.publish(new AppEvent(map, Events.ArticleVisitCount.name()));
-			return ResultUtil.sucess(res);
-		} catch (JedisException e)
-		{
-			logger.error("[查询文章的访问人数]redis服务器挂了");
-			e.printStackTrace();
-			// 发送邮箱提示redis服务器挂了
-			return ResultUtil.fail(res);
-		} catch (Exception e)
-		{
-			logger.error("[查询文章的访问人数]detail:{} location:{}", e.getMessage(), e.getCause());
-			e.printStackTrace();
-			return ResultUtil.fail(e.getMessage(), res);
-		}
+		Long articleId = Long.parseLong(articleIdStr);
+		res = articleManagementWrappedService.findArticleVisitCount(articleId, ip);
+		return ResultUtil.sucess(res);
 	}
 
 	@RequestMapping(value = "/admin/title/addOrUpdate", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResultDTO<String> addOrUpdateTitle(@Valid FormTitle formTitle,BindingResult result, HttpServletRequest request,
-			HttpServletResponse response)
+	public ResultDTO<String> addOrUpdateTitle(@Valid FormTitle formTitle, BindingResult result,
+			HttpServletRequest request, HttpServletResponse response)
 	{
 		String error = "";
-		if(result.hasErrors())
+		if (result.hasErrors())
 		{
-			for(ObjectError error2:result.getAllErrors())
+			for (ObjectError error2 : result.getAllErrors())
 			{
-				error+=error2.getDefaultMessage();
+				error += error2.getDefaultMessage();
 			}
 		}
 		if (!CommonUtils.validString(formTitle.getTitleName()))
@@ -194,14 +181,15 @@ public class RestAPIController
 		try
 		{
 			DlxyTitleDTO dbTitle = titleService.findByAbbName(formTitle.getTitleAbbName());
-			if(null==titleDTO.getTitleId())
+			if (null == titleDTO.getTitleId())
 			{
-				if(null!=dbTitle)
+				if (null != dbTitle)
 				{
 					return ResultUtil.fail("缩写名字重复了,请重新输入,尽量以拼音缩写或全英文代替");
 				}
-			}else {
-				if(null!=dbTitle && !dbTitle.getTitleId().equals(titleDTO.getTitleId()))
+			} else
+			{
+				if (null != dbTitle && !dbTitle.getTitleId().equals(titleDTO.getTitleId()))
 				{
 					return ResultUtil.fail("缩写名字重复了,请重新输入,尽量以拼音缩写或全英文代替");
 				}
@@ -269,30 +257,32 @@ public class RestAPIController
 		}
 		try
 		{
-//			ArticleDTO findByArticleId = articleManagementWrappedService
-//					.findArticleDetailByArticleId(Long.parseLong(searchQuery));
-//			return ResultUtil
-//					.sucess(new PageVO<Collection<ArticleDTO>>(Arrays.asList(findByArticleId), pageSize, pageNum, 1L));
-			Long articleId=Long.parseLong(searchQuery);
+			// ArticleDTO findByArticleId = articleManagementWrappedService
+			// .findArticleDetailByArticleId(Long.parseLong(searchQuery));
+			// return ResultUtil
+			// .sucess(new PageVO<Collection<ArticleDTO>>(Arrays.asList(findByArticleId),
+			// pageSize, pageNum, 1L));
+			Long articleId = Long.parseLong(searchQuery);
 			params.put("articleId", articleId);
 		} catch (NumberFormatException e)
 		{
 
 			params.put("searchParam", searchQuery);
-			
+
 		}
-//		catch (SQLException e)
-//		{
-//			logger.error("[rest api :search 查询文章] find articleById occur sql exception");
-//			e.printStackTrace();
-//			return ResultUtil.fail(e.getMessage());
-//		}
+		// catch (SQLException e)
+		// {
+		// logger.error("[rest api :search 查询文章] find articleById occur sql exception");
+		// e.printStackTrace();
+		// return ResultUtil.fail(e.getMessage());
+		// }
 		try
 		{
-			PageDTO<Collection<ArticleDTO>> pageRes = articleManagementWrappedService.findByParams(pageSize,
-					pageNum, params);
-			return ResultUtil.sucess(new PageVO<Collection<ArticleDTO>>(pageRes.getData(), pageSize, pageNum,
-					pageRes.getTotalCount()), "sucess");
+			PageDTO<Collection<ArticleDTO>> pageRes = articleManagementWrappedService.findByParams(pageSize, pageNum,
+					params);
+			return ResultUtil.sucess(
+					new PageVO<Collection<ArticleDTO>>(pageRes.getData(), pageSize, pageNum, pageRes.getTotalCount()),
+					"sucess");
 		} catch (SQLException e1)
 		{
 			logger.error("[rest api :search 查询文章] find articleByParam occur sql exception");
@@ -468,8 +458,10 @@ public class RestAPIController
 		try
 		{
 			titleId = Integer.parseInt(titleIdStr);
-			Integer count = articleManagementWrappedService.deleteByTitleId(AdminUtil.getLoginUser(), titleId);
-			if (count > 0)
+			//删除类目
+//			Integer count = articleManagementWrappedService.deleteByTitleId(AdminUtil.getLoginUser(), titleId);
+			boolean res = articleManagementWrappedService.deleteTitleAndUpdateArticleStatus(AdminUtil.getLoginUser(), titleId, ArticleStatusEnum.DELETE.ordinal());
+			if (res)
 			{
 				return ResultUtil.sucess();
 			} else
@@ -500,7 +492,7 @@ public class RestAPIController
 		String[] idArr = ids.split(",");
 		try
 		{
-			List<Long>idA=new ArrayList<>();
+			List<Long> idA = new ArrayList<>();
 			for (int i = 0; i < idArr.length; i++)
 			{
 				idA.add(Long.valueOf(idArr[i]));
@@ -543,13 +535,13 @@ public class RestAPIController
 			params.put("erro", "missing argument:articleId");
 		}
 		String[] ids = articleIds.split(",");
-		List<Long>articleIdList=new ArrayList<>();
-//		Long[] idArr = new Long[ids.length];
+		List<Long> articleIdList = new ArrayList<>();
+		// Long[] idArr = new Long[ids.length];
 		try
 		{
 			for (int i = 0; i < ids.length; i++)
 			{
-//				idArr[i] = Long.parseLong(ids[i]);
+				// idArr[i] = Long.parseLong(ids[i]);
 				articleIdList.add(Long.parseLong(ids[i]));
 			}
 		} catch (Exception e)
@@ -563,10 +555,11 @@ public class RestAPIController
 		}
 		try
 		{
-			Map<String, Object>p=new HashMap<>();
+			Map<String, Object> p = new HashMap<>();
 			p.put("articleIdList", articleIdList);
 			deleteArticleCommand.execute(p);
-//			articleManagementWrappedService.deleteInBatch(AdminUtil.getLoginUser(), articleIdList);
+			// articleManagementWrappedService.deleteInBatch(AdminUtil.getLoginUser(),
+			// articleIdList);
 			return ResultUtil.sucess();
 		} catch (Exception e)
 		{
@@ -596,8 +589,8 @@ public class RestAPIController
 		{
 			try
 			{
-				List<Long>ids=new ArrayList<Long>();
-//				Long[] ids = new Long[articleIds.length];
+				List<Long> ids = new ArrayList<Long>();
+				// Long[] ids = new Long[articleIds.length];
 				for (int i = 0; i < articleIds.length; i++)
 				{
 					ids.add(Long.parseLong(articleIds[i]));
@@ -653,7 +646,7 @@ public class RestAPIController
 		ArticleDTO articleDTO = new ArticleDTO();
 		articleDTO.setUserId(AdminUtil.getLoginUser().getUserId());
 		Map<String, Object> params = new HashMap<>();
-		List<Long>pictureIdList=new ArrayList<>();
+		List<Long> pictureIdList = new ArrayList<>();
 		String[] pictureIds = request.getParameterValues("pictureId");
 		String error = null;
 		if (result.hasErrors())
@@ -904,38 +897,40 @@ public class RestAPIController
 	@RequestMapping(value = "/admin/user/delete", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResultDTO<String> deleteUser(HttpServletRequest request, HttpServletResponse response)
 	{
-		String ids=request.getParameter("ids");
-		
-		if(StringUtils.isEmpty(ids))
+		String ids = request.getParameter("ids");
+
+		if (StringUtils.isEmpty(ids))
 		{
 			return ResultUtil.fail("参数不能为空");
 		}
 		String[] userIdArray = ids.split(",");
 		UserDTO userDTO = AdminUtil.getLoginUser();
-//		if (!userDTO.isAdmin())
-//		{
-//			IllegalLogDTO illegalLogDTO = new IllegalLogDTO(CommonUtils.getRemortIP(request), userDTO.getUserId(),
-//					"试图删除用户", IllegalLevelEnum.Serious.ordinal());
-//			PrintWriter writer = null;
-//			try
-//			{
-//				writer = response.getWriter();
-//				writer.write(JsonUtil.obj2Json(ResultUtil.fail("无权删除,记录你的信息了")));
-//			} catch (IOException e)
-//			{
-//				e.printStackTrace();
-//			}
-//			throw new DlxySystemIllegalException("无权删除用户",illegalLogDTO);
-//		}
+		// if (!userDTO.isAdmin())
+		// {
+		// IllegalLogDTO illegalLogDTO = new
+		// IllegalLogDTO(CommonUtils.getRemortIP(request), userDTO.getUserId(),
+		// "试图删除用户", IllegalLevelEnum.Serious.ordinal());
+		// PrintWriter writer = null;
+		// try
+		// {
+		// writer = response.getWriter();
+		// writer.write(JsonUtil.obj2Json(ResultUtil.fail("无权删除,记录你的信息了")));
+		// } catch (IOException e)
+		// {
+		// e.printStackTrace();
+		// }
+		// throw new DlxySystemIllegalException("无权删除用户",illegalLogDTO);
+		// }
 		List<Long> userIdS = new LinkedList<Long>();
 		for (String string : userIdArray)
 		{
 			userIdS.add(Long.parseLong(string));
 		}
-		if(userIdS.size()==1)
+		if (userIdS.size() == 1)
 		{
 			userManagementWrappedService.deleteUserSingle(userDTO, userIdS.iterator().next());
-		}else {
+		} else
+		{
 			userManagementWrappedService.deleteUser(userDTO, userIdS);
 		}
 		return ResultUtil.sucess();
@@ -1009,6 +1004,5 @@ public class RestAPIController
 	/*
 	 * 搜索用户
 	 */
-	
 
 }

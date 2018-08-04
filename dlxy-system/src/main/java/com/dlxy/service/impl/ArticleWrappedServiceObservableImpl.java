@@ -181,26 +181,6 @@ public class ArticleWrappedServiceObservableImpl extends DlxyObservervable imple
 		execute(userDTO, "添加或者更新标题:" + AbstractRecordDetailHandler.TITLE + ":" + dlxyTitleDTO.getTitleId());
 	}
 
-	@Transactional
-	@Override
-	public Integer deleteByTitleId(UserDTO userDTO, Integer titleId)
-	{
-		DlxyTitleDTO dlxyTitleDTO = titleService.findById(titleId);
-		if (null == dlxyTitleDTO)
-		{
-			ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder
-					.getRequestAttributes();
-			HttpServletRequest request = attributes.getRequest();
-			IllegalLogDTO illegalLogDTO = new IllegalLogDTO(CommonUtils.getRemortIP(request), userDTO.getUserId(),
-					"试图删除不存在的标题", IllegalLevelEnum.Suspicious.ordinal());
-			throw new DlxySystemIllegalException("试图删除不存在的标题", illegalLogDTO);
-		}
-		Integer count = titleService.deleteByTitleId(dlxyTitleDTO.getTitleId());
-		String detail = "删除标题:" + AbstractRecordDetailHandler.TITLE + ":" + titleId + ":" + dlxyTitleDTO.getTitleName();
-		execute(userDTO, detail);
-		return count;
-	}
-
 	// @Transactional
 	// @Override
 	// public void deleteInBatch(UserDTO userDTO, List<Long> ids)
@@ -348,12 +328,11 @@ public class ArticleWrappedServiceObservableImpl extends DlxyObservervable imple
 	}
 
 	@Override
-	public TitleDetailVO findTitleArticlesByTitleAbbName(int pageSize, int pageNum, String titleAbbName) throws SQLException
+	public TitleDetailVO findTitleArticlesByTitleAbbName(int pageSize, int pageNum, String titleAbbName)
+			throws SQLException
 	{
 		/*
-		 * 1.先查询得到自身的所有文章
-		 * 2.自身文章不存在,则直接查询子类的
-		 * 3.如果自身文章存在,并且数目不足,则子类文章补足 
+		 * 1.先查询得到自身的所有文章 2.自身文章不存在,则直接查询子类的 3.如果自身文章存在,并且数目不足,则子类文章补足
 		 */
 		TitleDetailVO titleDetailVO = new TitleDetailVO();
 		DlxyTitleDTO dlxyTitleDTO = titleService.findByAbbName(titleAbbName);
@@ -383,57 +362,134 @@ public class ArticleWrappedServiceObservableImpl extends DlxyObservervable imple
 		} else
 		{
 			childKey = tId;
-			
 		}
 		childs = (List<DlxyTitleDTO>) titleService.findChildsByParentId(childKey);
 		parentTitleDTO.setChilds(childs);
 		titleDetailVO.setTitleSelf(dlxyTitleDTO);
+		List<ArticleDTO> articles = new ArrayList<>();
 		if (totalCount <= 0)
 		{
 			titleDetailVO.setArticlePage(PageResultUtil.emptyPage());
 			titleDetailVO.setParentAndChilds(parentTitleDTO);
 			titleDetailVO.setTitleSelf(dlxyTitleDTO);
 			return titleDetailVO;
-		}
-
-		// 需要的数据:1.顶级父类 2.所有子类 3.所有子类对应的文章
-		 List<ArticleDTO> allArticles = new LinkedList<>();
-		if (tpId == 0)
+		} else if (totalCount == 1)
 		{
-			// 说明这个就是一个顶级父类
-			allArticles = (List<ArticleDTO>) articleService.findArticlesByParentTitleId(pageSize, pageNum, tId, status);
-			parentTitleDTO = dlxyTitleDTO;
+			// 说明只需要显示这一篇文章即可,并且是具体显示
+			articles = articleService.findArticlesByTitleId(dlxyTitleDTO.getTitleId(), status);
 		} else
 		{
-			// 说明只是一个普通的标题类,有父类,只需要显示自己旗下的文章即可
-			allArticles = (List<ArticleDTO>) articleService.findArticlesByTitleId(pageSize, pageNum, tId, status);
-		}
-//		final  List<ArticleDTO> articleList=allArticles;
-//		childs.forEach(c->{  
-//			Collection<AbstractDlxyArticleComposite> articles = c.getArticles();
-//			 articleList.forEach(a->{
-//				if(a.getTitleId().equals(c.getTitleId()))
-//				{
-//					articles.add(a);
-//				}
-//			});
-//		});
-		Iterator<ArticleDTO> iterator = allArticles.iterator();
-		while(iterator.hasNext())
-		{
-			ArticleDTO temp = iterator.next();
-			if(temp.getTitleId().equals(dlxyTitleDTO.getTitleId()))
+			// 说明有多篇文章,可能是自己的,也可能是旗下子类的
+			// 需要的数据:1.顶级父类 2.所有子类 3.所有子类对应的文章
+			// List<ArticleDTO> allArticles = new LinkedList<>();
+			if (tpId == 0)
 			{
-				dlxyTitleDTO.addArticle(temp);
+				// 说明这个就是一个顶级父类
+				articles = articleService.findArticlesByParentTitleId(pageSize, pageNum, tId, status);
+				parentTitleDTO = dlxyTitleDTO;
+				// final List<ArticleDTO> articleList = articles;
+				// articleList.forEach(a -> {
+				// if (a.getTitleId().equals(dlxyTitleDTO.getTitleId()))
+				// {
+				// dlxyTitleDTO.addArticle(a);
+				// }
+				// });
+			} else
+			{
+				// 说明只是一个普通的标题类,有父类,只需要显示自己旗下的文章即可
+				articles = articleService.findArticlesByTitleId(pageSize, pageNum, tId, status);
+			}
+		}
+		Iterator<ArticleDTO> iterator = articles.iterator();
+		while (iterator.hasNext())
+		{
+			ArticleDTO articleDTO = iterator.next();
+			if (articleDTO.getTitleId().equals(dlxyTitleDTO.getTitleId()))
+			{
+				dlxyTitleDTO.addArticle(articleDTO);
 				iterator.remove();
 			}
 		}
-		// dlxyTitleDTO.setArticles(collection);
-		 parentTitleDTO.setChilds(childs);
-		PageDTO<Collection<ArticleDTO>> pageDTO = new PageDTO<Collection<ArticleDTO>>(totalCount, allArticles);
+		// if (childs != null)
+		// {
+		// //如果不想是按照类目来显示文章,注释这段,remove即可
+		// childs.forEach(c -> {
+		// Collection<AbstractDlxyArticleComposite> childArticles = c.getArticles();
+		// articleList.forEach(a -> {
+		// if (a.getTitleId().equals(c.getTitleId()))
+		// {
+		// childArticles.add(a);
+		// } else if (a.getTitleId().equals(dlxyTitleDTO.getTitleId()))
+		// {
+		// dlxyTitleDTO.addArticle(a);
+		// }
+		// });
+		// });
+		// }
+		PageDTO<Collection<ArticleDTO>> pageDTO = new PageDTO<Collection<ArticleDTO>>(totalCount, articles);
 		titleDetailVO.setParentAndChilds(parentTitleDTO);
 		titleDetailVO.setArticlePage(pageDTO);
 		return titleDetailVO;
+	}
+
+	@Override
+	public Integer deleteByTitleId(UserDTO userDTO, DlxyTitleDTO dlxyTitleDTO)
+	{
+		// DlxyTitleDTO dlxyTitleDTO = titleService.findById(titleId);
+		if (null == dlxyTitleDTO)
+		{
+			ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder
+					.getRequestAttributes();
+			HttpServletRequest request = attributes.getRequest();
+			IllegalLogDTO illegalLogDTO = new IllegalLogDTO(CommonUtils.getRemortIP(request), userDTO.getUserId(),
+					"试图删除不存在的标题", IllegalLevelEnum.Suspicious.ordinal());
+			throw new DlxySystemIllegalException("试图删除不存在的标题", illegalLogDTO);
+		}
+		Integer count = titleService.deleteByTitleId(dlxyTitleDTO.getTitleId());
+		String detail = "删除标题:" + AbstractRecordDetailHandler.TITLE + ":" + dlxyTitleDTO.getTitleId() + ":"
+				+ dlxyTitleDTO.getTitleName();
+		execute(userDTO, detail);
+		return count;
+	}
+
+	@Override
+	public void updateArticleStatusByTitleId(UserDTO userDTO, DlxyTitleDTO titleDTO, int status)
+	{
+		Integer titleId = titleDTO.getTitleId();
+		// DlxyTitleDTO titleDTO = titleService.findById(titleId);
+		if (!titleDTO.getTitleParentId().equals(0))
+		{
+			articleService.updateArticleStatusByTitleId(titleId, status);
+		} else
+		{
+			/*
+			 * 为了日志记录,这里还是不打算直接批量更新了 找出子类下的所有文章
+			 * articleService.updateArticleStatusByParentId(titleId, status); 更新所有文章状态
+			 */
+			List<ArticleDTO> allArticles = articleService.findAllArticlesByTitleParentId(titleId);
+			if(allArticles!=null && allArticles.size()>0)
+			{
+				List<Long> ids = new ArrayList<>();
+				allArticles.forEach(a -> {
+					ids.add(a.getArticleId());
+				});
+				updateArticleStatusInBatch(userDTO, ids, status);
+			}
+		}
+	}
+
+	@Transactional
+	@Override
+	public boolean deleteTitleAndUpdateArticleStatus(UserDTO userDTO, Integer titleId, Integer status)
+	{
+		DlxyTitleDTO titleDTO = titleService.findById(titleId);
+		if (null == titleDTO)
+		{
+			return false;
+		}
+		updateArticleStatusByTitleId(userDTO, titleDTO, status);
+		deleteByTitleId(userDTO, titleDTO);
+		return true;
 	}
 
 }

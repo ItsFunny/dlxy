@@ -18,8 +18,8 @@
 
 	<beans profile="pro">
 		<context:property-placeholder
-			location="classpath:application-pro.properties" ignore-unresolvable="false"
-			ignore-resource-not-found="true" />
+			location="classpath:application-pro.properties"
+			ignore-unresolvable="false" ignore-resource-not-found="true" />
 	</beans>
 
 

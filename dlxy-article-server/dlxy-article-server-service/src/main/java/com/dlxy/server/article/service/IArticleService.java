@@ -30,6 +30,12 @@ public interface IArticleService
 	//这个方法可以复用的,需要修改
 //	Collection<ArticleDTO>findAllArticlesExceptRecommend(int start,int end);
 	
+	
+	void updateArticleStatusByParentId(Integer titleParentId,int status);
+	
+	void updateArticleStatusByTitleId(Integer titleId,int status);
+	
+	
 	void updateArticleStatus(Long articleId,int status);
 	
 	//修改文章状态
@@ -58,12 +64,14 @@ public interface IArticleService
 //	Collection<ArticleDTO>findArtilcesByTilteIds(List<Integer>titleIds,int limit) throws SQLException;
 	
 	
+	//一口气查询父类下的所有的文章,及其父类
+	List<ArticleDTO>findAllArticlesByTitleParentId(Integer titleParentId);
 	//需要更改
 	Collection<ArticleDTO>findArtilcesByTilteIdsAndPage(int pageSize,int pageNum,List<Integer> ids) throws SQLException;
 	//查询单个的,为什么要单个,因为可以根据索引查,快,in查询有时候不走索引
-	Collection<ArticleDTO>findArticlesByTitleId(int pageSize,int pageNum,int titleId,int status);
+	List<ArticleDTO>findArticlesByTitleId(int pageSize,int pageNum,int titleId,int status);
 	//通过父节点查找 
-	Collection<ArticleDTO>findArticlesByParentTitleId(int pageSize,int pageNum,int titleParentId,int status);
+	List<ArticleDTO>findArticlesByParentTitleId(int pageSize,int pageNum,int titleParentId,int status);
 	
 	
 	
@@ -84,9 +92,17 @@ public interface IArticleService
 	ArticleDTO findArticleDetailByArticleId(Long articleId) throws SQLException;
 	
 	/*
+	 * 特定使用,不可复用,找寻titleId下的具体IDE文章,包括文章内容
+	 */
+	List<ArticleDTO>findArticlesByTitleId(Integer titleId,Integer status);
+	
+	/*
 	 * 单单只是找寻文章,没有额外的信息
 	 */
 	ArticleDTO findByArticleId(Long articleId);
+	
+
+	
 	
 	/*
 	 * 查询最新的几篇文章

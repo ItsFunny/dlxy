@@ -365,6 +365,76 @@ public class DlxyArticleExample {
             return (Criteria) this;
         }
 
+        public Criteria andArticleContentIsNull() {
+            addCriterion("article_content is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andArticleContentIsNotNull() {
+            addCriterion("article_content is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andArticleContentEqualTo(String value) {
+            addCriterion("article_content =", value, "articleContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andArticleContentNotEqualTo(String value) {
+            addCriterion("article_content <>", value, "articleContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andArticleContentGreaterThan(String value) {
+            addCriterion("article_content >", value, "articleContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andArticleContentGreaterThanOrEqualTo(String value) {
+            addCriterion("article_content >=", value, "articleContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andArticleContentLessThan(String value) {
+            addCriterion("article_content <", value, "articleContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andArticleContentLessThanOrEqualTo(String value) {
+            addCriterion("article_content <=", value, "articleContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andArticleContentLike(String value) {
+            addCriterion("article_content like", value, "articleContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andArticleContentNotLike(String value) {
+            addCriterion("article_content not like", value, "articleContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andArticleContentIn(List<String> values) {
+            addCriterion("article_content in", values, "articleContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andArticleContentNotIn(List<String> values) {
+            addCriterion("article_content not in", values, "articleContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andArticleContentBetween(String value1, String value2) {
+            addCriterion("article_content between", value1, value2, "articleContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andArticleContentNotBetween(String value1, String value2) {
+            addCriterion("article_content not between", value1, value2, "articleContent");
+            return (Criteria) this;
+        }
+
         public Criteria andArticleTypeIsNull() {
             addCriterion("article_type is null");
             return (Criteria) this;
