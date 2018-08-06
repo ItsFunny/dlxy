@@ -38,6 +38,7 @@ public interface TitleMybatisDao extends DlxyTitleDao
 	// title_id,title_name,title_parent_id,title_display_seq,create_date from
 	// dlxy_title where title_id=#{titleParentId} order by title_display_seq desc
 
+	@Deprecated
 	@Select("select title_id,title_name,title_abb_name,title_parent_id,title_display_seq,create_date from dlxy_title where  title_parent_id=#{titleParentId} union all   select title_id,title_name,title_abb_name,title_parent_id,title_display_seq,create_date from dlxy_title where  title_id=#{titleParentId} order by title_display_seq desc")
 	Collection<DlxyTitleDTO> findParentAndChildsWithUnion(int titleParentId);
 

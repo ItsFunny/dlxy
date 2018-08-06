@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.util.List;
-import java.util.Observer;
-
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
@@ -19,7 +17,6 @@ import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.connection.RabbitConnectionFactoryBean;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.aop.aspectj.annotation.AnnotationAwareAspectJAutoProxyCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -48,24 +45,11 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.dlxy.common.event.AppEventLogPubliher;
 import com.dlxy.common.event.AppEventPublisher;
 import com.dlxy.common.event.AppEventRabbitMQPublisher;
-import com.dlxy.factory.WrappedServiceFactory;
-import com.dlxy.filter.CharsetFilter;
 import com.dlxy.interceptor.IPInterceptor;
-import com.dlxy.service.IArticleWrappedService;
-import com.dlxy.service.IPictureWrappedService;
 import com.dlxy.service.IRedisService;
-import com.dlxy.service.ITitleWrappedService;
-import com.dlxy.service.IUserWrappedService;
-import com.dlxy.service.UserRecordObserver;
-import com.dlxy.service.command.AddOrUpdateArtilceCommand;
 import com.dlxy.service.command.ArticleReceiver;
-import com.dlxy.service.command.DeleteArticleCommand;
 import com.dlxy.service.command.PictureReceiver;
 import com.dlxy.service.command.UserArticleReceiver;
-import com.dlxy.service.impl.TitleWrappedServiceImpl;
-import com.dlxy.service.impl.ArticleWrappedServiceObservableImpl;
-import com.dlxy.service.impl.PictureWrappedServiceObservableImpl;
-import com.dlxy.service.impl.UserWrappedServiceImpl;
 import com.dlxy.service.impl.RedisServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -74,14 +58,6 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
-/**
- * 
- * @When
- * @Description
- * @Detail
- * @author joker
- * @date 创建时间：2018年7月14日 下午6:23:19
- */
 @Configuration
 @EnableWebMvc
 @EnableTransactionManagement
@@ -98,7 +74,6 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer
 	private DlxyProperty dlxyProperty;
 
 	private Logger logger = LoggerFactory.getLogger(DlxySystemConfiiguration.class);
-
 
 	@Bean
 	public JedisPool jedisPool()
@@ -274,6 +249,7 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer
 	@Override
 	public void configureMessageConverters(List<HttpMessageConverter<?>> converters)
 	{
+		//如果使用到了json这个消息转换器,则将内部的Long类型,BigInteger类型以String的格式进行转换,使用其他消息转换器的不做此处理
 		MappingJackson2HttpMessageConverter jackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter();
 		ObjectMapper objectMapper = new ObjectMapper();
 		SimpleModule simpleModule = new SimpleModule();
@@ -290,7 +266,6 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer
 	public void init() throws IOException
 	{
 		dlxyProperty.init();
-
 		logger.info("{}", dlxyProperty);
 	}
 
@@ -313,5 +288,6 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer
 	{
 		this.dlxyProperty = dlxyProperty;
 	}
+	
 
 }

@@ -7,6 +7,10 @@
 */
 package com.dlxy.system.batch.constants;
 
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 /**
 * 
 * @When
@@ -18,4 +22,11 @@ package com.dlxy.system.batch.constants;
 public interface PictureConstant
 {
 	String PICTURE_SAVE_LOCATION="";
+	public static void main(String[] args)
+	{
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		Calendar c = Calendar.getInstance();
+		c.add(Calendar.DAY_OF_MONTH, -7);
+		System.out.println(sdf.format(c.getTime()));
+	}
 }

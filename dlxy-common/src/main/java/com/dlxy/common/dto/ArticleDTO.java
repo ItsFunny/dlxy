@@ -53,6 +53,9 @@ public class ArticleDTO extends AbstractDlxyArticleComposite
 	private String pictureUrl;
 	//2018-07-22 13:40 add
 	private Integer visitCount;
+	//2018-08-06 14:04 add
+	private Long startTime;
+	
 	
 	
 	
@@ -274,6 +277,16 @@ public class ArticleDTO extends AbstractDlxyArticleComposite
 	public void setPictureIds(List<Long> pictureIds)
 	{
 		this.pictureIds = pictureIds;
+	}
+
+	public Long getStartTime()
+	{
+		return startTime;
+	}
+
+	public void setStartTime(Long startTime)
+	{
+		this.startTime = startTime;
 	}
 
 }

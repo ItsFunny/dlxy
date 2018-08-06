@@ -8,6 +8,9 @@
 package com.dlxy.server.article.service;
 
 import java.util.Collection;
+import java.util.List;
+
+import org.springframework.cache.annotation.Cacheable;
 
 import com.dlxy.common.dto.ArticleDTO;
 import com.dlxy.common.dto.DlxyTitleDTO;
@@ -22,13 +25,14 @@ import com.dlxy.common.dto.DlxyTitleDTO;
 */
 public interface ITitleService
 {
-	Collection<DlxyTitleDTO> findChildsByParentId(int titleParentId);
+	
+	List<DlxyTitleDTO> findChildsByParentId(int titleParentId);
 	
 	DlxyTitleDTO findParentAndHisChilds(int titleParentId);
 	
 //	Collection<DlxyTitleDTO>findAllParent();
 	
-	Collection<DlxyTitleDTO>findTitlesByType(Integer type);
+	List<DlxyTitleDTO>findTitlesByType(Integer type);
 	
 	
 	//查找出真正新闻的页面

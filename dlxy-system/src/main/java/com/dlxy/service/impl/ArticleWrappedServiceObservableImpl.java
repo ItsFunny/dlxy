@@ -68,18 +68,18 @@ public class ArticleWrappedServiceObservableImpl extends DlxyObservervable imple
 		{
 			return PageResultUtil.emptyPage();
 		}
-		if (pageSize < 10)
+		if (pageSize < 1)
 		{
-			pageSize = 1;
+			pageSize = 10;
 		}
 		if (pageNum < 1)
 		{
 			pageNum = 1;
 		}
-		if (params.containsKey("q"))
-		{
-			params.put("searchParam", params.get("q"));
-		}
+//		if (params.containsKey("q"))
+//		{
+//			params.put("searchParam", params.get("q"));
+//		}
 		Collection<ArticleDTO> datas = articleService.findByParam(params, (pageNum - 1) * pageSize, pageSize);
 		return new PageDTO<Collection<ArticleDTO>>(totalCount, datas);
 	}

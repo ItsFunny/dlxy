@@ -182,6 +182,17 @@ public class ArticleQueryDaoImpl implements ArticleQueryDao
 			set.add(params.get("userId"));
 			set.add(params.get("userId"));
 		}
+		if(params.containsKey("startTime"))
+		{
+			sql.append(" and a.start_time >=  ? ");
+			set.add(params.get("startTime"));
+		}
+		if(params.containsKey("endTime"))
+		{
+			sql.append(" and a.start_time <=?");
+			set.add(params.get("endTime"));
+		}
+		
 		// if(!StringUtils.isEmpty(params.get("articleName").toString()))
 		// {
 		// sql.append(" or a.article_name like ? ");

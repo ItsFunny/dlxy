@@ -214,14 +214,24 @@ public class RestAPIController
 	{
 		Map<String, Object> params = new HashMap<>();
 		UserDTO user = AdminUtil.getLoginUser();
-		String q = new String(request.getParameter("q").getBytes("iso-8859-1"), "utf-8");
+		String q = request.getParameter("q");
 		String pageSizeStr = StringUtils.defaultString(request.getParameter("pageSize"), "2");
 		String pageNumStr = StringUtils.defaultString(request.getParameter("pageNum"), "1");
+		String startTime = request.getParameter("startTime");
+		String endTime = request.getParameter("endTime");
 		Integer pageSize = Integer.parseInt(pageSizeStr);
 		Integer pageNum = Integer.parseInt(pageNumStr);
-		if (StringUtils.isEmpty(q))
+		if (!StringUtils.isEmpty(startTime))
 		{
-			return ResultUtil.fail("参数不可为空");
+			params.put("startTime", startTime);
+		}
+		if (!StringUtils.isEmpty(endTime))
+		{
+			params.put("endTime", endTime);
+		}
+		if (!StringUtils.isEmpty(q))
+		{
+			q = new String(q.getBytes("iso-8859-1"), "utf-8");
 		}
 		String searchQuery = CommonUtils.validStringException(q.trim());
 		String userIdStr = request.getParameter("userId");
@@ -249,7 +259,7 @@ public class RestAPIController
 				// eventPublisher.publish(new AppEvent(p, Events.IpCheck.name()));
 				// 返回无权
 				IllegalLogDTO illegalLogDTO = new IllegalLogDTO(CommonUtils.getRemortIP(request), user.getUserId(),
-						"试图跨权访问" + userId + "记录", IllegalLevelEnum.Suspicious.ordinal());
+						"试图跨权访问" + userIdStr + "记录", IllegalLevelEnum.Suspicious.ordinal());
 				response.getWriter().write("sorry u dont have the permission");
 				throw new DlxySystemIllegalException(illegalLogDTO);
 			}
@@ -257,18 +267,11 @@ public class RestAPIController
 		}
 		try
 		{
-			// ArticleDTO findByArticleId = articleManagementWrappedService
-			// .findArticleDetailByArticleId(Long.parseLong(searchQuery));
-			// return ResultUtil
-			// .sucess(new PageVO<Collection<ArticleDTO>>(Arrays.asList(findByArticleId),
-			// pageSize, pageNum, 1L));
 			Long articleId = Long.parseLong(searchQuery);
 			params.put("articleId", articleId);
 		} catch (NumberFormatException e)
 		{
-
 			params.put("searchParam", searchQuery);
-
 		}
 		// catch (SQLException e)
 		// {
@@ -458,9 +461,12 @@ public class RestAPIController
 		try
 		{
 			titleId = Integer.parseInt(titleIdStr);
-			//删除类目
-//			Integer count = articleManagementWrappedService.deleteByTitleId(AdminUtil.getLoginUser(), titleId);
-			boolean res = articleManagementWrappedService.deleteTitleAndUpdateArticleStatus(AdminUtil.getLoginUser(), titleId, ArticleStatusEnum.DELETE.ordinal());
+			// 删除类目
+			// Integer count =
+			// articleManagementWrappedService.deleteByTitleId(AdminUtil.getLoginUser(),
+			// titleId);
+			boolean res = articleManagementWrappedService.deleteTitleAndUpdateArticleStatus(AdminUtil.getLoginUser(),
+					titleId, ArticleStatusEnum.DELETE.ordinal());
 			if (res)
 			{
 				return ResultUtil.sucess();

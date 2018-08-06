@@ -275,7 +275,7 @@ public class AdminController
 	 * article
 	 */
 	@RequestMapping("/articles")
-	public ModelAndView showAllArticles(HttpServletRequest request, HttpServletResponse response)
+	public ModelAndView showAllArticles(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException
 	{
 		ModelAndView modelAndView = null;
 		Map<String, Object> params = new HashMap<>();
@@ -286,6 +286,11 @@ public class AdminController
 		int pageNum = Integer.parseInt(StringUtils.defaultString(request.getParameter("pageNum"), "1"));
 		String userIdStr = request.getParameter("userId");
 		String type = StringUtils.defaultString(request.getParameter("type"), "");
+		String q = request.getParameter("q");
+		String startTime = request.getParameter("startTime");
+		String endTime = request.getParameter("endTime");
+		
+		
 		if (type.equals("picArticles"))
 		{
 			params.put("articleType", ArticleTypeEnum.PICTURE_ARTICLE.ordinal());
@@ -321,6 +326,40 @@ public class AdminController
 			IllegalLogDTO illegalLogDTO = new IllegalLogDTO(CommonUtils.getIpAddr(request), user.getUserId(),
 					"试图跨权访问所有文章", IllegalLevelEnum.Suspicious.ordinal());
 			throw new DlxySystemIllegalException(illegalLogDTO);
+		}
+		
+		if (!StringUtils.isEmpty(startTime))
+		{
+			params.put("startTime", startTime);
+		}
+		if (!StringUtils.isEmpty(endTime))
+		{
+			params.put("endTime", endTime);
+		}
+		if (!StringUtils.isEmpty(q))
+		{
+			q = new String(q.getBytes("iso-8859-1"), "utf-8");
+			String searchQuery = CommonUtils.validStringException(q.trim());
+			params.put("q", q);
+			try
+			{
+				Long articleId = Long.parseLong(searchQuery);
+				params.put("articleId", articleId);
+			} catch (NumberFormatException e)
+			{
+				params.put("searchParam", searchQuery);
+			}
+		}
+		
+		String titleIdStr = request.getParameter("titleId");
+		String parentTitleIdStr = request.getParameter("titleParentId");
+		
+		if (!StringUtils.isEmpty(titleIdStr))
+		{
+			params.put("titleId", titleIdStr);
+		} else if (!StringUtils.isEmpty(parentTitleIdStr))
+		{
+			params.put("titleParentId", parentTitleIdStr);
 		}
 		try
 		{

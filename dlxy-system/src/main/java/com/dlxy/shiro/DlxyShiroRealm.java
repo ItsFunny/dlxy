@@ -50,5 +50,6 @@ public class DlxyShiroRealm extends AuthorizingRealm
 	{
 		return token instanceof DlxyShiroAuthToken;
 	}
+	
 
 }

@@ -1,0 +1,24 @@
+#surefire
+#Sun Aug 05 16:12:27 CST 2018
+testClassesDirectory=/Users/joker/Java/oxygen_workspace/dlxy/dlxy-article-server/dlxy-article-server-mpi/target/test-classes
+classPathUrl.2=/Users/joker/.m2/repository/junit/junit/3.8.1/junit-3.8.1.jar
+useManifestOnlyJar=true
+classPathUrl.1=/Users/joker/Java/oxygen_workspace/dlxy/dlxy-article-server/dlxy-article-server-mpi/target/classes
+reportsDirectory=/Users/joker/Java/oxygen_workspace/dlxy/dlxy-article-server/dlxy-article-server-mpi/target/surefire-reports
+classPathUrl.0=/Users/joker/Java/oxygen_workspace/dlxy/dlxy-article-server/dlxy-article-server-mpi/target/test-classes
+providerConfiguration=org.apache.maven.surefire.junit.JUnit3Provider
+testSuiteDefinitionTestSourceDirectory=/Users/joker/Java/oxygen_workspace/dlxy/dlxy-article-server/dlxy-article-server-mpi/src/test/java
+surefireClassPathUrl.1=/Users/joker/.m2/repository/org/apache/maven/surefire/surefire-api/2.12.4/surefire-api-2.12.4.jar
+surefireClassPathUrl.0=/Users/joker/.m2/repository/org/apache/maven/surefire/surefire-junit3/2.12.4/surefire-junit3-2.12.4.jar
+runOrder=filesystem
+useSystemClassLoader=true
+excludes0=**/*$*
+isTrimStackTrace=true
+tc.0=com.dlxy.dlxy_article_server_mpi.AppTest
+enableAssertions=true
+includes2=**/*TestCase.java
+failIfNoTests=false
+includes1=**/*Test.java
+runStatisticsFile=/Users/joker/Java/oxygen_workspace/dlxy/dlxy-article-server/dlxy-article-server-mpi/.surefire-2FE6320971A4E2610FEA2FC9DD8C4AFC52B86B13
+includes0=**/Test*.java
+childDelegation=false

@@ -1,5 +1,7 @@
 package com.dlxy.config;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -10,14 +12,22 @@ import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.ehcache.core.EhcacheManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.MethodInvokingFactoryBean;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.concurrent.ConcurrentMapCache;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
+import org.springframework.cache.ehcache.EhCacheCacheManager;
+import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
+import org.springframework.cache.support.CompositeCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.io.ClassPathResource;
+
 import com.dlxy.common.service.IdWorkerService;
 import com.dlxy.common.service.IdWorkerServiceTwitter;
 import com.dlxy.shiro.DlxyShiroRealm;
@@ -28,9 +38,9 @@ import com.google.code.kaptcha.util.Config;
 
 @Configuration
 @Order(1)
+@EnableCaching
 public class DlxySystemSpringConfiguration implements InitializingBean
 {
-	private BeanFactory beanFactory;
 
 	// @Profile("dev")
 	// @Bean
@@ -52,28 +62,70 @@ public class DlxySystemSpringConfiguration implements InitializingBean
 	// configurer.setLocations(new ClassPathResource("application-pro.properties"));
 	// return configurer;
 	// }
-
 	// @Bean
-	// public AnnotationAwareAspectJAutoProxyCreator ajcDeclareAnnotation()
+	// public EhCacheManagerFactoryBean ehcacheManagerFactoryBean()
 	// {
-	// AnnotationAwareAspectJAutoProxyCreator creator=new
-	// AnnotationAwareAspectJAutoProxyCreator();
-	// creator.setProxyTargetClass(true);
-	// return creator;
+	// EhCacheManagerFactoryBean ehCacheManagerFactoryBean=new
+	// EhCacheManagerFactoryBean();
+	// ehCacheManagerFactoryBean.setShared(false);
+	// ehCacheManagerFactoryBean.setConfigLocation(new
+	// ClassPathResource("shiro/cacheManager1.xml"));
+	// return ehCacheManagerFactoryBean;
 	// }
+	// @Bean
+	// public CacheManager cacheManager()
+	// {
+	// EhcacheManager ehcacheManager=new EhcacheManager(null);
+	//
+	// }
+//
 //	@Bean
-//	public CacheManager cacheManager()
+//	public EhCacheManagerFactoryBean ehcacheManagerFactoryBean()
 //	{
-//		EhCacheManager ehCacheManager = new EhCacheManager();
-//		ehCacheManager.setCacheManagerConfigFile("classpath:shiro/cacheManager.xml");
-//		return ehCacheManager;
+//		EhCacheManagerFactoryBean ehCacheManagerFactoryBean=new EhCacheManagerFactoryBean();
+//		ehCacheManagerFactoryBean.setConfigLocation(new ClassPathResource("shiro/cache.xml"));
+//		ehCacheManagerFactoryBean.setShared(false);
+//		return ehCacheManagerFactoryBean;
 //	}
+//	@Bean
+//	public EhCacheCacheManager ehCacheManager()
+//	{
+//		EhCacheCacheManager ehCacheCacheManager=new EhCacheCacheManager();
+//		ehCacheCacheManager.setCacheManager(ehcacheManagerFactoryBean().getObject());
+//		return ehCacheCacheManager;
+//	}
+	
 	@Bean
-	public SecurityManager securityManager()
+	public DlxyBeanPostProcessor beanPostProcessor()
+	{
+		return new DlxyBeanPostProcessor();
+	}
+	@Bean
+	public org.springframework.cache.CacheManager titlesCacheManager()
+	{
+		CompositeCacheManager compositeCacheManager=new CompositeCacheManager();
+		List<org.springframework.cache.CacheManager>cacheManagers=new ArrayList<>();
+		cacheManagers.add(new ConcurrentMapCacheManager("titles"));
+		cacheManagers.add(new ConcurrentMapCacheManager("single_title"));
+		compositeCacheManager.setCacheManagers(cacheManagers);
+		return compositeCacheManager;
+	}
+	@Bean
+	public CacheManager cacheManager()
+	{
+		EhCacheManager ehCacheManager = new EhCacheManager();
+		ehCacheManager.setCacheManagerConfigFile("classpath:shiro/cacheManager.xml");
+		return ehCacheManager;
+	}
+
+	@Bean
+	public org.apache.shiro.mgt.SecurityManager securityManager()
 	{
 		DefaultWebSecurityManager defaultWebSecurityManager = new DefaultWebSecurityManager();
 		defaultWebSecurityManager.setRealm(dlxyShiroRealm());
-//		defaultWebSecurityManager.setCacheManager(cacheManager());
+		// EhCacheManager ehCacheManager=new EhCacheManager();
+		// ehCacheManager.setCacheManager(ehCacheManagerFactoryBean().getObject());
+		defaultWebSecurityManager.setCacheManager(cacheManager());
 		return defaultWebSecurityManager;
 	}
 
@@ -128,11 +180,11 @@ public class DlxySystemSpringConfiguration implements InitializingBean
 	// * 将securityManger绑定
 	// */
 	@Bean
-	public MethodInvokingFactoryBean methodInvokingFactoryBean()
+	public MethodInvokingFactoryBean methodInvokingFactoryBean(SecurityManager securityManager)
 	{
 		MethodInvokingFactoryBean factoryBean = new MethodInvokingFactoryBean();
 		factoryBean.setStaticMethod("org.apache.shiro.SecurityUtils.setSecurityManager");
-		factoryBean.setArguments(securityManager());
+		factoryBean.setArguments(securityManager);
 		return factoryBean;
 	}
 

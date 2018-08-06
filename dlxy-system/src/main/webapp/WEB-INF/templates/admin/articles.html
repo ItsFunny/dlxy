@@ -1,5 +1,7 @@
 <#include "wrapper_up.html">
 <#setting datetime_format="yyyy-MM-dd HH:mm:ss"/>
+
+<script type="text/javascript" src="/My97DatePicker/WdatePicker.js"></script>
 <script type="text/javascript">
 	var editor;
 	window.K = KindEditor;
@@ -47,11 +49,16 @@
 <section class="layui-larry-box">
 	<div class="larry-personal">
 	    <div class="layui-tab">
-            <blockquote class="layui-elem-quote news_search">
-		
+            <blockquote class="layui-elem-quote news_search"> 
 		<div class="layui-inline">
 		    <div class="layui-input-inline">
-		    	<input value="" id="searchText" placeholder="可通过文章id,文章标题,文章作者搜索" class="layui-input search_input" type="text">
+		    	<input value="" id="searchText" name="q" value="${q!""}" placeholder="${q!"可通过文章id,文章标题,文章作者搜索"}" class="layui-input search_input" type="text">
+		    </div>
+		      <div class="layui-input-inline">
+		      <input class="Wdate" type="text"  onClick="WdatePicker()"  id="startTime" value="${startTime!""}" >
+		    </div>
+		      <div class="layui-input-inline">
+		    	  <input class="Wdate" type="text"  onClick="WdatePicker()"  id="endTime" value="${endTime!""}">
 		    </div>
 		    <input type="button" id="searchButton" class="layui-btn search_btn"  value="查询">
 		    <input type="button" class="layui-btn search_btn" value="刷新" onclick="JavaScript:location.reload();">
@@ -208,7 +215,9 @@
 							      	<input type="hidden" name="pageNum" value="${pageVO.pageNum}">
 							      	<input type="hidden" name="type" value="${type!""}">
 							      	<input type="hidden" name="q" value="${q!""}">
-							      	<input type="hidden" name="titleParentId" value="${titleParentId!""}"
+							      	<input type="hidden" name="titleParentId" value="${titleParentId!""}">
+							      	<input type="hidden" name="startTime" value="${startTime!""}">
+							      	<input type="hidden" name="endTime" value="${endTime!""}">
 							      	<div id="page2" class="page">
 										<div class="layui-box layui-laypage layui-laypage-default" id="layui-laypage-0">
 											<span class="layui-laypage-curr">
@@ -382,80 +391,12 @@ function editSaveUpdate(){
 	}
 	$("#searchButton").click(function(){
 		var q=$("#searchText").val();
+		var startTime=$("#startTime").val();
+		var endTime=$("#endTime").val();
 		$("input[name='q']").val(q);
-		var titleId=null;
-	
-		$.ajax({
-			type:'get',
-			url:'/api/v1/admin/search/article.html',
-			data:$("#pageForm").serialize(),
-			success:function(data,str){
-				if(data.code==1){
-					var pageVO=data.data;
-					document.pageForm.q.value=q;
-					var contentBody=$("#contentBody");
-					contentBody.empty();
-					for(var i=0;i<data.data.data.length;i++){
-						var p=data.data.data[i];
-						var m='';
-						var date=$.format.date(p.createDate,'yyyy-MM-dd mm:HH:ss');
-						var t='<tr><td><input name="checked" lay-skin="primary" lay-filter="choose" type="checkbox" value="'+p.articleId+'"><div class="layui-unselect layui-form-checkbox" lay-skin="primary"><i class="layui-icon"></i></div></td><td>'+p.articleId+'</td><td><a style="text-decoration:underline;" href="/admin/title/article/'+p.titleId+'.html">'+p.titleName+'</a></td><td align="left"><a href="javascript:void(0)" data-toggle="modal" data-target="#changeSource" style="text-decoration:underline;" onclick="loadArticle(this);" articleId="'+p.articleId+'">'+p.articleName+'</a></td><td>'+p.articleAuthor+'</td><td> <a href="/admin/articles.html?userId='+p.userId+'" style="text-decoration:underline;" >'+p.realname+'</a></td><td>'+date+'</td><td>'+p.updateDateStr+'</td>'
-						if(p.articleType==0){
-							t+='<td>普通文章</td>';
-							m='<a class="layui-btn layui-btn-mini "  onclick="changeType(this,1)" articleId="'+p.articleId+'"><i class="iconfont icon-edit"></i> 设为推荐新闻</a><a class="layui-btn layui-btn-mini "  onclick="changeType(this,1)" articleId="'+p.articleId+'"><i class="iconfont icon-edit"></i> 设置为首页图片文章</a>';
-						}else if(p.articleType==1){
-							t+='<td>新闻推荐文章</td>'
-							m='<a class="layui-btn layui-btn-mini "  onclick="changeType(this,0)" articleId="'+p.articleId+'"><i class="iconfont icon-edit"></i> 设置为普通文章</a><a class="layui-btn layui-btn-mini "  onclick="changeType(this,2)" articleId="'+p.articleId+'"><i class="iconfont icon-edit"></i> 设置为首页图片文章</a>';
-						}else if(p.articleType==2){
-							t+='<td>首页新闻图片文章</td>'
-							m='<a class="layui-btn layui-btn-mini "  onclick="changeType(this,0)" articleId="'+p.articleId+'"><i class="iconfont icon-edit"></i> 设为普通文章</a><a class="layui-btn layui-btn-mini "  onclick="changeType(this,1)" articleId="'+p.articleId+'"><i class="iconfont icon-edit"></i> 设置新闻推荐文章</a>'
-						}
-						
-						if(p.articleStatus==0){
-							t+='<td>下线</td><td><a class="layui-btn layui-btn-mini news_edit"  onclick="changeStatus(this,1);" articleId="'+p.articleId+'" "><i class="iconfont icon-edit" ></i> 上线</a><a class="layui-btn layui-btn-mini " data-toggle="modal" data-target="#changeSource" onclick="loadArticle(this);" articleId="'+p.articleId+'"><i class="iconfont icon-edit"></i> 编辑</a>'+m+'<a class="layui-btn layui-btn-danger layui-btn-mini news_del" data-id="1" articleId="'+p.articleId+'" onclick="changeStatus(this,2)" ><i class="layui-icon"></i> 放至回收站</a></td>';
-						}else if(p.articleStatus==1){
-							t+='<td>上线</td><td><a class="layui-btn layui-btn-mini news_edit"  articleId="'+p.articleId+'" onclick="changeStatus(this,0);"><i class="iconfont icon-edit" ></i> 下线</a><a class="layui-btn layui-btn-mini " data-toggle="modal" data-target="#changeSource" onclick="loadArticle(this);" articleId="'+p.articleId+'"><i class="iconfont icon-edit"></i> 编辑</a>'+m+'<a class="layui-btn layui-btn-mini "  onclick="changeType(this,1);" articleId="'+p.articleId+'"><i class="iconfont icon-edit"></i> 设为推荐新闻</a><a class="layui-btn layui-btn-danger layui-btn-mini news_del" data-id="1" articleId="'+p.articleId+'" onclick="changeStatus(this,2)" ><i class="layui-icon"></i> 放至回收站</a></td>';
-						}else if(p.articleStatus==2){
-							t+='<td>回收站</td><td><a class="layui-btn layui-btn-mini news_edit" articleId="'+p.articleId+'" onclick="changeStatus(this,0)"><i class="iconfont icon-edit" ></i> 恢复</a><a class="layui-btn layui-btn-mini " data-toggle="modal" data-target="#changeSource" onclick="loadArticle(this);" articleId="'+p.articleId+'"><i class="iconfont icon-edit"></i> 编辑</a>'+m+'<a class="layui-btn layui-btn-mini "  onclick="changeType(this,1);" articleId="'+p.articleId+'"><i class="iconfont icon-edit"></i> 设为推荐新闻</a></td>';
-						}
-						contentBody.append(t);
-					}
-					
-					var o=$("#layui-laypage-0");
-					if(data.data.data.length==0){
-						o.empty();
-						o.append('<span class="layui-laypage-curr"><em class="layui-laypage-em"></em><em id="pageEm">暂无数据</em></span>')
-					}else{
-						o.empty();
-						var s='<span class="layui-laypage-curr"><em class="layui-laypage-em"></em><em id="pageEm">当前第'+pageVO.pageNum+'页 总共有'+pageVO.maxPage+'页</em></span>';
-						o.append(s);
-						s="";
-						if(pageVO.pageNum==1)
-						{
-							s+='<a href="javascript:void(0)">首页</a>';						
-						}else{
-							s+='<a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=1;document.pageForm.submit();">首页</a>';
-						}
-						if(pageVO.pageNum<=1){
-							s+=' <a href="javascript:void(0)">上一页</a>';
-						}else{
-							s+='<a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=('+pageVO.pageNum-1+');document.pageForm.submit();"> 上一页</a>';
-						}
-						if(pageVO.pageNum>=pageVO.maxPage){
-							s+='<a href="javascript:void(0)">下一页</a>';
-							s+='<a href="javascript:void(0)">最后一页</a>';
-						}else{
-							s+='<a href="javascript:void(0)" onclick="document.pageForm.pageNum.value='+(pageVO.pageNum+1)+';document.pageForm.submit();">下一页</a> ';
-							s+='<a href="javascript:void(0)" onclick="document.pageForm.pageNum.value='+pageVO.maxPage+';document.pageForm.submit();">最后一页</a>';
-						}
-						o.append(s);
-					}
-				}
-			},
-			error:function(data){
-				alert('fail');
-			}
-		});
+		$("input[name='startTime']").val(startTime);
+		$("input[name='endTime']").val(endTime);
+		document.pageForm.submit();
 	});
 	function singleDelButton(obj){
 		var articleId=$(obj).attr("articleId");

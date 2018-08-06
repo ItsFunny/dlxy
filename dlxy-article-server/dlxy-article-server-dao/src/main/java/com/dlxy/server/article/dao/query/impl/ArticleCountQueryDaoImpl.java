@@ -83,6 +83,16 @@ public class ArticleCountQueryDaoImpl implements ArticleCountQueryDao
 				p.add(params.get("userId"));
 			}
 		}
+		if(params.containsKey("startTime"))
+		{
+			sql+="and start_time >= ?";
+			p.add(params.get("startTime"));
+		}
+		if(params.containsKey("endTime"))
+		{
+			sql+="and start_time <= ? ";
+			p.add(params.get("endTime"));
+		}
 
 		Object count = queryRunner.query(sql, new ScalarHandler<Object>(), p.toArray());
 		if (null == count)

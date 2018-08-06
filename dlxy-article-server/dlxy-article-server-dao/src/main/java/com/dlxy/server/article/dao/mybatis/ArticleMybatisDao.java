@@ -57,8 +57,8 @@ public interface ArticleMybatisDao extends DlxyArticleDao
 
 	Integer updateInBatchSelective(Collection<ArticleDTO> articleDTOs);
 
-	@Insert("insert into dlxy_article (article_id,title_id,article_name,article_author,article_content,article_status,article_type ) "
-			+ "values (#{articleId},#{titleId},#{articleName},#{articleAuthor},#{articleContent},#{articleStatus},#{articleType} ) "
+	@Insert("insert into dlxy_article (article_id,title_id,article_name,article_author,article_content,article_status,article_type,start_time ) "
+			+ "values (#{articleId},#{titleId},#{articleName},#{articleAuthor},#{articleContent},#{articleStatus},#{articleType},#{startTime}) "
 			+ "on duplicate key update article_status= values(article_status),article_content=values(article_content),article_author=values(article_author),article_type=values(article_type)")
 	void insertOrUpdate(ArticleDTO articleDTO);
 

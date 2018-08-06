@@ -17,6 +17,7 @@
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/utils/RSAUtils.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/dto/PageDTO.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/enums/ArticleTypeEnum.java
+/Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/service/ITitleCacheServiec.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/vo/UserRecordUrlVO.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/dto/VisitUserHistoryDTO.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-common/src/main/java/com/dlxy/common/model/VisitUserManager.java
