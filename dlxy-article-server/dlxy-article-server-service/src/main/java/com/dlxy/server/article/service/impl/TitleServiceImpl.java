@@ -176,7 +176,7 @@ public class TitleServiceImpl implements ITitleService,IBeanSelefAware,ITitleCac
 		{
 			criteria.andTitleTypeEqualTo(type);
 		}
-		example.setOrderByClause("title_display_seq desc");
+		example.setOrderByClause("title_display_seq asc");
 		return titleDao.selectByExample(example);
 		// return titleDao.findByType(type);
 	}

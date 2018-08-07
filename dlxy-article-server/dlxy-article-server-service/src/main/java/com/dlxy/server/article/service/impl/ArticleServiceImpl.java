@@ -223,11 +223,12 @@ public class ArticleServiceImpl implements IArticleService, IUserArticleService
 	@Override
 	public List<ArticleDTO> findArticlesByTitleId(Integer titleId, Integer status)
 	{
-		DlxyArticleExample example = new DlxyArticleExample();
-		Criteria criteria = example.createCriteria();
-		criteria.andTitleIdEqualTo(titleId);
-		criteria.andArticleStatusEqualTo(status);
-		return articleDao.selectByExample(example);
+//		DlxyArticleExample example = new DlxyArticleExample();
+//		Criteria criteria = example.createCriteria();
+//		criteria.andTitleIdEqualTo(titleId);
+//		criteria.andArticleStatusEqualTo(status);
+//		return articleDao.selectByExample(example);
+		return articleDao.findArticlesByTitleIdIWithContent(titleId, status);
 	}
 
 	@Override

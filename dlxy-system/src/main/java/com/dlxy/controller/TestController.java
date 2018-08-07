@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -24,6 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/test")
 public class TestController
 {
+	private Logger logger=LoggerFactory.getLogger(TestController.class);
 	@RequiresRoles("admin")
 	@RequestMapping("/t")
 	@ResponseBody
@@ -43,6 +46,17 @@ public class TestController
 	public void testDate(HttpServletRequest request,HttpServletResponse response)
 	{
 		System.out.println(request.getParameter("startTime"));
+	}
+	
+	@RequestMapping("/log")
+	@ResponseBody
+	public void logTest()
+	{
+		logger.debug("test_debug");
+		logger.info("test_info");
+		logger.warn("test_warn");
+		logger.error("test_error");
+		
 	}
 
 }

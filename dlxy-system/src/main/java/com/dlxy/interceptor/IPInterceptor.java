@@ -35,7 +35,7 @@ public class IPInterceptor implements HandlerInterceptor
 
 	private Integer maxRefreshTimes = 5;
 
-	private boolean needIpFilter = true;
+	
 
 	private ThreadLocal<VisitUserHistoryDTO> histroy = new ThreadLocal<>();
 
@@ -122,6 +122,7 @@ public class IPInterceptor implements HandlerInterceptor
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception
 	{
+		boolean needIpFilter=false;
 		if (!needIpFilter)
 		{
 			return true;
@@ -167,6 +168,7 @@ public class IPInterceptor implements HandlerInterceptor
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
 			throws Exception
 	{
+		boolean needIpFilter=false;
 		if (!needIpFilter)
 		{
 			return;

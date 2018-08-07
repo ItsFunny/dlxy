@@ -467,3 +467,15 @@
 0:0:0:0:0:0:0:1 - - [06/Aug/2018:14:09:52 +0800] "GET /api/v1/articles.html?type=news&pageSize=8&pageNum=1 HTTP/1.1" 200 663 http-bio-8000-exec-9 4
 0:0:0:0:0:0:0:1 - - [06/Aug/2018:14:09:52 +0800] "GET /api/v1/article/latest.html HTTP/1.1" 200 1109 http-bio-8000-exec-9 4
 0:0:0:0:0:0:0:1 - - [06/Aug/2018:14:09:54 +0800] "GET /api/v1/title/8.html HTTP/1.1" 200 46 http-bio-8000-exec-9 4
+0:0:0:0:0:0:0:1 - - [06/Aug/2018:15:21:58 +0800] "GET /test/log.html HTTP/1.1" 500 3157 http-bio-8000-exec-1 337
+0:0:0:0:0:0:0:1 - - [06/Aug/2018:15:29:06 +0800] "GET /test/log.html HTTP/1.1" 200 - http-bio-8000-exec-1 273
+0:0:0:0:0:0:0:1 - - [06/Aug/2018:15:30:20 +0800] "GET /test/log.html HTTP/1.1" 200 - http-bio-8000-exec-8 14
+0:0:0:0:0:0:0:1 - - [06/Aug/2018:15:35:26 +0800] "GET /test/log.html HTTP/1.1" 200 - http-bio-8000-exec-1 4094
+0:0:0:0:0:0:0:1 - - [06/Aug/2018:15:43:21 +0800] "GET /test/log.html HTTP/1.1" 200 - http-bio-8000-exec-1 2254
+0:0:0:0:0:0:0:1 - - [06/Aug/2018:15:45:25 +0800] "GET /test/log.html HTTP/1.1" 200 - http-bio-8000-exec-1 5809
+0:0:0:0:0:0:0:1 - - [06/Aug/2018:15:49:05 +0800] "GET /test/log.html HTTP/1.1" 200 - http-bio-8000-exec-1 143
+0:0:0:0:0:0:0:1 - - [06/Aug/2018:16:11:10 +0800] "GET /test/log.html HTTP/1.1" 200 - http-bio-8000-exec-1 158
+0:0:0:0:0:0:0:1 - - [06/Aug/2018:16:12:19 +0800] "GET /test/log.html HTTP/1.1" 200 - http-bio-8000-exec-1 154
+0:0:0:0:0:0:0:1 - - [06/Aug/2018:16:27:11 +0800] "GET /test/log.html HTTP/1.1" 200 - http-bio-8000-exec-1 265
+0:0:0:0:0:0:0:1 - - [06/Aug/2018:16:27:19 +0800] "GET /test/log.html HTTP/1.1" 200 - http-bio-8000-exec-2 7
+0:0:0:0:0:0:0:1 - - [06/Aug/2018:16:40:53 +0800] "GET /test/log.html HTTP/1.1" 200 - http-bio-8000-exec-4 9

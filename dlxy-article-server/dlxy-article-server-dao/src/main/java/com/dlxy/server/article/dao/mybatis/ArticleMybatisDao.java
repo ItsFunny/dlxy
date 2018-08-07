@@ -39,10 +39,18 @@ public interface ArticleMybatisDao extends DlxyArticleDao
 			+ "SELECT title_id FROM dlxy_title WHERE title_parent_id=#{titleParentId})) UNION ALL ( "
 			+ "SELECT article_id FROM dlxy_article WHERE title_id=#{titleParentId})";
 
-	String FIND_LATEST_ARTICLES = "SELECT a.article_id,a.title_id,a.article_name,a.article_author,a.article_type,a.article_status,a.create_date,a.update_date \n"
+	String FIND_LATEST_ARTICLES = "SELECT a.article_id,a.title_id,a.article_name,a.article_author,a.article_type,a.article_status,a.create_date,a.update_date  "
 			+ "FROM dlxy_article a "
 			+ "WHERE article_status=1 AND EXISTS (SELECT 1 FROM dlxy_title b WHERE b.title_id=a.title_id) "
 			+ "ORDER BY create_date DESC " + "LIMIT #{count}";
+
+	/*
+	 * 这条sql只会在显示title_detail的时候,特殊需求而生成的sql语句
+	 */
+	String FIND_ARTICLES_WITH_CONTENT_BY_TITEL_ID = "( "
+			+ "SELECT a.article_id,a.title_id,a.article_name,a.article_author,a.article_type,a.create_date,a.update_date,a.article_status,a.article_content FROM dlxy_article a WHERE a.article_status=#{status} AND a.title_id IN ( "
+			+ "SELECT b.title_id FROM dlxy_title b WHERE b.title_parent_id=#{titleId})) UNION ALL ( "
+			+ "SELECT c.article_id,c.title_id,c.article_name,c.article_author,c.article_type,c.create_date,c.update_date,c.article_status,c.article_content FROM dlxy_article c WHERE c.article_status=#{status} AND c.title_id=#{titleId} ORDER BY c.create_date DESC)  ";
 
 	@Deprecated
 	@Update("update dlxy_article set article_status=#{status} where article_id=#{articleId}")
@@ -91,7 +99,10 @@ public interface ArticleMybatisDao extends DlxyArticleDao
 	 */
 	Collection<ArticleDTO> findArticlesInTitleIdsByPage(@Param("start") int start, @Param("end") int end,
 			@Param("ids") List<Integer> ids);
-
+	
+	
+	
+	
 	// 保留
 	// 查询单个的,为什么要单个,因为可以根据索引查,快,in查询有时候不走索引
 	@Select("select "
@@ -109,6 +120,10 @@ public interface ArticleMybatisDao extends DlxyArticleDao
 			+ "SELECT c.article_id,c.title_id,c.article_name,c.article_author,c.article_type,c.create_date,c.update_date,c.article_status FROM dlxy_article c WHERE c.article_status=#{status} AND c.title_id=#{titleParentId} ORDER BY c.create_date DESC)  limit #{start},#{end}")
 	List<ArticleDTO> findArticlesByParentTitleId(@Param("start") int start, @Param("end") int end,
 			@Param("titleParentId") int titleParentId, @Param("status") int status);
+	
+	
+	@Select(FIND_ARTICLES_WITH_CONTENT_BY_TITEL_ID)
+	List<ArticleDTO>findArticlesByTitleIdIWithContent(@Param("titleId")Integer titleId,@Param("status")Integer status);
 
 	// Collection<ArticleDTO>findArticlesInTitleIds(@Param("list")List<Integer>
 	// titelIds,@Param("limit")int limit);

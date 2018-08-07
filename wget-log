@@ -1,0 +1,101 @@
+--2018-08-06 14:44:31--  http://download.redis.io/releases/redis-4.0.11.tar.gz
+正在解析主机 download.redis.io (download.redis.io)... 109.74.203.151
+正在连接 download.redis.io (download.redis.io)|109.74.203.151|:80... 已连接。
+已发出 HTTP 请求，正在等待回应... 读取文件头错误 (Connection reset by peer)。
+重试中。
+
+--2018-08-06 14:45:47--  (尝试次数： 2)  http://download.redis.io/releases/redis-4.0.11.tar.gz
+正在连接 download.redis.io (download.redis.io)|109.74.203.151|:80... 已连接。
+已发出 HTTP 请求，正在等待回应... 读取文件头错误 (Operation timed out)。
+重试中。
+
+--2018-08-06 15:13:16--  (尝试次数： 3)  http://download.redis.io/releases/redis-4.0.11.tar.gz
+正在连接 download.redis.io (download.redis.io)|109.74.203.151|:80... 已连接。
+已发出 HTTP 请求，正在等待回应... 读取文件头错误 (Connection reset by peer)。
+重试中。
+
+--2018-08-06 15:14:35--  (尝试次数： 4)  http://download.redis.io/releases/redis-4.0.11.tar.gz
+正在连接 download.redis.io (download.redis.io)|109.74.203.151|:80... 已连接。
+已发出 HTTP 请求，正在等待回应... 读取文件头错误 (Connection reset by peer)。
+重试中。
+
+--2018-08-06 15:15:55--  (尝试次数： 5)  http://download.redis.io/releases/redis-4.0.11.tar.gz
+正在连接 download.redis.io (download.redis.io)|109.74.203.151|:80... 已连接。
+已发出 HTTP 请求，正在等待回应... 读取文件头错误 (Connection reset by peer)。
+重试中。
+
+--2018-08-06 15:17:15--  (尝试次数： 6)  http://download.redis.io/releases/redis-4.0.11.tar.gz
+正在连接 download.redis.io (download.redis.io)|109.74.203.151|:80... 已连接。
+已发出 HTTP 请求，正在等待回应... 读取文件头错误 (Connection reset by peer)。
+重试中。
+
+--2018-08-06 15:18:37--  (尝试次数： 7)  http://download.redis.io/releases/redis-4.0.11.tar.gz
+正在连接 download.redis.io (download.redis.io)|109.74.203.151|:80... 已连接。
+已发出 HTTP 请求，正在等待回应... 读取文件头错误 (Connection reset by peer)。
+重试中。
+
+--2018-08-06 15:19:59--  (尝试次数： 8)  http://download.redis.io/releases/redis-4.0.11.tar.gz
+正在连接 download.redis.io (download.redis.io)|109.74.203.151|:80... 已连接。
+已发出 HTTP 请求，正在等待回应... 读取文件头错误 (Connection reset by peer)。
+重试中。
+
+--2018-08-06 15:21:22--  (尝试次数： 9)  http://download.redis.io/releases/redis-4.0.11.tar.gz
+正在连接 download.redis.io (download.redis.io)|109.74.203.151|:80... 已连接。
+已发出 HTTP 请求，正在等待回应... 读取文件头错误 (Connection reset by peer)。
+重试中。
+
+--2018-08-06 15:22:46--  (尝试次数：10)  http://download.redis.io/releases/redis-4.0.11.tar.gz
+正在连接 download.redis.io (download.redis.io)|109.74.203.151|:80... 已连接。
+已发出 HTTP 请求，正在等待回应... 读取文件头错误 (Connection reset by peer)。
+重试中。
+
+--2018-08-06 15:24:11--  (尝试次数：11)  http://download.redis.io/releases/redis-4.0.11.tar.gz
+正在连接 download.redis.io (download.redis.io)|109.74.203.151|:80... 已连接。
+已发出 HTTP 请求，正在等待回应... 读取文件头错误 (Connection reset by peer)。
+重试中。
+
+--2018-08-06 15:25:37--  (尝试次数：12)  http://download.redis.io/releases/redis-4.0.11.tar.gz
+正在连接 download.redis.io (download.redis.io)|109.74.203.151|:80... 已连接。
+已发出 HTTP 请求，正在等待回应... 读取文件头错误 (Connection reset by peer)。
+重试中。
+
+--2018-08-06 15:27:02--  (尝试次数：13)  http://download.redis.io/releases/redis-4.0.11.tar.gz
+正在连接 download.redis.io (download.redis.io)|109.74.203.151|:80... 已连接。
+已发出 HTTP 请求，正在等待回应... 读取文件头错误 (Connection reset by peer)。
+重试中。
+
+--2018-08-06 15:28:27--  (尝试次数：14)  http://download.redis.io/releases/redis-4.0.11.tar.gz
+正在连接 download.redis.io (download.redis.io)|109.74.203.151|:80... 已连接。
+已发出 HTTP 请求，正在等待回应... 读取文件头错误 (Connection reset by peer)。
+重试中。
+
+--2018-08-06 15:29:52--  (尝试次数：15)  http://download.redis.io/releases/redis-4.0.11.tar.gz
+正在连接 download.redis.io (download.redis.io)|109.74.203.151|:80... 已连接。
+已发出 HTTP 请求，正在等待回应... 读取文件头错误 (Connection reset by peer)。
+重试中。
+
+--2018-08-06 15:31:17--  (尝试次数：16)  http://download.redis.io/releases/redis-4.0.11.tar.gz
+正在连接 download.redis.io (download.redis.io)|109.74.203.151|:80... 已连接。
+已发出 HTTP 请求，正在等待回应... 读取文件头错误 (Connection reset by peer)。
+重试中。
+
+--2018-08-06 15:32:43--  (尝试次数：17)  http://download.redis.io/releases/redis-4.0.11.tar.gz
+正在连接 download.redis.io (download.redis.io)|109.74.203.151|:80... 已连接。
+已发出 HTTP 请求，正在等待回应... 读取文件头错误 (Connection reset by peer)。
+重试中。
+
+--2018-08-06 15:34:08--  (尝试次数：18)  http://download.redis.io/releases/redis-4.0.11.tar.gz
+正在连接 download.redis.io (download.redis.io)|109.74.203.151|:80... 已连接。
+已发出 HTTP 请求，正在等待回应... 读取文件头错误 (Connection reset by peer)。
+重试中。
+
+--2018-08-06 15:35:33--  (尝试次数：19)  http://download.redis.io/releases/redis-4.0.11.tar.gz
+正在连接 download.redis.io (download.redis.io)|109.74.203.151|:80... 已连接。
+已发出 HTTP 请求，正在等待回应... 读取文件头错误 (Connection reset by peer)。
+重试中。
+
+--2018-08-06 15:36:58--  (尝试次数：20)  http://download.redis.io/releases/redis-4.0.11.tar.gz
+正在连接 download.redis.io (download.redis.io)|109.74.203.151|:80... 已连接。
+已发出 HTTP 请求，正在等待回应... 读取文件头错误 (Connection reset by peer)。
+放弃操作。
+

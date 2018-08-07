@@ -76,10 +76,10 @@ public class ArticleWrappedServiceObservableImpl extends DlxyObservervable imple
 		{
 			pageNum = 1;
 		}
-//		if (params.containsKey("q"))
-//		{
-//			params.put("searchParam", params.get("q"));
-//		}
+		// if (params.containsKey("q"))
+		// {
+		// params.put("searchParam", params.get("q"));
+		// }
 		Collection<ArticleDTO> datas = articleService.findByParam(params, (pageNum - 1) * pageSize, pageSize);
 		return new PageDTO<Collection<ArticleDTO>>(totalCount, datas);
 	}
@@ -375,8 +375,9 @@ public class ArticleWrappedServiceObservableImpl extends DlxyObservervable imple
 			return titleDetailVO;
 		} else if (totalCount == 1)
 		{
-			// 说明只需要显示这一篇文章即可,并且是具体显示
+			// 说明只需要显示这一篇文章即可,并且是具体显示 ,但是注意可能是父类没文章,子类只有1篇
 			articles = articleService.findArticlesByTitleId(dlxyTitleDTO.getTitleId(), status);
+			dlxyTitleDTO.setArticles(articles);
 		} else
 		{
 			// 说明有多篇文章,可能是自己的,也可能是旗下子类的
@@ -399,17 +400,18 @@ public class ArticleWrappedServiceObservableImpl extends DlxyObservervable imple
 				// 说明只是一个普通的标题类,有父类,只需要显示自己旗下的文章即可
 				articles = articleService.findArticlesByTitleId(pageSize, pageNum, tId, status);
 			}
-		}
-		Iterator<ArticleDTO> iterator = articles.iterator();
-		while (iterator.hasNext())
-		{
-			ArticleDTO articleDTO = iterator.next();
-			if (articleDTO.getTitleId().equals(dlxyTitleDTO.getTitleId()))
+			Iterator<ArticleDTO> iterator = articles.iterator();
+			while (iterator.hasNext())
 			{
-				dlxyTitleDTO.addArticle(articleDTO);
-				iterator.remove();
+				ArticleDTO articleDTO = iterator.next();
+				if (articleDTO.getTitleId().equals(dlxyTitleDTO.getTitleId()))
+				{
+					dlxyTitleDTO.addArticle(articleDTO);
+					iterator.remove();
+				}
 			}
 		}
+		
 		// if (childs != null)
 		// {
 		// //如果不想是按照类目来显示文章,注释这段,remove即可
@@ -467,7 +469,7 @@ public class ArticleWrappedServiceObservableImpl extends DlxyObservervable imple
 			 * articleService.updateArticleStatusByParentId(titleId, status); 更新所有文章状态
 			 */
 			List<ArticleDTO> allArticles = articleService.findAllArticlesByTitleParentId(titleId);
-			if(allArticles!=null && allArticles.size()>0)
+			if (allArticles != null && allArticles.size() > 0)
 			{
 				List<Long> ids = new ArrayList<>();
 				allArticles.forEach(a -> {
