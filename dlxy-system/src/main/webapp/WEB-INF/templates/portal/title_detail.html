@@ -112,8 +112,9 @@
 <div class="zybj">
 	
 	
-	<#-- 如果不存在 freemarker 判断为空忘了-->
-	<#if pageVO.totalCount==1>
+	<#-- 如果不存在 freemarker 判断为空忘了
+	这个按照需求,没别要存在了
+	<#if (pageVO.totalCount?size)==1>
 		<div class="you_dh">
 	       <div class="erji_dh">
 	            <div class="daohang_biaot">所有文章</div>
@@ -143,7 +144,7 @@
 	 <#else>
 	
 	</#if>
-
+-->
 	   
     <div class="zuo_nr">
         <div class="dqwz">
@@ -157,7 +158,8 @@
         </div>
         <div class="zybt_a"><h3>${title.titleName}</h3></div>
         
-        <#if pageVO.totalCount==1>
+        <#if pageVO.totalCount==1> 
+         <#--  <#if (title.articles?size)==1>-->
         	  <#assign article=title.articles[0]>
       		  <div class="xw_xq">
 	            <h1>

@@ -6,6 +6,7 @@
 */
 package com.dlxy.interceptor;
 
+
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +39,7 @@ public class IPInterceptor implements HandlerInterceptor
 
 	
 
-	private ThreadLocal<VisitUserHistoryDTO> histroy = new ThreadLocal<>();
+//	private ThreadLocal<VisitUserHistoryDTO> histroy = new ThreadLocal<>();
 
 	@Autowired
 	private IRedisService redisService;
@@ -71,10 +73,16 @@ public class IPInterceptor implements HandlerInterceptor
 
 	}
 
-	private JudgeResult judgeFromHistory(String ip, String uri)
+	private JudgeResult judgeFromHistory(HttpServletRequest request,String ip, String uri)
 	{
+//		IPInterceptor interceptor=new IPInterceptor();
+		
+		
+		HttpSession session = request.getSession(true);
+		VisitUserHistoryDTO historyDTO =null;
+		historyDTO = (VisitUserHistoryDTO) session.getAttribute("history");
 		JudgeResult result = this.new JudgeResult();
-		VisitUserHistoryDTO historyDTO = histroy.get();
+		
 		if (historyDTO == null)
 		{
 			String json = redisService.get(String.format(IRedisService.USER_VISIT_HISTORY, ip));
@@ -83,11 +91,10 @@ public class IPInterceptor implements HandlerInterceptor
 				result.setFilter(true);
 				historyDTO = new VisitUserHistoryDTO();
 				historyDTO.setIp(ip);
-				histroy.set(historyDTO);
+				session.setAttribute("history", historyDTO);
 				return result;
 			}
 			historyDTO = JsonUtil.json2Object(json, VisitUserHistoryDTO.class);
-			histroy.set(historyDTO);
 		}
 		HistroyDetail detail = historyDTO.getDetails().get(uri);
 		Integer refreshCounts = detail.getRefreshCounts();
@@ -122,7 +129,7 @@ public class IPInterceptor implements HandlerInterceptor
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception
 	{
-		boolean needIpFilter=false;
+		boolean needIpFilter=true;
 		if (!needIpFilter)
 		{
 			return true;
@@ -132,7 +139,7 @@ public class IPInterceptor implements HandlerInterceptor
 		try
 		{
 			String ipJsonStr = redisService.get(IRedisService.BANED_IP);
-			if (!StringUtils.isEmpty(ipJsonStr))
+			if(org.apache.commons.lang3.StringUtils.isEmpty(ipJsonStr))
 			{
 				List<String> ips = JsonUtil.json2List(ipJsonStr, new TypeToken<String>()
 				{
@@ -143,7 +150,7 @@ public class IPInterceptor implements HandlerInterceptor
 					rediretct(response, error);
 				}
 			}
-			JudgeResult result = judgeFromHistory(ip, uri);
+			JudgeResult result = judgeFromHistory(request,ip, uri);
 			if (!result.isFilter())
 			{
 				rediretct(response, "刷新频率太快了,请过" + result.getRemainSeconds() / 1000 + "秒后再访问");
@@ -151,7 +158,7 @@ public class IPInterceptor implements HandlerInterceptor
 			}
 		} catch (Exception e)
 		{
-			logger.error("[IPfilter]redis服务器挂了");
+			logger.error("[IPfilter]error:{}",e.getMessage());
 			return true;
 		}
 		return true;
@@ -168,19 +175,20 @@ public class IPInterceptor implements HandlerInterceptor
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
 			throws Exception
 	{
-		boolean needIpFilter=false;
+		boolean needIpFilter=true;
 		if (!needIpFilter)
 		{
 			return;
 		}
+		VisitUserHistoryDTO  visitUserHistoryDTO=(VisitUserHistoryDTO) request.getSession(true).getAttribute("history");
 		try
 		{
-			VisitUserHistoryDTO visitUserHistoryDTO = histroy.get();
-			if (visitUserHistoryDTO == null)
-			{
-				visitUserHistoryDTO = new VisitUserHistoryDTO();
-				// detail = new HistroyDetail();
-			}
+//			VisitUserHistoryDTO visitUserHistoryDTO = histroy.get();
+//			if (visitUserHistoryDTO == null)
+//			{
+//				visitUserHistoryDTO = new VisitUserHistoryDTO();
+//				// detail = new HistroyDetail();
+//			}
 			// else
 			// {
 			// detail = visitUserHistoryDTO.getDetails().get(request.getRequestURI());
