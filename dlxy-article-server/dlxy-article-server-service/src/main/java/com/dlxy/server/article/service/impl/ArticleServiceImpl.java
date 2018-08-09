@@ -8,7 +8,9 @@
 package com.dlxy.server.article.service.impl;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -103,12 +105,16 @@ public class ArticleServiceImpl implements IArticleService, IUserArticleService
 		{
 			// params.put("deleteDate", new Date());
 			articleDTO.setDeleteDate(new Date());
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+			Calendar c = Calendar.getInstance();
+			c.add(Calendar.DAY_OF_MONTH,0);
+			articleDTO.setDeleteTime(Long.parseLong(sdf.format(c.getTime())));
 		}
 		// params.put("status", status);
 		// params.put("list", Arrays.asList(articleIds));
 		// articleDao.updateStatusInBatch(params);
 		articleDao.updateByExampleSelective(articleDTO, example);
-	}
+	}	
 
 	@Override
 	public void updateArticleTypeInbatch(List<Long> articleIds, int type)

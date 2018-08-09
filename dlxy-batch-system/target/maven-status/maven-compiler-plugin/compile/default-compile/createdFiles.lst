@@ -1,8 +1,5 @@
 META-INF/spring-configuration-metadata.json
-com/dlxy/system/batch/consumer/detail/UserIllegalLogListener.class
 com/dlxy/system/batch/config/BatchSystemConfiguration.class
-com/dlxy/system/batch/consumer/detail/ArticleVistitCountListener.class
-com/dlxy/system/batch/consumer/detail/UserRecordListener.class
 com/dlxy/system/batch/jobs/ArticleVisitCountJob.class
 com/dlxy/system/batch/consumer/FacadedAmqpListener.class
 com/dlxy/system/batch/jobs/JobRunner.class
@@ -10,4 +7,3 @@ com/dlxy/system/batch/config/DlxyProperty.class
 com/dlxy/system/batch/BatchSystem.class
 com/dlxy/system/batch/jobs/DelArticlePicJob.class
 com/dlxy/system/batch/constants/PictureConstant.class
-com/dlxy/system/batch/jobs/DelArticlePicJob$DelArticlePicJobModel.class

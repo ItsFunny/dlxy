@@ -11,8 +11,6 @@ public class DlxyArticle {
 
     private String articleAuthor;
 
-    private String articleContent;
-
     private Integer articleType;
 
     private Integer articleStatus;
@@ -21,9 +19,15 @@ public class DlxyArticle {
 
     private Date createDate;
 
+    private Long startTime;
+
+    private Long deleteTime;
+
     private Date updateDate;
 
     private Date deleteDate;
+
+    private String articleContent;
 
     public Long getArticleId() {
         return articleId;
@@ -55,14 +59,6 @@ public class DlxyArticle {
 
     public void setArticleAuthor(String articleAuthor) {
         this.articleAuthor = articleAuthor == null ? null : articleAuthor.trim();
-    }
-
-    public String getArticleContent() {
-        return articleContent;
-    }
-
-    public void setArticleContent(String articleContent) {
-        this.articleContent = articleContent == null ? null : articleContent.trim();
     }
 
     public Integer getArticleType() {
@@ -97,6 +93,22 @@ public class DlxyArticle {
         this.createDate = createDate;
     }
 
+    public Long getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Long startTime) {
+        this.startTime = startTime;
+    }
+
+    public Long getDeleteTime() {
+        return deleteTime;
+    }
+
+    public void setDeleteTime(Long deleteTime) {
+        this.deleteTime = deleteTime;
+    }
+
     public Date getUpdateDate() {
         return updateDate;
     }
@@ -111,5 +123,13 @@ public class DlxyArticle {
 
     public void setDeleteDate(Date deleteDate) {
         this.deleteDate = deleteDate;
+    }
+
+    public String getArticleContent() {
+        return articleContent;
+    }
+
+    public void setArticleContent(String articleContent) {
+        this.articleContent = articleContent == null ? null : articleContent.trim();
     }
 }

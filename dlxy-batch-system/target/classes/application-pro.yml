@@ -1,0 +1,23 @@
+
+
+
+dlxy: 
+  config: 
+    db-url: jdbc:mysql://120.78.240.211/JN?characterEncoding=utf-8&useSSL=false
+    db-username: root
+    db-password: 123456
+    amqp-host: 120.78.240.211
+    amqp-username: joker
+    amqp-password: 123456
+    amqp-port: 5672
+    amqp-enabled: false
+    redis-host: 120.78.240.211
+    redis-port: 6379
+    redis-password: 123456
+    worker-id: 0
+    datacenter-id: 1
+    property-public-key-path: 'classpath:keys/property-public.key'
+    batch-classes: com.dlxy.system.batch.jobs.DelArticlePicJob,com.dlxy.system.batch.jobs.ArticleVisitCountJob
+    
+server:
+  port: 8888

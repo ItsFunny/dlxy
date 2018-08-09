@@ -44,6 +44,7 @@ public class UserVisitListener implements HttpSessionListener,ServletContextList
 	public void sessionCreated(HttpSessionEvent se)
 	{
 		ServletRequestAttributes attributes=(ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+		if(null==attributes) return;
 		HttpServletRequest request = attributes.getRequest();
 		HttpSession session = se.getSession();
 		try

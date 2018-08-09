@@ -6,13 +6,17 @@
     <result column="title_id" jdbcType="INTEGER" property="titleId" />
     <result column="article_name" jdbcType="VARCHAR" property="articleName" />
     <result column="article_author" jdbcType="VARCHAR" property="articleAuthor" />
-    <result column="article_content" jdbcType="VARCHAR" property="articleContent" />
     <result column="article_type" jdbcType="INTEGER" property="articleType" />
     <result column="article_status" jdbcType="INTEGER" property="articleStatus" />
     <result column="visit_count" jdbcType="INTEGER" property="visitCount" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="start_time" jdbcType="BIGINT" property="startTime" />
+    <result column="delete_time" jdbcType="BIGINT" property="deleteTime" />
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
     <result column="delete_date" jdbcType="TIMESTAMP" property="deleteDate" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.dlxy.common.dto.ArticleDTO">
+    <result column="article_content" jdbcType="LONGVARCHAR" property="articleContent" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -73,9 +77,29 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    article_id, title_id, article_name, article_author, article_content, article_type, 
-    article_status, visit_count, create_date, update_date, delete_date
+    article_id, title_id, article_name, article_author, article_type, article_status, 
+    visit_count, create_date, start_time, delete_time, update_date, delete_date
   </sql>
+  <sql id="Blob_Column_List">
+    article_content
+  </sql>
+  <select id="selectByExampleWithBLOBs" parameterType="com.dlxy.server.article.model.DlxyArticleExample" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from dlxy_article
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
   <select id="selectByExample" parameterType="com.dlxy.server.article.model.DlxyArticleExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
@@ -91,9 +115,11 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
     select 
     <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
     from dlxy_article
     where article_id = #{articleId,jdbcType=BIGINT}
   </select>
@@ -109,13 +135,15 @@
   </delete>
   <insert id="insert" parameterType="com.dlxy.common.dto.ArticleDTO">
     insert into dlxy_article (article_id, title_id, article_name, 
-      article_author, article_content, article_type, 
-      article_status, visit_count, create_date, 
-      update_date, delete_date)
+      article_author, article_type, article_status, 
+      visit_count, create_date, start_time, 
+      delete_time, update_date, delete_date, 
+      article_content)
     values (#{articleId,jdbcType=BIGINT}, #{titleId,jdbcType=INTEGER}, #{articleName,jdbcType=VARCHAR}, 
-      #{articleAuthor,jdbcType=VARCHAR}, #{articleContent,jdbcType=VARCHAR}, #{articleType,jdbcType=INTEGER}, 
-      #{articleStatus,jdbcType=INTEGER}, #{visitCount,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, 
-      #{updateDate,jdbcType=TIMESTAMP}, #{deleteDate,jdbcType=TIMESTAMP})
+      #{articleAuthor,jdbcType=VARCHAR}, #{articleType,jdbcType=INTEGER}, #{articleStatus,jdbcType=INTEGER}, 
+      #{visitCount,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{startTime,jdbcType=BIGINT}, 
+      #{deleteTime,jdbcType=BIGINT}, #{updateDate,jdbcType=TIMESTAMP}, #{deleteDate,jdbcType=TIMESTAMP}, 
+      #{articleContent,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.dlxy.common.dto.ArticleDTO">
     insert into dlxy_article
@@ -132,9 +160,6 @@
       <if test="articleAuthor != null">
         article_author,
       </if>
-      <if test="articleContent != null">
-        article_content,
-      </if>
       <if test="articleType != null">
         article_type,
       </if>
@@ -147,11 +172,20 @@
       <if test="createDate != null">
         create_date,
       </if>
+      <if test="startTime != null">
+        start_time,
+      </if>
+      <if test="deleteTime != null">
+        delete_time,
+      </if>
       <if test="updateDate != null">
         update_date,
       </if>
       <if test="deleteDate != null">
         delete_date,
+      </if>
+      <if test="articleContent != null">
+        article_content,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -167,9 +201,6 @@
       <if test="articleAuthor != null">
         #{articleAuthor,jdbcType=VARCHAR},
       </if>
-      <if test="articleContent != null">
-        #{articleContent,jdbcType=VARCHAR},
-      </if>
       <if test="articleType != null">
         #{articleType,jdbcType=INTEGER},
       </if>
@@ -182,11 +213,20 @@
       <if test="createDate != null">
         #{createDate,jdbcType=TIMESTAMP},
       </if>
+      <if test="startTime != null">
+        #{startTime,jdbcType=BIGINT},
+      </if>
+      <if test="deleteTime != null">
+        #{deleteTime,jdbcType=BIGINT},
+      </if>
       <if test="updateDate != null">
         #{updateDate,jdbcType=TIMESTAMP},
       </if>
       <if test="deleteDate != null">
         #{deleteDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="articleContent != null">
+        #{articleContent,jdbcType=LONGVARCHAR},
       </if>
     </trim>
   </insert>
@@ -211,9 +251,6 @@
       <if test="record.articleAuthor != null">
         article_author = #{record.articleAuthor,jdbcType=VARCHAR},
       </if>
-      <if test="record.articleContent != null">
-        article_content = #{record.articleContent,jdbcType=VARCHAR},
-      </if>
       <if test="record.articleType != null">
         article_type = #{record.articleType,jdbcType=INTEGER},
       </if>
@@ -226,13 +263,41 @@
       <if test="record.createDate != null">
         create_date = #{record.createDate,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.startTime != null">
+        start_time = #{record.startTime,jdbcType=BIGINT},
+      </if>
+      <if test="record.deleteTime != null">
+        delete_time = #{record.deleteTime,jdbcType=BIGINT},
+      </if>
       <if test="record.updateDate != null">
         update_date = #{record.updateDate,jdbcType=TIMESTAMP},
       </if>
       <if test="record.deleteDate != null">
         delete_date = #{record.deleteDate,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.articleContent != null">
+        article_content = #{record.articleContent,jdbcType=LONGVARCHAR},
+      </if>
     </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map">
+    update dlxy_article
+    set article_id = #{record.articleId,jdbcType=BIGINT},
+      title_id = #{record.titleId,jdbcType=INTEGER},
+      article_name = #{record.articleName,jdbcType=VARCHAR},
+      article_author = #{record.articleAuthor,jdbcType=VARCHAR},
+      article_type = #{record.articleType,jdbcType=INTEGER},
+      article_status = #{record.articleStatus,jdbcType=INTEGER},
+      visit_count = #{record.visitCount,jdbcType=INTEGER},
+      create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      start_time = #{record.startTime,jdbcType=BIGINT},
+      delete_time = #{record.deleteTime,jdbcType=BIGINT},
+      update_date = #{record.updateDate,jdbcType=TIMESTAMP},
+      delete_date = #{record.deleteDate,jdbcType=TIMESTAMP},
+      article_content = #{record.articleContent,jdbcType=LONGVARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -243,11 +308,12 @@
       title_id = #{record.titleId,jdbcType=INTEGER},
       article_name = #{record.articleName,jdbcType=VARCHAR},
       article_author = #{record.articleAuthor,jdbcType=VARCHAR},
-      article_content = #{record.articleContent,jdbcType=VARCHAR},
       article_type = #{record.articleType,jdbcType=INTEGER},
       article_status = #{record.articleStatus,jdbcType=INTEGER},
       visit_count = #{record.visitCount,jdbcType=INTEGER},
       create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      start_time = #{record.startTime,jdbcType=BIGINT},
+      delete_time = #{record.deleteTime,jdbcType=BIGINT},
       update_date = #{record.updateDate,jdbcType=TIMESTAMP},
       delete_date = #{record.deleteDate,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
@@ -266,9 +332,6 @@
       <if test="articleAuthor != null">
         article_author = #{articleAuthor,jdbcType=VARCHAR},
       </if>
-      <if test="articleContent != null">
-        article_content = #{articleContent,jdbcType=VARCHAR},
-      </if>
       <if test="articleType != null">
         article_type = #{articleType,jdbcType=INTEGER},
       </if>
@@ -281,13 +344,38 @@
       <if test="createDate != null">
         create_date = #{createDate,jdbcType=TIMESTAMP},
       </if>
+      <if test="startTime != null">
+        start_time = #{startTime,jdbcType=BIGINT},
+      </if>
+      <if test="deleteTime != null">
+        delete_time = #{deleteTime,jdbcType=BIGINT},
+      </if>
       <if test="updateDate != null">
         update_date = #{updateDate,jdbcType=TIMESTAMP},
       </if>
       <if test="deleteDate != null">
         delete_date = #{deleteDate,jdbcType=TIMESTAMP},
       </if>
+      <if test="articleContent != null">
+        article_content = #{articleContent,jdbcType=LONGVARCHAR},
+      </if>
     </set>
+    where article_id = #{articleId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.dlxy.common.dto.ArticleDTO">
+    update dlxy_article
+    set title_id = #{titleId,jdbcType=INTEGER},
+      article_name = #{articleName,jdbcType=VARCHAR},
+      article_author = #{articleAuthor,jdbcType=VARCHAR},
+      article_type = #{articleType,jdbcType=INTEGER},
+      article_status = #{articleStatus,jdbcType=INTEGER},
+      visit_count = #{visitCount,jdbcType=INTEGER},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      start_time = #{startTime,jdbcType=BIGINT},
+      delete_time = #{deleteTime,jdbcType=BIGINT},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      delete_date = #{deleteDate,jdbcType=TIMESTAMP},
+      article_content = #{articleContent,jdbcType=LONGVARCHAR}
     where article_id = #{articleId,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.dlxy.common.dto.ArticleDTO">
@@ -295,11 +383,12 @@
     set title_id = #{titleId,jdbcType=INTEGER},
       article_name = #{articleName,jdbcType=VARCHAR},
       article_author = #{articleAuthor,jdbcType=VARCHAR},
-      article_content = #{articleContent,jdbcType=VARCHAR},
       article_type = #{articleType,jdbcType=INTEGER},
       article_status = #{articleStatus,jdbcType=INTEGER},
       visit_count = #{visitCount,jdbcType=INTEGER},
       create_date = #{createDate,jdbcType=TIMESTAMP},
+      start_time = #{startTime,jdbcType=BIGINT},
+      delete_time = #{deleteTime,jdbcType=BIGINT},
       update_date = #{updateDate,jdbcType=TIMESTAMP},
       delete_date = #{deleteDate,jdbcType=TIMESTAMP}
     where article_id = #{articleId,jdbcType=BIGINT}

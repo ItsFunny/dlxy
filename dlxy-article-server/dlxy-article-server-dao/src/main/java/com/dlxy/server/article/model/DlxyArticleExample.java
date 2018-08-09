@@ -365,76 +365,6 @@ public class DlxyArticleExample {
             return (Criteria) this;
         }
 
-        public Criteria andArticleContentIsNull() {
-            addCriterion("article_content is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andArticleContentIsNotNull() {
-            addCriterion("article_content is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andArticleContentEqualTo(String value) {
-            addCriterion("article_content =", value, "articleContent");
-            return (Criteria) this;
-        }
-
-        public Criteria andArticleContentNotEqualTo(String value) {
-            addCriterion("article_content <>", value, "articleContent");
-            return (Criteria) this;
-        }
-
-        public Criteria andArticleContentGreaterThan(String value) {
-            addCriterion("article_content >", value, "articleContent");
-            return (Criteria) this;
-        }
-
-        public Criteria andArticleContentGreaterThanOrEqualTo(String value) {
-            addCriterion("article_content >=", value, "articleContent");
-            return (Criteria) this;
-        }
-
-        public Criteria andArticleContentLessThan(String value) {
-            addCriterion("article_content <", value, "articleContent");
-            return (Criteria) this;
-        }
-
-        public Criteria andArticleContentLessThanOrEqualTo(String value) {
-            addCriterion("article_content <=", value, "articleContent");
-            return (Criteria) this;
-        }
-
-        public Criteria andArticleContentLike(String value) {
-            addCriterion("article_content like", value, "articleContent");
-            return (Criteria) this;
-        }
-
-        public Criteria andArticleContentNotLike(String value) {
-            addCriterion("article_content not like", value, "articleContent");
-            return (Criteria) this;
-        }
-
-        public Criteria andArticleContentIn(List<String> values) {
-            addCriterion("article_content in", values, "articleContent");
-            return (Criteria) this;
-        }
-
-        public Criteria andArticleContentNotIn(List<String> values) {
-            addCriterion("article_content not in", values, "articleContent");
-            return (Criteria) this;
-        }
-
-        public Criteria andArticleContentBetween(String value1, String value2) {
-            addCriterion("article_content between", value1, value2, "articleContent");
-            return (Criteria) this;
-        }
-
-        public Criteria andArticleContentNotBetween(String value1, String value2) {
-            addCriterion("article_content not between", value1, value2, "articleContent");
-            return (Criteria) this;
-        }
-
         public Criteria andArticleTypeIsNull() {
             addCriterion("article_type is null");
             return (Criteria) this;
@@ -672,6 +602,126 @@ public class DlxyArticleExample {
 
         public Criteria andCreateDateNotBetween(Date value1, Date value2) {
             addCriterion("create_date not between", value1, value2, "createDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andStartTimeIsNull() {
+            addCriterion("start_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStartTimeIsNotNull() {
+            addCriterion("start_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStartTimeEqualTo(Long value) {
+            addCriterion("start_time =", value, "startTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andStartTimeNotEqualTo(Long value) {
+            addCriterion("start_time <>", value, "startTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andStartTimeGreaterThan(Long value) {
+            addCriterion("start_time >", value, "startTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andStartTimeGreaterThanOrEqualTo(Long value) {
+            addCriterion("start_time >=", value, "startTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andStartTimeLessThan(Long value) {
+            addCriterion("start_time <", value, "startTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andStartTimeLessThanOrEqualTo(Long value) {
+            addCriterion("start_time <=", value, "startTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andStartTimeIn(List<Long> values) {
+            addCriterion("start_time in", values, "startTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andStartTimeNotIn(List<Long> values) {
+            addCriterion("start_time not in", values, "startTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andStartTimeBetween(Long value1, Long value2) {
+            addCriterion("start_time between", value1, value2, "startTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andStartTimeNotBetween(Long value1, Long value2) {
+            addCriterion("start_time not between", value1, value2, "startTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteTimeIsNull() {
+            addCriterion("delete_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteTimeIsNotNull() {
+            addCriterion("delete_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteTimeEqualTo(Long value) {
+            addCriterion("delete_time =", value, "deleteTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteTimeNotEqualTo(Long value) {
+            addCriterion("delete_time <>", value, "deleteTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteTimeGreaterThan(Long value) {
+            addCriterion("delete_time >", value, "deleteTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteTimeGreaterThanOrEqualTo(Long value) {
+            addCriterion("delete_time >=", value, "deleteTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteTimeLessThan(Long value) {
+            addCriterion("delete_time <", value, "deleteTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteTimeLessThanOrEqualTo(Long value) {
+            addCriterion("delete_time <=", value, "deleteTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteTimeIn(List<Long> values) {
+            addCriterion("delete_time in", values, "deleteTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteTimeNotIn(List<Long> values) {
+            addCriterion("delete_time not in", values, "deleteTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteTimeBetween(Long value1, Long value2) {
+            addCriterion("delete_time between", value1, value2, "deleteTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeleteTimeNotBetween(Long value1, Long value2) {
+            addCriterion("delete_time not between", value1, value2, "deleteTime");
             return (Criteria) this;
         }
 

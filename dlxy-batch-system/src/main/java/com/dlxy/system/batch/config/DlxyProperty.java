@@ -33,6 +33,8 @@ public class DlxyProperty implements InitializingBean
 	private String driverClassName = "com.mysql.jdbc.Driver";
 	private String dbUrl;
 
+	
+	
 	/*
 	 * rabbitMQ
 	 */
@@ -53,6 +55,13 @@ public class DlxyProperty implements InitializingBean
 	
 	private String propertyPublicKeyPath;
 	private byte[] publicKeyBytes;
+	
+	
+	/*
+	 * batch
+	 */
+	private String[] batchClasses;
+	
 	
 	public void init() throws IOException
 	{
@@ -234,6 +243,14 @@ public class DlxyProperty implements InitializingBean
 				+ ", redisHost=" + redisHost + ", redisPort=" + redisPort + ", redisPassword=" + redisPassword
 				+ ", workerId=" + workerId + ", datacenterId=" + datacenterId + ", propertyPublicKeyPath="
 				+ propertyPublicKeyPath + ", publicKeyBytes=" + Arrays.toString(publicKeyBytes) + "]";
+	}
+	public String[] getBatchClasses()
+	{
+		return batchClasses;
+	}
+	public void setBatchClasses(String[] batchClasses)
+	{
+		this.batchClasses = batchClasses;
 	}
 	
 

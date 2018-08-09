@@ -19,7 +19,6 @@ import com.dlxy.common.dto.IllegalLogDTO;
 import com.dlxy.common.dto.UserDTO;
 import com.dlxy.common.enums.IllegalLevelEnum;
 import com.dlxy.exception.DlxySystemIllegalException;
-import com.dlxy.factory.WrappedServiceFactory;
 import com.dlxy.service.ITitleWrappedService;
 import com.dlxy.service.IUserWrappedService;
 import com.dlxy.utils.AdminUtil;

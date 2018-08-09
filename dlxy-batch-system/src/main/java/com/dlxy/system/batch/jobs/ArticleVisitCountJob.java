@@ -36,7 +36,7 @@ import com.dlxy.system.batch.service.IRedisService;
  * @author joker
  * @date 创建时间：2018年7月27日 下午3:07:25
  */
-//@Component
+@Component
 public class ArticleVisitCountJob implements JobRunner
 {
 	public static final LinkedBlockingQueue<String> ARTICLEIDS = new LinkedBlockingQueue<>();
@@ -53,8 +53,8 @@ public class ArticleVisitCountJob implements JobRunner
 	private IArticleService articleService;
 	private Logger logger = LoggerFactory.getLogger(ArticleVisitCountJob.class);
 
-	//每隔9天执行一次
-	@Scheduled(cron = "0/10 0 0 1-12 * ? ")
+	//每3天的23点执行一次
+	@Scheduled(cron = "0 0 23 1/3 1-12 ? ")
 	@Override
 	public void run()
 	{

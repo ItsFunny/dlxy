@@ -86,6 +86,13 @@
 			<artifactId>hibernate-validator</artifactId>
 			<version>5.4.1.Final</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+			<version>2.9.0</version>
+		</dependency>
+
 
 		<!-- https://mvnrepository.com/artifact/org.ehcache/ehcache -->
 		<!-- <dependency> <groupId>org.ehcache</groupId> <artifactId>ehcache</artifactId> 
@@ -104,11 +111,8 @@
 				<configuration>
 					<port>8000</port>
 					<path>/</path>
-					<!-- <url>http://120.78.240.211:80/manager/text</url>
-					<username>joker</username>
-					<password>
-						123456
-					</password> -->
+					<!-- <url>http://120.78.240.211:80/manager/text</url> <username>joker</username> 
+						<password> 123456 </password> -->
 				</configuration>
 			</plugin>
 			<plugin>

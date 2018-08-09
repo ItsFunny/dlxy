@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import com.dlxy.common.event.AmqpListener;
 import com.dlxy.common.event.AppEvent;
-import com.dlxy.common.event.Events;
 
 /**
 * 

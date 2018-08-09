@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,6 +57,7 @@ import com.dlxy.common.enums.PictureStatusEnum;
 import com.dlxy.common.event.AppEvent;
 import com.dlxy.common.event.AppEventPublisher;
 import com.dlxy.common.event.Events;
+import com.dlxy.common.utils.FileUtil;
 import com.dlxy.common.utils.RSAUtils;
 import com.dlxy.common.utils.ResultUtil;
 import com.dlxy.common.vo.PageVO;
@@ -75,6 +77,8 @@ import com.dlxy.service.ITitleWrappedService;
 import com.dlxy.service.IUserWrappedService;
 import com.dlxy.service.command.AddOrUpdateArtilceCommand;
 import com.dlxy.service.command.DeleteArticleCommand;
+import com.dlxy.strategy.FileStrategyContext;
+import com.dlxy.strategy.IFileStrategy;
 import com.dlxy.utils.AdminUtil;
 import com.joker.library.utils.CommonUtils;
 import redis.clients.jedis.exceptions.JedisException;
@@ -111,6 +115,9 @@ public class RestAPIController
 	private DlxyProperty dlxyProperty;
 	@Autowired
 	private DeleteArticleCommand deleteArticleCommand;
+
+	@Autowired
+	private FileStrategyContext fileService;
 
 	@RequestMapping(value = "/address/images", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResultDTO<String> getImagesAddress(HttpServletRequest request, HttpServletResponse response)
@@ -722,11 +729,144 @@ public class RestAPIController
 	//
 	// }
 
+	// @RequestMapping(value = "/admin/file/upload")
+	// public PictureUploadResponseDTO uploadFile(@RequestParam("imgFile")
+	// MultipartFile file, HttpServletRequest request,
+	// HttpServletResponse response)
+	// {
+	// // MultipartRequest req=(MultipartRequest) request;
+	// PictureUploadResponseDTO pictureUploadResponseDTO = new
+	// PictureUploadResponseDTO();
+	// String articleId = request.getParameter("articleId");
+	// articleId = articleId.replaceAll(",", "");
+	// if (StringUtils.isEmpty(articleId))
+	// {
+	// pictureUploadResponseDTO.setError(0);
+	// pictureUploadResponseDTO.setMessage("缺失参数,请刷新页面重试");
+	// return pictureUploadResponseDTO;
+	// }
+	//// String suffix =
+	// file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf('.'));
+	// String realPath = request.getServletContext().getRealPath("")+ File.separator
+	// + "imgs" + File.separator + articleId + File.separator;
+	// String newFileName=UUID.randomUUID().toString();
+	// String upload = fileService.upload(file, realPath, newFileName);
+	// File dirFile = new File(realPath );
+	// if (!dirFile.exists())
+	// {
+	// dirFile.mkdirs();
+	// }
+	//// String fileName = UUID.randomUUID().toString();
+	//
+	//// File newFiel = new File(dirFile.getAbsolutePath() + File.separator +
+	// fileName + suffix);
+	// String url=null;
+	// try
+	// {
+	//// file.transferTo(newFiel);
+	// url = FileUtil.saveFile(file, Long.parseLong(articleId), request);
+	// } catch (Exception e)
+	// {
+	// e.printStackTrace();
+	// pictureUploadResponseDTO.setError(1);
+	// pictureUploadResponseDTO.setMessage(e.getMessage());
+	// return pictureUploadResponseDTO;
+	// }
+	//
+	//// StringBuffer reqUrl = request.getRequestURL();
+	//// String requestURI = request.getRequestURI();
+	//// String string = reqUrl.substring(0, reqUrl.indexOf(requestURI));
+	// //
+	// System.out.println(string+File.separator+"imgs"+File.separator+articleId+File.separator+fileName);
+	//// String url = string + File.separator + "imgs" + File.separator + articleId
+	// + File.separator + fileName + suffix;
+	// PictureDTO pictureDTO = new PictureDTO();
+	// // pictureDTO.setPictureId(fileName);
+	// pictureDTO.setPictureUrl(url);
+	// pictureDTO.setArticleId(Long.parseLong(articleId));
+	// pictureDTO.setCreateDate(new Date());
+	// pictureDTO.setPictureStatus(PictureStatusEnum.Invalid.ordinal());
+	// try
+	// {
+	// // 这里上面需要进行设置,使之成为一个集合,至于保存采用多线程的方式
+	// // pictureService.addPicture(new PictureDTO[] {pictureDTO});
+	// // pictureService.addPictureWithArticleId(Long.parseLong(articleId), new
+	// // PictureDTO[] {pictureDTO});
+	// pictureManagementWrappedService.addPciture(AdminUtil.getLoginUser(),
+	// Long.parseLong(articleId),
+	// new PictureDTO[]
+	// { pictureDTO });
+	// System.out.println(pictureDTO.getPictureId());
+	// pictureUploadResponseDTO.setError(0);
+	// pictureUploadResponseDTO.setUrl(url + "?pictureId=" +
+	// pictureDTO.getPictureId());
+	// } catch (SQLException e)
+	// {
+	// e.printStackTrace();
+	// pictureUploadResponseDTO.setError(1);
+	// pictureUploadResponseDTO.setMessage(e.getMessage());
+	// }
+	// return pictureUploadResponseDTO;
+	// }
+	// @RequestMapping(value = "/admin/file/upload")
+	// public PictureUploadResponseDTO uploadFile(@RequestParam("imgFile")
+	// MultipartFile file, HttpServletRequest request,
+	// HttpServletResponse response)
+	// {
+	// PictureUploadResponseDTO pictureUploadResponseDTO = new
+	// PictureUploadResponseDTO();
+	// String articleId = request.getParameter("articleId");
+	// articleId = articleId.replaceAll(",", "");
+	// if (StringUtils.isEmpty(articleId))
+	// {
+	// pictureUploadResponseDTO.setError(0);
+	// pictureUploadResponseDTO.setMessage("缺失参数,请刷新页面重试");
+	// return pictureUploadResponseDTO;
+	// }
+	//// String suffix =
+	// file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf('.'));
+	// String storePath = request.getServletContext().getRealPath("")+
+	// File.separator + "imgs" + File.separator + articleId + File.separator;
+	// String newFileName=UUID.randomUUID().toString();
+	// String url=null;
+	// try
+	// {
+	// url= fileService.upload(file, storePath, newFileName);
+	// } catch (Exception e)
+	// {
+	// e.printStackTrace();
+	// pictureUploadResponseDTO.setError(1);
+	// pictureUploadResponseDTO.setMessage(e.getMessage());
+	// return pictureUploadResponseDTO;
+	// }
+	//
+	// PictureDTO pictureDTO = new PictureDTO();
+	// pictureDTO.setPictureUrl(url);
+	// pictureDTO.setArticleId(Long.parseLong(articleId));
+	// pictureDTO.setCreateDate(new Date());
+	// pictureDTO.setPictureStatus(PictureStatusEnum.Invalid.ordinal());
+	// try
+	// {
+	// pictureManagementWrappedService.addPciture(AdminUtil.getLoginUser(),
+	// Long.parseLong(articleId),
+	// new PictureDTO[]
+	// { pictureDTO });
+	// System.out.println(pictureDTO.getPictureId());
+	// pictureUploadResponseDTO.setError(0);
+	// pictureUploadResponseDTO.setUrl(url + "?pictureId=" +
+	// pictureDTO.getPictureId());
+	// } catch (SQLException e)
+	// {
+	// e.printStackTrace();
+	// pictureUploadResponseDTO.setError(1);
+	// pictureUploadResponseDTO.setMessage(e.getMessage());
+	// }
+	// return pictureUploadResponseDTO;
+	// }
 	@RequestMapping(value = "/admin/file/upload")
 	public PictureUploadResponseDTO uploadFile(@RequestParam("imgFile") MultipartFile file, HttpServletRequest request,
 			HttpServletResponse response)
 	{
-		// MultipartRequest req=(MultipartRequest) request;
 		PictureUploadResponseDTO pictureUploadResponseDTO = new PictureUploadResponseDTO();
 		String articleId = request.getParameter("articleId");
 		articleId = articleId.replaceAll(",", "");
@@ -736,20 +876,16 @@ public class RestAPIController
 			pictureUploadResponseDTO.setMessage("缺失参数,请刷新页面重试");
 			return pictureUploadResponseDTO;
 		}
-		String suffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf('.'));
-		String realPath = request.getServletContext().getRealPath("");
-		File dirFile = new File(realPath + File.separator + "imgs" + File.separator + articleId + File.separator);
-		if (!dirFile.exists())
-		{
-			dirFile.mkdirs();
-		}
-		String fileName = UUID.randomUUID().toString();
-
-		File newFiel = new File(dirFile.getAbsolutePath() + File.separator + fileName + suffix);
+		// String suffix =
+		// file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf('.'));
+		String storePath = fileService.getStoreBasePath(IFileStrategy.IMG_TYPE) + File.separator
+				+ fileService.getVisitPrefix(IFileStrategy.IMG_TYPE) + File.separator + articleId + File.separator;
+		String newFileName = UUID.randomUUID().toString();
+		String url = null;
 		try
 		{
-			file.transferTo(newFiel);
-		} catch (IllegalStateException | IOException e)
+			url = fileService.upload(file, storePath, newFileName, IFileStrategy.IMG_TYPE);
+		} catch (Exception e)
 		{
 			e.printStackTrace();
 			pictureUploadResponseDTO.setError(1);
@@ -757,23 +893,13 @@ public class RestAPIController
 			return pictureUploadResponseDTO;
 		}
 
-		StringBuffer reqUrl = request.getRequestURL();
-		String requestURI = request.getRequestURI();
-		String string = reqUrl.substring(0, reqUrl.indexOf(requestURI));
-		// System.out.println(string+File.separator+"imgs"+File.separator+articleId+File.separator+fileName);
-		String url = string + File.separator + "imgs" + File.separator + articleId + File.separator + fileName + suffix;
 		PictureDTO pictureDTO = new PictureDTO();
-		// pictureDTO.setPictureId(fileName);
 		pictureDTO.setPictureUrl(url);
 		pictureDTO.setArticleId(Long.parseLong(articleId));
 		pictureDTO.setCreateDate(new Date());
 		pictureDTO.setPictureStatus(PictureStatusEnum.Invalid.ordinal());
 		try
 		{
-			// 这里上面需要进行设置,使之成为一个集合,至于保存采用多线程的方式
-			// pictureService.addPicture(new PictureDTO[] {pictureDTO});
-			// pictureService.addPictureWithArticleId(Long.parseLong(articleId), new
-			// PictureDTO[] {pictureDTO});
 			pictureManagementWrappedService.addPciture(AdminUtil.getLoginUser(), Long.parseLong(articleId),
 					new PictureDTO[]
 					{ pictureDTO });

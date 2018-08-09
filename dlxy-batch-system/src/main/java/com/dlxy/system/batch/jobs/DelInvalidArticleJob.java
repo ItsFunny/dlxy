@@ -10,8 +10,10 @@ package com.dlxy.system.batch.jobs;
 import java.io.File;
 import java.net.URLEncoder;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,6 +40,7 @@ import com.dlxy.server.picture.service.IPictureService;
 import com.dlxy.system.batch.config.DlxyProperty;
 
 /**
+ * 删除放到回收站的文章 结合消息队列做是最好的,可以控制在一个稳定的时间内,但是问题不大
  * 
  * @When
  * @Description
@@ -45,7 +48,7 @@ import com.dlxy.system.batch.config.DlxyProperty;
  * @author joker
  * @date 创建时间：2018年7月31日 下午12:41:25
  */
-// @Component
+@Component
 public class DelInvalidArticleJob implements JobRunner
 {
 	@Autowired
@@ -94,8 +97,8 @@ public class DelInvalidArticleJob implements JobRunner
 	}
 
 	private Logger logger = LoggerFactory.getLogger(DelInvalidArticleJob.class);
-
-	@Scheduled(cron = "0/10 * * * * ?")
+	//没10天的23点执行一次
+	@Scheduled(cron = "0 0 23 1/10 1-12 ? ")
 	@Override
 	public void run()
 	{
@@ -107,7 +110,12 @@ public class DelInvalidArticleJob implements JobRunner
 		List<Long> deleteIds = new ArrayList<>();
 		Integer count = 0;
 		// 这条sql per上有问题,但是这个项目上应该dont care
-		String sql = "SELECT article_id,delete_date FROM dlxy_article WHERE article_status=2 ";
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.DAY_OF_MONTH, -10);
+		Long limitTime = Long.parseLong(simpleDateFormat.format(calendar.getTime()));
+		String sql = "SELECT article_id,delete_time FROM dlxy_article WHERE delete_time BETWEEN 19700102 AND 20180808 AND article_status=2  ";
+
 		try
 		{
 			List<Map<String, Object>> res = queryRunner.query(sql, new MapListHandler());
@@ -120,13 +128,14 @@ public class DelInvalidArticleJob implements JobRunner
 			}
 			if (ids.isEmpty())
 			{
-				logger.info("[DeleteInvalidArticle] find no match records  finish the job ");
+				logger.info("[DeleteInvalidArticle] find no match records ,finish the job ");
 				return;
 			}
 			String storeUrl = getStoreUrl();
 			if (StringUtils.isEmpty(storeUrl))
 			{
-				logger.error("[DeleteInvalidArticles] finished unexpceted");
+				logger.error(
+						"[DeleteInvalidArticles] finished unexpceted,error: the img store url is empty for rest error");
 				return;
 			}
 			for (Long articleId : ids)

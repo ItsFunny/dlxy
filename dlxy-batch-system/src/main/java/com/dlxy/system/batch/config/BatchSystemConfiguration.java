@@ -27,7 +27,12 @@ import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -47,6 +52,7 @@ import com.dlxy.system.batch.consumer.ArticleVistitCountListener;
 import com.dlxy.system.batch.consumer.FacadedAmqpListener;
 import com.dlxy.system.batch.consumer.UserIllegalLogListener;
 import com.dlxy.system.batch.consumer.UserRecordListener;
+import com.dlxy.system.batch.jobs.JobRunner;
 import com.dlxy.system.batch.service.IRedisService;
 import com.dlxy.system.batch.service.impl.RedisServiceImpl;
 
@@ -68,9 +74,12 @@ import redis.clients.jedis.JedisPoolConfig;
 { "com.dlxy" }, excludeFilters = @ComponentScan.Filter(type = FilterType.ANNOTATION, value = Mapper.class))
 @MapperScan(basePackages =
 { "com.dlxy" }, annotationClass = Mapper.class)
-public class BatchSystemConfiguration
+public class BatchSystemConfiguration implements BeanFactoryAware
 {
 	private Logger logger = LoggerFactory.getLogger(BatchSystemConfiguration.class);
+	
+	private BeanFactory beanFactory;
+	
 	@Autowired
 	private DlxyProperty dlxyProperty;
 
@@ -289,5 +298,20 @@ public class BatchSystemConfiguration
 			e.printStackTrace();
 		}
 		logger.info("{}", dlxyProperty);
+	}
+
+	@Override
+	public void setBeanFactory(BeanFactory beanFactory) throws BeansException
+	{
+		this.beanFactory=beanFactory;
+	}
+	
+	public JobRunner createBean(Class<? extends JobRunner> job )
+	{
+		return (JobRunner) ((AutowireCapableBeanFactory)beanFactory).createBean(job,AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE,false);
+	}
+	public DlxyProperty getProperties()
+	{
+		return this.dlxyProperty;
 	}
 }

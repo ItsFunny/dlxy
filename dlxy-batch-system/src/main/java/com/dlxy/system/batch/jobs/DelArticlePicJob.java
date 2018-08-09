@@ -8,21 +8,15 @@
 package com.dlxy.system.batch.jobs;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.MapListHandler;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.annotations.Select;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,11 +27,11 @@ import org.springframework.web.client.RestTemplate;
 import com.dlxy.common.dto.ResultDTO;
 import com.dlxy.common.enums.PictureStatusEnum;
 import com.dlxy.common.event.AppEventPublisher;
-import com.dlxy.common.utils.FileUtil;
 import com.dlxy.common.utils.RSAUtils;
 import com.dlxy.system.batch.config.DlxyProperty;
 
 /**
+ * 自动删除那些添加了,但是不保存的图片
  * 
  * @When
  * @Description
@@ -45,7 +39,7 @@ import com.dlxy.system.batch.config.DlxyProperty;
  * @author joker
  * @date 创建时间：2018年7月9日 上午8:35:01
  */
-// @Component
+@Component
 public class DelArticlePicJob implements JobRunner
 {
 	private Logger logger = LoggerFactory.getLogger(DelArticlePicJob.class);
@@ -71,12 +65,13 @@ public class DelArticlePicJob implements JobRunner
 			{
 				String token = RSAUtils.encryptByPublic("getImgsAddress", dlxyProperty.getPublicKeyBytes());
 				@SuppressWarnings("rawtypes")
-				ResultDTO resultDTO = restTemplate.getForObject(
-						"http://localhost:8000/api/v1/address/images.html?token=" + URLEncoder.encode(token, "utf-8"),
-						ResultDTO.class);
+				ResultDTO resultDTO = restTemplate
+						.getForObject("http://localhost:8000/api/v1/address/images.html?token="
+								+ URLEncoder.encode(token, "utf-8"), ResultDTO.class);
 				if (resultDTO.getCode() == 1)
 				{
 					picStoreUrl = (String) resultDTO.getData();
+					System.out.println(picStoreUrl);
 					return picStoreUrl;
 				} else
 				{
@@ -86,7 +81,8 @@ public class DelArticlePicJob implements JobRunner
 			} catch (Exception e)
 			{
 				logger.error("[获取图片存储地址错误]error:{}", e.getMessage());
-				return null;
+				picStoreUrl="/Users/joker/Java/oxygen_workspace/dlxy/dlxy-system/src/main/webapp";
+				return picStoreUrl;
 			}
 		} else
 		{
@@ -94,8 +90,9 @@ public class DelArticlePicJob implements JobRunner
 		}
 
 	}
-
-	 @Scheduled(cron = "0/10 * * * * ?")
+	
+	//每15天的24:00点执行一次
+	@Scheduled(cron = "0 0 0 1/15 1-12 ? ")
 	@Override
 	public void run()
 	{
@@ -141,7 +138,8 @@ public class DelArticlePicJob implements JobRunner
 					if (file.exists())
 					{
 						boolean delete = file.delete();
-						Long pictureId= Long.parseLong(map.get("pictureId").toString());;
+						Long pictureId = Long.parseLong(map.get("pictureId").toString());
+						;
 						if (delete)
 						{
 							count++;
@@ -150,7 +148,7 @@ public class DelArticlePicJob implements JobRunner
 							logger.info("[删除图片]sucess,pictureId:{}", pictureId);
 						} else
 						{
-							logger.error("[删除图片发生错误],错误未知,图片编号:{}",pictureId);
+							logger.error("[删除图片发生错误],错误未知,图片编号:{}", pictureId);
 						}
 					} else
 					{
@@ -177,8 +175,8 @@ public class DelArticlePicJob implements JobRunner
 			{
 				logger.error("[删除图片出现系统错误]可能是权限问题,error : {},cause:{}", e.getMessage(), e.getCause());
 			}
-			pictureIdList=null;
-			list=null;
+			pictureIdList = null;
+			list = null;
 		} catch (SQLException e)
 		{
 			logger.error("[查询下线图片时候发生sql错误] error:{} cause:{}", e.getMessage(), e.getCause());

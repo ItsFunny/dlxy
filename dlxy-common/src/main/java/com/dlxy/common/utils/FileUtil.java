@@ -51,8 +51,10 @@ public class FileUtil
 	public static String saveFile(MultipartFile file, Long articleId, HttpServletRequest request)
 	{
 		String suffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf('.'));
-		String realPath = request.getServletContext().getRealPath("");
-		File dirFile = new File(realPath + File.separator + "imgs" + File.separator + articleId + File.separator);
+//		String realPath = request.getServletContext().getRealPath("");
+		String realPath="/usr/local/imgs"+File.separator + articleId + File.separator;
+//		File dirFile = new File(realPath + File.separator + "imgs" + File.separator + articleId + File.separator);
+		File dirFile = new File(realPath);
 		if (!dirFile.exists())
 		{
 			dirFile.mkdirs();
@@ -63,12 +65,13 @@ public class FileUtil
 		try
 		{
 			file.transferTo(newFiel);
-			StringBuffer reqUrl = request.getRequestURL();
-			String requestURI = request.getRequestURI();
-			String string = reqUrl.substring(0, reqUrl.indexOf(requestURI));
+//			StringBuffer reqUrl = request.getRequestURL();
+//			String requestURI = request.getRequestURI();
+//			String string = reqUrl.substring(0, reqUrl.indexOf(requestURI));
 			// System.out.println(string+File.separator+"imgs"+File.separator+articleId+File.separator+fileName);
-			String url = string + File.separator + "imgs" + File.separator + articleId + File.separator + fileName
-					+ suffix;
+//			String url = string + File.separator + "imgs" + File.separator + articleId + File.separator + fileName
+//					+ suffix;
+			String url="file:"+realPath+fileName+suffix;
 			return url;
 		} catch (IllegalStateException | IOException e)
 		{

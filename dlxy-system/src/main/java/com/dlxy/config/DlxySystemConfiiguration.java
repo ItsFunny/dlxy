@@ -2,9 +2,14 @@ package com.dlxy.config;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbutils.QueryRunner;
@@ -24,6 +29,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -31,6 +37,8 @@ import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
@@ -51,10 +59,16 @@ import com.dlxy.service.command.ArticleReceiver;
 import com.dlxy.service.command.PictureReceiver;
 import com.dlxy.service.command.UserArticleReceiver;
 import com.dlxy.service.impl.RedisServiceImpl;
+import com.dlxy.strategy.DefaultFileService;
+import com.dlxy.strategy.FTPFileService;
+import com.dlxy.strategy.FileStrategyContext;
+import com.dlxy.strategy.IFileStrategy;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
+import redis.clients.jedis.HostAndPort;
+import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
@@ -75,6 +89,39 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer
 
 	private Logger logger = LoggerFactory.getLogger(DlxySystemConfiiguration.class);
 
+	
+	
+	@Bean
+	public FileStrategyContext fileContext()
+	{
+		Map<String, String>pathMap=new HashMap<String, String>();
+		Map<String, String>visitPrefixMap=new HashMap<>();
+		FileStrategyContext context=new FileStrategyContext();
+		
+//		DefaultFileService defaultFileService=new DefaultFileService();
+//		defaultFileService.setVisitPrefix("imgs");
+//		pathMap.put(IFileStrategy.IMG_TYPE, "/");
+//		visitPrefixMap.put(IFileStrategy.IMG_TYPE, "imgs");
+//		defaultFileService.setVisitPrefixMap(visitPrefixMap);
+//		defaultFileService.setBasePathMap(pathMap);
+//		context.setFileStrategy(defaultFileService);
+		
+		
+		pathMap.put(IFileStrategy.IMG_TYPE, "/home/joker/www");
+		visitPrefixMap.put(IFileStrategy.IMG_TYPE, "imgs");
+		String host="120.78.240.211";
+		Integer port=21;
+		String username="joker";
+		String password="lvcong124536789";
+		FTPFileService fileService=new FTPFileService(host, port, username, password);
+		fileService.setVisitPrefixMap(visitPrefixMap);
+		fileService.setBasePathMap(pathMap);
+		context.setFileStrategy(fileService);
+		return context;
+	}
+	
+	
+	
 	@Bean
 	public JedisPool jedisPool()
 	{
@@ -85,9 +132,12 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer
 		jedisPoolConfig.setTestOnBorrow(true);
 		JedisPool jedisPool = new JedisPool(jedisPoolConfig, dlxyProperty.getRedisHost(), dlxyProperty.getRedisPort(),
 				10000, dlxyProperty.getRedisPassword());
+
 		// JedisPool jedisPool = new JedisPool("localhost", 6379);
 		return jedisPool;
 	}
+
+	
 
 	@Bean
 	public IRedisService redisService()
@@ -249,7 +299,7 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer
 	@Override
 	public void configureMessageConverters(List<HttpMessageConverter<?>> converters)
 	{
-		//如果使用到了json这个消息转换器,则将内部的Long类型,BigInteger类型以String的格式进行转换,使用其他消息转换器的不做此处理
+		// 如果使用到了json这个消息转换器,则将内部的Long类型,BigInteger类型以String的格式进行转换,使用其他消息转换器的不做此处理
 		MappingJackson2HttpMessageConverter jackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter();
 		ObjectMapper objectMapper = new ObjectMapper();
 		SimpleModule simpleModule = new SimpleModule();
@@ -267,6 +317,13 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer
 	{
 		dlxyProperty.init();
 		logger.info("{}", dlxyProperty);
+		
+	}
+	public static void main(String[] args)
+	{
+		DlxySystemConfiiguration dlxySystemConfiiguration=new DlxySystemConfiiguration();
+		URL resource = dlxySystemConfiiguration.getClass().getClassLoader().getResource("WEB-INF");
+		System.out.println(resource.getPath());
 	}
 
 	@Bean
@@ -288,6 +345,5 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer
 	{
 		this.dlxyProperty = dlxyProperty;
 	}
-	
 
 }

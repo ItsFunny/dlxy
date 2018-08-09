@@ -26,7 +26,6 @@ import com.dlxy.system.batch.jobs.ArticleVisitCountJob;
 */
 public class ArticleVistitCountListener implements AmqpListener
 {
-
 	private Logger logger=LoggerFactory.getLogger(ArticleVistitCountListener.class);
 	
 	@Override
@@ -50,10 +49,8 @@ public class ArticleVistitCountListener implements AmqpListener
 			logger.info("[ArticleVisitCountlistener]finish consume the message ");
 		} catch (InterruptedException e)
 		{
-			e.printStackTrace();
-			logger.error("[ArticleVisitCountlistener] occur error {}",e.getMessage());
+			logger.error("[ArticleVisitCountlistener] occur error {}",e.getMessage(),e);
 		}
 		
 	}
-
 }

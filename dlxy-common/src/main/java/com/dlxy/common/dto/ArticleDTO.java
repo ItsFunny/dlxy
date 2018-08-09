@@ -55,6 +55,10 @@ public class ArticleDTO extends AbstractDlxyArticleComposite
 	private Integer visitCount;
 	//2018-08-06 14:04 add
 	private Long startTime;
+	private Long deleteTime;
+	
+	
+	
 	
 	
 	
@@ -287,6 +291,16 @@ public class ArticleDTO extends AbstractDlxyArticleComposite
 	public void setStartTime(Long startTime)
 	{
 		this.startTime = startTime;
+	}
+
+	public Long getDeleteTime()
+	{
+		return deleteTime;
+	}
+
+	public void setDeleteTime(Long deleteTime)
+	{
+		this.deleteTime = deleteTime;
 	}
 
 }
