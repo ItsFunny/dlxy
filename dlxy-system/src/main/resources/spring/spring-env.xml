@@ -21,8 +21,10 @@
 			location="classpath:application-pro.properties"
 			ignore-unresolvable="false" ignore-resource-not-found="true" />
 	</beans>
-
-
-
-
+	
+	<beans profile="test">
+		<context:property-placeholder
+			location="classpath:application-test.properties"
+			ignore-unresolvable="false" ignore-resource-not-found="true" />
+	</beans>
 </beans>

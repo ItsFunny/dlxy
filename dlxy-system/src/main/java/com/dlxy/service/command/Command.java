@@ -1,7 +1,6 @@
 package com.dlxy.service.command;
 
 import java.util.Map;
-import java.util.Observable;
 
 import com.dlxy.config.DlxyObservervable;
 

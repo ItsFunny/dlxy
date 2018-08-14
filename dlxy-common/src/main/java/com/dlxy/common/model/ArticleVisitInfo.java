@@ -7,12 +7,8 @@
 */
 package com.dlxy.common.model;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -26,6 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ArticleVisitInfo 
 {
 	private Long articleId;
+	private String articleName;
 	private AtomicInteger visitCount;
 	private Map<String, Long> visitors;
 
@@ -70,6 +67,14 @@ public class ArticleVisitInfo
 	public void setVisitCount(AtomicInteger visitCount)
 	{
 		this.visitCount = visitCount;
+	}
+	public String getArticleName()
+	{
+		return articleName;
+	}
+	public void setArticleName(String articleName)
+	{
+		this.articleName = articleName;
 	}
 
 	

@@ -1,0 +1,321 @@
+<#include "wrapper_up.html">
+<#setting datetime_format="yyyy-MM-dd HH:mm:ss"/>
+<script type="text/javascript">
+</script>
+<section class="layui-larry-box">
+	<div class="larry-personal">
+	    <div class="layui-tab">
+            <blockquote class="layui-elem-quote news_search">
+		
+		<form action="/admin/user/search.html" method="get">
+		<div class="layui-inline">
+		    <div class="layui-input-inline">
+		    	<input value="" id="searchText" placeholder="请输入关键字" class="layui-input search_input" type="text" name="q">
+		    </div>
+		    <input type="submit"  class="layui-btn search_btn"  value="查询">
+		    
+		</div>
+		</form>
+	</blockquote>
+		         <!-- 操作日志 -->
+                <div class="layui-form news_list">
+                    <table class="layui-table">
+					    <colgroup>
+						<col width="50">
+						<col>
+						<col width="9%">
+						<col width="9%">
+						<col width="9%">
+						<col width="9%">
+						<col width="9%">
+						<col width="15%">
+					</colgroup>
+					<thead>
+						<tr>
+							<th>
+								<input name="" lay-skin="primary" lay-filter="allChoose" id="allChoose" type="checkbox">
+								<div class="layui-unselect layui-form-checkbox" lay-skin="primary"><i class="layui-icon"></i></div>
+							</th>
+							<th>用户编号</th>
+							<th>用户真实姓名</th>
+							<th>用户角色</th>
+							<th>状态</th>
+							<th>创建时间</th>
+							<th>最近登录时间</th>
+							<th>最近登录ip地址</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody class="news_content" id="contentBody">
+					<#if pageVO.data??>
+						<#list pageVO.data as item>
+							<tr>
+							<td>
+								<input name="checked" lay-skin="primary" lay-filter="choose" type="checkbox" value="${item.userId}">
+							
+								<div class="layui-unselect layui-form-checkbox" lay-skin="primary">
+								<i class="layui-icon"></i>
+								</div>
+							</td>
+							<td>${item.userId}</td>
+							<td>
+								<a href="/admin/articles.html?userId=${item.userId}" style="text-decoration:underline;" >${item.realname}</a>
+							</td>
+							<td>
+								<#if item.roleId==1>
+									普通管理员
+								<#else>
+									超级管理员
+								</#if>
+							
+							</td>
+							<td>
+							<#if item.able>
+								允许登录
+							<#else>
+								禁止登录
+							</#if>
+							</td>
+							<td>
+								${item.createDate?string('yyyy-MM-dd HH:mm:ss')}
+							</td>
+							<td>
+								<#if item.lastLoginDate??>
+									${item.lastLoginDate?string('yyyy-MM-dd HH:mm:ss')}
+								</#if>
+							</td>
+							<td>
+								<#if item.lastLoginIp??>
+									${item.lastLoginIp}
+								</#if>
+							</td>
+							<td>
+								<a class="layui-btn layui-btn-mini " data-toggle="modal" data-target="#changeSource" onclick="loadUser(this);" userId="${item.userId}"><i class="iconfont icon-edit"></i> 修改资料</a>
+								</br>
+								<#if item.able>
+								<a class="layui-btn layui-btn-mini "  userId="${item.userId?c}" onclick="updateUserStatus(this,0)"><i class="iconfont icon-edit"></i> 禁止登录</a>
+								<#else>
+								<a class="layui-btn layui-btn-mini "  userId="${item.userId?c}" onclick="updateUserStatus(this,1)"><i class="iconfont icon-edit"></i> 允许登录</a>
+								</#if>
+								
+								<input class="layui-btn layui-btn-danger layui-btn-mini" onclick="singleDel(this)" value="删除" userId="${item.userId?c}">
+							</td>
+						</tr>
+						</#list>
+					</#if>
+					</tbody>
+					</table>
+                     <div class="larry-table-page clearfix">
+                          <input type="button" id="batchDelButton" onclick="delUser()" class="layui-btn layui-btn-small" value="删除">
+                           <#if pageVO??>
+						      <form name="pageForm" action="/admin/users.html" method="get">
+							      	<input type="hidden" name="pageNum" value="${pageVO.pageNum}">
+							      	<input type="hidden" name="q" value="${q!""}">
+							      	<div id="page2" class="page">
+										<div class="layui-box layui-laypage layui-laypage-default" id="layui-laypage-0">
+											<span class="layui-laypage-curr">
+								      			<em class="layui-laypage-em"></em>
+								      			<em id="pageEm">当前第 ${pageVO.pageNum}页 总共有${pageVO.maxPage} </em>
+							      			</span>
+											<#if pageVO.pageNum==1><a href="javascript:void(0)">首页</a>	<#else><a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=1;document.pageForm.submit();">首页</a>   </#if>
+											<#if pageVO.pageNum<=1> <a href="javascript:void(0)">上一页</a><#else><a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=(${pageVO.pageNum}-1);document.pageForm.submit();"> 上一页</a>  </#if>
+											<#if (pageVO.pageNum>=pageVO.maxPage)> <a href="javascript:void(0)">下一页</a>  <#else><a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=${pageVO.pageNum}+1;document.pageForm.submit();">下一页</a> </#if>		
+											<#if (pageVO.pageNum>=pageVO.maxPage)> <a href="javascript:void(0)">最后一页</a> <#else> <a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=${pageVO.maxPage};document.pageForm.submit();">最后一页</a> </#if>>
+										</div>				          
+							      </div>
+						      </form>
+						 </#if>
+			         </div>
+			    </div>
+			    </div>
+		    </div>
+		</div>
+	<form method="post" action="/admin/user/doUpdate.html" id="editUserForm">
+		<div class="modal fade" id="changeSource" role="dialog" aria-labelledby="gridSystemModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="gridSystemModalLabel">修改用户信息</h4>
+				</div>
+				<div class="modal-body">
+					<div class="container-fluid">
+							<div class="form-group ">
+								<label class="col-xs-3 control-label">用户姓名:</label>
+								<div class="col-xs-8 ">
+									<input type="text" class="form-control input-sm duiqi" id="edit_realname" placeholder="" name="realname">
+								</div>
+								<label class="col-xs-3 control-label">用户性别:</label>
+								<div class="col-xs-3 ">
+									<select name="able"  style="width:100px;height: 30px">
+										<option value ="0">男</option>
+										<option value="1">女</option>
+									</select>
+								</div>
+								<label class="col-xs-2 control-label">用户密码:</label>
+								<div class="col-xs-3 ">
+									<input type="text" name="password" class="form-control input-sm duiqi" id="edit_password" placeholder="">
+								</div>
+								<#-- 	<div class="col-xs-3 ">
+									<select name="able"  style="width:100px;height: 30px">
+										<option value ="0">允许登录</option>
+										<option value="1">禁止登录</option>
+									</select>
+								</div> -->
+							
+								<label class="col-xs-2 control-label">用户角色:</label>
+								<div class="col-xs-3 " >
+									<select name="roleId"  style="width:100px;height: 30px" id="role_select">
+										<option value="0">超级管理员</option>
+										<option value="1">管理员</option>
+									</select>
+								</div>
+							</div>
+							<input type="hidden" name="userId" value="" id="edit_userId">
+							<input type="hidden" name="able" value="" id="edit_status">
+					</div>
+				</div>
+				
+				<div class="modal-footer" >
+					<input type="button" class="btn btn-xs btn-white" data-dismiss="modal" value="取 消">
+					<input type="button" id="editSaveButton" onclick="editSaveUpdate();" class="btn btn-xs btn-green"  value="保 存">
+				</div>
+			</div>
+		</div>
+	</div>
+	</form>
+
+</section>
+<#include "wrapper_down.html">
+<script type="text/javascript">
+	
+	function singleDel(obj){
+		var ids="";
+		ids=$(obj).attr("userId");
+		
+	}
+	function delUser(){
+			var ids="";
+			$("input:checkbox[name=checked]:checked").each(function(){
+				ids+=$(this).val()+",";
+			})
+			alert(ids);
+			jQuery.get('/api/v1/admin/user/delete.html',{ids:ids},function(data){
+				alert(data.msg);
+				location.reload();
+			},'json');
+	
+	}
+	function editSaveUpdate(){
+	
+		var data=$("#editUserForm").serialize();
+		jQuery.post('/api/v1/admin/user/update.html',data,function(data,textStatus,jqXHR){
+			alert(data.msg);
+			if(data.code==1){location.reload();}
+		},'json');
+	}
+	function updateUserStatus(obj,status){
+		var userId=$(obj).attr("userId");
+		
+		jQuery.get('/api/v1/admin/user/updateStatus.html',{"userId":userId,"status":status},function(data){
+					alert(data.msg);
+					location.reload();		
+		},'json');
+	}
+	function loadUser(obj){
+		var userId=$(obj).attr("userId");
+		jQuery.get('/api/v1/admin/user/find.html',{"q":userId},function(data,textStatus,jqXHR){
+			if(data.code==1){
+				$("#edit_realname").val(data.data.realname);
+				<#-- 		var roleId=data.data.roleId;
+				loadRoles(roleId); -->
+				$("#edit_userId").val(data.data.userId);
+				alert(data.data.able);
+				if(data.data.able){
+				alert("1");
+				$("#edit_status").val(1);
+					alert($("#edit_status").val());
+				}else{
+				alert("2");
+				$("#edit_status").val(0);
+				alert($("#edit_status").val());
+				}
+				
+			}else{
+				alert(data.msg);
+			}		
+		},'json');
+	}
+	function loadRoles(roleId){
+		jQuery.get('/api/v1/user/roles/all.html',function(data){
+			if(data.code==1){
+				var str="";
+				for(var i=0;i<data.data.length;i++){
+					var o=data.data[i];
+					if(roleId==o.roleId){
+						str+='<option value ="'+o.roelId+'" selected="selected">'+o.roleDescription+'</option>';
+						}else{
+							str+='<option value ="'+o.roelId+'" >'+o.roleDescription+'</option>';
+						}
+					}
+					$("#role_select").append(str);
+				}
+		},'json');
+	
+	}
+	$("#searchButton").click(function(){
+		var q=$("#searchText").val();
+		$.ajax({
+			type:'get',
+			url:'/api/search/article.html',
+			data:{"q":q,"pageNum":1},
+			success:function(data,str){
+				if(data.code==1){
+					var pageVO=data.data;
+					document.pageForm.q.value=q;
+					var contentBody=$("#contentBody");
+					contentBody.empty();
+					for(var i=0;i<data.data.data.length;i++){
+						var p=data.data.data[i];
+						contentBody.append('<tr><td><input name="checked" lay-skin="primary" lay-filter="choose" type="checkbox" value=""><div class="layui-unselect layui-form-checkbox" lay-skin="primary"><i class="layui-icon"></i></div></td><td>'+p.articleId+'</td><td align="left">'+p.articleName+'</td><td>'+p.articleAuthor+'</td>	<td>'+p.username+'</td><td><input name="show" lay-skin="switch" lay-text="是|否" lay-filter="isShow" type="checkbox"><div class="layui-unselect layui-form-switch"><i></i></div></td><td>'+p.createDateStr+'</td><td>'+p.updateDateStr+'</td><td><a class="layui-btn layui-btn-mini news_edit"><i class="iconfont icon-edit"></i> 编辑</a><a class="layui-btn layui-btn-danger layui-btn-mini" id="delHref" href="/article/del/'+p.articleId+'.html" articleId='+p.articleId+'><i class="layui-icon"></i> 删除</a></td></tr>');
+					}
+					var o=$("#layui-laypage-0");
+					if(data.data.data.length==0){
+						o.empty();
+						o.append('<span class="layui-laypage-curr"><em class="layui-laypage-em"></em><em id="pageEm">暂无数据</em></span>')
+					}else{
+						o.empty();
+						var s='<span class="layui-laypage-curr"><em class="layui-laypage-em"></em><em id="pageEm">当前第'+pageVO.pageNum+'页 总共有'+pageVO.maxPage+'页</em></span>';
+						o.append(s);
+						s="";
+						if(pageVO.pageNum==1)
+						{
+							s+='<a href="javascript:void(0)">首页</a>';						
+						}else{
+							s+='<a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=1;document.pageForm.submit();">首页</a>';
+						}
+						if(pageVO.pageNum<=1){
+							s+=' <a href="javascript:void(0)">上一页</a>';
+						}else{
+							s+='<a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=('+pageVO.pageNum-1+');document.pageForm.submit();"> 上一页</a>';
+						}
+						if(pageVO.pageNum>=pageVO.maxPage){
+							s+='<a href="javascript:void(0)">下一页</a>';
+							s+='<a href="javascript:void(0)">最后一页</a>';
+						}else{
+							s+='<a href="javascript:void(0)" onclick="document.pageForm.pageNum.value='+(pageVO.pageNum+1)+';document.pageForm.submit();">下一页</a> ';
+							s+='<a href="javascript:void(0)" onclick="document.pageForm.pageNum.value='+pageVO.maxPage+';document.pageForm.submit();">最后一页</a>';
+						}
+						o.append(s);
+					}
+				}
+			},
+			error:function(data){
+				alert('fail');
+			}
+		});
+	});
+</script>
+<#include "footer.html">

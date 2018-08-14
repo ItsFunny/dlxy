@@ -171,6 +171,7 @@ public interface ArticleMybatisDao extends DlxyArticleDao
 	@Select("(SELECT a.article_id,a.article_name,a.create_date FROM dlxy_article a WHERE a.article_id< #{articleId} AND a.article_status=1 ORDER BY a.article_id DESC LIMIT 1) UNION ALL (SELECT b.article_id,b.article_name,b.create_date FROM dlxy_article b WHERE b.article_id> #{articleId} AND b.article_status=1 ORDER BY b.create_date ASC LIMIT 1)")
 	Collection<ArticleDTO> findArticlePrevAndNext(Long articleId);
 
+	@Deprecated
 	@Select("select count(1) from dlxy_article  a left join dlxy_title b on a.title_id=b.title_id left join dlxy_user_article c on a.article_id=c.article_id ")
 	long countAllArticles();
 

@@ -1,10 +1,3 @@
-/**
-*
-* @Description
-* @author joker 
-* @date 创建时间：2018年7月15日 下午6:03:10
-* 
-*/
 package com.dlxy.filter;
 
 import java.io.IOException;

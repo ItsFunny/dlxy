@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -54,34 +52,36 @@ import com.dlxy.common.enums.ArticleTypeEnum;
 import com.dlxy.common.enums.DlxyTitleEnum;
 import com.dlxy.common.enums.IllegalLevelEnum;
 import com.dlxy.common.enums.PictureStatusEnum;
-import com.dlxy.common.event.AppEvent;
-import com.dlxy.common.event.AppEventPublisher;
-import com.dlxy.common.event.Events;
-import com.dlxy.common.utils.FileUtil;
 import com.dlxy.common.utils.RSAUtils;
 import com.dlxy.common.utils.ResultUtil;
 import com.dlxy.common.vo.PageVO;
 import com.dlxy.config.DlxyProperty;
 import com.dlxy.constant.TitleArticleConstant;
 import com.dlxy.exception.DlxySystemIllegalException;
+import com.dlxy.listener.ShiroSessionListener;
 import com.dlxy.model.FormArticle;
 import com.dlxy.model.FormTitle;
 import com.dlxy.server.article.service.IArticleService;
 import com.dlxy.server.article.service.ITitleService;
+import com.dlxy.server.user.model.DlxyLink;
 import com.dlxy.server.user.model.DlxyUser;
+import com.dlxy.server.user.model.DlxyVisitRecord;
+import com.dlxy.server.user.service.ILinkService;
 import com.dlxy.server.user.service.IUserRoleService;
 import com.dlxy.server.user.service.IUserService;
+import com.dlxy.server.user.service.IVisitRecordService;
 import com.dlxy.service.IArticleWrappedService;
 import com.dlxy.service.IPictureWrappedService;
+import com.dlxy.service.IRedisService;
 import com.dlxy.service.ITitleWrappedService;
 import com.dlxy.service.IUserWrappedService;
 import com.dlxy.service.command.AddOrUpdateArtilceCommand;
 import com.dlxy.service.command.DeleteArticleCommand;
-import com.dlxy.strategy.FileStrategyContext;
-import com.dlxy.strategy.IFileStrategy;
 import com.dlxy.utils.AdminUtil;
+import com.joker.library.file.FileStrategyContext;
+import com.joker.library.file.IFileStrategy;
 import com.joker.library.utils.CommonUtils;
-import redis.clients.jedis.exceptions.JedisException;
+import com.joker.library.utils.DateUtils;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -110,15 +110,19 @@ public class RestAPIController
 	@Autowired
 	private ITitleWrappedService titleManagementWrappedService;
 	@Autowired
-	private AppEventPublisher appeventPublisher;
-	@Autowired
 	private DlxyProperty dlxyProperty;
 	@Autowired
 	private DeleteArticleCommand deleteArticleCommand;
 
 	@Autowired
 	private FileStrategyContext fileService;
+	@Autowired
+	private ILinkService linkService;
+	@Autowired
+	private IRedisService redisService;
 
+	@Autowired
+	private IVisitRecordService visitRecordService;
 	@RequestMapping(value = "/address/images", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResultDTO<String> getImagesAddress(HttpServletRequest request, HttpServletResponse response)
 			throws UnsupportedEncodingException
@@ -156,7 +160,67 @@ public class RestAPIController
 		Integer res = 0;
 		Long articleId = Long.parseLong(articleIdStr);
 		res = articleManagementWrappedService.findArticleVisitCount(articleId, ip);
+//		最好还是采用原先的方式,因为需要对ip和时间进行判断,那种做法是最好的,就是只有1个缺点,factroy这个类内存占用会逐渐增大
+//		String json = redisService.get(String.format(IRedisService.ARTICLE_VISIT_COUNT, articleId));
+//		if(StringUtils.isEmpty(json))
+//		{
+//			ArticleDTO articleDTO = articleService.findByArticleId(articleId);
+//			ArticleVisitInfo articleVisitInfo=new ArticleVisitInfo();
+//			articleVisitInfo.setArticleId(articleId);
+//			articleVisitInfo.setArticleName(articleDTO.getArticleName());
+//			articleVisitInfo.getVisitors().put(ip, System.currentTimeMillis());
+//			articleVisitInfo.incr();
+//			.............
+//		}
 		return ResultUtil.sucess(res);
+	}
+	@RequestMapping(value="/visitCount",method=RequestMethod.GET,produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResultDTO<String>getTotalCountAndPerDayCount(HttpServletRequest request,HttpServletResponse response)
+	{
+		String totalVisitCount="";
+		String perDayVisitCount="";
+		Long currentDate=DateUtils.getCurrentDay();
+		try
+		{
+			totalVisitCount=redisService.get(IRedisService.WEB_VISIT_TOTAL_COUT);
+			perDayVisitCount=redisService.get(String.format(IRedisService.PER_DAY_VISIT_COUNT, currentDate));
+		} catch (Exception e)
+		{
+			logger.error("[Redis]服务器挂了");
+			totalVisitCount=visitRecordService.findByType(IVisitRecordService.TOTAL).iterator().next().getVisitCount().toString();
+			DlxyVisitRecord findByRecordDate = visitRecordService.findByRecordDate(currentDate);
+			if(null==findByRecordDate)
+			{
+				perDayVisitCount="0";
+				DlxyVisitRecord record=new DlxyVisitRecord();
+				record.setVisitCount(0);
+				record.setVisitRecordType(IVisitRecordService.PER_DAY);
+				visitRecordService.addOrUpdate(record);
+			}else {
+				perDayVisitCount=findByRecordDate.getVisitCount().toString();
+			}
+		}
+		return ResultUtil.sucess(totalVisitCount+","+perDayVisitCount+","+ShiroSessionListener.onlineCount.get(),"success");
+	}
+
+	@RequestMapping(value = "/link/delete", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResultDTO<String> deleteLinkByLinkId(HttpServletRequest request, HttpServletResponse response)
+	{
+		String linkIdStr = request.getParameter("linkId");
+		UserDTO user = AdminUtil.getLoginUser();
+		if (StringUtils.isEmpty(linkIdStr))
+		{
+			return ResultUtil.fail("缺失参数linkId");
+		}
+		DlxyLink link = linkService.findById(Integer.parseInt(linkIdStr));
+		if (null == link)
+		{
+			IllegalLogDTO illegalLogDTO = new IllegalLogDTO(CommonUtils.getIpAddr(request), user.getUserId(),
+					"试图删除不存在的超链接", IllegalLevelEnum.Suspicious.ordinal());
+			throw new DlxySystemIllegalException(illegalLogDTO);
+		}
+		userManagementWrappedService.deleteLinkByLinkId(user, link);
+		return ResultUtil.sucess();
 	}
 
 	@RequestMapping(value = "/admin/title/addOrUpdate", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -177,6 +241,9 @@ public class RestAPIController
 		} else if (formTitle.getTitleDisplaySeq() > 100 || formTitle.getTitleDisplaySeq() < 0)
 		{
 			error = "排序号范围为0-100";
+		} else if (CommonUtils.isContainsChinese(formTitle.getTitleAbbName()))
+		{
+			error = "缩写名称不能包含中文";
 		}
 		if (!StringUtils.isEmpty(error))
 		{
@@ -299,6 +366,13 @@ public class RestAPIController
 			e1.printStackTrace();
 			return ResultUtil.fail(e1.getMessage());
 		}
+	}
+
+	@RequestMapping(value = "/links", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResultDTO<Collection<DlxyLink>> findAlllinks(HttpServletRequest request, HttpServletResponse response)
+	{
+		List<DlxyLink> links = linkService.findAllLinks();
+		return ResultUtil.sucess(links);
 	}
 
 	@RequestMapping(value = "/article/latest", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -468,10 +542,6 @@ public class RestAPIController
 		try
 		{
 			titleId = Integer.parseInt(titleIdStr);
-			// 删除类目
-			// Integer count =
-			// articleManagementWrappedService.deleteByTitleId(AdminUtil.getLoginUser(),
-			// titleId);
 			boolean res = articleManagementWrappedService.deleteTitleAndUpdateArticleStatus(AdminUtil.getLoginUser(),
 					titleId, ArticleStatusEnum.DELETE.ordinal());
 			if (res)
@@ -525,8 +595,6 @@ public class RestAPIController
 	{
 		try
 		{
-			// ArticleDTO articleDTO =
-			// articleService.findArticleDetailByArticleId(articleId);
 			ArticleDTO articleDTO = articleService.findByArticleId(articleId);
 			return ResultUtil.sucess(articleDTO);
 		} catch (Exception e)
@@ -549,12 +617,10 @@ public class RestAPIController
 		}
 		String[] ids = articleIds.split(",");
 		List<Long> articleIdList = new ArrayList<>();
-		// Long[] idArr = new Long[ids.length];
 		try
 		{
 			for (int i = 0; i < ids.length; i++)
 			{
-				// idArr[i] = Long.parseLong(ids[i]);
 				articleIdList.add(Long.parseLong(ids[i]));
 			}
 		} catch (Exception e)
@@ -571,8 +637,6 @@ public class RestAPIController
 			Map<String, Object> p = new HashMap<>();
 			p.put("articleIdList", articleIdList);
 			deleteArticleCommand.execute(p);
-			// articleManagementWrappedService.deleteInBatch(AdminUtil.getLoginUser(),
-			// articleIdList);
 			return ResultUtil.sucess();
 		} catch (Exception e)
 		{
@@ -603,7 +667,6 @@ public class RestAPIController
 			try
 			{
 				List<Long> ids = new ArrayList<Long>();
-				// Long[] ids = new Long[articleIds.length];
 				for (int i = 0; i < articleIds.length; i++)
 				{
 					ids.add(Long.parseLong(articleIds[i]));
@@ -700,169 +763,7 @@ public class RestAPIController
 			return ResultUtil.fail(e.getMessage());
 		}
 	}
-	// @RequestMapping(value="/article/update/descpic",method=RequestMethod.POST,produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	// public ResultDTO<String>updateArticleDescPic( @RequestParam Map<String,
-	// Object>params,MultipartFile imgFile,HttpServletRequest
-	// request,HttpServletResponse response)
-	// {
-	// String articleIdStr=request.getParameter("articleId");
-	// if(StringUtils.isEmpty(articleIdStr) || imgFile==null || imgFile.isEmpty())
-	// {
-	// return ResultUtil.fail("缺失参数");
-	// }
-	// try
-	// {
-	// Long articleId=Long.parseLong(articleIdStr);
-	// String url = FileUtil.saveFile(imgFile, articleId, request);
-	// PictureDTO pictureDTO=new PictureDTO();
-	// pictureDTO.setArticleId(articleId);
-	// pictureDTO.setPictureUrl(url);
-	// pictureDTO.setPictureType(ArticlePictureTypeEnum.DESCRIPTION_PICTURE.ordinal());
-	// pictureManagementWrappedService.addPciture(AdminUtil.getLoginUser(),
-	// articleId, new PictureDTO[] {pictureDTO});
-	// return ResultUtil.sucess();
-	// } catch (Exception e)
-	// {
-	// logger.error("[update article desc pic] error : {}" ,e.getMessage());
-	// return ResultUtil.fail(e.getMessage());
-	// }
-	//
-	// }
 
-	// @RequestMapping(value = "/admin/file/upload")
-	// public PictureUploadResponseDTO uploadFile(@RequestParam("imgFile")
-	// MultipartFile file, HttpServletRequest request,
-	// HttpServletResponse response)
-	// {
-	// // MultipartRequest req=(MultipartRequest) request;
-	// PictureUploadResponseDTO pictureUploadResponseDTO = new
-	// PictureUploadResponseDTO();
-	// String articleId = request.getParameter("articleId");
-	// articleId = articleId.replaceAll(",", "");
-	// if (StringUtils.isEmpty(articleId))
-	// {
-	// pictureUploadResponseDTO.setError(0);
-	// pictureUploadResponseDTO.setMessage("缺失参数,请刷新页面重试");
-	// return pictureUploadResponseDTO;
-	// }
-	//// String suffix =
-	// file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf('.'));
-	// String realPath = request.getServletContext().getRealPath("")+ File.separator
-	// + "imgs" + File.separator + articleId + File.separator;
-	// String newFileName=UUID.randomUUID().toString();
-	// String upload = fileService.upload(file, realPath, newFileName);
-	// File dirFile = new File(realPath );
-	// if (!dirFile.exists())
-	// {
-	// dirFile.mkdirs();
-	// }
-	//// String fileName = UUID.randomUUID().toString();
-	//
-	//// File newFiel = new File(dirFile.getAbsolutePath() + File.separator +
-	// fileName + suffix);
-	// String url=null;
-	// try
-	// {
-	//// file.transferTo(newFiel);
-	// url = FileUtil.saveFile(file, Long.parseLong(articleId), request);
-	// } catch (Exception e)
-	// {
-	// e.printStackTrace();
-	// pictureUploadResponseDTO.setError(1);
-	// pictureUploadResponseDTO.setMessage(e.getMessage());
-	// return pictureUploadResponseDTO;
-	// }
-	//
-	//// StringBuffer reqUrl = request.getRequestURL();
-	//// String requestURI = request.getRequestURI();
-	//// String string = reqUrl.substring(0, reqUrl.indexOf(requestURI));
-	// //
-	// System.out.println(string+File.separator+"imgs"+File.separator+articleId+File.separator+fileName);
-	//// String url = string + File.separator + "imgs" + File.separator + articleId
-	// + File.separator + fileName + suffix;
-	// PictureDTO pictureDTO = new PictureDTO();
-	// // pictureDTO.setPictureId(fileName);
-	// pictureDTO.setPictureUrl(url);
-	// pictureDTO.setArticleId(Long.parseLong(articleId));
-	// pictureDTO.setCreateDate(new Date());
-	// pictureDTO.setPictureStatus(PictureStatusEnum.Invalid.ordinal());
-	// try
-	// {
-	// // 这里上面需要进行设置,使之成为一个集合,至于保存采用多线程的方式
-	// // pictureService.addPicture(new PictureDTO[] {pictureDTO});
-	// // pictureService.addPictureWithArticleId(Long.parseLong(articleId), new
-	// // PictureDTO[] {pictureDTO});
-	// pictureManagementWrappedService.addPciture(AdminUtil.getLoginUser(),
-	// Long.parseLong(articleId),
-	// new PictureDTO[]
-	// { pictureDTO });
-	// System.out.println(pictureDTO.getPictureId());
-	// pictureUploadResponseDTO.setError(0);
-	// pictureUploadResponseDTO.setUrl(url + "?pictureId=" +
-	// pictureDTO.getPictureId());
-	// } catch (SQLException e)
-	// {
-	// e.printStackTrace();
-	// pictureUploadResponseDTO.setError(1);
-	// pictureUploadResponseDTO.setMessage(e.getMessage());
-	// }
-	// return pictureUploadResponseDTO;
-	// }
-	// @RequestMapping(value = "/admin/file/upload")
-	// public PictureUploadResponseDTO uploadFile(@RequestParam("imgFile")
-	// MultipartFile file, HttpServletRequest request,
-	// HttpServletResponse response)
-	// {
-	// PictureUploadResponseDTO pictureUploadResponseDTO = new
-	// PictureUploadResponseDTO();
-	// String articleId = request.getParameter("articleId");
-	// articleId = articleId.replaceAll(",", "");
-	// if (StringUtils.isEmpty(articleId))
-	// {
-	// pictureUploadResponseDTO.setError(0);
-	// pictureUploadResponseDTO.setMessage("缺失参数,请刷新页面重试");
-	// return pictureUploadResponseDTO;
-	// }
-	//// String suffix =
-	// file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf('.'));
-	// String storePath = request.getServletContext().getRealPath("")+
-	// File.separator + "imgs" + File.separator + articleId + File.separator;
-	// String newFileName=UUID.randomUUID().toString();
-	// String url=null;
-	// try
-	// {
-	// url= fileService.upload(file, storePath, newFileName);
-	// } catch (Exception e)
-	// {
-	// e.printStackTrace();
-	// pictureUploadResponseDTO.setError(1);
-	// pictureUploadResponseDTO.setMessage(e.getMessage());
-	// return pictureUploadResponseDTO;
-	// }
-	//
-	// PictureDTO pictureDTO = new PictureDTO();
-	// pictureDTO.setPictureUrl(url);
-	// pictureDTO.setArticleId(Long.parseLong(articleId));
-	// pictureDTO.setCreateDate(new Date());
-	// pictureDTO.setPictureStatus(PictureStatusEnum.Invalid.ordinal());
-	// try
-	// {
-	// pictureManagementWrappedService.addPciture(AdminUtil.getLoginUser(),
-	// Long.parseLong(articleId),
-	// new PictureDTO[]
-	// { pictureDTO });
-	// System.out.println(pictureDTO.getPictureId());
-	// pictureUploadResponseDTO.setError(0);
-	// pictureUploadResponseDTO.setUrl(url + "?pictureId=" +
-	// pictureDTO.getPictureId());
-	// } catch (SQLException e)
-	// {
-	// e.printStackTrace();
-	// pictureUploadResponseDTO.setError(1);
-	// pictureUploadResponseDTO.setMessage(e.getMessage());
-	// }
-	// return pictureUploadResponseDTO;
-	// }
 	@RequestMapping(value = "/admin/file/upload")
 	public PictureUploadResponseDTO uploadFile(@RequestParam("imgFile") MultipartFile file, HttpServletRequest request,
 			HttpServletResponse response)
@@ -876,8 +777,6 @@ public class RestAPIController
 			pictureUploadResponseDTO.setMessage("缺失参数,请刷新页面重试");
 			return pictureUploadResponseDTO;
 		}
-		// String suffix =
-		// file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf('.'));
 		String storePath = fileService.getStoreBasePath(IFileStrategy.IMG_TYPE) + File.separator
 				+ fileService.getVisitPrefix(IFileStrategy.IMG_TYPE) + File.separator + articleId + File.separator;
 		String newFileName = UUID.randomUUID().toString();

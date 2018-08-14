@@ -2,11 +2,15 @@
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-batch-system/src/main/java/com/dlxy/system/batch/controller/MonitorController.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-batch-system/src/main/java/com/dlxy/system/batch/jobs/ArticleVisitCountJob.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-batch-system/src/main/java/com/dlxy/system/batch/consumer/UserIllegalLogListener.java
+/Users/joker/Java/oxygen_workspace/dlxy/dlxy-batch-system/src/main/java/com/dlxy/system/batch/service/DefaultFileStrategyHandler.java
+/Users/joker/Java/oxygen_workspace/dlxy/dlxy-batch-system/src/main/java/com/dlxy/system/batch/service/FTPFileStrategyHandler.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-batch-system/src/main/java/com/dlxy/system/batch/jobs/DelInvalidArticleJob.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-batch-system/src/main/java/com/dlxy/system/batch/consumer/UserRecordListener.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-batch-system/src/main/java/com/dlxy/system/batch/constants/PictureConstant.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-batch-system/src/main/java/com/dlxy/system/batch/service/impl/RedisServiceImpl.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-batch-system/src/main/java/com/dlxy/system/batch/service/IRedisService.java
+/Users/joker/Java/oxygen_workspace/dlxy/dlxy-batch-system/src/main/java/com/dlxy/system/batch/service/AbstractDeleteFileHandler.java
+/Users/joker/Java/oxygen_workspace/dlxy/dlxy-batch-system/src/main/java/com/dlxy/system/batch/service/IFileDeleteHandler.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-batch-system/src/main/java/com/dlxy/system/batch/service/impl/BatchPictureServiceImpl.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-batch-system/src/main/java/com/dlxy/system/batch/BatchSystem.java
 /Users/joker/Java/oxygen_workspace/dlxy/dlxy-batch-system/src/main/java/com/dlxy/system/batch/consumer/FacadedAmqpListener.java

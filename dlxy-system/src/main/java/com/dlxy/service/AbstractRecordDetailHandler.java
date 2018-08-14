@@ -13,6 +13,8 @@ public abstract class AbstractRecordDetailHandler
 	public static final String PICTURE = "picture";
 
 	public static final String USER = "user";
+	
+	public static final String LINK="link";
 
 	private final String level;
 

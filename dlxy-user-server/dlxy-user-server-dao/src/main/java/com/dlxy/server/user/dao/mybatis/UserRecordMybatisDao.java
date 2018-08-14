@@ -1,10 +1,3 @@
-/**
-*
-* @Description
-* @author joker 
-* @date 创建时间：2018年6月29日 下午4:23:50
-* 
-*/
 package com.dlxy.server.user.dao.mybatis;
 
 
@@ -15,14 +8,6 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import com.dlxy.common.dto.UserRecordDTO;
 
-/**
-* 
-* @When
-* @Description
-* @Detail
-* @author joker 
-* @date 创建时间：2018年6月29日 下午4:23:50
-*/
 @Mapper
 public interface UserRecordMybatisDao
 {

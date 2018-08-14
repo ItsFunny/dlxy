@@ -11,11 +11,6 @@ import java.util.Observable;
 import java.util.Observer;
 
 
-/**
- * 
- * @author joker
- * @date 创建时间：2018年8月3日 上午9:08:36
- */
 public class DlxyObservervable extends Observable
 {
 	public void setObs(List<Observer> obs)

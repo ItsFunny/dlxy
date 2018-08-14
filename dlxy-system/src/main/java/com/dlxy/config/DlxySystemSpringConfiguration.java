@@ -8,28 +8,27 @@ import java.util.Properties;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.cache.ehcache.EhCacheManager;
 import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.session.SessionListener;
+import org.apache.shiro.session.SessionListenerAdapter;
+import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
-import org.ehcache.core.EhcacheManager;
+import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.MethodInvokingFactoryBean;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
-import org.springframework.cache.ehcache.EhCacheCacheManager;
-import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.cache.support.CompositeCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.annotation.Order;
-import org.springframework.core.io.ClassPathResource;
-
 import com.dlxy.common.service.IdWorkerService;
 import com.dlxy.common.service.IdWorkerServiceTwitter;
+import com.dlxy.listener.ShiroSessionListener;
 import com.dlxy.shiro.DlxyShiroRealm;
 import com.google.code.kaptcha.Constants;
 import com.google.code.kaptcha.Producer;
@@ -42,59 +41,6 @@ import com.google.code.kaptcha.util.Config;
 public class DlxySystemSpringConfiguration implements InitializingBean
 {
 
-	// @Profile("dev")
-	// @Bean
-	// public DlxyPropertyPlaceholderConfigurer devPropertyPlaceholder() throws
-	// IOException
-	// {
-	// DlxyPropertyPlaceholderConfigurer configurer=new
-	// DlxyPropertyPlaceholderConfigurer();
-	// configurer.setLocations(new ClassPathResource("application-dev.properties"));
-	// return configurer;
-	// }
-	// @Profile("pro")
-	// @Bean
-	// public DlxyPropertyPlaceholderConfigurer proPropertyPlaceholder() throws
-	// IOException
-	// {
-	// DlxyPropertyPlaceholderConfigurer configurer=new
-	// DlxyPropertyPlaceholderConfigurer();
-	// configurer.setLocations(new ClassPathResource("application-pro.properties"));
-	// return configurer;
-	// }
-	// @Bean
-	// public EhCacheManagerFactoryBean ehcacheManagerFactoryBean()
-	// {
-	// EhCacheManagerFactoryBean ehCacheManagerFactoryBean=new
-	// EhCacheManagerFactoryBean();
-	// ehCacheManagerFactoryBean.setShared(false);
-	// ehCacheManagerFactoryBean.setConfigLocation(new
-	// ClassPathResource("shiro/cacheManager1.xml"));
-	// return ehCacheManagerFactoryBean;
-	// }
-	// @Bean
-	// public CacheManager cacheManager()
-	// {
-	// EhcacheManager ehcacheManager=new EhcacheManager(null);
-	//
-	// }
-//
-//	@Bean
-//	public EhCacheManagerFactoryBean ehcacheManagerFactoryBean()
-//	{
-//		EhCacheManagerFactoryBean ehCacheManagerFactoryBean=new EhCacheManagerFactoryBean();
-//		ehCacheManagerFactoryBean.setConfigLocation(new ClassPathResource("shiro/cache.xml"));
-//		ehCacheManagerFactoryBean.setShared(false);
-//		return ehCacheManagerFactoryBean;
-//	}
-//	@Bean
-//	public EhCacheCacheManager ehCacheManager()
-//	{
-//		EhCacheCacheManager ehCacheCacheManager=new EhCacheCacheManager();
-//		ehCacheCacheManager.setCacheManager(ehcacheManagerFactoryBean().getObject());
-//		return ehCacheCacheManager;
-//	}
-	
 	@Bean
 	public DlxyBeanPostProcessor beanPostProcessor()
 	{
@@ -107,6 +53,7 @@ public class DlxySystemSpringConfiguration implements InitializingBean
 		List<org.springframework.cache.CacheManager>cacheManagers=new ArrayList<>();
 		cacheManagers.add(new ConcurrentMapCacheManager("titles"));
 		cacheManagers.add(new ConcurrentMapCacheManager("single_title"));
+		cacheManagers.add(new ConcurrentMapCacheManager("links"));
 		compositeCacheManager.setCacheManagers(cacheManagers);
 		return compositeCacheManager;
 	}
@@ -123,9 +70,8 @@ public class DlxySystemSpringConfiguration implements InitializingBean
 	{
 		DefaultWebSecurityManager defaultWebSecurityManager = new DefaultWebSecurityManager();
 		defaultWebSecurityManager.setRealm(dlxyShiroRealm());
-		// EhCacheManager ehCacheManager=new EhCacheManager();
-		// ehCacheManager.setCacheManager(ehCacheManagerFactoryBean().getObject());
 		defaultWebSecurityManager.setCacheManager(cacheManager());
+		defaultWebSecurityManager.setSessionManager(sessionManager());
 		return defaultWebSecurityManager;
 	}
 
@@ -133,6 +79,23 @@ public class DlxySystemSpringConfiguration implements InitializingBean
 	public DlxyShiroRealm dlxyShiroRealm()
 	{
 		return new DlxyShiroRealm();
+	}
+	@Bean
+	public ShiroSessionListener shiroSessionListener()
+	{
+		return new ShiroSessionListener();
+	}
+	@Bean
+	public SessionManager sessionManager()
+	{
+		DefaultWebSessionManager defaultWebSessionManager=new DefaultWebSessionManager();
+		defaultWebSessionManager.setGlobalSessionTimeout(1000*60*5);
+		List<SessionListener>listeners=new ArrayList<>();
+		listeners.add(shiroSessionListener());
+		defaultWebSessionManager.setSessionListeners(listeners);
+		return defaultWebSessionManager;
+		
+		
 	}
 
 	@Bean("shiroFilter")
@@ -146,6 +109,7 @@ public class DlxySystemSpringConfiguration implements InitializingBean
 		// Map<String, Filter> filters = shiroFilterFactoryBean.getFilters();
 		// filters.put("authc", new TFilter());
 		Map<String, String> filterChainDefinitionMap = shiroFilterFactoryBean.getFilterChainDefinitionMap();
+		filterChainDefinitionMap.put("/test/**", "anon");
 		filterChainDefinitionMap.put("/admin/doLogin.html", "anon");
 		filterChainDefinitionMap.put("/css/**", "anon");
 		filterChainDefinitionMap.put("/fonts/**", "anon");

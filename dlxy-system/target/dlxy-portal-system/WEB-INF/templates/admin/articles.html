@@ -1,0 +1,562 @@
+<#include "wrapper_up.html">
+<#setting datetime_format="yyyy-MM-dd HH:mm:ss"/>
+
+<script type="text/javascript" src="/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript">
+	var editor;
+	window.K = KindEditor;
+ 	function initkindEditor() {
+          editor = K.create('#edit_articleContent', {
+             themeType: "simple",
+             uploadJson: '/api/v1/admin/file/upload.html?articleId='+$("#edit_articleId").val(),
+             resizeType: 1,
+             pasteType: 2,
+             syncType: "",
+             filterMode: true,
+             allowPreviewEmoticons: false,
+             items: [
+                    'source', 'undo', 'redo', 'plainpaste', 'wordpaste', 'clearhtml', 'quickformat',
+                    'selectall', 'fullscreen', 'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor',
+                    'bold', 'italic', 'underline', 'hr', 'removeformat', '|', 'justifyleft', 'justifycenter',
+                    'justifyright', 'insertorderedlist', 'insertunorderedlist', '|', 'link', 'image','multiimage',
+                    'unlink', 'baidumap', 'emoticons' 
+                ],
+             afterCreate: function () {
+                 this.sync();
+             },
+             afterBlur: function () {
+                 this.sync();
+             },
+             afterChange: function () {
+                  K('.word_count1').html("最多20000个字符,已输入" + this.count() + "个字符");
+             },
+             afterUpload:function(url){
+             	
+             	var t=url.substring(url.lastIndexOf("/")+1,url.indexOf("."));
+             	var pictureId=url.substring(url.lastIndexOf("=")+1);
+             	$("#hiddenBlock").append('<input type="hidden" name="pictureId" value='+pictureId+'>');
+             },
+             allowFileManager: false,
+             allowFlashUpload: false,
+             allowMediaUpload: false,
+             allowFileUpload: false,
+             formatUploadUrl: false,
+             
+         });
+     };
+</script>
+<section class="layui-larry-box">
+	<div class="larry-personal">
+	    <div class="layui-tab">
+            <blockquote class="layui-elem-quote news_search"> 
+		<div class="layui-inline">
+		    <div class="layui-input-inline">
+		    	<input value="" id="searchText" name="q" value="${q!""}" placeholder="${q!"可通过文章id,文章标题,文章作者搜索"}" class="layui-input search_input" type="text">
+		    </div>
+		      <div class="layui-input-inline">
+		      <input class="Wdate" type="text"  onClick="WdatePicker()"  id="startTime" value="${startTime!""}" >
+		    </div>
+		      <div class="layui-input-inline">
+		    	  <input class="Wdate" type="text"  onClick="WdatePicker()"  id="endTime" value="${endTime!""}">
+		    </div>
+		    <input type="button" id="searchButton" class="layui-btn search_btn"  value="查询">
+		    <input type="button" class="layui-btn search_btn" value="刷新" onclick="JavaScript:location.reload();">
+		    若出现unknown ,则对应的类目或者操作人已被删除
+		</div>
+	</blockquote>
+		         <!-- 操作日志 -->
+                <div class="layui-form news_list">
+                    <table class="layui-table">
+					    <colgroup>
+						<col width="50">
+						<col>
+						<col width="9%">
+						<col width="9%">
+						<col width="9%">
+						<col width="9%">
+						<col width="9%">
+						<col width="15%">
+					</colgroup>
+					<thead>
+						<tr>
+							<th>
+								<input name="" lay-skin="primary" lay-filter="allChoose" id="allChoose" type="checkbox">
+								<div class="layui-unselect layui-form-checkbox" lay-skin="primary"><i class="layui-icon"></i></div>
+							</th>
+							<th>文章编号</th>
+							<th>所属分类</th>
+							<th style="text-align:left;"><a href="javascript:void(0)" onclick="">文章标题</a></th>
+							<th>作者</th>
+							<th>处理人</th>
+							<th>发布时间</th>
+							<th>更新时间</th>
+							<th>文章类型</th>
+							<#if type=='picArticles'>
+							<th>描述图</th>
+							</#if>
+							<th>文章状态</th>
+							
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody class="news_content" id="contentBody">
+					<#if pageVO.data??>
+						<#list pageVO.data as item>
+							<tr>
+							<td>
+								<input name="checked" lay-skin="primary" lay-filter="choose" type="checkbox" value="${item.articleId?c}">
+								<div class="layui-unselect layui-form-checkbox" lay-skin="primary">
+								<i class="layui-icon"></i>
+								</div>
+							</td>
+							<td>${item.articleId?c}</td>
+							<td>
+								<#if item.titleName??>
+								<a href="/admin/title/article/${item.titleId}.html" style="text-decoration:underline;" >${item.titleName}</a>
+								<#else>
+								unknown
+								</#if>
+							</td>
+							<td align="left"><a href="javascript:void(0)" data-toggle="modal" data-target="#changeSource" style="text-decoration:underline;" onclick="loadArticle(this);" articleId="${item.articleId?c}">${item.articleName}</a></td>
+							<td>${item.articleAuthor}</td>
+							<td><a href="/admin/articles.html?userId=${item.userId}" style="text-decoration:underline;">${item.realname!"unknow"}</a></td>
+							<td>
+								${item.createDate?string('yyyy-MM-dd HH:mm:ss')}
+							</td>
+							<td>
+								<#if item.updateDate??>
+									${item.updateDate?string('yyyy-MM-dd HH:mm:ss')}
+								</#if>
+							</td>
+							
+							
+							<#if item.articleType==0>
+								<td>普通文章</td>
+							<#elseif item.articleType==1>
+								<td>推荐文章</td>
+							<#elseif item.articleType==2>
+								<td>首页图片显示文章</td>
+							</#if>
+						
+							<#if type=='picArticles'>
+								<td><img src="${item.pictureUrl!"null"}" style="width:100px;height:100px"></td>
+							</#if>
+							<#if item.articleStatus == 0>
+							<td>
+							下线
+							</td>
+							<td>
+									<a class="layui-btn layui-btn-mini news_edit"  onclick="changeStatus(this,1);" articleId="${item.articleId?c}" "><i class="iconfont icon-edit" ></i> 上线</a>
+									<a class="layui-btn layui-btn-mini " data-toggle="modal" data-target="#changeSource" onclick="loadArticle(this);" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i> 编辑</a>
+									<#if item.articleType==0>
+										<a class="layui-btn layui-btn-mini "  onclick="changeType(this,1)" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i>设置为推荐新闻</a>
+										<a class="layui-btn layui-btn-mini "  onclick="changeType(this,2)" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i> 设置为首页图片新闻</a>
+									<#elseif item.articleType==1>
+										<a class="layui-btn layui-btn-mini "  onclick="changeType(this,0)" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i> 设置为普通文章</a>
+										<a class="layui-btn layui-btn-mini "  onclick="changeType(this,2)" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i> 设置为首页图片新闻</a>
+									<#elseif item.articleType==2>
+										<a class="layui-btn layui-btn-mini "  onclick="changeType(this,0)" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i> 设置为普通文章</a>
+										<a class="layui-btn layui-btn-mini "  onclick="changeType(this,1)" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i> 设置为推荐新闻</a>
+										<a class="layui-btn layui-btn-mini" data-id="1" articleId="${item.articleId?c}" data-toggle="modal" data-target="#changeDescPic" onclick="changeDescPic(this)"><i class="layui-icon"></i> 更换描述图</a>
+									</#if>
+									<a class="layui-btn layui-btn-danger layui-btn-mini news_del" data-id="1" articleId="${item.articleId?c}" onclick="changeStatus(this,2)"><i class="layui-icon"></i> 放至回收站</a>
+							</td>
+							<#elseif item.articleStatus ==1 >
+							<td>上线</td>
+							<td>
+									<a class="layui-btn layui-btn-mini news_edit"  articleId="${item.articleId?c}" onclick="changeStatus(this,0);"><i class="iconfont icon-edit" ></i> 下线</a>
+									<a class="layui-btn layui-btn-mini " data-toggle="modal" data-target="#changeSource" onclick="loadArticle(this);" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i> 编辑</a>
+										<#if item.articleType==0>
+										<a class="layui-btn layui-btn-mini "  onclick="changeType(this,1)" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i>设置为推荐新闻</a>
+										<a class="layui-btn layui-btn-mini "  onclick="changeType(this,2)" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i> 设置为首页图片新闻</a>
+									<#elseif item.articleType==1>
+										<a class="layui-btn layui-btn-mini "  onclick="changeType(this,0)" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i> 设置为普通文章</a>
+										<a class="layui-btn layui-btn-mini "  onclick="changeType(this,2)" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i> 设置为首页图片新闻</a>
+									<#elseif item.articleType==2>
+										<a class="layui-btn layui-btn-mini "  onclick="changeType(this,0)" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i> 设置为普通文章</a>
+										<a class="layui-btn layui-btn-mini "  onclick="changeType(this,1)" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i> 设置为推荐新闻</a>
+										<a class="layui-btn layui-btn-mini" data-id="1" articleId="${item.articleId?c}" data-toggle="modal" data-target="#changeDescPic" onclick="changeDescPic(this)"><i class="layui-icon"></i>更换描述图</a>
+									</#if>
+									<a class="layui-btn layui-btn-danger layui-btn-mini news_del" data-id="1" articleId="${item.articleId?c}" onclick="changeStatus(this,2)"><i class="layui-icon"></i> 放至回收站</a>
+							</td>
+							<#elseif item.articleStatus == 2>
+							<td>回收站</td>
+							<td>
+									<a class="layui-btn layui-btn-mini news_edit" articleId="${item.articleId?c}" onclick="changeStatus(this,0)"><i class="iconfont icon-edit" ></i> 恢复</a>
+									<a class="layui-btn layui-btn-mini " data-toggle="modal" data-target="#changeSource" onclick="loadArticle(this);" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i> 编辑</a>
+									<#if item.articleType==0>
+										<a class="layui-btn layui-btn-mini "  onclick="changeType(this,1)" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i>设置为推荐新闻</a>
+										<a class="layui-btn layui-btn-mini "  onclick="changeType(this,2)" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i> 设置为首页图片新闻</a>
+									<#elseif item.articleType==1>
+										<a class="layui-btn layui-btn-mini "  onclick="changeType(this,0)" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i> 设置为普通文章</a>
+										<a class="layui-btn layui-btn-mini "  onclick="changeType(this,2)" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i> 设置为首页图片新闻</a>
+									<#elseif item.articleType==2>
+										<a class="layui-btn layui-btn-mini "  onclick="changeType(this,0)" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i> 设置为普通文章</a>
+										<a class="layui-btn layui-btn-mini "  onclick="changeType(this,1)" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i> 设置为推荐新闻</a>
+										<a class="layui-btn layui-btn-mini" data-id="1" articleId="${item.articleId?c}" data-toggle="modal" data-target="#changeDescPic" onclick="changeDescPic(this)"><i class="layui-icon"></i> 更换描述图</a>
+									</#if>
+								<a class="layui-btn layui-btn-danger layui-btn-mini news_del "  onclick="singleDelIndeed(this);" articleId="${item.articleId?c}"><i class="iconfont icon-edit"></i> 彻底删除</a>
+							</td>
+							</#if>
+						</tr>
+						</#list>
+					</#if>
+					</tbody>
+					</table>
+                     <div class="larry-table-page clearfix">
+                     	<#if type=="deleted">
+                          <input type="button" id="batchDelButton" onclick="batchDelIndeed()"  class="layui-btn layui-btn-small" value="批量彻底删除">
+                          <#else>
+                           <input type="button" id="batchDelButton" onclick="batchPurInRecycleBin()" class="layui-btn layui-btn-small" value="批量放入回收站">
+                         </#if>
+                           <#if pageVO??>
+						       <form name="pageForm" action="/admin/articles.html" method="get" id="pageForm">	
+							      	<input type="hidden" name="pageNum" value="${pageVO.pageNum}">
+							      	<input type="hidden" name="type" value="${type!""}">
+							      	<input type="hidden" name="q" value="${q!""}">
+							      	<input type="hidden" name="titleParentId" value="${titleParentId!""}">
+							      	<input type="hidden" name="startTime" value="${startTime!""}">
+							      	<input type="hidden" name="endTime" value="${endTime!""}">
+							      	<div id="page2" class="page">
+										<div class="layui-box layui-laypage layui-laypage-default" id="layui-laypage-0">
+											<span class="layui-laypage-curr">
+								      			<em class="layui-laypage-em"></em>
+								      			<em id="pageEm">当前第 ${pageVO.pageNum}页 总共有${pageVO.maxPage}页 总共有${pageVO.totalCount}条记录</em>
+							      			</span>
+											<#if pageVO.pageNum==1><a href="javascript:void(0)">首页</a>	<#else><a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=1;document.pageForm.submit();">首页</a>   </#if>
+											<#if pageVO.pageNum<=1> <a href="javascript:void(0)">上一页</a><#else><a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=(${pageVO.pageNum}-1);document.pageForm.submit();"> 上一页</a>  </#if>
+											<#if (pageVO.pageNum>=pageVO.maxPage)> <a href="javascript:void(0)">下一页</a>  <#else><a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=${pageVO.pageNum}+1;document.pageForm.submit();">下一页</a> </#if>		
+											<#if (pageVO.pageNum>=pageVO.maxPage)> <a href="javascript:void(0)">最后一页</a> <#else> <a href="javascript:void(0)" onclick="document.pageForm.pageNum.value=${pageVO.maxPage};document.pageForm.submit();">最后一页</a> </#if>>
+										</div>				          
+							      </div>
+						      </form>
+						 </#if>
+			         </div>
+			    </div>
+			    </div>
+		    </div>
+		</div>
+
+<form method='post' action='/admin/article/update/descpic.html' id="changeDescPicForm" enctype="multipart/form-data">
+	<div class="modal fade" id="changeDescPic" role="dialog" aria-labelledby="gridSystemModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					</button>
+					<h4 class="modal-title" id="gridSystemModalLabel">修改标题</h4>
+					<input type="file" name="imgFile">
+					<input type="hidden" id="pic_articleId" name="articleId" value="">
+					<input type="hidden" id="pic_pictureId" name="pictureId" value="">
+					<input type="submit" value="上传" id="changeDescPicButton" >
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+<form method="post" action="/api/article/update.html" id="editForm">
+	<div class="modal fade" id="changeSource" role="dialog" aria-labelledby="gridSystemModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="gridSystemModalLabel">修改标题</h4>
+				</div>
+				<div class="modal-body">
+					<div class="container-fluid">
+								<label class="col-xs-3 control-label">文章标题：</label>
+								<div class="col-xs-8 ">
+									<input type="text" class="form-control input-sm duiqi" id="edit_articleName" placeholder="" name="articleName">
+								</div>
+								<label class="col-xs-3 control-label">作者：</label>
+								<div class="col-xs-3 ">
+									<input type="text" name="articleAuthor" class="form-control input-sm duiqi" id="edit_articleAuthor" placeholder="">
+								</div>
+								<label class="col-xs-2 control-label">类目：</label>
+								<div class="col-xs-3 ">
+									<select id="leimu0" name="titleId" style="width:100px;height: 30px" onchange="changeChild(this)">
+
+									</select>
+								</div>
+								<div class="col-xs-3 " id="leimu1_div">
+									<select id="leimu1" name="titleId" style="width:100px;height: 30px">
+
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<textarea cols="0" rows="5" name="articleContent" class="form-control" id="edit_articleContent" style="margin: 0px -0.5px 0px 0px; height: 250px; width: 100%;">
+    							</textarea>
+							</div>
+						
+					</div>
+				</div>
+				<div class="modal-footer" id="hiddenBlock">
+					<input type="hidden" name="articleId" id="edit_articleId">
+					<button type="button" class="btn btn-xs btn-white" data-dismiss="modal">取 消</button>
+					<input type="button" id="editSaveButton" onclick="editSaveUpdate();" class="btn btn-xs btn-green"  value="保 存">
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+</section>
+<#include "wrapper_down.html">
+<script>
+
+function editSaveUpdate(){
+		var d=$("#editForm").serialize();
+		jQuery.post('/api/v1/admin/article/update.html',d,function(data,textStatus,jqXHR){
+			if(data.code==1){
+				alert('sucess');
+				window.location.reload();
+			}else{
+				alert(data.msg);
+			}
+		},'json');
+		
+	}
+
+
+	var ids="";
+	function batchPurInRecycleBin(){
+		$("input:checkbox[name=checked]:checked").each(function(){
+				ids+=$(this).val()+",";
+			})
+			var params={"ids":ids};
+			jQuery.post('/api/v1/admin/article/del/batch.html',params,function(data,textStatus,jqXHR){
+				if(data.code==1){
+					alert('删除成功');
+					location.reload();
+				}else{
+					alert('fail');
+				}
+			},'json');
+	}
+	<#--$("#batchDelButton").click(function batchDel(){
+		$("input:checkbox[name=checked]:checked").each(function(){
+			ids+=$(this).val()+",";
+		})
+		var params={"ids":ids};
+		jQuery.post('/api/v1/article/del/batch.html',params,function(data,textStatus,jqXHR){
+			if(data.code==1){
+				alert('删除成功');
+				location.reload();
+			}else{
+				alert('fail');
+			}
+		},'json');
+	});  -->
+	
+	function batchDelIndeed(){
+		$("input:checkbox[name=checked]:checked").each(function(){
+			ids+=$(this).val()+",";
+		})
+		var params={"articleId":ids};
+		jQuery.post('/api/v1/admin/article/delete.html',params,function(data,textStatus,jqXHR){
+			if(data.code==1){
+				alert('删除成功');
+				location.reload();
+			}else{
+				alert('fail');
+			}
+		},'json');
+		
+	
+	}
+	function changeStatus(obj,status){
+		var articleId=$(obj).attr("articleId");
+		jQuery.get('/api/v1/admin/article/update/typeOrStatus.html',{"key":"status","articleId":articleId,"articleStatus":status},function(data,textStatus,jqXHR){
+			if(data.code==1){
+				alert('sucess');
+				window.location.reload();
+			}else{
+				alert(data.msg);
+			}
+		},'json');		
+	}
+	function changeType(obj,type){
+		var articleId=$(obj).attr("articleId");
+		jQuery.get('/api/v1/admin/article/update/typeOrStatus.html',{"key":"type","articleId":articleId,"articleType":type},function(data,textStatus,jqXHR){
+			if(data.code==1){
+				alert('sucess');
+				window.location.reload();
+			}else{
+				alert(data.msg);
+			}
+		},'json');		
+	}
+	$("#searchButton").click(function(){
+		var q=$("#searchText").val();
+		var startTime=$("#startTime").val();
+		var endTime=$("#endTime").val();
+		$("input[name='q']").val(q);
+		$("input[name='startTime']").val(startTime);
+		$("input[name='endTime']").val(endTime);
+		document.pageForm.submit();
+	});
+	function singleDelButton(obj){
+		var articleId=$(obj).attr("articleId");
+		var params={"ids":articleId};
+		jQuery.post('/api/v1/article/del/batch.html',params,function(data,textStatus,jqXHR){
+			if(data.code==1){
+				alert('删除成功');
+				location.reload();
+			}else{
+				alert('fail');
+			}
+		},'json');
+	}
+	
+	
+	function loadArticle(obj){
+		var articleId=$(obj).attr("articleId");
+		$("#edit_articleId").val(articleId);
+		initkindEditor();
+		jQuery.get('/api/v1/admin/article/detail/'+articleId+'.html',function(data,textStatus,jqXHR){
+			if(data.code==1){
+				var article=data.data;
+				$("#edit_articleName").val(article.articleName);
+				$("#edit_articleAuthor").val(article.articleAuthor);
+				KindEditor.html("#edit_articleContent", article.articleContent);
+				var titleId=article.titleId;
+				var parentTitleId=article.titleParentId;
+				loadAllTitles(titleId,parentTitleId);
+			}else{
+				alert(data.msg);
+			}
+		},'json')
+	}
+	
+ 	function loadAllTitles(titleId,parentTitleId){
+ 	$("#leimu0").empty();
+ 	$("#leimu1").empty();
+ 	if(parentTitleId==0){
+ 		parentTitleId=titleId;
+ 	}
+ 		$.ajax({
+ 			url: '/api/v1/titles.html',
+ 			type:'get',
+ 			dataType:'json',
+ 			success:function(data){
+ 				var obj=data.data;
+	 			var str="";
+				for(i=0;i<obj.length;i++){
+					var t=obj[i].titleId;
+					if(t==parentTitleId){
+					 str+='<option value="'+obj[i].titleId+'" selected="selected" ">'+obj[i].titleName+'</option>';
+					}else{
+					 str+='<option value="'+obj[i].titleId+'">'+obj[i].titleName+'</option>';
+					}
+				}
+				$("#leimu0").append(str);
+				showChild(titleId,$("#leimu0"));
+ 			}
+ 		})
+ 	}
+ 	function changeChild(obj){
+ 		 $("#leimu1").empty();
+        var parentId=$(obj).val();
+            $.ajax({
+                url:'/api/v1/title/'+parentId+'.html',
+                type:'post',
+                dataType:'json',
+                success:function (data) {
+					var o=data.data;
+                    var str="";
+                    if(o.length<1){
+                    	 $("#leimu1").remove();
+                    }else{
+                     $("#leimu1").remove();
+                    	str+='<select id="leimu1" style="width:100px;height: 30px" name="titleId"> ';
+                     for(i=0;i<o.length;i++){
+                    	var t=o[i].titleId;
+	                    	str+="<option value="+o[i].titleId+">"+o[i].titleName+"</option>"
+                    }
+                    str+='</select>';
+                    $("#leimu1_div").append(str);
+                    }
+                }
+          })
+ 	}
+ 	function showChild(titleId,obj){
+ 	 $("#leimu1").empty();
+        var parentId=$(obj).val();
+            $.ajax({
+                url:'/api/v1/title/'+parentId+'.html',
+                type:'post',
+                dataType:'json',
+                success:function (data) {
+					var o=data.data;
+                    var str="";
+                    if(o.length<1){
+                    	 $("#leimu1").remove();
+                    }else{
+                     $("#leimu1").remove();
+                    	str+='<select id="leimu1" style="width:100px;height: 30px" name="titleId"> ';
+                     for(i=0;i<o.length;i++){
+                    	var t=o[i].titleId;
+                    	if(t==titleId)
+                    	{
+                    		str+='<option value="'+o[i].titleId+'" selected="selected">'+o[i].titleName+'</option>';
+                    	}else{
+	                    	str+="<option value="+o[i].titleId+">"+o[i].titleName+"</option>"
+                    	}
+                    }
+                    str+='</select>';
+                    $("#leimu1_div").append(str);
+                    }
+                }
+            })
+ 	}
+ 
+ 	function singleDelIndeed(obj){
+ 		var articleId=$(obj).attr("articleId");
+ 		jQuery.get('/api/v1/admin/article/delete.html',{"articleId":articleId},function(data,textStatus,jqXHR){
+ 			alert(data.msg);
+ 			location.reload();
+ 		},'json');
+ 	}
+ 	
+ 	function changeDescPic(obj){
+ 		var articleId=$(obj).attr("articleId");
+ 		$("#pic_articleId").val(articleId);
+ 	}
+ 	function uploadDescPic(){
+ 		var obj=$("#changeDescPicForm");
+ 		var formData=new FormData($("#changeDescPicForm")[0]);
+ 		
+ 		var params=$("#changeDescPicForm").serialize();
+ 		alert(params);
+ 		<#-- jQuery.post('/api/v1/article/update/descpic.html',formData,function(data){
+ 			alert(data.msg);
+ 			if(data.code==1){
+	 				location.reload();
+	 		}
+ 		},'json'); -->
+ 		
+ 		$.ajax({
+ 			headers:{
+ 				'Accept':'application/json',
+ 				'Content-type':'application/json'
+ 			},
+ 			url:'/api/v1/admin/article/update/descpic.html',
+ 			type:'post',
+ 			data:formData,
+ 			dataType:'json',
+ 			contentType: false, // 注意这里应设为false
+            processData: false,
+   			success:function(data){
+   			alert(data.msg);
+	 			if(data.code==1){
+	 				location.reload();
+	 			}
+   			}
+ 		})  
+ 		
+ 	}
+	 	
+</script>
+<#include "footer.html">

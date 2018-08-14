@@ -1,0 +1,87 @@
+<#include "wrapper_up.html">
+<script>
+	var error="";
+$(document).ready(function(){
+
+<#-- 
+	jQuery.get('/api/v1/user/roles/all.html',function(data,textStatus,jqXHR){
+		if(data.code==1){
+			var str='';
+			for(var i=0;i<data.data.length;i++){
+				var o=data.data[i];
+				str+='<option value="'+o.roleId+'">'+o.roleDescription+'</option>';
+			}
+			$("#edit_role").append(str);
+		}else{
+			alert(data.msg);
+			error=data.msg;
+		}
+	},'json');
+  -->
+
+})
+</script>
+<section class="layui-larry-box">
+	<div class="larry-personal">
+	    <div class="layui-tab">
+		         <!-- 操作日志 -->
+                <form class="" name="userForm" action="/admin/user/doAddUser.html" accept-charset="UTF-8" method="post">
+				  <div class="layui-form-item">
+				    <label class="layui-form-label">姓名</label>
+				    <div class="layui-input-block">
+				      <input type="text" name="realname" required  lay-verify="required" placeholder="请输入姓名" autocomplete="off" class="layui-input">
+				    </div>
+				  </div>
+				  <div class="layui-form-item">
+				    <label class="layui-form-label">密码</label>
+				    <div class="layui-input-inline">
+				      <input type="password" name="password" required lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">
+				    </div>
+				  </div>
+				  <div class="layui-form-item">
+				    <label class="layui-form-label">性别</label>
+				    <div class="layui-input-block">
+				     男 <input type="radio" name="sex" value="0" title="男">
+				     女 <input type="radio" name="sex" value="1" title="女" >
+				    </div>
+				  </div>
+				  <div class="layui-form-item">
+				    <label class="layui-form-label">角色</label>
+				    <div class="layui-input-block">
+				      <select name="roleId"  id="edit_role">
+				      	<option value="0">超级管理员</option>
+				      	<option value="1">管理员</option>
+				      </select>
+				    </div>
+				  </div>
+			
+				  <div class="layui-form-item">
+				    <div class="layui-input-block">
+				      <input type="button" value="立即提交" class="layui-btn"  onclick="saveUser()">
+				      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+				    </div>
+				  </div>
+				</form>
+ 
+
+			     <!-- 完 -->
+			   
+		    </div>
+		</div>
+	
+</section>
+<script>
+
+	<#if error??>
+		alert("${error}");
+	</#if>
+	function saveUser(){
+		if(error !=""){
+			alert("未处理异常"+error+",请刷新重试或者过会再试");
+			return;
+		}
+		document.userForm.submit();
+	}
+</script>
+
+<#include "wrapper_down.html">

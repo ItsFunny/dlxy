@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.dlxy.common.event.AppEventPublisher;
+import com.dlxy.common.model.ArticleVisitInfo;
 import com.dlxy.model.ArticleVisitCountFactory;
-import com.dlxy.model.ArticleVisitInfo;
 import com.dlxy.server.article.service.IArticleService;
 
 import redis.clients.jedis.exceptions.JedisException;

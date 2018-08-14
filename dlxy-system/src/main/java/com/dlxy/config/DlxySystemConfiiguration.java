@@ -5,11 +5,13 @@ import java.math.BigInteger;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.ServletContext;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbutils.QueryRunner;
@@ -28,17 +30,17 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.core.annotation.Order;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
@@ -59,19 +61,19 @@ import com.dlxy.service.command.ArticleReceiver;
 import com.dlxy.service.command.PictureReceiver;
 import com.dlxy.service.command.UserArticleReceiver;
 import com.dlxy.service.impl.RedisServiceImpl;
-import com.dlxy.strategy.DefaultFileService;
-import com.dlxy.strategy.FTPFileService;
-import com.dlxy.strategy.FileStrategyContext;
-import com.dlxy.strategy.IFileStrategy;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.joker.library.file.FTPFileService;
+import com.joker.library.file.FileStrategyContext;
+import com.joker.library.file.IFileStrategy;
 
 import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
+@EnableScheduling
 @Configuration
 @EnableWebMvc
 @EnableTransactionManagement
@@ -80,48 +82,45 @@ import redis.clients.jedis.JedisPoolConfig;
 { @ComponentScan.Filter(type = FilterType.ANNOTATION, value = Mapper.class) })
 @MapperScan(annotationClass = Mapper.class, basePackages =
 { "com.dlxy" })
-@Import(DlxySystemSpringConfiguration.class)
 @Order(2)
-public class DlxySystemConfiiguration implements WebMvcConfigurer
+@Import(DlxySystemSpringConfiguration.class)
+public class DlxySystemConfiiguration implements WebMvcConfigurer, ServletContextAware
 {
 	@Autowired
 	private DlxyProperty dlxyProperty;
 
+	private ServletContext servletContext;
+
 	private Logger logger = LoggerFactory.getLogger(DlxySystemConfiiguration.class);
 
-	
-	
 	@Bean
 	public FileStrategyContext fileContext()
 	{
-		Map<String, String>pathMap=new HashMap<String, String>();
-		Map<String, String>visitPrefixMap=new HashMap<>();
-		FileStrategyContext context=new FileStrategyContext();
-		
-//		DefaultFileService defaultFileService=new DefaultFileService();
-//		defaultFileService.setVisitPrefix("imgs");
-//		pathMap.put(IFileStrategy.IMG_TYPE, "/");
-//		visitPrefixMap.put(IFileStrategy.IMG_TYPE, "imgs");
-//		defaultFileService.setVisitPrefixMap(visitPrefixMap);
-//		defaultFileService.setBasePathMap(pathMap);
-//		context.setFileStrategy(defaultFileService);
-		
-		
-		pathMap.put(IFileStrategy.IMG_TYPE, "/home/joker/www");
-		visitPrefixMap.put(IFileStrategy.IMG_TYPE, "imgs");
-		String host="120.78.240.211";
-		Integer port=21;
-		String username="joker";
-		String password="lvcong124536789";
-		FTPFileService fileService=new FTPFileService(host, port, username, password);
+		Map<String, String> pathMap = new HashMap<String, String>();
+		Map<String, String> visitPrefixMap = new HashMap<>();
+		FileStrategyContext context = new FileStrategyContext();
+
+		// DefaultFileService defaultFileService=new DefaultFileService();
+		// pathMap.put(IFileStrategy.IMG_TYPE, servletContext.getRealPath(""));
+		// visitPrefixMap.put(IFileStrategy.IMG_TYPE, "imgs");
+		// defaultFileService.setVisitPrefixMap(visitPrefixMap);
+		// defaultFileService.setBasePathMap(pathMap);
+		// context.setFileStrategy(defaultFileService);
+
+		pathMap.put(IFileStrategy.IMG_TYPE, dlxyProperty.getImgFTPStoreBasePath());
+		visitPrefixMap.put(IFileStrategy.IMG_TYPE, dlxyProperty.getImgFTPVisitPrefx());
+//		String host = "120.78.240.211";
+//		Integer port = 21;
+//		String username = "joker";
+//		String password = "lvcong124536789";
+		FTPFileService fileService = new FTPFileService(dlxyProperty.getFtpHost(), dlxyProperty.getFtpPort(),
+				dlxyProperty.getFtpUsername(), dlxyProperty.getFtpPassword());
 		fileService.setVisitPrefixMap(visitPrefixMap);
 		fileService.setBasePathMap(pathMap);
 		context.setFileStrategy(fileService);
 		return context;
 	}
-	
-	
-	
+
 	@Bean
 	public JedisPool jedisPool()
 	{
@@ -130,14 +129,27 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer
 		jedisPoolConfig.setMaxTotal(1024);
 		jedisPoolConfig.setMaxWaitMillis(10000);
 		jedisPoolConfig.setTestOnBorrow(true);
+		
 		JedisPool jedisPool = new JedisPool(jedisPoolConfig, dlxyProperty.getRedisHost(), dlxyProperty.getRedisPort(),
 				10000, dlxyProperty.getRedisPassword());
 
 		// JedisPool jedisPool = new JedisPool("localhost", 6379);
 		return jedisPool;
 	}
-
-	
+//	@Bean
+//	public JedisCluster jedisCluster()
+//	{
+//		Set<HostAndPort>nodes=new HashSet<>();
+//		nodes.add(new HostAndPort("120.78.240.211", 6379));
+//		nodes.add(new HostAndPort("120.78.240.211", 7000));
+//		nodes.add(new HostAndPort("120.78.240.211", 7001));
+//		nodes.add(new HostAndPort("120.78.240.211", 7002));
+//		nodes.add(new HostAndPort("120.78.240.211", 7003));
+//		nodes.add(new HostAndPort("120.78.240.211", 7004));
+//		JedisCluster jedisCluster=new JedisCluster(nodes);
+//		return jedisCluster;
+//	}
+//	
 
 	@Bean
 	public IRedisService redisService()
@@ -317,11 +329,12 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer
 	{
 		dlxyProperty.init();
 		logger.info("{}", dlxyProperty);
-		
+
 	}
+
 	public static void main(String[] args)
 	{
-		DlxySystemConfiiguration dlxySystemConfiiguration=new DlxySystemConfiiguration();
+		DlxySystemConfiiguration dlxySystemConfiiguration = new DlxySystemConfiiguration();
 		URL resource = dlxySystemConfiiguration.getClass().getClassLoader().getResource("WEB-INF");
 		System.out.println(resource.getPath());
 	}
@@ -344,6 +357,12 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer
 	public void setDlxyProperty(DlxyProperty dlxyProperty)
 	{
 		this.dlxyProperty = dlxyProperty;
+	}
+
+	@Override
+	public void setServletContext(ServletContext servletContext)
+	{
+		this.servletContext = servletContext;
 	}
 
 }

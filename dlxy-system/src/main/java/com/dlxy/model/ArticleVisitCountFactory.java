@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 
 import com.dlxy.common.dto.ArticleDTO;
+import com.dlxy.common.model.ArticleVisitInfo;
 import com.dlxy.common.utils.JsonUtil;
 import com.dlxy.server.article.service.IArticleService;
 import com.dlxy.service.IRedisService;
@@ -41,6 +42,7 @@ public class ArticleVisitCountFactory
 			{
 				visitInfo = new ArticleVisitInfo();
 				visitInfo.setArticleId(articleId);
+				visitInfo.setArticleName(articleDTO.getArticleName());
 				visitInfo.setVisitCount(articleDTO.getVisitCount());
 			}
 		} else
@@ -49,6 +51,10 @@ public class ArticleVisitCountFactory
 		}
 		ARTICLESTORAGE.put(articleId, visitInfo);
 		return visitInfo;
+	}
+	public static synchronized void refreshStorage()
+	{
+		ARTICLESTORAGE.clear();
 	}
 
 }

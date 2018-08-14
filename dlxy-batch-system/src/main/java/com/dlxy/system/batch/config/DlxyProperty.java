@@ -32,7 +32,22 @@ public class DlxyProperty implements InitializingBean
 	private String dbPassword;
 	private String driverClassName = "com.mysql.jdbc.Driver";
 	private String dbUrl;
-
+//    ftp-host: 120.78.240.211
+//    ftp-port: 21
+//    ftp-username: joker
+//    ftp-password: lvcong124536789
+//    imgFTPStoreBasePath: /home/joker/www
+//    imgFTPVisitPrefx: imgs
+//    #local
+//    imgLocalVisitPrefix: imgs
+	//ftp
+	private String ftpHost;
+	private Integer ftpPort;
+	private String ftpUsername;
+	private String ftpPassword;
+	private String imgFTPStoreBasePath;
+	private String imgFTPVisitPrefx;
+	private String imgLocalVisitPrefix;
 	
 	
 	/*
@@ -238,11 +253,15 @@ public class DlxyProperty implements InitializingBean
 	public String toString()
 	{
 		return "DlxyProperty [dbUsername=" + dbUsername + ", dbPassword=" + dbPassword + ", driverClassName="
-				+ driverClassName + ", dbUrl=" + dbUrl + ", amqpHost=" + amqpHost + ", amqpUsername=" + amqpUsername
-				+ ", amqpPassword=" + amqpPassword + ", amqpEnabled=" + amqpEnabled + ", amqpPort=" + amqpPort
-				+ ", redisHost=" + redisHost + ", redisPort=" + redisPort + ", redisPassword=" + redisPassword
-				+ ", workerId=" + workerId + ", datacenterId=" + datacenterId + ", propertyPublicKeyPath="
-				+ propertyPublicKeyPath + ", publicKeyBytes=" + Arrays.toString(publicKeyBytes) + "]";
+				+ driverClassName + ", dbUrl=" + dbUrl + ", ftpHost=" + ftpHost + ", ftpPort=" + ftpPort
+				+ ", ftpUsername=" + ftpUsername + ", ftpPassword=" + ftpPassword + ", imgFTPStoreBasePath="
+				+ imgFTPStoreBasePath + ", imgFTPVisitPrefx=" + imgFTPVisitPrefx + ", imgLocalVisitPrefix="
+				+ imgLocalVisitPrefix + ", amqpHost=" + amqpHost + ", amqpUsername=" + amqpUsername + ", amqpPassword="
+				+ amqpPassword + ", amqpEnabled=" + amqpEnabled + ", amqpPort=" + amqpPort + ", redisHost=" + redisHost
+				+ ", redisPort=" + redisPort + ", redisPassword=" + redisPassword + ", workerId=" + workerId
+				+ ", datacenterId=" + datacenterId + ", propertyPublicKeyPath=" + propertyPublicKeyPath
+				+ ", publicKeyBytes=" + Arrays.toString(publicKeyBytes) + ", batchClasses="
+				+ Arrays.toString(batchClasses) + "]";
 	}
 	public String[] getBatchClasses()
 	{
@@ -251,6 +270,62 @@ public class DlxyProperty implements InitializingBean
 	public void setBatchClasses(String[] batchClasses)
 	{
 		this.batchClasses = batchClasses;
+	}
+	public String getFtpHost()
+	{
+		return ftpHost;
+	}
+	public void setFtpHost(String ftpHost)
+	{
+		this.ftpHost = ftpHost;
+	}
+	public Integer getFtpPort()
+	{
+		return ftpPort;
+	}
+	public void setFtpPort(Integer ftpPort)
+	{
+		this.ftpPort = ftpPort;
+	}
+	public String getFtpUsername()
+	{
+		return ftpUsername;
+	}
+	public void setFtpUsername(String ftpUsername)
+	{
+		this.ftpUsername = ftpUsername;
+	}
+	public String getFtpPassword()
+	{
+		return ftpPassword;
+	}
+	public void setFtpPassword(String ftpPassword)
+	{
+		this.ftpPassword = ftpPassword;
+	}
+	public String getImgFTPStoreBasePath()
+	{
+		return imgFTPStoreBasePath;
+	}
+	public void setImgFTPStoreBasePath(String imgFTPStoreBasePath)
+	{
+		this.imgFTPStoreBasePath = imgFTPStoreBasePath;
+	}
+	public String getImgFTPVisitPrefx()
+	{
+		return imgFTPVisitPrefx;
+	}
+	public void setImgFTPVisitPrefx(String imgFTPVisitPrefx)
+	{
+		this.imgFTPVisitPrefx = imgFTPVisitPrefx;
+	}
+	public String getImgLocalVisitPrefix()
+	{
+		return imgLocalVisitPrefix;
+	}
+	public void setImgLocalVisitPrefix(String imgLocalVisitPrefix)
+	{
+		this.imgLocalVisitPrefix = imgLocalVisitPrefix;
 	}
 	
 

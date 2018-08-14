@@ -1,5 +1,5 @@
-#dlxy.key.property-private-key-path=classpath:keys/property-public.key
-#dlxy.key.property-public-key-path=classpath:keys/property-private.key
+#key.property-private-key-path=classpath:keys/property-public.key
+#key.property-public-key-path=classpath:keys/property-private.key
 
 
 
@@ -11,7 +11,7 @@ dlxy:
     amqp-host: localhost
     amqp-username: guest
     amqp-password: guest
-    amqp-enabled: true
+    amqp-enabled: false
     amqp-port: 5672
     redis-host: 127.0.0.1
     redis-port: 6379
@@ -19,7 +19,17 @@ dlxy:
     worker-id: 0
     datacenter-id: 1
     property-public-key-path: 'classpath:keys/property-public.key'
-    batch-classes: com.dlxy.system.batch.jobs.DelArticlePicJob,com.dlxy.system.batch.jobs.ArticleVisitCountJob
+    batch-classes: com.system.batch.jobs.DelArticlePicJob,com.system.batch.jobs.ArticleVisitCountJob
+    #ftp
+    
+    ftp-host: 120.78.240.211
+    ftp-port: 21
+    ftp-username: joker
+    ftp-password: lvcong124536789
+    imgFTPStoreBasePath: /home/joker/www
+    imgFTPVisitPrefx: imgs
+    #local
+    imgLocalVisitPrefix: imgs
     
 server:
   port: 8888

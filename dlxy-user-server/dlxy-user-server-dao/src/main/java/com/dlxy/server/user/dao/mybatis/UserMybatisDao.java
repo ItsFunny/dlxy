@@ -1,10 +1,3 @@
-/**
-*
-* @Description
-* @author joker 
-* @date 创建时间：2018年7月6日 上午9:23:01
-* 
-*/
 package com.dlxy.server.user.dao.mybatis;
 
 import java.util.Collection;
@@ -18,14 +11,6 @@ import org.apache.ibatis.annotations.Update;
 
 import com.dlxy.common.dto.UserDTO;
 
-/**
- * 
- * @When
- * @Description
- * @Detail
- * @author joker
- * @date 创建时间：2018年7月6日 上午9:23:01
- */
 @Mapper
 public interface UserMybatisDao extends DlxyUserDao
 {

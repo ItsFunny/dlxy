@@ -3,7 +3,7 @@ package com.dlxy.service;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.dlxy.model.ArticleVisitInfo;
+import com.dlxy.common.model.ArticleVisitInfo;
 import com.dlxy.server.article.service.IArticleService;
 
 public class DbVisitCountStrategy extends AbstractArticleVistitCountStrategy

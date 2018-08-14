@@ -1,10 +1,3 @@
-/**
-*
-* @Description
-* @author joker 
-* @date 创建时间：2018年7月27日 下午12:08:50
-* 
-*/
 package com.dlxy.task;
 
 import java.io.Serializable;

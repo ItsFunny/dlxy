@@ -1,15 +1,19 @@
 package com.dlxy.system.batch.config;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.ServletContext;
 import javax.sql.DataSource;
 
 import org.apache.commons.collections.functors.FalsePredicate;
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -41,6 +45,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.ServletContextAware;
+import org.xml.sax.helpers.DefaultHandler;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.dlxy.common.event.AmqpListener;
@@ -53,8 +59,16 @@ import com.dlxy.system.batch.consumer.FacadedAmqpListener;
 import com.dlxy.system.batch.consumer.UserIllegalLogListener;
 import com.dlxy.system.batch.consumer.UserRecordListener;
 import com.dlxy.system.batch.jobs.JobRunner;
+import com.dlxy.system.batch.service.AbstractDeleteFileHandler;
+import com.dlxy.system.batch.service.DefaultFileStrategyHandler;
+import com.dlxy.system.batch.service.FTPFileStrategyHandler;
+import com.dlxy.system.batch.service.IFileDeleteHandler;
 import com.dlxy.system.batch.service.IRedisService;
 import com.dlxy.system.batch.service.impl.RedisServiceImpl;
+import com.joker.library.file.DefaultFileService;
+import com.joker.library.file.FTPFileService;
+import com.joker.library.file.FileStrategyContext;
+import com.joker.library.file.IFileStrategy;
 
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -74,14 +88,95 @@ import redis.clients.jedis.JedisPoolConfig;
 { "com.dlxy" }, excludeFilters = @ComponentScan.Filter(type = FilterType.ANNOTATION, value = Mapper.class))
 @MapperScan(basePackages =
 { "com.dlxy" }, annotationClass = Mapper.class)
-public class BatchSystemConfiguration implements BeanFactoryAware
+public class BatchSystemConfiguration implements BeanFactoryAware, ServletContextAware
 {
 	private Logger logger = LoggerFactory.getLogger(BatchSystemConfiguration.class);
-	
+
 	private BeanFactory beanFactory;
-	
+	private ServletContext servletContext;
+
 	@Autowired
 	private DlxyProperty dlxyProperty;
+
+	private Map<String, String> serverInfo;
+
+
+
+	@Bean
+	public IFileDeleteHandler handler()
+	{
+		AbstractDeleteFileHandler fileHandler = new FTPFileStrategyHandler(IFileDeleteHandler.FTP_TYPE);
+
+		Map<String, String> ftpBasePathMap = new HashMap<>();
+		Map<String, String> ftpVisitPrefixMap = new HashMap<>();
+		ftpBasePathMap.put(IFileStrategy.IMG_TYPE, dlxyProperty.getImgFTPStoreBasePath());
+		ftpVisitPrefixMap.put(IFileStrategy.IMG_TYPE, dlxyProperty.getImgFTPVisitPrefx());
+		FTPFileService ftpFileService = new FTPFileService(dlxyProperty.getFtpHost(), dlxyProperty.getFtpPort(),
+				dlxyProperty.getFtpUsername(), dlxyProperty.getFtpPassword());
+		ftpFileService.setBasePathMap(ftpBasePathMap);
+		ftpFileService.setVisitPrefixMap(ftpVisitPrefixMap);
+		fileHandler.setFileStrategy(ftpFileService);
+		
+		AbstractDeleteFileHandler defaultHandler=new DefaultFileStrategyHandler(IFileDeleteHandler.NORMAL_TYPE);
+		DefaultFileService defaultFileService=new DefaultFileService();
+		Map<String, String> defaultBasePathMap = new HashMap<>();
+		Map<String, String> defaultVisitPrefixMap = new HashMap<>();
+		defaultVisitPrefixMap.put(IFileStrategy.IMG_TYPE, dlxyProperty.getImgLocalVisitPrefix());
+		defaultFileService.setBasePathMap(defaultBasePathMap);
+		defaultFileService.setVisitPrefixMap(defaultVisitPrefixMap);
+		defaultHandler.setFileStrategy(defaultFileService);
+		
+		
+		fileHandler.setNextHandler(defaultHandler);
+
+		return fileHandler;
+	}
+
+	public String getByKey(String key)
+	{
+		String value = this.serverInfo.get(key);
+		return value;
+	}
+
+	public void addKeyValue(String key, String value)
+	{
+		this.serverInfo.put(key, value);
+	}
+
+	@Bean
+	public DefaultFileService localFileStrategyService()
+	{
+		Map<String, String> pathMap = new HashMap<String, String>();
+		Map<String, String> visitPrefixMap = new HashMap<>();
+		DefaultFileService defaultFileService = new DefaultFileService();
+		visitPrefixMap.put(IFileStrategy.IMG_TYPE, "imgs");
+		defaultFileService.setVisitPrefixMap(visitPrefixMap);
+		defaultFileService.setBasePathMap(pathMap);
+		return defaultFileService;
+	}
+
+	@Bean
+	public FTPFileService ftpFileStrategyService()
+	{
+		Map<String, String> pathMap = new HashMap<String, String>();
+		Map<String, String> visitPrefixMap = new HashMap<>();
+		pathMap.put(IFileStrategy.IMG_TYPE, dlxyProperty.getImgFTPStoreBasePath());
+		visitPrefixMap.put(IFileStrategy.IMG_TYPE, dlxyProperty.getImgFTPVisitPrefx());
+		FTPFileService ftpFileService = new FTPFileService(dlxyProperty.getFtpHost(), dlxyProperty.getFtpPort(),
+				dlxyProperty.getFtpUsername(), dlxyProperty.getFtpPassword());
+		ftpFileService.setVisitPrefixMap(visitPrefixMap);
+		ftpFileService.setBasePathMap(pathMap);
+
+		return ftpFileService;
+	}
+
+	@Bean
+	public FileStrategyContext fileStrategyContext()
+	{
+		FileStrategyContext context = new FileStrategyContext();
+
+		return context;
+	}
 
 	@Bean
 	public JedisPool jedisPool()
@@ -303,15 +398,23 @@ public class BatchSystemConfiguration implements BeanFactoryAware
 	@Override
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException
 	{
-		this.beanFactory=beanFactory;
+		this.beanFactory = beanFactory;
 	}
-	
-	public JobRunner createBean(Class<? extends JobRunner> job )
+
+	public JobRunner createBean(Class<? extends JobRunner> job)
 	{
-		return (JobRunner) ((AutowireCapableBeanFactory)beanFactory).createBean(job,AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE,false);
+		return (JobRunner) ((AutowireCapableBeanFactory) beanFactory).createBean(job,
+				AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, false);
 	}
+
 	public DlxyProperty getProperties()
 	{
 		return this.dlxyProperty;
+	}
+
+	@Override
+	public void setServletContext(ServletContext servletContext)
+	{
+		this.servletContext = servletContext;
 	}
 }

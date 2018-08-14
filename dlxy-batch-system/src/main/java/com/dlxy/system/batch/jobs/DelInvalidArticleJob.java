@@ -12,10 +12,8 @@ import java.net.URLEncoder;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -33,11 +31,15 @@ import org.springframework.web.client.RestTemplate;
 
 import com.dlxy.common.dto.ResultDTO;
 import com.dlxy.common.enums.PictureStatusEnum;
-import com.dlxy.common.utils.FileUtil;
 import com.dlxy.common.utils.RSAUtils;
 import com.dlxy.server.article.service.IArticleService;
 import com.dlxy.server.picture.service.IPictureService;
 import com.dlxy.system.batch.config.DlxyProperty;
+import com.dlxy.system.batch.service.AbstractDeleteFileHandler;
+import com.dlxy.system.batch.service.DefaultFileStrategyHandler;
+import com.dlxy.system.batch.service.FTPFileStrategyHandler;
+import com.dlxy.system.batch.service.IFileDeleteHandler;
+import com.joker.library.file.IFileStrategy;
 
 /**
  * 删除放到回收站的文章 结合消息队列做是最好的,可以控制在一个稳定的时间内,但是问题不大
@@ -46,9 +48,9 @@ import com.dlxy.system.batch.config.DlxyProperty;
  * @Description
  * @Detail
  * @author joker
- * @date 创建时间：2018年7月31日 下午12:41:25
+ * @date 创建时间：2018年7月02日 下午12:41:25
  */
-@Component
+ @Component
 public class DelInvalidArticleJob implements JobRunner
 {
 	@Autowired
@@ -63,6 +65,12 @@ public class DelInvalidArticleJob implements JobRunner
 	@Autowired
 	private IArticleService articleService;
 
+	@Autowired
+	private IFileDeleteHandler deleteHandler;
+
+//	@Autowired
+//	private FileStrategyContext fileStrategyContext;
+
 	private String picStoreUrl;
 
 	private String getStoreUrl()
@@ -74,7 +82,7 @@ public class DelInvalidArticleJob implements JobRunner
 				String token = RSAUtils.encryptByPublic("getImgsAddress", dlxyProperty.getPublicKeyBytes());
 				@SuppressWarnings("rawtypes")
 				ResultDTO resultDTO = restTemplate.getForObject(
-						"http://localhost:8000/api/v1/address/images.html?token=" + URLEncoder.encode(token, "utf-8"),
+						"http://www.jokerlvccc.club/api/v1/address/images.html?token=" + URLEncoder.encode(token, "utf-8"),
 						ResultDTO.class);
 				if (resultDTO.getCode() == 1)
 				{
@@ -97,7 +105,8 @@ public class DelInvalidArticleJob implements JobRunner
 	}
 
 	private Logger logger = LoggerFactory.getLogger(DelInvalidArticleJob.class);
-	//没10天的23点执行一次
+
+	// 没10天的23点执行一次
 	@Scheduled(cron = "0 0 23 1/10 1-12 ? ")
 	@Override
 	public void run()
@@ -114,11 +123,11 @@ public class DelInvalidArticleJob implements JobRunner
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.DAY_OF_MONTH, -10);
 		Long limitTime = Long.parseLong(simpleDateFormat.format(calendar.getTime()));
-		String sql = "SELECT article_id,delete_time FROM dlxy_article WHERE delete_time BETWEEN 19700102 AND 20180808 AND article_status=2  ";
+		String sql = "SELECT article_id,delete_time FROM dlxy_article WHERE delete_time BETWEEN 19700102 AND ? AND article_status=2  ";
 
 		try
 		{
-			List<Map<String, Object>> res = queryRunner.query(sql, new MapListHandler());
+			List<Map<String, Object>> res = queryRunner.query(sql, new MapListHandler(), limitTime);
 			if (res != null && !res.isEmpty())
 			{
 				for (Map<String, Object> map : res)
@@ -143,8 +152,15 @@ public class DelInvalidArticleJob implements JobRunner
 				File file = null;
 				try
 				{
-					file = new File(storeUrl + File.separator + "imgs" + File.separator + articleId);
-					boolean isDel = FileUtil.delFileOrDir(file);
+					// 指定存储方式的话直接这样既可,只需要注入bean的时候指定方式既可
+					// Boolean isSuccess =
+					// fileStrategyContext.delete(fileStrategyContext.getStoreBasePath(IFileStrategy.IMG_TYPE)
+					// + File.separator + fileStrategyContext.getVisitPrefix(IFileStrategy.IMG_TYPE)
+					// + File.separator + articleId);
+					// 实际是会指定的,但本地可以先这么写
+					boolean isDel = loopDelete(deleteHandler, articleId);
+//					file = new File(storeUrl + File.separator + "imgs" + File.separator + articleId);
+//					boolean isDel = FileUtil.delFileOrDir(file);
 					if (isDel)
 					{
 						deleteIds.add(articleId);
@@ -158,6 +174,7 @@ public class DelInvalidArticleJob implements JobRunner
 					backUpdateIds.add(articleId);
 				}
 			}
+
 			if (!deleteIds.isEmpty())
 			{
 				count = articleService.deleteArticlesInBatch(new ArrayList<Long>(ids));
@@ -187,6 +204,31 @@ public class DelInvalidArticleJob implements JobRunner
 		}
 		logger.info("[DeleteInvalidArticleJob] finish the job,delete {} records,consume {} millseconds", count,
 				System.currentTimeMillis() - beginTime);
+	}
+
+	private boolean loopDelete(IFileDeleteHandler deleteHandler, Long articleId)
+	{
+		boolean res = false;
+		AbstractDeleteFileHandler absDFH = (AbstractDeleteFileHandler) deleteHandler;
+		IFileDeleteHandler nextHandler = absDFH.getNextHandler();
+		IFileDeleteHandler.DeleteHandlerObject deleteHandlerObject = new IFileDeleteHandler.DeleteHandlerObject();
+		String dbUrl = absDFH.getBaseStorePath(IFileStrategy.IMG_TYPE) + File.separator
+				+ absDFH.getVisitPrefix(IFileStrategy.IMG_TYPE) + File.separator + articleId;
+		deleteHandlerObject.setDbUrl(dbUrl);
+		if (absDFH instanceof FTPFileStrategyHandler)
+		{
+			deleteHandlerObject.setType(IFileDeleteHandler.FTP_TYPE);
+		} else if (absDFH instanceof DefaultFileStrategyHandler)
+		{
+			deleteHandlerObject.setType(IFileDeleteHandler.NORMAL_TYPE);
+		}
+		res = absDFH.delete(deleteHandlerObject);
+		if (null != nextHandler)
+		{
+			res = loopDelete(nextHandler, articleId);
+		}
+		return res;
+
 	}
 
 	private Integer delPicsByArticleIds(List<Long> articleIds) throws SQLException

@@ -1,0 +1,130 @@
+<#include "wrapper_up.html">
+<#setting datetime_format="yyyy-MM-dd HH:mm:ss"/>
+
+<script type="text/javascript" src="/My97DatePicker/WdatePicker.js"></script>
+<script>
+	function updateLink(obj){
+		$("#edit_linkName").val($(obj).attr("linkName"));
+		$("#edit_linkUrl").val($(obj).attr("linkUrl"));
+		$("#linkId").val($(obj).attr("linkId"));	
+		
+	}
+	function deleteLink(obj){
+		var param={"linkId":$(obj).attr("linkId")};
+		jQuery.get('/api/v1/link/delete.html',param,function(data){
+			alert(data.msg);
+			location.reload();
+		},'json');
+	}
+
+</script>
+<section class="layui-larry-box">
+
+	</blockquote>
+	<div class="check-div form-inline">
+        <button class="btn btn-yellow btn-xs" data-toggle="modal" data-target="#linkSource" onclick='javascript:$("#linkSource input").val("")'>添加标题</button>
+    </div>
+		         <!-- 操作日志 -->
+                <div class="layui-form news_list">
+                    <table class="layui-table">
+					    <colgroup>
+						<col width="50">
+						<col>
+						<col width="9%">
+						<col width="9%">
+						<col width="9%">
+						<col width="9%">
+						<col width="9%">
+						<col width="15%">
+					</colgroup>
+					<thead>
+						<tr>
+							<th>
+								<input name="" lay-skin="primary" lay-filter="allChoose" id="allChoose" type="checkbox">
+								<div class="layui-unselect layui-form-checkbox" lay-skin="primary"><i class="layui-icon"></i></div>
+							</th>
+							<th>超链接编号</th>
+							<th>超链接名称</th>
+							<th style="text-align:left;">
+							<a href="javascript:void(0)" onclick="">超链接url</a>
+							</th>
+							
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody class="news_content" id="contentBody">
+					<#if links??>
+						<#list links as item>
+							<tr>
+							<td>
+								<input name="checked" lay-skin="primary" lay-filter="choose" type="checkbox" value="${item.linkId}">
+								<div class="layui-unselect layui-form-checkbox" lay-skin="primary">
+								<i class="layui-icon"></i>
+								</div>
+							</td>
+							<td>${item.linkId?c}</td>
+							<td>
+								 ${item.linkName}
+							</td>
+							<td>
+								 ${item.linkUrl}
+							</td>
+							<td>
+									<a class="layui-btn layui-btn-mini news_edit"  linkId="${item.linkId?c}" onclick="deleteLink(this);"><i class="iconfont icon-edit" ></i> 删除</a>
+									<a class="layui-btn layui-btn-mini " data-toggle="modal" data-target="#linkSource" onclick="updateLink(this);" linkId="${item.linkId?c}" linkName="${item.linkName}" linkUrl="${item.linkUrl}"><i class="iconfont icon-edit"></i> 编辑</a>
+							</td>
+						</tr>
+						</#list>
+					</#if>
+					</tbody>
+					</table>
+			    </div>
+			    </div>
+		    </div>
+		</div>
+
+  <div class="modal fade" id="linkSource" role="dialog" aria-labelledby="gridSystemModalLabel" >
+        <form class="form-horizontal" id="titleForm" method="post" action="/admin/link/addOrUpdate.html" name="">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="gridSystemModalLabel">修改友情链接</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                                <div class="form-group ">
+                                    <label for="" class="col-xs-3 control-label">链接名称：</label>
+                                   <div class="col-xs-8 ">
+                                        <input type="text"  class="form-control input-sm duiqi" id="edit_linkName" name="linkName" placeholder="">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="sName" class="col-xs-3 control-label">链接地址:</label>
+                                    <div class="col-xs-8 ">
+                                        <input type="text"   class="form-control input-sm duiqi" id="edit_linkUrl" name="linkUrl"
+                                               placeholder="">
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                    	<input type="hidden" name="linkId" id="linkId" value="">
+                        <button type="button" class="btn btn-xs btn-white" >取 消</button>
+                        <button type="submit" >提交</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+            </form>
+        </div>
+</section>
+<#include "wrapper_down.html">
+<script>
+
+	 	
+</script>
+<#include "footer.html">

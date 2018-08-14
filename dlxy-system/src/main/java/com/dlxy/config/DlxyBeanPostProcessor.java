@@ -13,11 +13,6 @@ import com.dlxy.server.article.service.IBeanSelefAware;
 import com.dlxy.server.article.service.ITitleService;
 import com.dlxy.server.article.service.impl.TitleServiceImpl;
 
-/**
-* 
-* @author joker 
-* @date 创建时间：2018年8月5日 下午3:42:08
-*/
 public class DlxyBeanPostProcessor implements BeanPostProcessor
 {
 

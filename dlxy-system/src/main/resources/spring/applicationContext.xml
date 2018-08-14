@@ -13,8 +13,6 @@
 
 
 
-
-
 	<context:component-scan
 		base-package="com.dlxy.config" />
 	<aop:aspectj-autoproxy />

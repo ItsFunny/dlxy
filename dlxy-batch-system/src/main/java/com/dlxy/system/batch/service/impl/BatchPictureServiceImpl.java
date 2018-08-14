@@ -1,10 +1,3 @@
-/**
-*
-* @Description
-* @author joker 
-* @date 创建时间：2018年7月30日 上午11:39:10
-* 
-*/
 package com.dlxy.system.batch.service.impl;
 
 import java.util.List;
@@ -18,14 +11,6 @@ import com.dlxy.server.picture.model.DlxyArticlePictureExample;
 import com.dlxy.server.picture.model.DlxyArticlePictureExample.Criteria;
 import com.dlxy.system.batch.service.IBatchPictureService;
 
-/**
-* 
-* @When
-* @Description
-* @Detail
-* @author joker 
-* @date 创建时间：2018年7月30日 上午11:39:10
-*/
 @Service
 public class BatchPictureServiceImpl implements IBatchPictureService
 {

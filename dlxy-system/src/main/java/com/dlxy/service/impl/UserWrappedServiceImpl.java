@@ -4,16 +4,22 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Observer;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.dlxy.common.dto.IllegalLogDTO;
 import com.dlxy.common.dto.PageDTO;
+import com.dlxy.common.dto.SuspicionDTO;
 import com.dlxy.common.dto.UserDTO;
 import com.dlxy.common.dto.UserRecordDTO;
 import com.dlxy.common.utils.PageResultUtil;
 import com.dlxy.config.DlxyObservervable;
+import com.dlxy.exception.DlxySuspicionException;
+import com.dlxy.exception.DlxySystemIllegalException;
+import com.dlxy.server.user.model.DlxyLink;
 import com.dlxy.server.user.model.DlxyUser;
+import com.dlxy.server.user.service.ILinkService;
 import com.dlxy.server.user.service.IUserArticleService;
 import com.dlxy.server.user.service.IUserRecordService;
 import com.dlxy.server.user.service.IUserService;
@@ -34,6 +40,9 @@ public class UserWrappedServiceImpl extends DlxyObservervable implements IUserWr
 
 	@Autowired
 	private IUserService userService;
+	
+	@Autowired
+	private ILinkService linkService;
 
 	@Override
 	public PageDTO<Collection<Map<String, Object>>> findUserArticlesByPage(int pageSize, int pageNum,
@@ -168,5 +177,29 @@ public class UserWrappedServiceImpl extends DlxyObservervable implements IUserWr
 			notifyObservers(UserRecordDTO.getUserRecordDTO(loginUser.getUserId(), sb.toString()));
 		}
 		return d;
+	}
+
+	@Override
+	public void addLink(UserDTO loginUser, DlxyLink link)
+	{
+		Integer c = linkService.addOrUpdate(link);
+		if(c>0)
+		{
+			setChanged();
+			String detail="更新或者添加超链接:"+AbstractRecordDetailHandler.LINK+":"+link.getLinkUrl();
+			notifyObservers(UserRecordDTO.getUserRecordDTO(loginUser.getUserId(), detail));
+		}
+	}
+
+	@Override
+	public void deleteLinkByLinkId(UserDTO loginUser, DlxyLink link)
+	{
+		Integer c = linkService.deleteByLinkId(link.getLinkId());
+		if(c>0)
+		{
+			setChanged();
+			String detail="删除超链接:"+AbstractRecordDetailHandler.LINK+":"+link.getLinkUrl()+":删除了名为:"+link.getLinkName()+"的超链接";
+			notifyObservers(UserRecordDTO.getUserRecordDTO(loginUser.getUserId(), detail));
+		}
 	}
 }

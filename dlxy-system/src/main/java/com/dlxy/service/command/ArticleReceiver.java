@@ -1,13 +1,14 @@
 package com.dlxy.service.command;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import com.dlxy.common.dto.ArticleDTO;
 import com.dlxy.server.article.service.IArticleService;
-import com.dlxy.service.IArticleWrappedService;
 
 public class ArticleReceiver implements IReceiver
 {
@@ -19,6 +20,10 @@ public class ArticleReceiver implements IReceiver
 	public void add(Map<String, Object> map)
 	{
 		ArticleDTO articleDTO = (ArticleDTO) map.get("articleDTO");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		Calendar c = Calendar.getInstance();
+		c.add(Calendar.DAY_OF_MONTH,0);
+		articleDTO.setStartTime(Long.parseLong(sdf.format(c.getTime())));
 		articleServiceImpl.insertOrUpdate(articleDTO);
 	}
 

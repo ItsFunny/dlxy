@@ -32,7 +32,7 @@ import com.dlxy.vo.TitleDetailVO;
 @Controller
 public class PortalController
 {
-	private Logger logger=LoggerFactory.getLogger(PortalController.class);
+	private Logger logger = LoggerFactory.getLogger(PortalController.class);
 	@Autowired
 	private ITitleService titleService;
 	@Autowired
@@ -41,114 +41,129 @@ public class PortalController
 	private IArticleWrappedService articleManagementWrappedService;
 	@Autowired
 	private IArticleService articleService;
-	
-	
-	
-	@RequestMapping("/index")
-	public ModelAndView index(HttpServletRequest request,HttpServletResponse response)
+
+	@RequestMapping(value =
+	{ "/index", "/" })
+	public ModelAndView index(HttpServletRequest request, HttpServletResponse response)
 	{
 		/*
-		 * 1.得到所有的类目
-		 * 2.得到类目对应的文章
+		 * 1.得到所有的类目 2.得到类目对应的文章
 		 */
-		Map<String, Object>params=new HashMap<String, Object>();
-		ModelAndView modelAndView=null;
-		DlxyTitleDTO dlxyTitleDTO=null;
+		Map<String, Object> params = new HashMap<String, Object>();
+		ModelAndView modelAndView = null;
+		DlxyTitleDTO dlxyTitleDTO = null;
 		try
 		{
-			dlxyTitleDTO = titleManagementWrappedService.findDlxyDetailTitles(ITitleWrappedService.MAX_SHOW_ARTICLE_NUMBER);
+			dlxyTitleDTO = titleManagementWrappedService
+					.findDlxyDetailTitles(ITitleWrappedService.MAX_SHOW_ARTICLE_NUMBER);
 		} catch (Exception e)
 		{
 			e.printStackTrace();
-			logger.error("[显示首页学院相关新闻]error:{}",e.getCause());
+			logger.error("[显示首页学院相关新闻]error:{}", e.getCause());
 		}
 		params.put("dlxyTitleDTO", dlxyTitleDTO);
-		modelAndView=new ModelAndView("portal/index",params);
+		modelAndView = new ModelAndView("portal/index", params);
 		return modelAndView;
 	}
-	
-//	@CheckIllegalFormat
-//	@RequestMapping("/title/detail/{titleId}")
-//	public ModelAndView showTitleDetail(@PathVariable("titleId")String titleIdStr,HttpServletRequest request,HttpServletResponse response)
-//	{
-//		ModelAndView modelAndView=null;
-//		try
-//		{
-//			Integer titleId=Integer.parseInt(titleIdStr);
-//			int pageSize=Integer.parseInt(StringUtils.defaultString(request.getParameter("pageSize"), "10"));
-//			int pageNum=Integer.parseInt(StringUtils.defaultString(request.getParameter("pageNum"),"1"));
-//			//显示文章:
-//			TitleDetailVO titleDetailVO = articleManagementWrappedService.findTitleArticles(pageSize, pageNum, titleId);
-//			PageVO<Collection<ArticleDTO>>pageVO=new PageVO<Collection<ArticleDTO>>(titleDetailVO.getArticlePage().getData(), pageSize, pageNum, titleDetailVO.getArticlePage().getTotalCount());
-//			modelAndView=new ModelAndView("portal/title_detail");
-//			modelAndView.addObject("pageVO",pageVO);
-//			modelAndView.addObject("parent",titleDetailVO.getParentAndChilds());
-//			modelAndView.addObject("title",titleDetailVO.getTitleSelf());
-//			return modelAndView;
-//		} 
-//		catch (Exception e) {
-//			logger.error("[show title articles] error:{}",e.getMessage());
-//			
-//		}
-//		return modelAndView;
-//	}
-	
+
+	// @CheckIllegalFormat
+	// @RequestMapping("/title/detail/{titleId}")
+	// public ModelAndView showTitleDetail(@PathVariable("titleId")String
+	// titleIdStr,HttpServletRequest request,HttpServletResponse response)
+	// {
+	// ModelAndView modelAndView=null;
+	// try
+	// {
+	// Integer titleId=Integer.parseInt(titleIdStr);
+	// int
+	// pageSize=Integer.parseInt(StringUtils.defaultString(request.getParameter("pageSize"),
+	// "10"));
+	// int
+	// pageNum=Integer.parseInt(StringUtils.defaultString(request.getParameter("pageNum"),"1"));
+	// //显示文章:
+	// TitleDetailVO titleDetailVO =
+	// articleManagementWrappedService.findTitleArticles(pageSize, pageNum,
+	// titleId);
+	// PageVO<Collection<ArticleDTO>>pageVO=new
+	// PageVO<Collection<ArticleDTO>>(titleDetailVO.getArticlePage().getData(),
+	// pageSize, pageNum, titleDetailVO.getArticlePage().getTotalCount());
+	// modelAndView=new ModelAndView("portal/title_detail");
+	// modelAndView.addObject("pageVO",pageVO);
+	// modelAndView.addObject("parent",titleDetailVO.getParentAndChilds());
+	// modelAndView.addObject("title",titleDetailVO.getTitleSelf());
+	// return modelAndView;
+	// }
+	// catch (Exception e) {
+	// logger.error("[show title articles] error:{}",e.getMessage());
+	//
+	// }
+	// return modelAndView;
+	// }
+
 	@RequestMapping("/title/detail/{titleAbbName}")
-	public ModelAndView showTitleDetail(@PathVariable("titleAbbName")String titleAbbName,HttpServletRequest request,HttpServletResponse response)
+	public ModelAndView showTitleDetail(@PathVariable("titleAbbName") String titleAbbName, HttpServletRequest request,
+			HttpServletResponse response)
 	{
-		ModelAndView modelAndView=null;
+		ModelAndView modelAndView = null;
 		try
 		{
-			int pageSize=Integer.parseInt(StringUtils.defaultString(request.getParameter("pageSize"), "10"));
-			int pageNum=Integer.parseInt(StringUtils.defaultString(request.getParameter("pageNum"),"1"));
-			//显示文章:
-			TitleDetailVO titleDetailVO = articleManagementWrappedService.findTitleArticlesByTitleAbbName(pageSize, pageNum, titleAbbName);
-//			TitleDetailVO titleDetailVO = articleManagementWrappedService.findTitleArticlesByTitleId(pageSize, pageNum, titleId);
-			PageVO<Collection<ArticleDTO>>pageVO=new PageVO<Collection<ArticleDTO>>(titleDetailVO.getArticlePage().getData(), pageSize, pageNum, titleDetailVO.getArticlePage().getTotalCount());
-			modelAndView=new ModelAndView("portal/title_detail");
-			modelAndView.addObject("pageVO",pageVO);
-			modelAndView.addObject("parent",titleDetailVO.getParentAndChilds());
-			modelAndView.addObject("title",titleDetailVO.getTitleSelf());
+			int pageSize = Integer.parseInt(StringUtils.defaultString(request.getParameter("pageSize"), "10"));
+			int pageNum = Integer.parseInt(StringUtils.defaultString(request.getParameter("pageNum"), "1"));
+			// 显示文章:
+			TitleDetailVO titleDetailVO = articleManagementWrappedService.findTitleArticlesByTitleAbbName(pageSize,
+					pageNum, titleAbbName);
+			// TitleDetailVO titleDetailVO =
+			// articleManagementWrappedService.findTitleArticlesByTitleId(pageSize, pageNum,
+			// titleId);
+			PageVO<Collection<ArticleDTO>> pageVO = new PageVO<Collection<ArticleDTO>>(
+					titleDetailVO.getArticlePage().getData(), pageSize, pageNum,
+					titleDetailVO.getArticlePage().getTotalCount());
+			modelAndView = new ModelAndView("portal/title_detail");
+			modelAndView.addObject("pageVO", pageVO);
+			modelAndView.addObject("parent", titleDetailVO.getParentAndChilds());
+			modelAndView.addObject("title", titleDetailVO.getTitleSelf());
 			return modelAndView;
-		} 
-		catch (Exception e) {
+		} catch (Exception e)
+		{
 			e.printStackTrace();
-			logger.error("[show title articles] error:{},cause:{}",e.getMessage(),e.getCause());
-			modelAndView=new ModelAndView("error");
-			modelAndView.addObject("error",e.getMessage());
+			logger.error("[show title articles] error:{},cause:{}", e.getMessage(), e.getCause());
+			modelAndView = new ModelAndView("error");
+			modelAndView.addObject("error", e.getMessage());
 		}
 		return modelAndView;
 	}
+
 	@CheckIllegalFormat
 	@RequestMapping("/article/detail/{articleId}")
-	public ModelAndView showArticleDetail(@PathVariable("articleId")String articleIdStr,HttpServletRequest request,HttpServletResponse response)
+	public ModelAndView showArticleDetail(@PathVariable("articleId") String articleIdStr, HttpServletRequest request,
+			HttpServletResponse response)
 	{
-		ModelAndView modelAndView=null;
-		Map<String, Object>params=new HashMap<>();
+		ModelAndView modelAndView = null;
+		Map<String, Object> params = new HashMap<>();
 		try
 		{
-			Long articleId=Long.parseLong(articleIdStr);
+			Long articleId = Long.parseLong(articleIdStr);
 			ArticleDTO articleDTO = articleManagementWrappedService.showArticleDetail(articleId);
-			if(null==articleDTO || !articleDTO.getArticleStatus().equals(ArticleStatusEnum.UP.ordinal()))
+			if (null == articleDTO || !articleDTO.getArticleStatus().equals(ArticleStatusEnum.UP.ordinal()))
 			{
 				params.put("error", "文章不存在或已下线");
-				modelAndView=new ModelAndView("error",params);
+				modelAndView = new ModelAndView("error", params);
 				return modelAndView;
 			}
 			params.put("article", articleDTO);
-//			Map<String, Object>p=new HashMap<>();
-//			p.put("articleType", ArticleTypeEnum.INTRODUCE_ARTICLE.ordinal());
-//			Collection<ArticleDTO> latest = articleService.findLatestArticleLimited(TitleArticleConstant.MAX_NUMBER_ARTICLES);
-			
-//			params.put("latestArticles", latest);
-			modelAndView=new ModelAndView("portal/article_detail",params);
+			// Map<String, Object>p=new HashMap<>();
+			// p.put("articleType", ArticleTypeEnum.INTRODUCE_ARTICLE.ordinal());
+			// Collection<ArticleDTO> latest =
+			// articleService.findLatestArticleLimited(TitleArticleConstant.MAX_NUMBER_ARTICLES);
+
+			// params.put("latestArticles", latest);
+			modelAndView = new ModelAndView("portal/article_detail", params);
 		} catch (Exception e)
 		{
-			params.put("error", e.getMessage());//记录消息
-			logger.error("[show article detail] error:{}",e.getMessage());
-			modelAndView=new ModelAndView("error",params);
+			params.put("error", e.getMessage());// 记录消息
+			logger.error("[show article detail] error:{}", e.getMessage());
+			modelAndView = new ModelAndView("error", params);
 		}
 		return modelAndView;
 	}
 }
-

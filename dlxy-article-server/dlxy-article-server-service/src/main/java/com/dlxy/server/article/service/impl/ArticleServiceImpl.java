@@ -86,7 +86,7 @@ public class ArticleServiceImpl implements IArticleService, IUserArticleService
 		articleDTO.setArticleId(articleId);
 		articleDTO.setArticleStatus(status);
 		articleDao.updateByPrimaryKeySelective(articleDTO);
-		articleDao.updateArticleStatus(articleId, status);
+//		articleDao.updateArticleStatus(articleId, status);
 	}
 
 	// @UserRecordAnnotation(dealWay="update(delete):article")

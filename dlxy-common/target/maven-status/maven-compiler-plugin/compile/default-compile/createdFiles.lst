@@ -14,6 +14,7 @@ com/dlxy/common/event/AppEventLogPubliher.class
 com/dlxy/common/dto/AbstractDlxyTitleComposite.class
 com/dlxy/common/dto/UserDTO.class
 com/dlxy/common/enums/DlxyTitleEnum.class
+com/dlxy/common/service/ITitleCacheServiec.class
 com/dlxy/common/service/IdWorkerService.class
 com/dlxy/common/enums/IllegalLevelEnum.class
 com/dlxy/common/model/VisitUserManager.class
@@ -32,6 +33,7 @@ com/dlxy/common/dto/PageDTO.class
 com/dlxy/common/event/AmqpListener.class
 com/dlxy/common/vo/PageVO.class
 com/dlxy/common/dto/UserRecordDTO.class
+com/dlxy/common/utils/FTPUtil.class
 com/dlxy/common/exception/UnfindPageException.class
 com/dlxy/common/dto/VisitUserDTO.class
 com/dlxy/common/dto/DlxyTitleDTO.class

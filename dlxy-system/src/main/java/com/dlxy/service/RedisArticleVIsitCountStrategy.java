@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 import com.dlxy.common.event.AppEvent;
 import com.dlxy.common.event.AppEventPublisher;
 import com.dlxy.common.event.Events;
+import com.dlxy.common.model.ArticleVisitInfo;
 import com.dlxy.common.utils.JsonUtil;
-import com.dlxy.model.ArticleVisitInfo;
 import com.dlxy.server.article.service.IArticleService;
 
 import redis.clients.jedis.exceptions.JedisException;
@@ -42,7 +42,8 @@ public class RedisArticleVIsitCountStrategy extends AbstractArticleVistitCountSt
 		String key = String.format(IRedisService.ARTICLE_VISIT_COUNT, visitInfo.getArticleId());
 		try
 		{
-			redisService.set(key, JsonUtil.obj2Json(visitInfo));
+			redisService.set(key, JsonUtil.obj2Json(visitInfo),60*60*24*5);
+			redisService.zAdd(IRedisService.ARTICLE_VISIT_RANGE, (double)visitInfo.getVisitCount().get(), visitInfo.getArticleId().toString());
 		} catch (Exception e)
 		{
 			throw new JedisException(e);

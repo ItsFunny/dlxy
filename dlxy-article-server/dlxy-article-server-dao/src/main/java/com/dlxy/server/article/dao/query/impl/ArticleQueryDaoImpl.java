@@ -16,7 +16,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.management.RuntimeErrorException;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
@@ -109,13 +108,11 @@ public class ArticleQueryDaoImpl implements ArticleQueryDao
 		StringBuilder sql = new StringBuilder();
 		ResultSetHandler<List<ArticleDTO>> resultSetHandler = null;
 
-		boolean isTypeFind = false;
 		if (params.containsKey("articleType")
 				&& Integer.parseInt(params.get("articleType").toString()) == ArticleTypeEnum.PICTURE_ARTICLE.ordinal())
 		{
 			sql.append(
 					"SELECT a.article_id,a.title_id,a.article_name,a.article_author,a.article_type,a.create_date,a.update_date,a.article_status,c.realname,c.user_id,a.delete_date,b.title_name,e.picture_url FROM dlxy_article a LEFT JOIN dlxy_title b ON a.title_id=b.title_id LEFT JOIN dlxy_user_article c ON a.article_id=c.article_id LEFT JOIN dlxy_article_picture d ON d.article_id=a.article_id AND d.picture_type=1 AND d.picture_status =1 LEFT JOIN dlxy_picture e ON d.picture_id=e.picture_id WHERE 1=1 ");
-			isTypeFind = true;
 			resultSetHandler = new ArticleTypeResultSetHandler();
 		} else
 		{
@@ -201,31 +198,9 @@ public class ArticleQueryDaoImpl implements ArticleQueryDao
 		sql.append(" order by a.create_date desc limit ?,? ");
 		set.add(start);
 		set.add(end);
-		System.out.println(sql);
 		List<ArticleDTO> res = queryRunner.query(sql.toString(), resultSetHandler, set.toArray());
 		return res;
 	}
-
-	// public ArticleDTO findByArticleId(Long articleId) throws SQLException
-	// {
-	// String sql = "select
-	// a.article_id,a.title_id,a.article_name,a.article_author,a.article_type,a.create_date,a.update_date
-	// ,a.article_status ,c.realname ,c.user_id,a.delete_date,a.article_content "
-	// + " from dlxy_article a,dlxy_title b ,dlxy_user_article c where
-	// a.title_id=b.title_id and a.article_id= c.article_id and a.article_id=?";
-	// ArticleDTO query = queryRunner.query(sql, new
-	// ArticleSingleResultSetHandler(), articleId);
-	// return query;
-	// }
-
-	// @Override
-	// public int rollBackArticle(int status, Long articleId, Integer titleId)
-	// throws SQLException
-	// {
-	// String sql = "update dlxy_article set article_status=? where article_id=? and
-	// exists(select 1 from dlxy_title b where b.title_id = ? )";
-	// return queryRunner.update(sql, status, articleId, titleId);
-	// }
 
 	@Override
 	public void update(ArticleDTO articleDTO) throws SQLException
@@ -283,44 +258,12 @@ public class ArticleQueryDaoImpl implements ArticleQueryDao
 		queryRunner.update(sb.toString(), l.toArray());
 	}
 
-	// @Override
-	// public Collection<ArticleDTO> findArticlesInTitleIds(List<Integer> titelIds,
-	// int limit) throws SQLException
-	// {
-	// StringBuilder sql = new StringBuilder(
-	// " SELECT a.article_id,article_name,a.create_date,b.title_parent_id FROM
-	// dlxy_article a,dlxy_title b WHERE a.title_id=b.title_id AND
-	// a.article_status<> 2 AND a.title_id IN ( ");
-	// sql.append(" select b.title_id from dlxy_title b where b.title_parent_id in (
-	// ");
-	// sql.append(StringUtils.repeat(" ?, ", titelIds.size()-1)).append(" ? ) ");
-	// sql.append(" ) ");
-	// return queryRunner.query(sql.toString(), new
-	// ResultSetHandler<Collection<ArticleDTO>>()
-	// {
-	//
-	// @Override
-	// public Collection<ArticleDTO> handle(ResultSet rs) throws SQLException
-	// {
-	// List<ArticleDTO>articleDTOs=new ArrayList<ArticleDTO>();
-	// while(rs.next())
-	// {
-	// ArticleDTO articleDTO=new ArticleDTO();
-	// articleDTO.setArticleId(rs.getLong(1));
-	// articleDTO.setArticleName(rs.getString(2));
-	// articleDTO.setCreateDate((Date)rs.getDate(3));
-	// articleDTO.setTitleParentId(rs.getInt(4));
-	// articleDTOs.add(articleDTO);
-	// }
-	// return articleDTOs;
-	// }
-	// }, titelIds.toArray());
-	// }
 
 	@Override
 	public Collection<ArticleDTO> findArticlesInTitleIds(Map<String, Object> params) throws SQLException
 	{
 		List<Object> l = new LinkedList<>();
+		@SuppressWarnings("unchecked")
 		List<Integer> titleIds = (List<Integer>) params.get("ids");
 		StringBuilder sql = new StringBuilder(
 				" SELECT a.article_id,article_name,a.create_date,b.title_parent_id,a.article_author FROM dlxy_article a,dlxy_title b WHERE a.title_id=b.title_id AND a.article_status<> 2 AND a.title_id IN ( ");

@@ -1,10 +1,3 @@
-/**
-*
-* @Description
-* @author joker 
-* @date 创建时间：2018年7月22日 下午1:15:51
-* 
-*/
 package com.dlxy.aop;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,14 +16,6 @@ import com.dlxy.common.enums.IllegalLevelEnum;
 import com.dlxy.exception.DlxySuspicionException;
 import com.joker.library.utils.CommonUtils;
 
-/**
-* 
-* @When
-* @Description
-* @Detail
-* @author joker 
-* @date 创建时间：2018年7月22日 下午1:15:51
-*/
 @Aspect
 @Component
 @Order(1)

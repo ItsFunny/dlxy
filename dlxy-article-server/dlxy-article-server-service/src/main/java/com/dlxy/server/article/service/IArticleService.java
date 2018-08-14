@@ -58,7 +58,9 @@ public interface IArticleService
 	
 	
 	
+	@Deprecated
 	Long countAllArticles();
+	
 	Collection<ArticleDTO>findAllArticlesByPage(int start,int end);
 	
 //	Collection<ArticleDTO>findArtilcesByTilteIds(List<Integer>titleIds,int limit) throws SQLException;

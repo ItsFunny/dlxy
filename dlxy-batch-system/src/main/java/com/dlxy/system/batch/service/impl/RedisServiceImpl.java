@@ -1,10 +1,3 @@
-/**
-*
-* @Description
-* @author joker 
-* @date 创建时间：2018年7月1日 下午3:51:55
-* 
-*/
 package com.dlxy.system.batch.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +8,6 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.exceptions.JedisException;
 
-/**
- * 
- * @When
- * @Description
- * @Detail
- * @author joker
- * @date 创建时间：2018年7月1日 下午3:51:55
- */
 public class RedisServiceImpl implements IRedisService
 {
 	@Autowired

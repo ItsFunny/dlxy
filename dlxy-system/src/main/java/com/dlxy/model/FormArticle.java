@@ -42,10 +42,6 @@ public class FormArticle
 		articleDTO.setArticleContent(this.articleContent);
 		articleDTO.setTitleId(this.titleId);
 		articleDTO.setArticleType(this.articleType);
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-		Calendar c = Calendar.getInstance();
-		c.add(Calendar.DAY_OF_MONTH,0);
-		articleDTO.setStartTime(Long.parseLong(sdf.format(c.getTime())));
 	}
 	public Long getArticleId()
 	{

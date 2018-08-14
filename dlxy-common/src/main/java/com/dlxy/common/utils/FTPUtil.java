@@ -425,6 +425,7 @@ public class FTPUtil
 
 		try
 		{
+			
 			flag = ftpClient.deleteFile(changeEncode(ftpClient, filePath));
 			if (flag)
 			{

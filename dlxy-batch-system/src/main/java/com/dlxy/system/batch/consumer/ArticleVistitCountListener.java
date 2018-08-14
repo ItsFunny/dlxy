@@ -16,14 +16,6 @@ import com.dlxy.common.event.AmqpListener;
 import com.dlxy.common.event.AppEvent;
 import com.dlxy.system.batch.jobs.ArticleVisitCountJob;
 
-/**
-* 
-* @When
-* @Description
-* @Detail
-* @author joker 
-* @date 创建时间：2018年7月27日 下午3:00:39
-*/
 public class ArticleVistitCountListener implements AmqpListener
 {
 	private Logger logger=LoggerFactory.getLogger(ArticleVistitCountListener.class);

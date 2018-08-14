@@ -1,20 +1,5 @@
-/**
-*
-* @Description
-* @author joker 
-* @date 创建时间：2018年7月24日 下午4:10:26
-* 
-*/
 package com.dlxy.common.vo;
 
-/**
-* 
-* @When
-* @Description
-* @Detail
-* @author joker 
-* @date 创建时间：2018年7月24日 下午4:10:26
-*/
 public class UserRecordUrlVO
 {
 	private String id;

@@ -1,9 +1,9 @@
+com/dlxy/system/batch/config/DlxyProperty.class
+com/dlxy/system/batch/constants/PictureConstant.class
 META-INF/spring-configuration-metadata.json
 com/dlxy/system/batch/config/BatchSystemConfiguration.class
 com/dlxy/system/batch/jobs/ArticleVisitCountJob.class
 com/dlxy/system/batch/consumer/FacadedAmqpListener.class
 com/dlxy/system/batch/jobs/JobRunner.class
-com/dlxy/system/batch/config/DlxyProperty.class
 com/dlxy/system/batch/BatchSystem.class
 com/dlxy/system/batch/jobs/DelArticlePicJob.class
-com/dlxy/system/batch/constants/PictureConstant.class

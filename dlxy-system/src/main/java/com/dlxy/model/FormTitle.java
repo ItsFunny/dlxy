@@ -3,22 +3,17 @@ package com.dlxy.model;
 
 import javax.validation.constraints.Max;
 
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
 import com.dlxy.common.dto.DlxyTitleDTO;
 
-/**
-* 
-* @When
-* @Description
-* @Detail
-* @author joker 
-* @date 创建时间：2018年7月8日 上午10:38:26
-*/
 public class FormTitle
 {
 	@NotBlank(message="titleName不可为空")
 	private String titleName;
+	
+	@Length(max=7,min=1,message="缩写名称长度在1-7之内")
 	private String titleAbbName;
 	
 	@Max(value=100,message="最大不能超过100")

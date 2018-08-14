@@ -1,10 +1,3 @@
-/**
-*
-* @Description
-* @author joker 
-* @date 创建时间：2018年7月27日 上午10:56:49
-* 
-*/
 package com.dlxy.task;
 
 import java.util.concurrent.ExecutorService;

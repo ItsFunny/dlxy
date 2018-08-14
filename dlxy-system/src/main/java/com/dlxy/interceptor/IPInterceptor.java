@@ -1,17 +1,9 @@
-/**
-*
-* @author joker 
-* @date 创建时间：2018年8月1日 下午12:40:45
-* 
-*/
 package com.dlxy.interceptor;
-
 
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -30,16 +22,13 @@ import com.dlxy.common.utils.JsonUtil;
 import com.dlxy.service.IRedisService;
 import com.google.gson.reflect.TypeToken;
 import com.joker.library.utils.CommonUtils;
+import com.joker.library.utils.DateUtils;
 
 public class IPInterceptor implements HandlerInterceptor
 {
 	private Long visitIntervalTime = 1000 * 30L;
 
 	private Integer maxRefreshTimes = 5;
-
-	
-
-//	private ThreadLocal<VisitUserHistoryDTO> histroy = new ThreadLocal<>();
 
 	@Autowired
 	private IRedisService redisService;
@@ -73,16 +62,17 @@ public class IPInterceptor implements HandlerInterceptor
 
 	}
 
-	private JudgeResult judgeFromHistory(HttpServletRequest request,String ip, String uri)
+	private JudgeResult judgeFromHistory(HttpServletRequest request, String ip, String uri)
 	{
-//		IPInterceptor interceptor=new IPInterceptor();
-		
-		
-		HttpSession session = request.getSession(true);
-		VisitUserHistoryDTO historyDTO =null;
+		HttpSession session = request.getSession();
+		if (session == null)
+		{
+			return null;
+		}
+		VisitUserHistoryDTO historyDTO = null;
 		historyDTO = (VisitUserHistoryDTO) session.getAttribute("history");
 		JudgeResult result = this.new JudgeResult();
-		
+
 		if (historyDTO == null)
 		{
 			String json = redisService.get(String.format(IRedisService.USER_VISIT_HISTORY, ip));
@@ -98,7 +88,7 @@ public class IPInterceptor implements HandlerInterceptor
 		}
 		HistroyDetail detail = historyDTO.getDetails().get(uri);
 		Integer refreshCounts = detail.getRefreshCounts();
-		Integer maxVisitCount=detail.getMaxLimitedCounts();
+		Integer maxVisitCount = detail.getMaxLimitedCounts();
 		if (refreshCounts < maxVisitCount)
 		{
 			result.setFilter(true);
@@ -106,14 +96,15 @@ public class IPInterceptor implements HandlerInterceptor
 		{
 			Long lastVisitTimes = historyDTO.getLastVisitTimes(uri);
 			Long remainSeconds = System.currentTimeMillis() - lastVisitTimes;
-			//关于时间判断可以根据数学公式做动态深入的设计
+			// 关于时间判断可以根据数学公式做动态深入的设计
 			if (remainSeconds < visitIntervalTime)
 			{
 				result.setFilter(false);
 				result.setRemainSeconds(visitIntervalTime - remainSeconds);
-			}else {
-				//关于次数限制可以根据数学公式做动态深入的设计
-				detail.setMaxLimitedCounts(maxVisitCount+maxRefreshTimes);
+			} else
+			{
+				// 关于次数限制可以根据数学公式做动态深入的设计
+				detail.setMaxLimitedCounts(maxVisitCount + maxRefreshTimes);
 			}
 		}
 		return result;
@@ -129,7 +120,28 @@ public class IPInterceptor implements HandlerInterceptor
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception
 	{
-		boolean needIpFilter=true;
+
+		boolean needIpFilter = true;
+		request.getSession();
+		// 更新全站的访问次数和,日访问次数,不限ip,一旦访问就增加
+		// try
+		// {
+		// redisService.incr(IRedisService.WEB_VISIT_TOTAL_COUT);
+		// String perKey=String.format(IRedisService.PER_DAY_VISIT_COUNT,
+		// DateUtils.getCurrentDay());
+		// String perDayJson = redisService.get(perKey);
+		// if(StringUtils.isEmpty(perDayJson))
+		// {
+		// redisService.set(perKey, "1",60*60*48);
+		// }else {
+		// redisService.incr(perKey);
+		// }
+		// } catch (Exception e)
+		// {
+		// logger.error("[更新全站访问次数],可能是redis服务器挂了:{}",e.getMessage());
+		// return true;
+		// }
+
 		if (!needIpFilter)
 		{
 			return true;
@@ -139,7 +151,7 @@ public class IPInterceptor implements HandlerInterceptor
 		try
 		{
 			String ipJsonStr = redisService.get(IRedisService.BANED_IP);
-			if(org.apache.commons.lang3.StringUtils.isEmpty(ipJsonStr))
+			if (!org.apache.commons.lang3.StringUtils.isEmpty(ipJsonStr))
 			{
 				List<String> ips = JsonUtil.json2List(ipJsonStr, new TypeToken<String>()
 				{
@@ -150,15 +162,60 @@ public class IPInterceptor implements HandlerInterceptor
 					rediretct(response, error);
 				}
 			}
-			JudgeResult result = judgeFromHistory(request,ip, uri);
+			JudgeResult result = judgeFromHistory(request, ip, uri);
+			if (null == result)
+			{
+				return true;
+			}
 			if (!result.isFilter())
 			{
 				rediretct(response, "刷新频率太快了,请过" + result.getRemainSeconds() / 1000 + "秒后再访问");
 				return false;
 			}
+			// 通过ip显示每日访问人数,如果不想通过ip,每来一次访问都增加,则注释这段然后直接打开上面注释的那段即可
+			// 如果想跟文章采取的策略相同,则注释这段 打开下面这段即可,全站的访问策略采取的是跟文章相同
+			// 注意更改策略同时记得更改数据结构,同时尽量做到redis高可用,不然会出现数据丢失状况
+			// String perKey=String.format(IRedisService.PER_DAY_VISIT_COUNT,
+			// DateUtils.getCurrentDay());
+			// String perDayJson = redisService.get(perKey);
+			// Map<String, Object> map=null;
+			// Set<String>ips=null;
+			// if(!StringUtils.isEmpty(perDayJson))
+			// {
+			// map= JsonUtil.json2Map(perDayJson, Map.class);
+			// ips=(Set<String>) map.get("ips");
+			// if(!ips.contains(ip))
+			// {
+			// Long visitCount = (Long) map.get("visitCount");
+			// visitCount++;
+			// }
+			// }else {
+			// map=new HashMap<String, Object>();
+			// map.put("visitCount", 1);
+			// ips=new HashSet<>();
+			// ips.add(ip);
+			// redisService.expire(perKey, 60*60*48);
+			// }
+			// String newJson = JsonUtil.obj2Json(map);
+			// redisService.set(perKey, newJson);
+
+			else
+			{
+				String perKey = String.format(IRedisService.PER_DAY_VISIT_COUNT, DateUtils.getCurrentDay());
+				String perDayJson = redisService.get(perKey);
+				redisService.incr(IRedisService.WEB_VISIT_TOTAL_COUT);
+				if (StringUtils.isEmpty(perDayJson))
+				{
+					redisService.set(perKey, "1", 60 * 60 * 48);
+				} else
+				{
+					redisService.incr(perKey);
+				}
+			}
+
 		} catch (Exception e)
 		{
-			logger.error("[IPfilter]error:{}",e.getMessage());
+			logger.error("[IPfilter]error:{}", e.getMessage());
 			return true;
 		}
 		return true;
@@ -168,35 +225,30 @@ public class IPInterceptor implements HandlerInterceptor
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception
 	{
-		HandlerInterceptor.super.postHandle(request, response, handler, modelAndView);
+
 	}
 
 	@Override
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
 			throws Exception
 	{
-		boolean needIpFilter=true;
+		boolean needIpFilter = true;
 		if (!needIpFilter)
 		{
 			return;
 		}
-		VisitUserHistoryDTO  visitUserHistoryDTO=(VisitUserHistoryDTO) request.getSession(true).getAttribute("history");
+		HttpSession session = request.getSession();
+		if (null == session)
+		{
+			return;
+		}
+		VisitUserHistoryDTO visitUserHistoryDTO = (VisitUserHistoryDTO) session.getAttribute("history");
 		try
 		{
-//			VisitUserHistoryDTO visitUserHistoryDTO = histroy.get();
-//			if (visitUserHistoryDTO == null)
-//			{
-//				visitUserHistoryDTO = new VisitUserHistoryDTO();
-//				// detail = new HistroyDetail();
-//			}
-			// else
-			// {
-			// detail = visitUserHistoryDTO.getDetails().get(request.getRequestURI());
-			// if (null == detail)
-			// {
-			// detail = new HistroyDetail();
-			// }
-			// }
+			if (visitUserHistoryDTO == null)
+			{
+				return;
+			}
 			Map<String, HistroyDetail> mapDetail = visitUserHistoryDTO.getDetails();
 			HistroyDetail detail = mapDetail.get(request.getRequestURI());
 			if (null == detail)

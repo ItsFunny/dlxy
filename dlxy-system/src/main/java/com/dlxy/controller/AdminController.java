@@ -1,6 +1,9 @@
 package com.dlxy.controller;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,6 +13,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,29 +44,39 @@ import com.dlxy.common.dto.PictureDTO;
 import com.dlxy.common.dto.UserDTO;
 import com.dlxy.common.dto.UserRecordDTO;
 import com.dlxy.common.dto.UserRoleDTO;
+import com.dlxy.common.dto.VisitUserHistoryDTO;
 import com.dlxy.common.enums.ArticlePictureTypeEnum;
 import com.dlxy.common.enums.ArticleStatusEnum;
 import com.dlxy.common.enums.ArticleTypeEnum;
 import com.dlxy.common.enums.DlxyTitleEnum;
 import com.dlxy.common.enums.IllegalLevelEnum;
 import com.dlxy.common.enums.PictureStatusEnum;
+import com.dlxy.common.model.ArticleVisitInfo;
 import com.dlxy.common.service.IdWorkerService;
+import com.dlxy.common.utils.JsonUtil;
 import com.dlxy.common.utils.PageResultUtil;
 import com.dlxy.common.vo.PageVO;
 import com.dlxy.exception.DlxySystemIllegalException;
+import com.dlxy.listener.ShiroSessionListener;
 import com.dlxy.model.FormArticle;
 import com.dlxy.model.FormUser;
+import com.dlxy.server.article.service.IArticleCountService;
+import com.dlxy.server.article.service.IArticleService;
 import com.dlxy.server.article.service.ITitleService;
+import com.dlxy.server.user.model.DlxyLink;
 import com.dlxy.server.user.model.DlxyUser;
+import com.dlxy.server.user.service.ILinkService;
 import com.dlxy.server.user.service.IUserRoleService;
 import com.dlxy.server.user.service.IUserService;
 import com.dlxy.service.IArticleWrappedService;
 import com.dlxy.service.IPictureWrappedService;
+import com.dlxy.service.IRedisService;
 import com.dlxy.service.IUserWrappedService;
 import com.dlxy.service.command.AddOrUpdateArtilceCommand;
 import com.dlxy.shiro.DlxyShiroAuthToken;
 import com.dlxy.utils.AdminUtil;
-import com.dlxy.utils.FileUtil;
+import com.joker.library.file.FileStrategyContext;
+import com.joker.library.file.IFileStrategy;
 import com.joker.library.utils.CommonUtils;
 import com.joker.library.utils.KeyUtils;
 
@@ -72,6 +87,8 @@ public class AdminController
 	Pattern realNamePattern = Pattern.compile("^([\u4e00-\u9fa5]{1,20}|[a-zA-Z]+ [a-zA-Z]+)$");
 	Pattern passwrodPattern = Pattern.compile("^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$");
 	Pattern phonePattern = Pattern.compile("^(1[34578])\\d{9}$");
+	Pattern urlPattern = Pattern.compile(
+			"(http|ftp|https):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&:/~\\+#]*[\\w\\-\\@?^=%&/~\\+#])?");
 	private Logger logger = LoggerFactory.getLogger(AdminController.class);
 	@Autowired
 	private ITitleService titleService;
@@ -83,14 +100,21 @@ public class AdminController
 	private IUserWrappedService userManagementWrappedService;
 	@Autowired
 	private IPictureWrappedService pictureManagementWrappedService;
-
+	@Autowired
+	private FileStrategyContext fileStrategyContext;
 	@Autowired
 	private IdWorkerService idWorkService;
 	@Autowired
 	private IUserRoleService userRoleService;
-
+	@Autowired
+	private IArticleCountService articleCountService;
 	@Autowired
 	private IUserService userService;
+	@Autowired
+	private IRedisService redisService;
+
+	@Autowired
+	private ILinkService linkService;
 
 	@RequestMapping("/login")
 	public ModelAndView test(HttpServletRequest request, HttpServletResponse response)
@@ -107,8 +131,24 @@ public class AdminController
 		return modelAndView;
 	}
 
+	public static void main(String[] args)
+	{
+		String url = "http://www.baido.com";
+		if (url.contains(":"))
+		{
+			url = url.replaceAll(":", "`");
+		}
+		if (!url.contains("http"))
+		{
+			url = "http:" + url;
+		}
+
+		System.out.println(url);
+	}
+
 	@RequestMapping("/doLogin")
 	public ModelAndView doLogin(HttpServletRequest request, HttpServletResponse response)
+			throws UnsupportedEncodingException
 	{
 		ModelAndView modelAndView = null;
 		Map<String, Object> params = new HashMap<>();
@@ -123,7 +163,6 @@ public class AdminController
 			return modelAndView;
 		}
 		UserDTO dbUser = userService.findByUsername(realname);
-
 		if (null == dbUser || !dbUser.getPassword().equals(KeyUtils.md5Encrypt(passwrod)))
 		{
 			params.put("error", "用户不存在,或者密码错误,忘记密码请联系管理员");
@@ -135,16 +174,21 @@ public class AdminController
 		} else
 		{
 			SecurityUtils.getSubject().login(new DlxyShiroAuthToken(dbUser, dbUser.getPassword()));
-
 			DlxyUser dlxyUser = new DlxyUser();
 			dlxyUser.setUserId(dbUser.getUserId());
 			dlxyUser.setLastLoginDate(new Date());
 			dlxyUser.setLastLoginIp(CommonUtils.getRemortIP(request));
 			userService.updateUserByExample(dlxyUser);
-
+			String userKey = String.format(IRedisService.ONLINE_USER_PREFIX + ":%s", CommonUtils.getIpAddr(request));
+			String userJson = redisService.get(userKey);
+			if (StringUtils.isEmpty(userJson))
+			{
+				redisService.set(userKey, String.valueOf(System.currentTimeMillis()), 60 * 5);
+				ShiroSessionListener.onlineCount.incrementAndGet();
+			}
 			if (null == dbUser.getLastLoginDate())
 			{
-				params.put("error", "第一次登录,强烈建议您修改用户密码");
+				params.put("error", URLEncoder.encode("第一次登录,强烈建议您修改用户密码", "UTF-8"));
 				params.put("user", dbUser);
 				modelAndView = new ModelAndView("redirect:/admin/user/userInfo/update.html", params);
 			} else
@@ -156,12 +200,74 @@ public class AdminController
 		return modelAndView;
 	}
 
-	public static void main(String[] args)
+	@RequestMapping("/links")
+	public ModelAndView showAllLinks(HttpServletRequest request, HttpServletResponse response)
 	{
-		String string = "202cb962ac59075b964b07152d234b70";
-		String string2 = "202cb962ac59075b964b07152d234b70";
-		System.out.println(string.equals(string2));
+		Map<String, Object> params = new HashMap<>();
+		List<DlxyLink> links = linkService.findAllLinks();
+		params.put("user", AdminUtil.getLoginUser());
+		params.put("links", links);
+		ModelAndView modelAndView = new ModelAndView("admin/links", params);
+		return modelAndView;
 	}
+
+	@RequestMapping("/link/addOrUpdate")
+	public ModelAndView addOrUpdatelink(HttpServletRequest request, HttpServletResponse response)
+	{
+		ModelAndView modelAndView = null;
+		Map<String, Object> params = new HashMap<>();
+		String linkId = null;
+		String linkName = null;
+		String linkUrl = null;
+		try
+		{
+			linkId = request.getParameter("linkId");
+			linkName = CommonUtils.validStringException(request.getParameter("linkName"));
+			linkUrl = request.getParameter("linkUrl");
+
+			if (!urlPattern.matcher(linkUrl).matches())
+			{
+				params.put("error", "url超链接地址格式错误,以http://www.baidu.com 为差不多格式");
+			}
+		} catch (Exception e)
+		{
+			params.put("error", e.getMessage());
+		}
+		if (params.containsKey("error"))
+		{
+			modelAndView = new ModelAndView("admin/links", params);
+			return modelAndView;
+		}
+		try
+		{
+			if (linkUrl.contains(":"))
+			{
+				linkUrl = linkUrl.replaceAll(":", "`");
+			}
+			DlxyLink dlxyLink = new DlxyLink();
+			if (!StringUtils.isEmpty(linkId))
+			{
+				dlxyLink.setLinkId(Integer.parseInt(linkId));
+			}
+			dlxyLink.setLinkName(linkName);
+			dlxyLink.setLinkUrl(linkUrl);
+			userManagementWrappedService.addLink(AdminUtil.getLoginUser(), dlxyLink);
+			modelAndView = new ModelAndView("redirect:/admin/links.html", params);
+		} catch (Exception e)
+		{
+			logger.error("[AddOrUpdateLink]occur error:", e.getMessage());
+			params.put("error", e.getMessage());
+			modelAndView = new ModelAndView("error", params);
+		}
+		return modelAndView;
+	}
+
+	// public static void main(String[] args)
+	// {
+	// String string = "202cb962ac59075b964b07152d234b70";
+	// String string2 = "202cb962ac59075b964b07152d234b70";
+	// System.out.println(string.equals(string2));
+	// }
 
 	@RequestMapping("/logout")
 	public ModelAndView LogoutAware(HttpServletRequest request, HttpServletResponse response)
@@ -177,6 +283,52 @@ public class AdminController
 		UserDTO user = AdminUtil.getLoginUser();
 		ModelAndView modelAndView = new ModelAndView("admin/index");
 		modelAndView.addObject("user", user);
+
+		try
+		{
+			Long totalUserCount = userService.countUsersByParam(new HashMap<>());
+			Long articlesTotalCount = articleCountService.countArticlesByDetailParam(new HashMap<>());
+			modelAndView.addObject("totalUserCount", totalUserCount);
+			modelAndView.addObject("articlesTotalCount", articlesTotalCount);
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		try
+		{
+			Set<String> keys = redisService.zRevrange(IRedisService.ARTICLE_VISIT_RANGE, 0L, 5L);
+
+			List<ArticleVisitInfo> articles = new ArrayList<>();
+			if (keys != null && !keys.isEmpty())
+			{
+				for (String string : keys)
+				{
+					String json = redisService.get(String.format(IRedisService.ARTICLE_VISIT_COUNT, string));
+					if (!StringUtils.isEmpty(json))
+					{
+						ArticleVisitInfo visitInfo = JsonUtil.json2Object(json, ArticleVisitInfo.class);
+						articles.add(visitInfo);
+					}
+				}
+			}
+			modelAndView.addObject("articles", articles);
+			// if (!articles.isEmpty())
+			// {
+			// Collections.sort(articles, new Comparator<ArticleVisitInfo>()
+			// {
+			// @Override
+			// public int compare(ArticleVisitInfo o1, ArticleVisitInfo o2)
+			// {
+			// return (o1.getVisitCount().get() <=o2.getVisitCount().get()) ? 1 : -1;
+			// }
+			// });
+			//
+			// }
+		} catch (Exception e)
+		{
+			logger.error("Redis服务器挂了", e);
+		}
+
 		return modelAndView;
 	}
 
@@ -275,7 +427,8 @@ public class AdminController
 	 * article
 	 */
 	@RequestMapping("/articles")
-	public ModelAndView showAllArticles(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException
+	public ModelAndView showAllArticles(HttpServletRequest request, HttpServletResponse response)
+			throws UnsupportedEncodingException
 	{
 		ModelAndView modelAndView = null;
 		Map<String, Object> params = new HashMap<>();
@@ -289,8 +442,7 @@ public class AdminController
 		String q = request.getParameter("q");
 		String startTime = request.getParameter("startTime");
 		String endTime = request.getParameter("endTime");
-		
-		
+
 		if (type.equals("picArticles"))
 		{
 			params.put("articleType", ArticleTypeEnum.PICTURE_ARTICLE.ordinal());
@@ -327,7 +479,7 @@ public class AdminController
 					"试图跨权访问所有文章", IllegalLevelEnum.Suspicious.ordinal());
 			throw new DlxySystemIllegalException(illegalLogDTO);
 		}
-		
+
 		if (!StringUtils.isEmpty(startTime))
 		{
 			params.put("startTime", startTime);
@@ -350,10 +502,10 @@ public class AdminController
 				params.put("searchParam", searchQuery);
 			}
 		}
-		
+
 		String titleIdStr = request.getParameter("titleId");
 		String parentTitleIdStr = request.getParameter("titleParentId");
-		
+
 		if (!StringUtils.isEmpty(titleIdStr))
 		{
 			params.put("titleId", titleIdStr);
@@ -400,7 +552,7 @@ public class AdminController
 	{
 		ModelAndView modelAndView = null;
 		UserDTO user = AdminUtil.getLoginUser();
-		List<Long>pictureIdList=new ArrayList<>();
+		List<Long> pictureIdList = new ArrayList<>();
 		String[] pictureIds = request.getParameterValues("pictureId");
 		String url = null;
 		PictureDTO descPic = null;
@@ -416,19 +568,23 @@ public class AdminController
 			modelAndView = new ModelAndView("error", params);
 			return modelAndView;
 		}
-		
-		if(null!=pictureIds && pictureIds.length>0)
+
+		if (null != pictureIds && pictureIds.length > 0)
 		{
 			for (String string : pictureIds)
 			{
 				pictureIdList.add(Long.parseLong(string));
 			}
 		}
-	
+
 		// 需要事务
 		if (null != imgFile && !imgFile.isEmpty())
 		{
-			url = FileUtil.saveFile(imgFile, formArticle.getArticleId(), request);
+			String storePath = fileStrategyContext.getStoreBasePath(IFileStrategy.IMG_TYPE) + File.separator
+					+ fileStrategyContext.getVisitPrefix(IFileStrategy.IMG_TYPE) + File.separator
+					+ formArticle.getArticleId() + File.separator;
+			url = fileStrategyContext.upload(imgFile, storePath, UUID.randomUUID().toString(), IFileStrategy.IMG_TYPE);
+			// url = FileUtil.saveFile(imgFile, formArticle.getArticleId(), request);
 			descPic = new PictureDTO();
 			descPic.setPictureUrl(url);
 			descPic.setArticleId(formArticle.getArticleId());
@@ -441,15 +597,15 @@ public class AdminController
 						new PictureDTO[]
 						{ descPic });
 				pictureIdList.add(descPic.getPictureId());
-//				if (null == pictureIds || pictureIds.length <= 0)
-//				{
-//					pictureIds = new String[1];
-//					pictureIds[0] = descPic.getPictureId().toString();
-//				} else
-//				{
-//					pictureIds = new String[pictureIds.length + 1];
-//					pictureIds[pictureIds.length - 1] = descPic.getPictureId().toString();
-//				}
+				// if (null == pictureIds || pictureIds.length <= 0)
+				// {
+				// pictureIds = new String[1];
+				// pictureIds[0] = descPic.getPictureId().toString();
+				// } else
+				// {
+				// pictureIds = new String[pictureIds.length + 1];
+				// pictureIds[pictureIds.length - 1] = descPic.getPictureId().toString();
+				// }
 			} catch (Exception e1)
 			{
 				e1.printStackTrace();
@@ -485,18 +641,18 @@ public class AdminController
 
 		articleDTO.setUserId(user.getUserId());
 		articleDTO.setRealname(user.getRealname());
-//		articleDTO.setPictureIds(pictureIds);
+		// articleDTO.setPictureIds(pictureIds);
 		// PictureDTO pictureDTO=new PictureDTO();
 		// pictureDTO.setArticleId(articleDTO.getArticleId());
 		// pictureDTO.setPictureStatus(PictureStatusEnum.Effective.ordinal());
 		params.put("articleDTO", articleDTO);
 		// params.put("pictureDTO", pictureDTO);
-		if(pictureIdList.size()>0)
+		if (pictureIdList.size() > 0)
 		{
 			params.put("pictureStatus", PictureStatusEnum.Effective.ordinal());
 			params.put("pictureIdList", pictureIdList);
 		}
-		
+
 		try
 		{
 			articleCommand.execute(params);
@@ -533,7 +689,12 @@ public class AdminController
 		try
 		{
 			Long articleId = Long.parseLong(articleIdStr);
-			String url = FileUtil.saveFile(imgFile, articleId, request);
+			String storePath = fileStrategyContext.getStoreBasePath(IFileStrategy.IMG_TYPE) + File.separator
+					+ fileStrategyContext.getVisitPrefix(IFileStrategy.IMG_TYPE) + File.separator + articleId
+					+ File.separator;
+			String url = fileStrategyContext.upload(imgFile, storePath, UUID.randomUUID().toString(),
+					IFileStrategy.IMG_TYPE);
+			// String url = FileUtil.saveFile(imgFile, articleId, request);
 			PictureDTO pictureDTO = new PictureDTO();
 			pictureDTO.setArticleId(articleId);
 			pictureDTO.setPictureUrl(url);
@@ -685,7 +846,7 @@ public class AdminController
 		} else if (!realNamePattern.matcher(formUser.getRealname()).matches()
 				|| !CommonUtils.validString(formUser.getRealname()))
 		{
-			params.put("error", "姓名格式不正确,正确格式:吕小聪 或者Justin Bieber,请不要包含特殊字符<>? 等");
+			params.put("error", "姓名格式不正确,正确格式:嗯嗯 或者Justin Bieber,请不要包含特殊字符<>? 等");
 		}
 		if (!params.containsKey("error"))
 		{
@@ -728,7 +889,8 @@ public class AdminController
 		{
 			try
 			{
-				params.put("error", new String(params.get("error").toString().getBytes("iso-8859-1"), "utf-8"));
+
+				params.put("error", URLDecoder.decode(params.get("error").toString(), "UTF-8"));
 			} catch (UnsupportedEncodingException e)
 			{
 				e.printStackTrace();
@@ -759,15 +921,14 @@ public class AdminController
 		}
 
 		params.put("user", loginUser);
-		// if(!passwrodPattern.matcher(user.getPassword()).matches())
-		// {
-		// params.put("error", "密码格式不正确,密码长度为6-16位,且包含字母和数字");
-		// }else
-		// if(!realNamePattern.matcher(user.getRealname()).matches())
-		// {
-		// params.put("error", "真实姓名格式不正确,王大二或者Justain Bieber 格式");
-		// }
-		// else if(!phonePattern.matcher(mobilePhone).matches())
+		if (!passwrodPattern.matcher(user.getPassword()).matches())
+		{
+			params.put("error", "密码格式不正确,密码长度为6-16位,且包含字母和数字");
+		} else if (!realNamePattern.matcher(user.getRealname()).matches())
+		{
+			params.put("error", "真实姓名格式不正确,王大二或者Justain Bieber 格式");
+		}
+		// else if (!phonePattern.matcher(mobilePhone).matches())
 		// {
 		// params.put("error", "手机格式不正确");
 		// }

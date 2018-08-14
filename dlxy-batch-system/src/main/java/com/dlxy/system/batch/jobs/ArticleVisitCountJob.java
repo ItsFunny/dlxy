@@ -7,11 +7,7 @@
 */
 package com.dlxy.system.batch.jobs;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -28,23 +24,10 @@ import com.dlxy.common.utils.JsonUtil;
 import com.dlxy.server.article.service.IArticleService;
 import com.dlxy.system.batch.service.IRedisService;
 
-/**
- * 
- * @When
- * @Description
- * @Detail
- * @author joker
- * @date 创建时间：2018年7月27日 下午3:07:25
- */
 @Component
 public class ArticleVisitCountJob implements JobRunner
 {
 	public static final LinkedBlockingQueue<String> ARTICLEIDS = new LinkedBlockingQueue<>();
-	// static
-	// {
-	// ARTICLEIDS.add("386208411710259200");
-	// ARTICLEIDS.add("384053948924952576");
-	// }
 
 	@Autowired
 	private IRedisService redisService;

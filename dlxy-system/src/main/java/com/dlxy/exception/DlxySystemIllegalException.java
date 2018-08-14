@@ -1,9 +1,3 @@
-/**
-*
-* @author joker 
-* @date 创建时间：2018年7月8日 上午12:05:51
-* 
-*/
 package com.dlxy.exception;
 
 import com.dlxy.common.dto.IllegalLogDTO;
@@ -14,7 +8,7 @@ import com.dlxy.common.dto.IllegalLogDTO;
 * @Description
 * @Detail
 * @author joker 
-* @date 创建时间：2018年7月8日 上午12:05:51
+* @date 创建时间：2018年7月03日 上午12:05:51
 */
 public class DlxySystemIllegalException extends RuntimeException
 {
@@ -23,7 +17,7 @@ public class DlxySystemIllegalException extends RuntimeException
 	* 
 	* @Description
 	* @author joker 
-	* @date 创建时间：2018年7月8日 上午12:08:42
+	* @date 创建时间：2018年7月03日 上午12:08:42
 	*/
 	private static final long serialVersionUID = -758841428074965716L;
 	

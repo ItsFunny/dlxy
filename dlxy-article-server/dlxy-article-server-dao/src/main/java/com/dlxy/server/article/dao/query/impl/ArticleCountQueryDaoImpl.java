@@ -11,17 +11,14 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 
 import com.dlxy.server.article.dao.query.ArticleCountQueryDao;
-import com.rabbitmq.client.AMQP.Basic.Return;
 
 /**
  * 
@@ -41,60 +38,66 @@ public class ArticleCountQueryDaoImpl implements ArticleCountQueryDao
 	public Long coutArticles(Map<String, Object> params) throws SQLException
 	{
 		String sql = "select count(1) from dlxy_article where 1 =1 ";
-		List<Object> p = new LinkedList<Object>();
-		if (params.containsKey("articleStatus"))
+		Object count=null;
+		if(params!=null)
 		{
-			if (!StringUtils.isEmpty(params.get("articleStatus").toString()))
+			List<Object> p = new LinkedList<Object>();
+			if (params.containsKey("articleStatus"))
 			{
-				sql += "and article_status=? ";
-				p.add(params.get("articleStatus"));
-			}
-		} else
-		{
-			sql += " and article_status <> 2 ";
-		}
-		if (params.containsKey("articleType"))
-		{
-			if (!StringUtils.isEmpty(params.get("articleType").toString()))
+				if (!StringUtils.isEmpty(params.get("articleStatus").toString()))
+				{
+					sql += "and article_status=? ";
+					p.add(params.get("articleStatus"));
+				}
+			} else
 			{
-				sql += " and article_type=? ";
-				p.add(params.get("articleType"));
+				sql += " and article_status <> 2 ";
 			}
-		}
+			if (params.containsKey("articleType"))
+			{
+				if (!StringUtils.isEmpty(params.get("articleType").toString()))
+				{
+					sql += " and article_type=? ";
+					p.add(params.get("articleType"));
+				}
+			}
 
-		if (params.containsKey("searchParam"))
-		{
-			if (!StringUtils.isEmpty(params.get("searchParam").toString()))
+			if (params.containsKey("searchParam"))
 			{
-				// article_id in (select b.article_id from dlxy_user_article b where b.realname
-				// like ? )
-				sql += " and (article_name like ? or article_author like ? )";
-				String tParam = "%" + params.get("searchParam") + "%";
-				p.add(tParam);
-				p.add(tParam);
+				if (!StringUtils.isEmpty(params.get("searchParam").toString()))
+				{
+					// article_id in (select b.article_id from dlxy_user_article b where b.realname
+					// like ? )
+					sql += " and (article_name like ? or article_author like ? )";
+					String tParam = "%" + params.get("searchParam") + "%";
+					p.add(tParam);
+					p.add(tParam);
+				}
 			}
-		}
-		if (params.containsKey("userId"))
-		{
-			if (!StringUtils.isEmpty(params.get("userId").toString()))
+			if (params.containsKey("userId"))
 			{
-				sql += "and article_id in (select b.article_id from dlxy_user_article b where exists(select 1 from dlxy_user where user_id = ? ) and b.user_id= ? ) ";
-				p.add(params.get("userId"));
-				p.add(params.get("userId"));
+				if (!StringUtils.isEmpty(params.get("userId").toString()))
+				{
+					sql += "and article_id in (select b.article_id from dlxy_user_article b where exists(select 1 from dlxy_user where user_id = ? ) and b.user_id= ? ) ";
+					p.add(params.get("userId"));
+					p.add(params.get("userId"));
+				}
 			}
+			if(params.containsKey("startTime"))
+			{
+				sql+="and start_time >= ?";
+				p.add(params.get("startTime"));
+			}
+			if(params.containsKey("endTime"))
+			{
+				sql+="and start_time <= ? ";
+				p.add(params.get("endTime"));
+			}
+			count = queryRunner.query(sql, new ScalarHandler<Object>(), p.toArray());
+		}else {
+			count=queryRunner.query(sql, new ScalarHandler<Object>());
 		}
-		if(params.containsKey("startTime"))
-		{
-			sql+="and start_time >= ?";
-			p.add(params.get("startTime"));
-		}
-		if(params.containsKey("endTime"))
-		{
-			sql+="and start_time <= ? ";
-			p.add(params.get("endTime"));
-		}
-
-		Object count = queryRunner.query(sql, new ScalarHandler<Object>(), p.toArray());
+	
 		if (null == count)
 		{
 			return 0L;
@@ -107,9 +110,6 @@ public class ArticleCountQueryDaoImpl implements ArticleCountQueryDao
 	@Override
 	public Long countTitleArticles(Integer titleId, Integer parentTitleId, Integer status) throws SQLException
 	{
-		/*
-		 * 1.请求的是一个子类    那样只需要查询子类所拥有的记录数:titleId
-		 */
 		String sql = "select count(1) from dlxy_article where 1=1 ";
 		List<Object> l = new LinkedList<>();
 		if (0 != parentTitleId)

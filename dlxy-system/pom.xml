@@ -86,7 +86,7 @@
 			<artifactId>hibernate-validator</artifactId>
 			<version>5.4.1.Final</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>redis.clients</groupId>
 			<artifactId>jedis</artifactId>
@@ -109,10 +109,11 @@
 				<groupId>org.apache.tomcat.maven</groupId>
 				<artifactId>tomcat7-maven-plugin</artifactId>
 				<configuration>
-					<port>8000</port>
 					<path>/</path>
-					<!-- <url>http://120.78.240.211:80/manager/text</url> <username>joker</username> 
-						<password> 123456 </password> -->
+					<!--  <port>8000</port>  -->
+				 <url>http://120.78.240.211:8080/manager/text</url>
+					<username>joker</username>
+					<password>123456</password> 
 				</configuration>
 			</plugin>
 			<plugin>

@@ -5,10 +5,9 @@ import com.dlxy.common.dto.SuspicionDTO;
 /**
 * 
 * @When
-* @Description 检测到有人有可疑的操作,抛出异常,batch 记录ip地址和次数然后直接ban了
 * @Detail
 * @author joker 
-* @date 创建时间：2018年7月20日 下午4:47:37
+* @date 创建时间：2018年7月03日 下午4:47:37
 */
 public class DlxySuspicionException extends RuntimeException
 {

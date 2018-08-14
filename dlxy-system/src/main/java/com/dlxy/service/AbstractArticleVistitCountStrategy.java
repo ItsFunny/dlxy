@@ -5,7 +5,7 @@ import java.util.Map;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.dlxy.model.ArticleVisitInfo;
+import com.dlxy.common.model.ArticleVisitInfo;
 import com.joker.library.utils.CommonUtils;
 
 public abstract class AbstractArticleVistitCountStrategy
