@@ -1,7 +1,5 @@
 package com.dlxy.listener;
 
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,7 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionListenerAdapter;
-import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -23,8 +20,6 @@ public class ShiroSessionListener extends SessionListenerAdapter
 	@Autowired
 	private IRedisService redisService;
 	
-	@Autowired
-	private SessionDAO sessionDAO;
 	
 	public static AtomicInteger onlineCount=new AtomicInteger(0);
 	
@@ -42,33 +37,19 @@ public class ShiroSessionListener extends SessionListenerAdapter
 			String userJson = redisService.get(userKey);
 			if(StringUtils.isEmpty(userJson))
 			{
-				boolean isAlreadyOn=false;
-				Collection<Session> visitUsers = sessionDAO.getActiveSessions();
-				for (Session session2 : visitUsers)
-				{
-					String storeIp=(String) session2.getAttribute("ip");
-					if(!StringUtils.isEmpty(storeIp)&&storeIp.equals(ip))
-					{
-						isAlreadyOn=true;
-						break;
-					}
-				}
-				if(!isAlreadyOn)
-				{
-					session.setAttribute("ip", ip);
-					ShiroSessionListener.onlineCount.incrementAndGet();
-				}else {
-					sessionDAO.delete(session);
-				}
-			
-//				redisService.set(userKey, String.valueOf(System.currentTimeMillis()),60*7);
+				ShiroSessionListener.onlineCount.incrementAndGet();
+				redisService.set(userJson, System.currentTimeMillis()+"");
 			}
 			String json = redisService.get(String.format(IRedisService.USER_VISIT_HISTORY, ip));
+			VisitUserHistoryDTO historyDTO =null;
 			if(!StringUtils.isEmpty(json))
 			{
-				VisitUserHistoryDTO historyDTO = JsonUtil.json2Object(json, VisitUserHistoryDTO.class);
-				session.setAttribute("history", historyDTO);
+				historyDTO = JsonUtil.json2Object(json, VisitUserHistoryDTO.class);
+			}else {
+				historyDTO=new VisitUserHistoryDTO();
 			}
+			historyDTO.setIp(ip);
+			session.setAttribute("history", historyDTO);
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -80,10 +61,13 @@ public class ShiroSessionListener extends SessionListenerAdapter
 	{
 		try
 		{
-			String ipKey = (String) session.getAttribute("ipKey");
-//			redisService.del(ipKey);
-			sessionDAO.delete(session);
-			ShiroSessionListener.onlineCount.decrementAndGet();
+			String ipKey=(String) session.getAttribute("ipKey");
+			String json = redisService.get(ipKey);
+			if(!StringUtils.isEmpty(json))
+			{
+				ShiroSessionListener.onlineCount.decrementAndGet();
+				redisService.del(ipKey);
+			}
 		} finally
 		{
 			session=null;
@@ -95,14 +79,17 @@ public class ShiroSessionListener extends SessionListenerAdapter
 	{
 		try
 		{
-			String ipKey = (String) session.getAttribute("ipKey");
-//			redisService.del(ipKey);
-			sessionDAO.delete(session);
-			ShiroSessionListener.onlineCount.decrementAndGet();
+			String ipKey=(String) session.getAttribute("ipKey");
+			String json = redisService.get(ipKey);
+			if(!StringUtils.isEmpty(json))
+			{
+				ShiroSessionListener.onlineCount.decrementAndGet();
+				redisService.del(ipKey);
+			}
 		} finally
 		{
 			session=null;
 		}
-		
+	
 	}
 }

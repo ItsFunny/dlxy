@@ -21,7 +21,6 @@ import com.dlxy.common.dto.VisitUserHistoryDTO.HistroyDetail;
 import com.dlxy.common.utils.JsonUtil;
 import com.dlxy.service.IRedisService;
 import com.google.gson.reflect.TypeToken;
-import com.joker.library.utils.CommonUtils;
 import com.joker.library.utils.DateUtils;
 
 public class IPInterceptor implements HandlerInterceptor
@@ -62,7 +61,7 @@ public class IPInterceptor implements HandlerInterceptor
 
 	}
 
-	private JudgeResult judgeFromHistory(HttpServletRequest request, String ip, String uri)
+	private JudgeResult judgeFromHistory(HttpServletRequest request, String uri)
 	{
 		HttpSession session = request.getSession();
 		if (session == null)
@@ -73,19 +72,19 @@ public class IPInterceptor implements HandlerInterceptor
 		historyDTO = (VisitUserHistoryDTO) session.getAttribute("history");
 		JudgeResult result = this.new JudgeResult();
 
-		if (historyDTO == null)
-		{
-			String json = redisService.get(String.format(IRedisService.USER_VISIT_HISTORY, ip));
-			if (StringUtils.isEmpty(json))
-			{
-				result.setFilter(true);
-				historyDTO = new VisitUserHistoryDTO();
-				historyDTO.setIp(ip);
-				session.setAttribute("history", historyDTO);
-				return result;
-			}
-			historyDTO = JsonUtil.json2Object(json, VisitUserHistoryDTO.class);
-		}
+//		if (historyDTO == null)
+//		{
+//			String json = redisService.get(String.format(IRedisService.USER_VISIT_HISTORY, ip));
+//			if (StringUtils.isEmpty(json))
+//			{
+//				result.setFilter(true);
+//				historyDTO = new VisitUserHistoryDTO();
+//				historyDTO.setIp(ip);
+//				session.setAttribute("history", historyDTO);
+//				return result;
+//			}
+//			historyDTO = JsonUtil.json2Object(json, VisitUserHistoryDTO.class);
+//		}
 		HistroyDetail detail = historyDTO.getDetails().get(uri);
 		if(null==detail)
 		{
@@ -130,7 +129,7 @@ public class IPInterceptor implements HandlerInterceptor
 	{
 
 		boolean needIpFilter = true;
-		request.getSession();
+		HttpSession session = request.getSession();
 		// 更新全站的访问次数和,日访问次数,不限ip,一旦访问就增加
 		// try
 		// {
@@ -155,7 +154,7 @@ public class IPInterceptor implements HandlerInterceptor
 			return true;
 		}
 		String uri = request.getRequestURI();
-		String ip = CommonUtils.getIpAddr(request);
+		String ip = (String) session.getAttribute("ip");
 		try
 		{
 			String ipJsonStr = redisService.get(IRedisService.BANED_IP);
@@ -171,7 +170,7 @@ public class IPInterceptor implements HandlerInterceptor
 					return false;
 				}
 			}
-			JudgeResult result = judgeFromHistory(request, ip, uri);
+			JudgeResult result = judgeFromHistory(request, uri);
 			if (null == result)
 			{
 				return true;

@@ -295,11 +295,13 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer, ServletContex
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry)
 	{
-		registry.addResourceHandler("/js/**").addResourceLocations("/static/js/**").setCachePeriod(1056000);
-		registry.addResourceHandler("/css/**").addResourceLocations("/static/css/**").setCachePeriod(1056000);
-		registry.addResourceHandler("/imgs/**").addResourceLocations("/static/imgs/**").setCachePeriod(1056000);
+//		registry.addResourceHandler("/js/**").addResourceLocations("/static/js/**").setCachePeriod(1056000);
+//		registry.addResourceHandler("/css/**").addResourceLocations("/static/css/**").setCachePeriod(1056000);
+//		registry.addResourceHandler("/imgs/**").addResourceLocations("/static/imgs/**").setCachePeriod(1056000);
 		registry.addResourceHandler("/public/404.html").addResourceLocations("/WEB-INF/templates/404.html")
 				.setCachePeriod(1056000);
+		//unknown bug fix by this way not good
+//		registry.addResourceHandler("/admin/js/navtab.js").addResourceLocations("/WEB-INF/navtab.js").setCachePeriod(1056000);
 	}
 
 	@Override

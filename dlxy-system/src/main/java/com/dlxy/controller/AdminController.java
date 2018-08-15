@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -24,6 +25,10 @@ import javax.validation.Valid;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.hyperic.sigar.Mem;
+import org.hyperic.sigar.OperatingSystem;
+import org.hyperic.sigar.Sigar;
+import org.hyperic.sigar.SigarException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +38,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -44,7 +50,6 @@ import com.dlxy.common.dto.PictureDTO;
 import com.dlxy.common.dto.UserDTO;
 import com.dlxy.common.dto.UserRecordDTO;
 import com.dlxy.common.dto.UserRoleDTO;
-import com.dlxy.common.dto.VisitUserHistoryDTO;
 import com.dlxy.common.enums.ArticlePictureTypeEnum;
 import com.dlxy.common.enums.ArticleStatusEnum;
 import com.dlxy.common.enums.ArticleTypeEnum;
@@ -78,6 +83,7 @@ import com.dlxy.utils.AdminUtil;
 import com.joker.library.file.FileStrategyContext;
 import com.joker.library.file.IFileStrategy;
 import com.joker.library.utils.CommonUtils;
+import com.joker.library.utils.DateUtils;
 import com.joker.library.utils.KeyUtils;
 
 @Controller
@@ -117,7 +123,7 @@ public class AdminController
 	private ILinkService linkService;
 
 	@RequestMapping("/login")
-	public ModelAndView test(HttpServletRequest request, HttpServletResponse response)
+	public ModelAndView login(HttpServletRequest request, HttpServletResponse response)
 	{
 		ModelAndView modelAndView = null;
 		UserDTO user = AdminUtil.getLoginUser();
@@ -130,22 +136,6 @@ public class AdminController
 		}
 		return modelAndView;
 	}
-
-	public static void main(String[] args)
-	{
-		String url = "http://www.baido.com";
-		if (url.contains(":"))
-		{
-			url = url.replaceAll(":", "`");
-		}
-		if (!url.contains("http"))
-		{
-			url = "http:" + url;
-		}
-
-		System.out.println(url);
-	}
-
 	@RequestMapping("/doLogin")
 	public ModelAndView doLogin(HttpServletRequest request, HttpServletResponse response)
 			throws UnsupportedEncodingException
@@ -179,13 +169,15 @@ public class AdminController
 			dlxyUser.setLastLoginDate(new Date());
 			dlxyUser.setLastLoginIp(CommonUtils.getRemortIP(request));
 			userService.updateUserByExample(dlxyUser);
-//			String userKey = String.format(IRedisService.ONLINE_USER_PREFIX + ":%s", CommonUtils.getIpAddr(request));
-//			String userJson = redisService.get(userKey);
-//			if (StringUtils.isEmpty(userJson))
-//			{
-//				redisService.set(userKey, String.valueOf(System.currentTimeMillis()), 60 * 5);
-//				ShiroSessionListener.onlineCount.incrementAndGet();
-//			}
+			// String userKey = String.format(IRedisService.ONLINE_USER_PREFIX + ":%s",
+			// CommonUtils.getIpAddr(request));
+			// String userJson = redisService.get(userKey);
+			// if (StringUtils.isEmpty(userJson))
+			// {
+			// redisService.set(userKey, String.valueOf(System.currentTimeMillis()), 60 *
+			// 5);
+			// ShiroSessionListener.onlineCount.incrementAndGet();
+			// }
 			if (null == dbUser.getLastLoginDate())
 			{
 				params.put("error", URLEncoder.encode("第一次登录,强烈建议您修改用户密码", "UTF-8"));
@@ -201,14 +193,15 @@ public class AdminController
 	}
 
 	@RequestMapping("/links")
-	public ModelAndView showAllLinks(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException
+	public ModelAndView showAllLinks(HttpServletRequest request, HttpServletResponse response)
+			throws UnsupportedEncodingException
 	{
 		Map<String, Object> params = new HashMap<>();
 		List<DlxyLink> links = linkService.findAllLinks();
 		String error = request.getParameter("error");
-		if(!StringUtils.isEmpty(error))
+		if (!StringUtils.isEmpty(error))
 		{
-			error=new String(error.getBytes("iso-8859-1"),System.getProperty("file.encoding"));
+			error = new String(error.getBytes("iso-8859-1"), "utf-8");
 			params.put("error", error);
 		}
 		params.put("user", AdminUtil.getLoginUser());
@@ -222,7 +215,7 @@ public class AdminController
 	{
 		ModelAndView modelAndView = null;
 		Map<String, Object> params = new HashMap<>();
-		
+
 		params.put("user", AdminUtil.getLoginUser());
 		String linkId = null;
 		String linkName = null;
@@ -282,12 +275,12 @@ public class AdminController
 	}
 
 	@RequestMapping("/index")
-	public ModelAndView index(HttpServletRequest request, HttpServletResponse response)
+	public @ResponseBody ModelAndView index(HttpServletRequest request, HttpServletResponse response)
 	{
 		UserDTO user = AdminUtil.getLoginUser();
-		ModelAndView modelAndView = new ModelAndView("admin/index");
+		Map<String, Object> params = new HashMap<>();
+		ModelAndView modelAndView = new ModelAndView("admin/index", params);
 		modelAndView.addObject("user", user);
-
 		try
 		{
 			Long totalUserCount = userService.countUsersByParam(new HashMap<>());
@@ -301,7 +294,6 @@ public class AdminController
 		try
 		{
 			Set<String> keys = redisService.zRevrange(IRedisService.ARTICLE_VISIT_RANGE, 0L, 5L);
-
 			List<ArticleVisitInfo> articles = new ArrayList<>();
 			if (keys != null && !keys.isEmpty())
 			{
@@ -316,6 +308,10 @@ public class AdminController
 				}
 			}
 			modelAndView.addObject("articles", articles);
+			
+			Long currentDay = DateUtils.getCurrentDay();
+			String lastVisitCount = redisService.get(String.format(IRedisService.PER_DAY_VISIT_COUNT, currentDay-1));
+			modelAndView.addObject("lastVisitCount",lastVisitCount);
 			// if (!articles.isEmpty())
 			// {
 			// Collections.sort(articles, new Comparator<ArticleVisitInfo>()
@@ -925,18 +921,20 @@ public class AdminController
 		}
 
 		params.put("user", loginUser);
-		if(!StringUtils.isEmpty(user.getPassword()))
+		if (!StringUtils.isEmpty(user.getPassword()))
 		{
 			if (!passwrodPattern.matcher(user.getPassword()).matches())
 			{
 				params.put("error", "密码格式不正确,密码长度为6-16位,且包含字母和数字");
-			}else {
+			} else
+			{
 				user.setPassword(KeyUtils.md5Encrypt(user.getPassword()));
 			}
-		}else {
+		} else
+		{
 			user.setPassword(null);
 		}
-		 if (!realNamePattern.matcher(user.getRealname()).matches())
+		if (!realNamePattern.matcher(user.getRealname()).matches())
 		{
 			params.put("error", "真实姓名格式不正确,王大二或者Justain Bieber 格式");
 		}

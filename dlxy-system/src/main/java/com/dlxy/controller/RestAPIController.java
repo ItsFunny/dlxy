@@ -61,6 +61,7 @@ import com.dlxy.config.DlxyProperty;
 import com.dlxy.constant.TitleArticleConstant;
 import com.dlxy.exception.DlxySystemIllegalException;
 import com.dlxy.listener.ShiroSessionListener;
+import com.dlxy.listener.UserVisitListener;
 import com.dlxy.model.FormArticle;
 import com.dlxy.model.FormTitle;
 import com.dlxy.server.article.service.IArticleService;
@@ -122,8 +123,6 @@ public class RestAPIController
 	private ILinkService linkService;
 	@Autowired
 	private IRedisService redisService;
-	@Autowired
-	private SessionDAO sessionDao;
 
 	@Autowired
 	private IVisitRecordService visitRecordService;
@@ -204,9 +203,7 @@ public class RestAPIController
 				perDayVisitCount=findByRecordDate.getVisitCount().toString();
 			}
 		}
-		Collection<Session> sessions = sessionDao.getActiveSessions();
-		Integer sizeInteger=sessions.size();
-		return ResultUtil.sucess(totalVisitCount+","+perDayVisitCount+","+sizeInteger,"success");
+		return ResultUtil.sucess(totalVisitCount+","+perDayVisitCount+","+UserVisitListener.onlineCount.get(),"success");
 	}
 
 	@RequestMapping(value = "/link/delete", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)

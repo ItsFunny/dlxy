@@ -65,12 +65,12 @@ public class RedisServiceImpl implements IRedisService
 	}
 
 	@Override
-	public void del(String key)
+	public Boolean del(String key)
 	{
 		Jedis jedis = getJedis();
 		try
 		{
-			jedis.del(key);
+			return jedis.del(key)>=1?true:false;
 		} catch (JedisException e)
 		{
 			if (null != jedis)

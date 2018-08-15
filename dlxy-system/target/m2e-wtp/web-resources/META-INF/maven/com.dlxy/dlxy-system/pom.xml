@@ -12,6 +12,14 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<dependencies>
+		<!-- https://mvnrepository.com/artifact/org.fusesource/sigar -->
+		<dependency>
+			<groupId>org.fusesource</groupId>
+			<artifactId>sigar</artifactId>
+			<version>1.6.4</version>
+		</dependency>
+
+
 		<!-- https://mvnrepository.com/artifact/org.apache.shiro/shiro-all -->
 		<dependency>
 			<groupId>org.apache.shiro</groupId>
@@ -110,10 +118,10 @@
 				<artifactId>tomcat7-maven-plugin</artifactId>
 				<configuration>
 					<path>/</path>
-					<!--  <port>8000</port>  -->
+					<!-- <port>8000</port> -->
 					<url>http://120.78.240.211:8080/manager/text</url>
 					<username>joker</username>
-					<password>123456</password> 
+					<password>123456</password>
 				</configuration>
 			</plugin>
 			<plugin>

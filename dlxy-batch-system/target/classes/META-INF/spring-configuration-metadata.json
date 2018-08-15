@@ -10,7 +10,6 @@
   "properties": [
     {
       "sourceType": "com.dlxy.system.batch.config.DlxyProperty",
-      "defaultValue": false,
       "name": "dlxy.config.amqp-enabled",
       "type": "java.lang.Boolean"
     },
@@ -41,7 +40,6 @@
     },
     {
       "sourceType": "com.dlxy.system.batch.config.DlxyProperty",
-      "defaultValue": 0,
       "name": "dlxy.config.datacenter-id",
       "type": "java.lang.Long"
     },
@@ -62,7 +60,6 @@
     },
     {
       "sourceType": "com.dlxy.system.batch.config.DlxyProperty",
-      "defaultValue": "com.mysql.jdbc.Driver",
       "name": "dlxy.config.driver-class-name",
       "type": "java.lang.String"
     },
@@ -128,7 +125,6 @@
     },
     {
       "sourceType": "com.dlxy.system.batch.config.DlxyProperty",
-      "defaultValue": 0,
       "name": "dlxy.config.worker-id",
       "type": "java.lang.Long"
     }

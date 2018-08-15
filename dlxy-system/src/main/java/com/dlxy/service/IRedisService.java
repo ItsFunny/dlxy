@@ -39,7 +39,7 @@ public interface IRedisService
 	
 	String get(String key);
 	
-	void del(String key);
+	Boolean del(String key);
 	
 	boolean isAvaliable();
 }

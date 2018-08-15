@@ -17,6 +17,7 @@ import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.apache.shiro.web.servlet.SimpleCookie;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.beans.factory.InitializingBean;
@@ -31,6 +32,7 @@ import org.springframework.core.annotation.Order;
 import com.dlxy.common.service.IdWorkerService;
 import com.dlxy.common.service.IdWorkerServiceTwitter;
 import com.dlxy.listener.ShiroSessionListener;
+import com.dlxy.listener.UserVisitListener;
 import com.dlxy.shiro.DlxyShiroRealm;
 import com.google.code.kaptcha.Constants;
 import com.google.code.kaptcha.Producer;
@@ -70,13 +72,7 @@ public class DlxySystemSpringConfiguration implements InitializingBean
 		return ehCacheManager;
 	}
 
-	@Bean
-	public SessionDAO sessionDao()
-	{
-		MemorySessionDAO memorySessionDAO = new MemorySessionDAO();
-		
-		return memorySessionDAO;
-	}
+
 
 	@Bean
 	public org.apache.shiro.mgt.SecurityManager securityManager()
@@ -84,7 +80,7 @@ public class DlxySystemSpringConfiguration implements InitializingBean
 		DefaultWebSecurityManager defaultWebSecurityManager = new DefaultWebSecurityManager();
 		defaultWebSecurityManager.setRealm(dlxyShiroRealm());
 		defaultWebSecurityManager.setCacheManager(cacheManager());
-		defaultWebSecurityManager.setSessionManager(sessionManager());
+//		defaultWebSecurityManager.setSessionManager(sessionManager());
 		return defaultWebSecurityManager;
 	}
 
@@ -94,26 +90,42 @@ public class DlxySystemSpringConfiguration implements InitializingBean
 		return new DlxyShiroRealm();
 	}
 
-	@Bean
-	public ShiroSessionListener shiroSessionListener()
-	{
-		return new ShiroSessionListener();
-	}
-
-	@Bean
-	public SessionManager sessionManager()
-	{
-		DefaultWebSessionManager defaultWebSessionManager = new DefaultWebSessionManager();
-		defaultWebSessionManager.setGlobalSessionTimeout(1000 * 60 );
-		List<SessionListener> listeners = new ArrayList<>();
-		listeners.add(shiroSessionListener());
-		defaultWebSessionManager.setSessionListeners(listeners);
-//		defaultWebSessionManager.setSessionValidationInterval(1000 * 30);
+//	@Bean
+//	public ShiroSessionListener shiroSessionListener()
+//	{
+//		return new ShiroSessionListener();
+//	}
+//	@Bean
+//	public SessionManager sessionManager()
+//	{
+//		DefaultWebSessionManager defaultWebSessionManager = new DefaultWebSessionManager();
+//		defaultWebSessionManager.setGlobalSessionTimeout(1000 * 60 *2);
+////		List<SessionListener> listeners = new ArrayList<>();
+////		listeners.add(shiroSessionListener());
+////		defaultWebSessionManager.setSessionListeners(listeners);
+//		defaultWebSessionManager.setSessionValidationInterval(1000 * 60);
 //		defaultWebSessionManager.setSessionValidationSchedulerEnabled(true);
-		defaultWebSessionManager.setSessionDAO(sessionDao());
-		return defaultWebSessionManager;
-
-	}
+//		
+////		defaultWebSessionManager.setSessionDAO(sessionDao());
+////		defaultWebSessionManager.setSessionIdCookie(simpleCookie());
+////		defaultWebSessionManager.setSessionIdCookieEnabled(true);
+////		defaultWebSessionManager.setSessionIdUrlRewritingEnabled(false);
+//		return defaultWebSessionManager;
+//	}
+//	@Bean
+//	public SessionDAO sessionDao()
+//	{
+//		MemorySessionDAO memorySessionDAO = new MemorySessionDAO();
+//		return memorySessionDAO;
+//	}
+//	@Bean
+//	public SimpleCookie simpleCookie()
+//	{
+//		SimpleCookie simpleCookie=new SimpleCookie();
+//		simpleCookie.setName("shiro.session");
+//		return simpleCookie;
+//	}
+	
 
 	@Bean("shiroFilter")
 	public ShiroFilterFactoryBean shiroFilterFactoryBean()
@@ -127,6 +139,8 @@ public class DlxySystemSpringConfiguration implements InitializingBean
 		// filters.put("authc", new TFilter());
 		Map<String, String> filterChainDefinitionMap = shiroFilterFactoryBean.getFilterChainDefinitionMap();
 		filterChainDefinitionMap.put("/test/**", "anon");
+		//fix a bug by this way no good
+//		filterChainDefinitionMap.put("/admin/js/navtab.js", "anon");
 		filterChainDefinitionMap.put("/admin/doLogin.html", "anon");
 		filterChainDefinitionMap.put("/css/**", "anon");
 		filterChainDefinitionMap.put("/fonts/**", "anon");

@@ -1,10 +1,23 @@
 
-<#include "header.html">
-<link rel="stylesheet" type="text/css" href="/css/adminstyle.css" media="all">
-<body>
-<#include "top_menu.html">
-<#include "left_menu.html">
 
+<#include "wrapper_up.html">
+<script>
+	function loadVisitCounts(){
+	 jQuery.get('/api/v1/visitCount.html',function(data,textStatus,jqXHR){
+		 	if(data.code==1){
+		 		var str='';
+		 		var arr=data.data.split(',');
+		 		str+="<tr><td><strong>网站总访问量</strong>：" +arr[0]+"</td><td></td></tr>";
+		 		str+="<tr><td><strong>网站今日访问量</strong>：" +arr[1]+"</td><td></td></tr>";
+		 		str+="<tr><td><strong>网站当前在线人数</strong>：" +arr[2]+"</td><td></td></tr>";
+		 		$("#web_visitCount").append(str);
+		 	}
+	 },'json')
+ }
+$(document).ready(function(){
+		loadVisitCounts();
+	});
+</script>
 <section class="larry-wrapper">
     <!-- overview -->
 	<div class="row state-overview">
@@ -15,14 +28,24 @@
 				<div class="value">
 					<a href="/admin/users.html">
 						<h1 id="count1">${totalUserCount}</h1>
+						<p>用户总量</p>
 					</a>
-					<p>用户总量</p>
+					
 				</div>
 			</section>
 		</div>
 		<div class="col-lg-3 col-sm-6 layui-anim layui-anim-up">
 			<section class="panel">
 				<div class="symbol commred layui-anim layui-anim-rotate"> <i class="iconpx-user-add"></i>
+					<a href="/admin/users.html">
+					</a>
+				</div>
+				<div class="value">
+					<a href="/admin/users.html">
+						<h1 id="count1">${totalUserCount}</h1>
+						<p>添加用户</p>
+					</a>
+					
 				</div>
 			</section>
 		</div>
@@ -34,8 +57,9 @@
 				<div class="value">
 					<a href="/admin/articles.html">
 						<h1 id="count3">${articlesTotalCount}</h1>
+						<p>文章总数</p>
 					</a>
-					<p>文章总数</p>
+					
 				</div>
 			</section>
 		</div>
@@ -45,69 +69,21 @@
 		<div class="col-lg-6">
 			<section class="panel">
 				<header class="panel-heading bm0">
-					<span class='span-title'>系统概览</span>
+					<span class='span-title'>吉林农业科技学院-鼎利学院后台管理</span>
 					<span class="tools pull-right"><a href="javascript:;" class="iconpx-chevron-down"></a></span>
 				</header>
 				<div class="panel-body" >
 					<table class="table table-hover personal-task">
-                         <tbody>
+                         <tbody id="web_visitCount">
                          	<tr>
                          		<td>
-                         			<strong>吉林农业科技学院-鼎利学院后台管理</strong>
-                         		</td>
-                         		<td>
-
-                         		</td>
-                         	</tr>
-                         	<tr>
-                         		<td>
-                                <strong>开发作者</strong>： Larry
-
+                                <strong>开发者</strong>： 鼎利
                                 </td>
                                 <td></td>
                          	</tr>
                          	<tr>
                          		<td>
-                                <strong>网站域名</strong>：未定义
-                                </td>
-                                <td></td>
-                         	</tr>
-                         	<tr>
-                         		<td>
-                                <strong>网站目录</strong>：未定义
-                                </td>
-                                <td></td>
-                         	</tr>
-                         	<tr>
-                         		<td>
-                                <strong>服务器IP</strong>：未定义
-                                </td>
-                                <td></td>
-                         	</tr>
-                         	<tr>
-                         		<td>
-                                <strong>服务器环境</strong>：未定义
-                                </td>
-                                <td></td>
-                         	</tr>
-                         	<tr>
-                         		<td>
-                                <strong>数据库版本</strong>： 未定义
-
-                                </td>
-                                <td></td>
-                         	</tr>
-                         	<tr>
-                         		<td>
-                                <strong>最大上传限制</strong>： 未定义
-
-                                </td>
-                                <td></td>
-                         	</tr>
-                         	<tr>
-                         		<td>
-                                <strong>当前登录用户</strong>： <span class="current_user">未定义</span>
-
+                                <strong>网站昨日访问量:</strong>： ${lastVisitCount!"0"}
                                 </td>
                                 <td></td>
                          	</tr>
@@ -137,15 +113,15 @@
                         <table class="table table-hover personal-task shortcut">
                             <tr>
                               <td>
-                                <div class="c1">1</div>
-                                <div class="c2">2</div>
+                                <div class="c1">如果点击菜单无用,请刷新重试,如果不行,:<strong><a href="">请先点击这</a></strong>-------1</div>
+                                <div class="c2">访问次数不限ip,存在1次ip多次访问的可能---------2</div>
+                                <div class="c2">服务器中文乱码问题,待解决---------2</div>
                                 <br>
                               </td>
                             </tr>
                         </table>
                   </div>
              </section>
-
               <!-- 最新文章 -->
              <section class="panel">
                   <header class="panel-heading bm0">
