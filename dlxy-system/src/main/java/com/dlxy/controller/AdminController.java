@@ -179,13 +179,13 @@ public class AdminController
 			dlxyUser.setLastLoginDate(new Date());
 			dlxyUser.setLastLoginIp(CommonUtils.getRemortIP(request));
 			userService.updateUserByExample(dlxyUser);
-			String userKey = String.format(IRedisService.ONLINE_USER_PREFIX + ":%s", CommonUtils.getIpAddr(request));
-			String userJson = redisService.get(userKey);
-			if (StringUtils.isEmpty(userJson))
-			{
-				redisService.set(userKey, String.valueOf(System.currentTimeMillis()), 60 * 5);
-				ShiroSessionListener.onlineCount.incrementAndGet();
-			}
+//			String userKey = String.format(IRedisService.ONLINE_USER_PREFIX + ":%s", CommonUtils.getIpAddr(request));
+//			String userJson = redisService.get(userKey);
+//			if (StringUtils.isEmpty(userJson))
+//			{
+//				redisService.set(userKey, String.valueOf(System.currentTimeMillis()), 60 * 5);
+//				ShiroSessionListener.onlineCount.incrementAndGet();
+//			}
 			if (null == dbUser.getLastLoginDate())
 			{
 				params.put("error", URLEncoder.encode("第一次登录,强烈建议您修改用户密码", "UTF-8"));
@@ -201,10 +201,16 @@ public class AdminController
 	}
 
 	@RequestMapping("/links")
-	public ModelAndView showAllLinks(HttpServletRequest request, HttpServletResponse response)
+	public ModelAndView showAllLinks(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException
 	{
 		Map<String, Object> params = new HashMap<>();
 		List<DlxyLink> links = linkService.findAllLinks();
+		String error = request.getParameter("error");
+		if(!StringUtils.isEmpty(error))
+		{
+			error=new String(error.getBytes("iso-8859-1"),System.getProperty("file.encoding"));
+			params.put("error", error);
+		}
 		params.put("user", AdminUtil.getLoginUser());
 		params.put("links", links);
 		ModelAndView modelAndView = new ModelAndView("admin/links", params);
@@ -216,6 +222,8 @@ public class AdminController
 	{
 		ModelAndView modelAndView = null;
 		Map<String, Object> params = new HashMap<>();
+		
+		params.put("user", AdminUtil.getLoginUser());
 		String linkId = null;
 		String linkName = null;
 		String linkUrl = null;
@@ -235,15 +243,11 @@ public class AdminController
 		}
 		if (params.containsKey("error"))
 		{
-			modelAndView = new ModelAndView("admin/links", params);
+			modelAndView = new ModelAndView("redirect:/admin/links.html", params);
 			return modelAndView;
 		}
 		try
 		{
-			if (linkUrl.contains(":"))
-			{
-				linkUrl = linkUrl.replaceAll(":", "`");
-			}
 			DlxyLink dlxyLink = new DlxyLink();
 			if (!StringUtils.isEmpty(linkId))
 			{
@@ -921,10 +925,18 @@ public class AdminController
 		}
 
 		params.put("user", loginUser);
-		if (!passwrodPattern.matcher(user.getPassword()).matches())
+		if(!StringUtils.isEmpty(user.getPassword()))
 		{
-			params.put("error", "密码格式不正确,密码长度为6-16位,且包含字母和数字");
-		} else if (!realNamePattern.matcher(user.getRealname()).matches())
+			if (!passwrodPattern.matcher(user.getPassword()).matches())
+			{
+				params.put("error", "密码格式不正确,密码长度为6-16位,且包含字母和数字");
+			}else {
+				user.setPassword(KeyUtils.md5Encrypt(user.getPassword()));
+			}
+		}else {
+			user.setPassword(null);
+		}
+		 if (!realNamePattern.matcher(user.getRealname()).matches())
 		{
 			params.put("error", "真实姓名格式不正确,王大二或者Justain Bieber 格式");
 		}

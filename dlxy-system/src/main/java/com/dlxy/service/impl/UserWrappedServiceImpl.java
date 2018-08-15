@@ -133,6 +133,8 @@ public class UserWrappedServiceImpl extends DlxyObservervable implements IUserWr
 		if (!StringUtils.isEmpty(objUser.getPassword()))
 		{
 			objUser.setPassword(KeyUtils.md5Encrypt(objUser.getPassword()));
+		}else {
+			objUser.setPassword(null);
 		}
 		int count = userService.updateUserByUserId(objUser);
 		if (count <= 0)
@@ -182,11 +184,16 @@ public class UserWrappedServiceImpl extends DlxyObservervable implements IUserWr
 	@Override
 	public void addLink(UserDTO loginUser, DlxyLink link)
 	{
+		String linkUrl=link.getLinkUrl();
+		if (linkUrl.contains(":"))
+		{
+			linkUrl = linkUrl.replaceAll(":", "`");
+		}
 		Integer c = linkService.addOrUpdate(link);
 		if(c>0)
 		{
 			setChanged();
-			String detail="更新或者添加超链接:"+AbstractRecordDetailHandler.LINK+":"+link.getLinkUrl();
+			String detail="更新或者添加超链接:"+AbstractRecordDetailHandler.LINK+":"+linkUrl;
 			notifyObservers(UserRecordDTO.getUserRecordDTO(loginUser.getUserId(), detail));
 		}
 	}

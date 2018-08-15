@@ -11,6 +11,8 @@ import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.SessionListener;
 import org.apache.shiro.session.SessionListenerAdapter;
 import org.apache.shiro.session.mgt.SessionManager;
+import org.apache.shiro.session.mgt.eis.MemorySessionDAO;
+import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
@@ -34,6 +36,7 @@ import com.google.code.kaptcha.Constants;
 import com.google.code.kaptcha.Producer;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.util.Config;
+import com.hazelcast.map.impl.event.AbstractFilteringStrategy;
 
 @Configuration
 @Order(1)
@@ -46,23 +49,33 @@ public class DlxySystemSpringConfiguration implements InitializingBean
 	{
 		return new DlxyBeanPostProcessor();
 	}
+
 	@Bean
 	public org.springframework.cache.CacheManager titlesCacheManager()
 	{
-		CompositeCacheManager compositeCacheManager=new CompositeCacheManager();
-		List<org.springframework.cache.CacheManager>cacheManagers=new ArrayList<>();
+		CompositeCacheManager compositeCacheManager = new CompositeCacheManager();
+		List<org.springframework.cache.CacheManager> cacheManagers = new ArrayList<>();
 		cacheManagers.add(new ConcurrentMapCacheManager("titles"));
 		cacheManagers.add(new ConcurrentMapCacheManager("single_title"));
 		cacheManagers.add(new ConcurrentMapCacheManager("links"));
 		compositeCacheManager.setCacheManagers(cacheManagers);
 		return compositeCacheManager;
 	}
+
 	@Bean
 	public CacheManager cacheManager()
 	{
 		EhCacheManager ehCacheManager = new EhCacheManager();
 		ehCacheManager.setCacheManagerConfigFile("classpath:shiro/cacheManager.xml");
 		return ehCacheManager;
+	}
+
+	@Bean
+	public SessionDAO sessionDao()
+	{
+		MemorySessionDAO memorySessionDAO = new MemorySessionDAO();
+		
+		return memorySessionDAO;
 	}
 
 	@Bean
@@ -80,22 +93,26 @@ public class DlxySystemSpringConfiguration implements InitializingBean
 	{
 		return new DlxyShiroRealm();
 	}
+
 	@Bean
 	public ShiroSessionListener shiroSessionListener()
 	{
 		return new ShiroSessionListener();
 	}
+
 	@Bean
 	public SessionManager sessionManager()
 	{
-		DefaultWebSessionManager defaultWebSessionManager=new DefaultWebSessionManager();
-		defaultWebSessionManager.setGlobalSessionTimeout(1000*60*5);
-		List<SessionListener>listeners=new ArrayList<>();
+		DefaultWebSessionManager defaultWebSessionManager = new DefaultWebSessionManager();
+		defaultWebSessionManager.setGlobalSessionTimeout(1000 * 60 );
+		List<SessionListener> listeners = new ArrayList<>();
 		listeners.add(shiroSessionListener());
 		defaultWebSessionManager.setSessionListeners(listeners);
+//		defaultWebSessionManager.setSessionValidationInterval(1000 * 30);
+//		defaultWebSessionManager.setSessionValidationSchedulerEnabled(true);
+		defaultWebSessionManager.setSessionDAO(sessionDao());
 		return defaultWebSessionManager;
-		
-		
+
 	}
 
 	@Bean("shiroFilter")

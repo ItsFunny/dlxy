@@ -149,7 +149,7 @@
 								</div>
 								<label class="col-xs-3 control-label">用户性别:</label>
 								<div class="col-xs-3 ">
-									<select name="able"  style="width:100px;height: 30px">
+									<select name="sex"  style="width:100px;height: 30px">
 										<option value ="0">男</option>
 										<option value="1">女</option>
 									</select>
@@ -201,7 +201,6 @@
 			$("input:checkbox[name=checked]:checked").each(function(){
 				ids+=$(this).val()+",";
 			})
-			alert(ids);
 			jQuery.get('/api/v1/admin/user/delete.html',{ids:ids},function(data){
 				alert(data.msg);
 				location.reload();
@@ -234,13 +233,9 @@
 				$("#edit_userId").val(data.data.userId);
 				alert(data.data.able);
 				if(data.data.able){
-				alert("1");
 				$("#edit_status").val(1);
-					alert($("#edit_status").val());
 				}else{
-				alert("2");
 				$("#edit_status").val(0);
-				alert($("#edit_status").val());
 				}
 				
 			}else{

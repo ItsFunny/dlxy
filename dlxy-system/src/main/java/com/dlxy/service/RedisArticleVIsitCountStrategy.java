@@ -61,10 +61,6 @@ public class RedisArticleVIsitCountStrategy extends AbstractArticleVistitCountSt
 		return visitInfo.get();
 	}
 
-	public static void main(String[] args)
-	{
-		System.out.println(test());
-	}
 
 	public static Integer test()
 	{

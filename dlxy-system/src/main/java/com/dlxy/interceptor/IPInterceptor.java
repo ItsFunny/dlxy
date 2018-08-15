@@ -87,6 +87,13 @@ public class IPInterceptor implements HandlerInterceptor
 			historyDTO = JsonUtil.json2Object(json, VisitUserHistoryDTO.class);
 		}
 		HistroyDetail detail = historyDTO.getDetails().get(uri);
+		if(null==detail)
+		{
+			result.setFilter(true);
+			detail=new HistroyDetail();
+			historyDTO.getDetails().put(uri, detail);
+			return result;
+		}
 		Integer refreshCounts = detail.getRefreshCounts();
 		Integer maxVisitCount = detail.getMaxLimitedCounts();
 		if (refreshCounts < maxVisitCount)
@@ -105,6 +112,7 @@ public class IPInterceptor implements HandlerInterceptor
 			{
 				// 关于次数限制可以根据数学公式做动态深入的设计
 				detail.setMaxLimitedCounts(maxVisitCount + maxRefreshTimes);
+				result.setFilter(true);
 			}
 		}
 		return result;
@@ -160,6 +168,7 @@ public class IPInterceptor implements HandlerInterceptor
 				{
 					String error = URLEncoder.encode("对不起,你已经被禁止访问,请明日再来访问", "utf-8");
 					rediretct(response, error);
+					return false;
 				}
 			}
 			JudgeResult result = judgeFromHistory(request, ip, uri);
@@ -198,9 +207,9 @@ public class IPInterceptor implements HandlerInterceptor
 			// }
 			// String newJson = JsonUtil.obj2Json(map);
 			// redisService.set(perKey, newJson);
-
 			else
 			{
+				//有刷新次数限制
 				String perKey = String.format(IRedisService.PER_DAY_VISIT_COUNT, DateUtils.getCurrentDay());
 				String perDayJson = redisService.get(perKey);
 				redisService.incr(IRedisService.WEB_VISIT_TOTAL_COUT);
@@ -251,13 +260,13 @@ public class IPInterceptor implements HandlerInterceptor
 			}
 			Map<String, HistroyDetail> mapDetail = visitUserHistoryDTO.getDetails();
 			HistroyDetail detail = mapDetail.get(request.getRequestURI());
-			if (null == detail)
-			{
-				detail = new HistroyDetail();
-			}
+//			if (null == detail)
+//			{
+//				detail = new HistroyDetail();
+//			}
 			detail.setLastVisitTime(System.currentTimeMillis());
 			detail.incr();
-			mapDetail.put(request.getRequestURI(), detail);
+//			mapDetail.put(request.getRequestURI(), detail);
 			String json = JsonUtil.obj2Json(visitUserHistoryDTO);
 			String key = String.format(IRedisService.USER_VISIT_HISTORY, visitUserHistoryDTO.getIp());
 			redisService.set(key, json);

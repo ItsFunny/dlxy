@@ -19,7 +19,7 @@ dlxy:
     worker-id: 0
     datacenter-id: 1
     property-public-key-path: 'classpath:keys/property-public.key'
-    batch-classes: com.system.batch.jobs.DelArticlePicJob,com.system.batch.jobs.ArticleVisitCountJob
+    batch-classes: com.dlxy.system.batch.jobs.ArticleVisitCountJob,com.dlxy.system.batch.jobs.DelArticlePicJob,com.dlxy.system.batch.jobs.DelInvalidArticleJob
     #ftp
     
     ftp-host: 120.78.240.211

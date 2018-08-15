@@ -11,13 +11,13 @@ dlxy:
     amqp-password: 123456
     amqp-port: 5672
     amqp-enabled: false
-    redis-host: 120.78.240.211
+    redis-host: 127.0.0.1
     redis-port: 6379
     redis-password: 123456
     worker-id: 0
     datacenter-id: 1
     property-public-key-path: 'classpath:keys/property-public.key'
-    batch-classes: com.dlxy.system.batch.jobs.DelArticlePicJob,com.dlxy.system.batch.jobs.ArticleVisitCountJob
+    batch-classes: com.dlxy.system.batch.jobs.ArticleVisitCountJob,com.dlxy.system.batch.jobs.DelArticlePicJob,com.dlxy.system.batch.jobs.DelInvalidArticleJob
     
 server:
   port: 8888

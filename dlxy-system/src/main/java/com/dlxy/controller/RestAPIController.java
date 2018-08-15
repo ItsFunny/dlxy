@@ -22,6 +22,8 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,6 +122,8 @@ public class RestAPIController
 	private ILinkService linkService;
 	@Autowired
 	private IRedisService redisService;
+	@Autowired
+	private SessionDAO sessionDao;
 
 	@Autowired
 	private IVisitRecordService visitRecordService;
@@ -200,7 +204,9 @@ public class RestAPIController
 				perDayVisitCount=findByRecordDate.getVisitCount().toString();
 			}
 		}
-		return ResultUtil.sucess(totalVisitCount+","+perDayVisitCount+","+ShiroSessionListener.onlineCount.get(),"success");
+		Collection<Session> sessions = sessionDao.getActiveSessions();
+		Integer sizeInteger=sessions.size();
+		return ResultUtil.sucess(totalVisitCount+","+perDayVisitCount+","+sizeInteger,"success");
 	}
 
 	@RequestMapping(value = "/link/delete", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -477,7 +483,6 @@ public class RestAPIController
 			SerializeConfig serializeConfig = new SerializeConfig();
 			serializeConfig.put(Long.class, ToStringSerializer.instance);
 			String json = JSON.toJSONString(ResultUtil.sucess(dto), serializeConfig);
-			System.out.println(json);
 			response.getWriter().write(json);
 			// return ResultUtil.sucess(dto);
 		} catch (Exception e)

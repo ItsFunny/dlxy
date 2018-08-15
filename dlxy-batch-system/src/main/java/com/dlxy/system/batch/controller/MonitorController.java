@@ -62,6 +62,7 @@ public class MonitorController
 			{
 				try
 				{
+					System.out.println(batchClasses[i]);
 					JobRunner runner = configuration
 							.createBean((Class<? extends JobRunner>) Class.forName(batchClasses[i]));
 					jobList.add(runner);

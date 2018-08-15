@@ -9,6 +9,9 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+import org.apache.shiro.web.servlet.AbstractShiroFilter;
+import org.springframework.web.context.request.RequestContextListener;
+
 public class CharsetFilter implements Filter
 {
 	private String encoding = null;
