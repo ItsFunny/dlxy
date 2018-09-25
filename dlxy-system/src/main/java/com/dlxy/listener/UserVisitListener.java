@@ -105,7 +105,7 @@ public class UserVisitListener implements HttpSessionListener,ServletContextList
 		{
 			for (String string : keys)
 			{
-				redisService.del(String.format(IRedisService.ONLINE_USER_PREFIX+":%s", string));
+				redisService.del(string);
 			}
 		}
 	}

@@ -34,12 +34,17 @@ public class DlxyAOP
 	public void checkIsIllegalFormat()
 	{
 	}
-
-	@Pointcut("execution (* com.dlxy.controller.AdminController.*(..)) && !execution(* com.dlxy.controller.AdminController.login(..)) && !execution(* com.dlxy.controller.AdminController.doLogin(..))")
+	
+	@Pointcut("execution (* com.dlxy.controller.PortalController.*(..)) ")
+	public void extendUserPortalExpireInRedis() {}
+	
+	@Pointcut("execution (* com.dlxy.controller.AdminController.*(..)) && ((!execution (* com.dlxy.controller.AdminController.login(..))) && (!execution (* com.dlxy.controller.AdminController.doLogin(..))))")
+	public void extendUserManagerExpireInRedis() {}
+	
+	@Pointcut("extendUserManagerExpireInRedis()  || extendUserPortalExpireInRedis()")
 	public void extendUserExpireInRedis()
 	{
 	}
-
 	@After("extendUserExpireInRedis()")
 	public void extendRedisExpire()
 	{
@@ -52,6 +57,7 @@ public class DlxyAOP
 			redisService.expire(String.format(IRedisService.ONLINE_USER_PREFIX + ":%s", ip), 60 * 12);
 		} catch (Exception e)
 		{
+			
 			logger.error("Redis服务器挂了,{}", e.getMessage());
 		}
 

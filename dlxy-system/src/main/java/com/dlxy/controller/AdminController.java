@@ -70,9 +70,11 @@ import com.dlxy.server.article.service.IArticleService;
 import com.dlxy.server.article.service.ITitleService;
 import com.dlxy.server.user.model.DlxyLink;
 import com.dlxy.server.user.model.DlxyUser;
+import com.dlxy.server.user.model.DlxyVisitRecord;
 import com.dlxy.server.user.service.ILinkService;
 import com.dlxy.server.user.service.IUserRoleService;
 import com.dlxy.server.user.service.IUserService;
+import com.dlxy.server.user.service.IVisitRecordService;
 import com.dlxy.service.IArticleWrappedService;
 import com.dlxy.service.IPictureWrappedService;
 import com.dlxy.service.IRedisService;
@@ -121,6 +123,9 @@ public class AdminController
 
 	@Autowired
 	private ILinkService linkService;
+	
+	@Autowired
+	private IVisitRecordService visitRecordService;
 
 	@RequestMapping("/login")
 	public ModelAndView login(HttpServletRequest request, HttpServletResponse response)
@@ -133,6 +138,7 @@ public class AdminController
 		} else
 		{
 			modelAndView = new ModelAndView("admin/index");
+			modelAndView.addObject("user",user);
 		}
 		return modelAndView;
 	}
@@ -185,7 +191,7 @@ public class AdminController
 				modelAndView = new ModelAndView("redirect:/admin/user/userInfo/update.html", params);
 			} else
 			{
-				modelAndView = new ModelAndView("redirect:/admin/index.html");
+				modelAndView = new ModelAndView("redirect:/admin/index.html",params);
 			}
 			dlxyUser = null;
 		}
@@ -281,6 +287,7 @@ public class AdminController
 		Map<String, Object> params = new HashMap<>();
 		ModelAndView modelAndView = new ModelAndView("admin/index", params);
 		modelAndView.addObject("user", user);
+		String lastVisitCount=null;
 		try
 		{
 			Long totalUserCount = userService.countUsersByParam(new HashMap<>());
@@ -291,6 +298,7 @@ public class AdminController
 		{
 			e.printStackTrace();
 		}
+		Long currentDay = DateUtils.getCurrentDay();
 		try
 		{
 			Set<String> keys = redisService.zRevrange(IRedisService.ARTICLE_VISIT_RANGE, 0L, 5L);
@@ -308,9 +316,7 @@ public class AdminController
 				}
 			}
 			modelAndView.addObject("articles", articles);
-			
-			Long currentDay = DateUtils.getCurrentDay();
-			String lastVisitCount = redisService.get(String.format(IRedisService.PER_DAY_VISIT_COUNT, currentDay-1));
+			lastVisitCount= redisService.get(String.format(IRedisService.PER_DAY_VISIT_COUNT, currentDay-1));
 			modelAndView.addObject("lastVisitCount",lastVisitCount);
 			// if (!articles.isEmpty())
 			// {
@@ -327,8 +333,15 @@ public class AdminController
 		} catch (Exception e)
 		{
 			logger.error("Redis服务器挂了", e);
+			DlxyVisitRecord findByRecordDate = visitRecordService.findByRecordDate(currentDay-1);
+			if(null==findByRecordDate)
+			{
+				lastVisitCount="0";
+			}else
+			{
+				lastVisitCount = findByRecordDate.getVisitCount().toString();
+			}
 		}
-
 		return modelAndView;
 	}
 

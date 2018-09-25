@@ -151,7 +151,7 @@ public class ArticleWrappedServiceObservableImpl extends DlxyObservervable imple
 			execute(userDTO, detail);
 		} catch (SQLException e)
 		{
-			throw new RuntimeException("sql错误");
+			throw new RuntimeException("sql错误",e);
 		}
 		return count;
 	}

@@ -1,5 +1,6 @@
 package com.dlxy.interceptor;
 
+
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.List;
@@ -28,6 +29,8 @@ public class IPInterceptor implements HandlerInterceptor
 	private Long visitIntervalTime = 1000 * 30L;
 
 	private Integer maxRefreshTimes = 5;
+	
+	private Long rollBackVisitCountInterval=1000*60*5L;
 
 	@Autowired
 	private IRedisService redisService;
@@ -93,29 +96,40 @@ public class IPInterceptor implements HandlerInterceptor
 			historyDTO.getDetails().put(uri, detail);
 			return result;
 		}
-		Integer refreshCounts = detail.getRefreshCounts();
 		Integer maxVisitCount = detail.getMaxLimitedCounts();
+		Long lastVisitTime = detail.getLastVisitTime();
+		if(null==lastVisitTime)
+		{
+			lastVisitTime=System.currentTimeMillis();
+		}
+		Long timesWentBy=System.currentTimeMillis()-lastVisitTime;
+		if(timesWentBy<visitIntervalTime)
+		{
+			detail.incr();
+		}else if(timesWentBy>rollBackVisitCountInterval)
+		{
+			detail.setRefreshCounts(1);
+		}
+		Integer refreshCounts = detail.getRefreshCounts();
+		detail.setLastVisitTime(System.currentTimeMillis());
+		
+		
 		if (refreshCounts < maxVisitCount)
 		{
 			result.setFilter(true);
-		} else
+		} else if(timesWentBy<visitIntervalTime)
 		{
-			Long lastVisitTimes = historyDTO.getLastVisitTimes(uri);
-			Long remainSeconds = System.currentTimeMillis() - lastVisitTimes;
-			// 关于时间判断可以根据数学公式做动态深入的设计
-			if (remainSeconds < visitIntervalTime)
-			{
-				result.setFilter(false);
-				result.setRemainSeconds(visitIntervalTime - remainSeconds);
-			} else
-			{
-				// 关于次数限制可以根据数学公式做动态深入的设计
-				detail.setMaxLimitedCounts(maxVisitCount + maxRefreshTimes);
-				result.setFilter(true);
-			}
+			// 关于时间判断可以根据数学公式做动态
+			result.setFilter(false);
+			result.setRemainSeconds(visitIntervalTime - timesWentBy);
+		}else {
+			// 关于次数限制可以根据数学公式做动态深入的设计
+			detail.setMaxLimitedCounts(maxVisitCount + maxRefreshTimes);
+			result.setFilter(true);
 		}
 		return result;
 	}
+	
 
 	private void rediretct(HttpServletResponse response, String error) throws IOException
 	{
@@ -223,7 +237,7 @@ public class IPInterceptor implements HandlerInterceptor
 
 		} catch (Exception e)
 		{
-			logger.error("[IPfilter]error:{}", e.getMessage());
+			logger.error("[IPfilter]error:{}", e.getMessage(),e);
 			return true;
 		}
 		return true;
@@ -263,8 +277,7 @@ public class IPInterceptor implements HandlerInterceptor
 //			{
 //				detail = new HistroyDetail();
 //			}
-			detail.setLastVisitTime(System.currentTimeMillis());
-			detail.incr();
+
 //			mapDetail.put(request.getRequestURI(), detail);
 			String json = JsonUtil.obj2Json(visitUserHistoryDTO);
 			String key = String.format(IRedisService.USER_VISIT_HISTORY, visitUserHistoryDTO.getIp());
