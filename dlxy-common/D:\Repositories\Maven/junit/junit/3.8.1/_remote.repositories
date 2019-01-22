@@ -1,0 +1,4 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Tue Jan 22 20:29:28 CST 2019
+junit-3.8.1.jar>nexus=
+junit-3.8.1.pom>nexus=
