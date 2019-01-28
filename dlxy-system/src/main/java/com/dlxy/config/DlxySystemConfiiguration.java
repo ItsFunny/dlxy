@@ -98,7 +98,7 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer, ServletContex
 	{
 		Map<String, String> pathMap = new HashMap<String, String>();
 		Map<String, String> visitPrefixMap = new HashMap<>();
-		FileStrategyContext context = new FileStrategyContext();
+		FileStrategyConftext context = new FileStrategyContext();
 
 		// DefaultFileService defaultFileService=new DefaultFileService();
 		// pathMap.put(IFileStrategy.IMG_TYPE, servletContext.getRealPath(""));

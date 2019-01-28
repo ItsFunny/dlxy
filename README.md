@@ -5,12 +5,13 @@
 
 * 因为实习与网络安全有关,因而在这额外新增一个需求:通过Go编写[网络流量监控程序](https://github.com/ItsFunny/data-monitor)
 对底层流量进行分析处理,会模仿公司的部分思路
+* [结合之前写的部分代码](https://github.com/ItsFunny/gopacket_example/blob/github/capture_main.go) ,包的组装准备采用原生的2进制形式,而非自身的库
 
-
+* 在线人数有bug,redis问题,没时间修改
 
 ---
 学院给的任务,这个项目权限并没有好好设计,只是简单的RBAC,中途学校割弃,所以只开发了85% 就不再开发了
-代码易维护,易扩展
+代码易维护,易扩展(`过度设计的项目`)
 项目上线于: http://www.jokerlvccc.club
 
 
