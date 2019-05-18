@@ -10,8 +10,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
 import com.dlxy.server.article.service.IBeanSelefAware;
-import com.dlxy.server.article.service.ITitleService;
-import com.dlxy.server.article.service.impl.TitleServiceImpl;
 
 public class DlxyBeanPostProcessor implements BeanPostProcessor
 {

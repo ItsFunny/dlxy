@@ -6,9 +6,10 @@ com/dlxy/server/article/dao/query/ArticleCountQueryDao.class
 com/dlxy/server/article/model/DlxyTitleExample$GeneratedCriteria.class
 com/dlxy/server/article/dao/query/ArticleQueryDao.class
 com/dlxy/server/article/dao/mybatis/count/TitleMybatisCountDao.class
+com/dlxy/server/article/model/DlxyArticle.class
 com/dlxy/server/article/model/DlxyArticleExample.class
-com/dlxy/server/article/dao/mybatis/count/UserArticleDao.class
 com/dlxy/server/article/dao/mybatis/DlxyArticleDao.class
+com/dlxy/server/article/dao/mybatis/count/UserArticleDao.class
 com/dlxy/server/article/dao/query/TitleQueryDao.class
 com/dlxy/server/article/dao/mybatis/DlxyTitleDao.class
 com/dlxy/server/article/dao/query/impl/ArticleQueryDaoImpl$ArticleTypeResultSetHandler.class

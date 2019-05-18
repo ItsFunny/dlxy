@@ -175,15 +175,6 @@ public class AdminController
 			dlxyUser.setLastLoginDate(new Date());
 			dlxyUser.setLastLoginIp(CommonUtils.getRemortIP(request));
 			userService.updateUserByExample(dlxyUser);
-			// String userKey = String.format(IRedisService.ONLINE_USER_PREFIX + ":%s",
-			// CommonUtils.getIpAddr(request));
-			// String userJson = redisService.get(userKey);
-			// if (StringUtils.isEmpty(userJson))
-			// {
-			// redisService.set(userKey, String.valueOf(System.currentTimeMillis()), 60 *
-			// 5);
-			// ShiroSessionListener.onlineCount.incrementAndGet();
-			// }
 			if (null == dbUser.getLastLoginDate())
 			{
 				params.put("error", URLEncoder.encode("第一次登录,强烈建议您修改用户密码", "UTF-8"));

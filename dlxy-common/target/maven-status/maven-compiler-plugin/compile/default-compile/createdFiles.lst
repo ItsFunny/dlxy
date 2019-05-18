@@ -6,8 +6,8 @@ com/dlxy/common/enums/RestAPIStatus.class
 com/dlxy/common/model/ArticleVisitInfo.class
 com/dlxy/common/service/IdWorkerServiceTwitter.class
 com/dlxy/common/dto/AbstractDlxyTreeComposite.class
-com/dlxy/common/event/AppEventRabbitMQPublisher.class
 com/dlxy/common/vo/CreaterAndConsumer$Producer.class
+com/dlxy/common/event/AppEventRabbitMQPublisher.class
 com/dlxy/common/vo/CreaterAndConsumer$Consumer.class
 com/dlxy/common/utils/PageResultUtil.class
 com/dlxy/common/event/AppEventLogPubliher.class

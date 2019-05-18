@@ -1,10 +1,16 @@
 com/dlxy/server/picture/dao/mybatis/DlxyPictureDao.class
+com/dlxy/server/picture/model/DlxyArticlePicture.class
 com/dlxy/server/picture/model/DlxyPictureExample$Criterion.class
 com/dlxy/server/picture/model/DlxyPictureExample.class
+com/dlxy/server/picture/model/DlxyArticlePictureExample.class
 com/dlxy/server/picture/dao/mybatis/PictureMybatisDao.class
 com/dlxy/server/picture/dao/query/PictureQueryDao.class
+com/dlxy/server/picture/model/DlxyArticlePictureExample$GeneratedCriteria.class
+com/dlxy/server/picture/model/DlxyArticlePictureExample$Criterion.class
+com/dlxy/server/picture/dao/mybatis/DlxyArticlePictureDao.class
 com/dlxy/server/picture/model/DlxyPictureExample$GeneratedCriteria.class
 com/dlxy/server/picture/dao/query/impl/PictureQueryDaoImpl.class
 com/dlxy/server/picture/model/DlxyPicture.class
 com/dlxy/server/picture/dao/App.class
+com/dlxy/server/picture/model/DlxyArticlePictureExample$Criteria.class
 com/dlxy/server/picture/model/DlxyPictureExample$Criteria.class
