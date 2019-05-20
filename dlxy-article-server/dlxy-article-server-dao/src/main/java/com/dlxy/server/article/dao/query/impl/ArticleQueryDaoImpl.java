@@ -150,10 +150,6 @@ public class ArticleQueryDaoImpl implements ArticleQueryDao
 		{
 			if (!StringUtils.isEmpty(params.get("searchParam").toString()))
 			{
-				// 这里好像有问题,这样写好像如果知道userId 对应的realname 照样能获取到某个user的文章信息
-				// 2018-07-07 22:47 直接屏蔽 对realname的判断
-				// or a.article_id in (select d.article_id from dlxy_user_article d where
-				// d.realname like ? )
 				sql.append("and ( a.article_name like ? or a.article_author like ? )");
 				set.add("%" + params.get("searchParam") + "%");
 				set.add("%" + params.get("searchParam") + "%");

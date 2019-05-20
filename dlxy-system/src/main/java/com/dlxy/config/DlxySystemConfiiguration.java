@@ -78,64 +78,65 @@ import redis.clients.jedis.JedisPoolConfig;
 @EnableWebMvc
 @EnableTransactionManagement
 @ComponentScan(basePackages =
-{ "com.dlxy" }, excludeFilters =
-{ @ComponentScan.Filter(type = FilterType.ANNOTATION, value = Mapper.class) })
+        {"com.dlxy"}, excludeFilters =
+        {@ComponentScan.Filter(type = FilterType.ANNOTATION, value = Mapper.class)})
 @MapperScan(annotationClass = Mapper.class, basePackages =
-{ "com.dlxy" })
+        {"com.dlxy"})
 @Order(2)
 @Import(DlxySystemSpringConfiguration.class)
 public class DlxySystemConfiiguration implements WebMvcConfigurer, ServletContextAware
 {
-	@Autowired
-	private DlxyProperty dlxyProperty;
+    @Autowired
+    private DlxyProperty dlxyProperty;
 
-	private ServletContext servletContext;
+    private ServletContext servletContext;
 
-	private Logger logger = LoggerFactory.getLogger(DlxySystemConfiiguration.class);
+    private Logger logger = LoggerFactory.getLogger(DlxySystemConfiiguration.class);
 
-	@Bean
-	public FileStrategyContext fileContext()
-	{
-		Map<String, String> pathMap = new HashMap<String, String>();
-		Map<String, String> visitPrefixMap = new HashMap<>();
-		FileStrategyConftext context = new FileStrategyContext();
+    @Bean
+    public FileStrategyContext fileContext()
+    {
+        Map<String, String> pathMap = new HashMap<String, String>();
+        Map<String, String> visitPrefixMap = new HashMap<>();
+        FileStrategyContext context = new FileStrategyContext();
 
-		// DefaultFileService defaultFileService=new DefaultFileService();
-		// pathMap.put(IFileStrategy.IMG_TYPE, servletContext.getRealPath(""));
-		// visitPrefixMap.put(IFileStrategy.IMG_TYPE, "imgs");
-		// defaultFileService.setVisitPrefixMap(visitPrefixMap);
-		// defaultFileService.setBasePathMap(pathMap);
-		// context.setFileStrategy(defaultFileService);
+        // DefaultFileService defaultFileService=new DefaultFileService();
+        // pathMap.put(IFileStrategy.IMG_TYPE, servletContext.getRealPath(""));
+        // visitPrefixMap.put(IFileStrategy.IMG_TYPE, "imgs");
+        // defaultFileService.setVisitPrefixMap(visitPrefixMap);
+        // defaultFileService.setBasePathMap(pathMap);
+        // context.setFileStrategy(defaultFileService);
 
-		pathMap.put(IFileStrategy.IMG_TYPE, dlxyProperty.getImgFTPStoreBasePath());
-		visitPrefixMap.put(IFileStrategy.IMG_TYPE, dlxyProperty.getImgFTPVisitPrefx());
+        pathMap.put(IFileStrategy.IMG_TYPE, dlxyProperty.getImgFTPStoreBasePath());
+        visitPrefixMap.put(IFileStrategy.IMG_TYPE, dlxyProperty.getImgFTPVisitPrefx());
 //		String host = "120.78.240.211";
 //		Integer port = 21;
 //		String username = "joker";
 //		String password = "lvcong124536789";
-		FTPFileService fileService = new FTPFileService(dlxyProperty.getFtpHost(), dlxyProperty.getFtpPort(),
-				dlxyProperty.getFtpUsername(), dlxyProperty.getFtpPassword());
-		fileService.setVisitPrefixMap(visitPrefixMap);
-		fileService.setBasePathMap(pathMap);
-		context.setFileStrategy(fileService);
-		return context;
-	}
+        FTPFileService fileService = new FTPFileService(dlxyProperty.getFtpHost(), dlxyProperty.getFtpPort(),
+                dlxyProperty.getFtpUsername(), dlxyProperty.getFtpPassword());
+        fileService.setVisitPrefixMap(visitPrefixMap);
+        fileService.setBasePathMap(pathMap);
+        context.setFileStrategy(fileService);
+        return context;
+    }
 
-	@Bean
-	public JedisPool jedisPool()
-	{
-		JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
-		jedisPoolConfig.setMaxIdle(5);
-		jedisPoolConfig.setMaxTotal(1024);
-		jedisPoolConfig.setMaxWaitMillis(10000);
-		jedisPoolConfig.setTestOnBorrow(true);
-		
-		JedisPool jedisPool = new JedisPool(jedisPoolConfig, dlxyProperty.getRedisHost(), dlxyProperty.getRedisPort(),
-				10000, dlxyProperty.getRedisPassword());
+    @Bean
+    public JedisPool jedisPool()
+    {
+        JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
+        jedisPoolConfig.setMaxIdle(5);
+        jedisPoolConfig.setMaxTotal(1024);
+        jedisPoolConfig.setMaxWaitMillis(10000);
+        jedisPoolConfig.setTestOnBorrow(true);
 
-		// JedisPool jedisPool = new JedisPool("localhost", 6379);
-		return jedisPool;
-	}
+//		JedisPool jedisPool = new JedisPool(jedisPoolConfig, dlxyProperty.getRedisHost(), dlxyProperty.getRedisPort(),
+//				10000, dlxyProperty.getRedisPassword());
+
+        JedisPool jedisPool = new JedisPool(dlxyProperty.getRedisHost(), dlxyProperty.getRedisPort());
+
+        return jedisPool;
+    }
 //	@Bean
 //	public JedisCluster jedisCluster()
 //	{
@@ -151,220 +152,220 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer, ServletContex
 //	}
 //	
 
-	@Bean
-	public IRedisService redisService()
-	{
-		return new RedisServiceImpl();
-	}
+    @Bean
+    public IRedisService redisService()
+    {
+        return new RedisServiceImpl();
+    }
 
-	@Bean
-	public CommonsMultipartResolver multipartResolver()
-	{
-		CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
-		multipartResolver.setMaxInMemorySize(100000);
-		return multipartResolver;
-	}
+    @Bean
+    public CommonsMultipartResolver multipartResolver()
+    {
+        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
+        multipartResolver.setMaxInMemorySize(100000);
+        return multipartResolver;
+    }
 
-	@Bean
-	public DataSourceTransactionManager DataSourceTransactionManager()
-	{
-		DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager();
-		dataSourceTransactionManager.setDataSource(dataSource());
-		return dataSourceTransactionManager;
-	}
+    @Bean
+    public DataSourceTransactionManager DataSourceTransactionManager()
+    {
+        DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager();
+        dataSourceTransactionManager.setDataSource(dataSource());
+        return dataSourceTransactionManager;
+    }
 
-	@Bean
-	public PictureReceiver pictureGroup()
-	{
-		return new PictureReceiver();
-	}
+    @Bean
+    public PictureReceiver pictureGroup()
+    {
+        return new PictureReceiver();
+    }
 
-	@Bean
-	public ArticleReceiver articleGroup()
-	{
-		return new ArticleReceiver();
-	}
+    @Bean
+    public ArticleReceiver articleGroup()
+    {
+        return new ArticleReceiver();
+    }
 
-	@Bean
-	public UserArticleReceiver userArticleGroup()
-	{
-		return new UserArticleReceiver();
-	}
+    @Bean
+    public UserArticleReceiver userArticleGroup()
+    {
+        return new UserArticleReceiver();
+    }
 
-	@Bean
-	public DataSource dataSource()
-	{
-		DruidDataSource dataSource = new DruidDataSource();
+    @Bean
+    public DataSource dataSource()
+    {
+        DruidDataSource dataSource = new DruidDataSource();
 
-		dataSource.setTestOnBorrow(false);
-		dataSource.setTestWhileIdle(true);
-		dataSource.setTimeBetweenEvictionRunsMillis(10000);
-		dataSource.setValidationQuery("SELECT 1");
-		dataSource.setUsername(dlxyProperty.getUsername());
-		dataSource.setDriverClassName(dlxyProperty.getDriverClassName());
-		dataSource.setPassword(dlxyProperty.getPassword());
-		dataSource.setUrl(dlxyProperty.getUrl());
-		return dataSource;
-	}
+        dataSource.setTestOnBorrow(false);
+        dataSource.setTestWhileIdle(true);
+        dataSource.setTimeBetweenEvictionRunsMillis(10000);
+        dataSource.setValidationQuery("SELECT 1");
+        dataSource.setUsername(dlxyProperty.getUsername());
+        dataSource.setDriverClassName(dlxyProperty.getDriverClassName());
+        dataSource.setPassword(dlxyProperty.getPassword());
+        dataSource.setUrl(dlxyProperty.getUrl());
+        return dataSource;
+    }
 
-	@Bean
-	public SqlSessionFactoryBean sqlSessionFactoryBean() throws IOException
-	{
-		SqlSessionFactoryBean sessionFactoryBeanqBean = new SqlSessionFactoryBean();
-		sessionFactoryBeanqBean.setDataSource(dataSource());
-		org.apache.ibatis.session.Configuration configuration = new org.apache.ibatis.session.Configuration();
-		configuration.setMapUnderscoreToCamelCase(true);
-		sessionFactoryBeanqBean.setConfiguration(configuration);
-		sessionFactoryBeanqBean
-				.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath*:/mapper/*.xml"));
-		return sessionFactoryBeanqBean;
-	}
-	// @Bean
-	// public MapperScannerConfigurer mapperScannerConfigurer()
-	// {
-	// MapperScannerConfigurer configurer=new MapperScannerConfigurer();
-	// configurer.setSqlSessionFactoryBeanName("sqlSession");
-	// return configurer;
-	// }
+    @Bean
+    public SqlSessionFactoryBean sqlSessionFactoryBean() throws IOException
+    {
+        SqlSessionFactoryBean sessionFactoryBeanqBean = new SqlSessionFactoryBean();
+        sessionFactoryBeanqBean.setDataSource(dataSource());
+        org.apache.ibatis.session.Configuration configuration = new org.apache.ibatis.session.Configuration();
+        configuration.setMapUnderscoreToCamelCase(true);
+        sessionFactoryBeanqBean.setConfiguration(configuration);
+        sessionFactoryBeanqBean
+                .setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath*:/mapper/*.xml"));
+        return sessionFactoryBeanqBean;
+    }
+    // @Bean
+    // public MapperScannerConfigurer mapperScannerConfigurer()
+    // {
+    // MapperScannerConfigurer configurer=new MapperScannerConfigurer();
+    // configurer.setSqlSessionFactoryBeanName("sqlSession");
+    // return configurer;
+    // }
 
-	@Bean
-	public QueryRunner queryRunner()
-	{
-		return new QueryRunner(dataSource());
-	}
+    @Bean
+    public QueryRunner queryRunner()
+    {
+        return new QueryRunner(dataSource());
+    }
 
-	/*
-	 * view
-	 */
-	@Bean
-	public ViewResolver viewResolver()
-	{
-		FreeMarkerViewResolver viewResolver = new FreeMarkerViewResolver();
-		viewResolver.setSuffix(".html");
-		return viewResolver;
-	}
+    /*
+     * view
+     */
+    @Bean
+    public ViewResolver viewResolver()
+    {
+        FreeMarkerViewResolver viewResolver = new FreeMarkerViewResolver();
+        viewResolver.setSuffix(".html");
+        return viewResolver;
+    }
 
-	@Bean
-	public FreeMarkerConfigurer freemarkerConfigurert()
-	{
-		FreeMarkerConfigurer freeMarkerConfigurer = new FreeMarkerConfigurer();
-		freeMarkerConfigurer.setTemplateLoaderPath("/WEB-INF/templates/");
-		freeMarkerConfigurer.setDefaultEncoding("UTF-8");
-		return freeMarkerConfigurer;
-	}
+    @Bean
+    public FreeMarkerConfigurer freemarkerConfigurert()
+    {
+        FreeMarkerConfigurer freeMarkerConfigurer = new FreeMarkerConfigurer();
+        freeMarkerConfigurer.setTemplateLoaderPath("/WEB-INF/templates/");
+        freeMarkerConfigurer.setDefaultEncoding("UTF-8");
+        return freeMarkerConfigurer;
+    }
 
-	/*
-	 * RabbitmQ
-	 */
-	@Bean
-	public ConnectionFactory connectionFactory() throws Exception
-	{
-		RabbitConnectionFactoryBean rabbitConnectionFactoryBean = new RabbitConnectionFactoryBean();
-		rabbitConnectionFactoryBean.setHost(dlxyProperty.getAmqpHost());
-		rabbitConnectionFactoryBean.setUsername(dlxyProperty.getAmqpUsername());
-		rabbitConnectionFactoryBean.setPassword(dlxyProperty.getAmqpPassword());
-		rabbitConnectionFactoryBean.afterPropertiesSet();
-		CachingConnectionFactory cachingConnectionFactory = new CachingConnectionFactory(
-				rabbitConnectionFactoryBean.getObject());
-		return cachingConnectionFactory;
-	}
+    /*
+     * RabbitmQ
+     */
+    @Bean
+    public ConnectionFactory connectionFactory() throws Exception
+    {
+        RabbitConnectionFactoryBean rabbitConnectionFactoryBean = new RabbitConnectionFactoryBean();
+        rabbitConnectionFactoryBean.setHost(dlxyProperty.getAmqpHost());
+        rabbitConnectionFactoryBean.setUsername(dlxyProperty.getAmqpUsername());
+        rabbitConnectionFactoryBean.setPassword(dlxyProperty.getAmqpPassword());
+        rabbitConnectionFactoryBean.afterPropertiesSet();
+        CachingConnectionFactory cachingConnectionFactory = new CachingConnectionFactory(
+                rabbitConnectionFactoryBean.getObject());
+        return cachingConnectionFactory;
+    }
 
-	@Bean
-	public RabbitTemplate rabbitTemplate() throws Exception
-	{
-		RabbitTemplate rabbitTemplate = new RabbitTemplate();
-		rabbitTemplate.setConnectionFactory(connectionFactory());
-		rabbitTemplate.setExchange("dlxy");
-		// rabbitTemplate.setMessageConverter(messageConverter);
-		return rabbitTemplate;
-	}
+    @Bean
+    public RabbitTemplate rabbitTemplate() throws Exception
+    {
+        RabbitTemplate rabbitTemplate = new RabbitTemplate();
+        rabbitTemplate.setConnectionFactory(connectionFactory());
+        rabbitTemplate.setExchange("dlxy");
+        // rabbitTemplate.setMessageConverter(messageConverter);
+        return rabbitTemplate;
+    }
 
-	@Bean
-	public AppEventPublisher appEventPublisher()
-	{
-		if (dlxyProperty.isAmqpEnabled())
-		{
-			return new AppEventRabbitMQPublisher();
-		} else
-		{
-			return new AppEventLogPubliher();
-		}
+    @Bean
+    public AppEventPublisher appEventPublisher()
+    {
+        if (dlxyProperty.isAmqpEnabled())
+        {
+            return new AppEventRabbitMQPublisher();
+        } else
+        {
+            return new AppEventLogPubliher();
+        }
 
-	}
+    }
 
-	@Override
-	public void addResourceHandlers(ResourceHandlerRegistry registry)
-	{
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry)
+    {
 //		registry.addResourceHandler("/js/**").addResourceLocations("/static/js/**").setCachePeriod(1056000);
 //		registry.addResourceHandler("/css/**").addResourceLocations("/static/css/**").setCachePeriod(1056000);
 //		registry.addResourceHandler("/imgs/**").addResourceLocations("/static/imgs/**").setCachePeriod(1056000);
-		registry.addResourceHandler("/public/404.html").addResourceLocations("/WEB-INF/templates/404.html")
-				.setCachePeriod(1056000);
-		//unknown bug fix by this way not good
+        registry.addResourceHandler("/public/404.html").addResourceLocations("/WEB-INF/templates/404.html")
+                .setCachePeriod(1056000);
+        //unknown bug fix by this way not good
 //		registry.addResourceHandler("/admin/js/navtab.js").addResourceLocations("/WEB-INF/navtab.js").setCachePeriod(1056000);
-	}
+    }
 
-	@Override
-	public void configureContentNegotiation(ContentNegotiationConfigurer configurer)
-	{
-		configurer.mediaType("html", MediaType.APPLICATION_JSON_UTF8);
-	}
+    @Override
+    public void configureContentNegotiation(ContentNegotiationConfigurer configurer)
+    {
+        configurer.mediaType("html", MediaType.APPLICATION_JSON_UTF8);
+    }
 
-	@Override
-	public void configureMessageConverters(List<HttpMessageConverter<?>> converters)
-	{
-		// 如果使用到了json这个消息转换器,则将内部的Long类型,BigInteger类型以String的格式进行转换,使用其他消息转换器的不做此处理
-		MappingJackson2HttpMessageConverter jackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter();
-		ObjectMapper objectMapper = new ObjectMapper();
-		SimpleModule simpleModule = new SimpleModule();
-		simpleModule.addSerializer(BigInteger.class, ToStringSerializer.instance);
-		simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
-		simpleModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
-		objectMapper.registerModule(simpleModule);
-		jackson2HttpMessageConverter.setObjectMapper(objectMapper);
-		converters.add(jackson2HttpMessageConverter);
-		converters.add(new StringHttpMessageConverter(Charset.forName("UTF-8")));
-	}
+    @Override
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters)
+    {
+        // 如果使用到了json这个消息转换器,则将内部的Long类型,BigInteger类型以String的格式进行转换,使用其他消息转换器的不做此处理
+        MappingJackson2HttpMessageConverter jackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter();
+        ObjectMapper objectMapper = new ObjectMapper();
+        SimpleModule simpleModule = new SimpleModule();
+        simpleModule.addSerializer(BigInteger.class, ToStringSerializer.instance);
+        simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
+        simpleModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
+        objectMapper.registerModule(simpleModule);
+        jackson2HttpMessageConverter.setObjectMapper(objectMapper);
+        converters.add(jackson2HttpMessageConverter);
+        converters.add(new StringHttpMessageConverter(Charset.forName("UTF-8")));
+    }
 
-	@PostConstruct
-	public void init() throws IOException
-	{
-		dlxyProperty.init();
-		logger.info("{}", dlxyProperty);
+    @PostConstruct
+    public void init() throws IOException
+    {
+        dlxyProperty.init();
+        logger.info("{}", dlxyProperty);
 
-	}
+    }
 
-	public static void main(String[] args)
-	{
-		DlxySystemConfiiguration dlxySystemConfiiguration = new DlxySystemConfiiguration();
-		URL resource = dlxySystemConfiiguration.getClass().getClassLoader().getResource("WEB-INF");
-		System.out.println(resource.getPath());
-	}
+    public static void main(String[] args)
+    {
+        DlxySystemConfiiguration dlxySystemConfiiguration = new DlxySystemConfiiguration();
+        URL resource = dlxySystemConfiiguration.getClass().getClassLoader().getResource("WEB-INF");
+        System.out.println(resource.getPath());
+    }
 
-	@Bean
-	public IPInterceptor ipInterceptor()
-	{
-		return new IPInterceptor();
-	}
+    @Bean
+    public IPInterceptor ipInterceptor()
+    {
+        return new IPInterceptor();
+    }
 
-	@Override
-	public void addInterceptors(InterceptorRegistry registry)
-	{
-		// registry.addInterceptor(ipInterceptor()).addPathPatterns("/*").excludePathPatterns("/public/*");
-		registry.addInterceptor(ipInterceptor()).excludePathPatterns("/public/**", "/api/**", "/admin/**")
-				.addPathPatterns("/**");
-	}
+    @Override
+    public void addInterceptors(InterceptorRegistry registry)
+    {
+        // registry.addInterceptor(ipInterceptor()).addPathPatterns("/*").excludePathPatterns("/public/*");
+        registry.addInterceptor(ipInterceptor()).excludePathPatterns("/public/**", "/api/**", "/admin/**")
+                .addPathPatterns("/**");
+    }
 
-	@Autowired
-	public void setDlxyProperty(DlxyProperty dlxyProperty)
-	{
-		this.dlxyProperty = dlxyProperty;
-	}
+    @Autowired
+    public void setDlxyProperty(DlxyProperty dlxyProperty)
+    {
+        this.dlxyProperty = dlxyProperty;
+    }
 
-	@Override
-	public void setServletContext(ServletContext servletContext)
-	{
-		this.servletContext = servletContext;
-	}
+    @Override
+    public void setServletContext(ServletContext servletContext)
+    {
+        this.servletContext = servletContext;
+    }
 
 }

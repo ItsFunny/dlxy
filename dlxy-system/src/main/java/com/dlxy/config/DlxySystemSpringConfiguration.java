@@ -38,7 +38,6 @@ import com.google.code.kaptcha.Constants;
 import com.google.code.kaptcha.Producer;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.util.Config;
-import com.hazelcast.map.impl.event.AbstractFilteringStrategy;
 
 @Configuration
 @Order(1)

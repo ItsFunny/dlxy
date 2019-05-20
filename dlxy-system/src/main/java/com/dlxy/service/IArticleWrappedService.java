@@ -67,4 +67,5 @@ public interface IArticleWrappedService
 	
 	boolean deleteTitleAndUpdateArticleStatus(UserDTO userDTO,Integer titleId,Integer status);
 
+
 }

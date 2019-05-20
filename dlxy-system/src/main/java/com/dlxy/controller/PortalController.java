@@ -1,5 +1,7 @@
 package com.dlxy.controller;
 
+import java.io.UnsupportedEncodingException;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,10 +10,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.swing.text.html.HTMLDocument.HTMLReader.ParagraphAction;
 
+import com.dlxy.common.dto.PageDTO;
+import com.dlxy.common.dto.ResultDTO;
+import com.dlxy.common.utils.PageResultUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,138 +38,170 @@ import com.dlxy.vo.TitleDetailVO;
 @Controller
 public class PortalController
 {
-	private Logger logger = LoggerFactory.getLogger(PortalController.class);
-	@Autowired
-	private ITitleService titleService;
-	@Autowired
-	private ITitleWrappedService titleManagementWrappedService;
-	@Autowired
-	private IArticleWrappedService articleManagementWrappedService;
-	@Autowired
-	private IArticleService articleService;
+    private Logger logger = LoggerFactory.getLogger(PortalController.class);
+    @Autowired
+    private ITitleService titleService;
+    @Autowired
+    private ITitleWrappedService titleManagementWrappedService;
+    @Autowired
+    private IArticleWrappedService articleManagementWrappedService;
+    @Autowired
+    private IArticleService articleService;
 
-	@RequestMapping(value =
-	{ "/index", "/" })
-	public ModelAndView index(HttpServletRequest request, HttpServletResponse response)
-	{
-		/*
-		 * 1.得到所有的类目 2.得到类目对应的文章
-		 */
-		Map<String, Object> params = new HashMap<String, Object>();
-		ModelAndView modelAndView = null;
-		DlxyTitleDTO dlxyTitleDTO = null;
-		try
-		{
-			dlxyTitleDTO = titleManagementWrappedService
-					.findDlxyDetailTitles(ITitleWrappedService.MAX_SHOW_ARTICLE_NUMBER);
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-			logger.error("[显示首页学院相关新闻]error:{}", e.getCause());
-		}
-		params.put("dlxyTitleDTO", dlxyTitleDTO);
-		modelAndView = new ModelAndView("portal/index", params);
-		return modelAndView;
-	}
+    @RequestMapping(value =
+            {"/index", "/"})
+    public ModelAndView index(HttpServletRequest request, HttpServletResponse response)
+    {
+        /*
+         * 1.得到所有的类目 2.得到类目对应的文章
+         */
+        Map<String, Object> params = new HashMap<String, Object>();
+        ModelAndView modelAndView = null;
+        DlxyTitleDTO dlxyTitleDTO = null;
+        try
+        {
+            dlxyTitleDTO = titleManagementWrappedService
+                    .findDlxyDetailTitles(ITitleWrappedService.MAX_SHOW_ARTICLE_NUMBER);
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+            logger.error("[显示首页学院相关新闻]error:{}", e.getCause());
+        }
+        params.put("dlxyTitleDTO", dlxyTitleDTO);
+        modelAndView = new ModelAndView("portal/index", params);
+        return modelAndView;
+    }
 
-	// @CheckIllegalFormat
-	// @RequestMapping("/title/detail/{titleId}")
-	// public ModelAndView showTitleDetail(@PathVariable("titleId")String
-	// titleIdStr,HttpServletRequest request,HttpServletResponse response)
-	// {
-	// ModelAndView modelAndView=null;
-	// try
-	// {
-	// Integer titleId=Integer.parseInt(titleIdStr);
-	// int
-	// pageSize=Integer.parseInt(StringUtils.defaultString(request.getParameter("pageSize"),
-	// "10"));
-	// int
-	// pageNum=Integer.parseInt(StringUtils.defaultString(request.getParameter("pageNum"),"1"));
-	// //显示文章:
-	// TitleDetailVO titleDetailVO =
-	// articleManagementWrappedService.findTitleArticles(pageSize, pageNum,
-	// titleId);
-	// PageVO<Collection<ArticleDTO>>pageVO=new
-	// PageVO<Collection<ArticleDTO>>(titleDetailVO.getArticlePage().getData(),
-	// pageSize, pageNum, titleDetailVO.getArticlePage().getTotalCount());
-	// modelAndView=new ModelAndView("portal/title_detail");
-	// modelAndView.addObject("pageVO",pageVO);
-	// modelAndView.addObject("parent",titleDetailVO.getParentAndChilds());
-	// modelAndView.addObject("title",titleDetailVO.getTitleSelf());
-	// return modelAndView;
-	// }
-	// catch (Exception e) {
-	// logger.error("[show title articles] error:{}",e.getMessage());
-	//
-	// }
-	// return modelAndView;
-	// }
+    // @CheckIllegalFormat
+    // @RequestMapping("/title/detail/{titleId}")
+    // public ModelAndView showTitleDetail(@PathVariable("titleId")String
+    // titleIdStr,HttpServletRequest request,HttpServletResponse response)
+    // {
+    // ModelAndView modelAndView=null;
+    // try
+    // {
+    // Integer titleId=Integer.parseInt(titleIdStr);
+    // int
+    // pageSize=Integer.parseInt(StringUtils.defaultString(request.getParameter("pageSize"),
+    // "10"));
+    // int
+    // pageNum=Integer.parseInt(StringUtils.defaultString(request.getParameter("pageNum"),"1"));
+    // //显示文章:
+    // TitleDetailVO titleDetailVO =
+    // articleManagementWrappedService.findTitleArticles(pageSize, pageNum,
+    // titleId);
+    // PageVO<Collection<ArticleDTO>>pageVO=new
+    // PageVO<Collection<ArticleDTO>>(titleDetailVO.getArticlePage().getData(),
+    // pageSize, pageNum, titleDetailVO.getArticlePage().getTotalCount());
+    // modelAndView=new ModelAndView("portal/title_detail");
+    // modelAndView.addObject("pageVO",pageVO);
+    // modelAndView.addObject("parent",titleDetailVO.getParentAndChilds());
+    // modelAndView.addObject("title",titleDetailVO.getTitleSelf());
+    // return modelAndView;
+    // }
+    // catch (Exception e) {
+    // logger.error("[show title articles] error:{}",e.getMessage());
+    //
+    // }
+    // return modelAndView;
+    // }
 
-	@RequestMapping("/title/detail/{titleAbbName}")
-	public ModelAndView showTitleDetail(@PathVariable("titleAbbName") String titleAbbName, HttpServletRequest request,
-			HttpServletResponse response)
-	{
-		ModelAndView modelAndView = null;
-		try
-		{
-			int pageSize = Integer.parseInt(StringUtils.defaultString(request.getParameter("pageSize"), "10"));
-			int pageNum = Integer.parseInt(StringUtils.defaultString(request.getParameter("pageNum"), "1"));
-			// 显示文章:
-			TitleDetailVO titleDetailVO = articleManagementWrappedService.findTitleArticlesByTitleAbbName(pageSize,
-					pageNum, titleAbbName);
-			// TitleDetailVO titleDetailVO =
-			// articleManagementWrappedService.findTitleArticlesByTitleId(pageSize, pageNum,
-			// titleId);
-			PageVO<Collection<ArticleDTO>> pageVO = new PageVO<Collection<ArticleDTO>>(
-					titleDetailVO.getArticlePage().getData(), pageSize, pageNum,
-					titleDetailVO.getArticlePage().getTotalCount());
-			modelAndView = new ModelAndView("portal/title_detail");
-			modelAndView.addObject("pageVO", pageVO);
-			modelAndView.addObject("parent", titleDetailVO.getParentAndChilds());
-			modelAndView.addObject("title", titleDetailVO.getTitleSelf());
-			return modelAndView;
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-			logger.error("[show title articles] error:{},cause:{}", e.getMessage(), e.getCause());
-			modelAndView = new ModelAndView("error");
-			modelAndView.addObject("error", e.getMessage());
-		}
-		return modelAndView;
-	}
+    @RequestMapping("/title/detail/{titleAbbName}")
+    public ModelAndView showTitleDetail(@PathVariable("titleAbbName") String titleAbbName, HttpServletRequest request,
+                                        HttpServletResponse response)
+    {
+        ModelAndView modelAndView = null;
+        try
+        {
+            int pageSize = Integer.parseInt(StringUtils.defaultString(request.getParameter("pageSize"), "10"));
+            int pageNum = Integer.parseInt(StringUtils.defaultString(request.getParameter("pageNum"), "1"));
+            // 显示文章:
+            TitleDetailVO titleDetailVO = articleManagementWrappedService.findTitleArticlesByTitleAbbName(pageSize,
+                    pageNum, titleAbbName);
+            // TitleDetailVO titleDetailVO =
+            // articleManagementWrappedService.findTitleArticlesByTitleId(pageSize, pageNum,
+            // titleId);
+            PageVO<Collection<ArticleDTO>> pageVO = new PageVO<Collection<ArticleDTO>>(
+                    titleDetailVO.getArticlePage().getData(), pageSize, pageNum,
+                    titleDetailVO.getArticlePage().getTotalCount());
+            modelAndView = new ModelAndView("portal/title_detail");
+            modelAndView.addObject("pageVO", pageVO);
+            modelAndView.addObject("parent", titleDetailVO.getParentAndChilds());
+            modelAndView.addObject("title", titleDetailVO.getTitleSelf());
+            return modelAndView;
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+            logger.error("[show title articles] error:{},cause:{}", e.getMessage(), e.getCause());
+            modelAndView = new ModelAndView("error");
+            modelAndView.addObject("error", e.getMessage());
+        }
+        return modelAndView;
+    }
 
-	@CheckIllegalFormat
-	@RequestMapping("/article/detail/{articleId}")
-	public ModelAndView showArticleDetail(@PathVariable("articleId") String articleIdStr, HttpServletRequest request,
-			HttpServletResponse response)
-	{
-		ModelAndView modelAndView = null;
-		Map<String, Object> params = new HashMap<>();
-		try
-		{
-			Long articleId = Long.parseLong(articleIdStr);
-			ArticleDTO articleDTO = articleManagementWrappedService.showArticleDetail(articleId);
-			if (null == articleDTO || !articleDTO.getArticleStatus().equals(ArticleStatusEnum.UP.ordinal()))
-			{
-				params.put("error", "文章不存在或已下线");
-				modelAndView = new ModelAndView("error", params);
-				return modelAndView;
-			}
-			params.put("article", articleDTO);
-			// Map<String, Object>p=new HashMap<>();
-			// p.put("articleType", ArticleTypeEnum.INTRODUCE_ARTICLE.ordinal());
-			// Collection<ArticleDTO> latest =
-			// articleService.findLatestArticleLimited(TitleArticleConstant.MAX_NUMBER_ARTICLES);
+    @CheckIllegalFormat
+    @RequestMapping("/article/detail/{articleId}")
+    public ModelAndView showArticleDetail(@PathVariable("articleId") String articleIdStr, HttpServletRequest request,
+                                          HttpServletResponse response)
+    {
+        ModelAndView modelAndView = null;
+        Map<String, Object> params = new HashMap<>();
+        try
+        {
+            Long articleId = Long.parseLong(articleIdStr);
+            ArticleDTO articleDTO = articleManagementWrappedService.showArticleDetail(articleId);
+            if (null == articleDTO || !articleDTO.getArticleStatus().equals(ArticleStatusEnum.UP.ordinal()))
+            {
+                params.put("error", "文章不存在或已下线");
+                modelAndView = new ModelAndView("error", params);
+                return modelAndView;
+            }
+            params.put("article", articleDTO);
+            // Map<String, Object>p=new HashMap<>();
+            // p.put("articleType", ArticleTypeEnum.INTRODUCE_ARTICLE.ordinal());
+            // Collection<ArticleDTO> latest =
+            // articleService.findLatestArticleLimited(TitleArticleConstant.MAX_NUMBER_ARTICLES);
 
-			// params.put("latestArticles", latest);
-			modelAndView = new ModelAndView("portal/article_detail", params);
-		} catch (Exception e)
-		{
-			params.put("error", e.getMessage());// 记录消息
-			logger.error("[show article detail] error:{}", e.getMessage());
-			modelAndView = new ModelAndView("error", params);
-		}
-		return modelAndView;
-	}
+            // params.put("latestArticles", latest);
+            modelAndView = new ModelAndView("portal/article_detail", params);
+        } catch (Exception e)
+        {
+            params.put("error", e.getMessage());// 记录消息
+            logger.error("[show article detail] error:{}", e.getMessage());
+            modelAndView = new ModelAndView("error", params);
+        }
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/search", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ModelAndView searchArticles(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException
+    {
+        String q = request.getParameter("q");
+        Map<String, Object> params = new HashMap<>();
+
+        PageDTO<Collection<ArticleDTO>> pageDTO = null;
+        ModelAndView modelAndView = new ModelAndView("portal/search_detail");
+
+        if (StringUtils.isEmpty(q))
+        {
+            pageDTO = PageResultUtil.emptyPage();
+            modelAndView.addObject("pageVO", pageDTO);
+        } else
+        {
+            q = new String(q.getBytes("iso-8859-1"), "utf-8");
+            params.put("searchParam", q);
+            try
+            {
+                pageDTO = articleManagementWrappedService.findByParams(Integer.MAX_VALUE, 1, params);
+                logger.info("[search] find {} records", pageDTO.getTotalCount());
+                modelAndView.addObject("pageVO", pageDTO);
+            } catch (SQLException e)
+            {
+                logger.error("[searchArticles]occur err:{}", e);
+                modelAndView = new ModelAndView("error");
+            }
+        }
+
+        return modelAndView;
+    }
 }

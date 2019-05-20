@@ -1,0 +1,175 @@
+<#include "header.html">
+<script type="text/javascript" src="/js/portal-article-0.5.js"></script>
+<script>
+    $(document).ready(function () {
+        loadTitles();
+        setTimeout("loadNews(8,1)", 700);
+        setTimeout("loadLatestArticles()", 1000);
+        setTimeout("loadLinks()", 500);
+        setTimeout("loadVisitCounts()", 500);
+    });
+
+    function loadLatestArticles() {
+        jQuery.get('/api/v1/article/latest.html', function (data, textStatus, jqXHR) {
+            if (data.code == 1) {
+                var str2 = '<ul style="float: left; width: 1728px;">';
+                for (var i = 0; i < data.data.length; i++) {
+                    var o = data.data[i];
+                    var d = $.format.date(o.createDate, "yyyy-MM-dd");
+                    if (i == 0) {
+                        str2 += ' <li class="first"><a href="/article/detail/' + o.articleId + '.html" target="_blank">' + o.articleName + '...</a><span class="dateRight">[' + d + ']</span></li>';
+                    } else if (i == data.data.length - 1) {
+                        str2 += ' <li class="last"><a href="/article/detail/' + o.articleId + '.html" target="_blank">' + o.articleName + '...</a><span class="dateRight">[' + d + ']</span></li>';
+                    } else {
+                        str2 += ' <li><a href="/article/detail/' + o.articleId + '.html" target="_blank">' + o.articleName + '...</a><span class="dateRight">[' + d + ']</span></li>';
+                    }
+                }
+                str2 += '</ul>';
+                $(".annCon").html(str2);
+                jQuery("#ann").slide({
+                    mainCell: ".annCon",
+                    autoPlay: true,
+                    effect: "leftMarquee",
+                    interTime: 50,
+                    vis: "1"
+                });
+            } else {
+                alert('加载最新文章失败:' + data.msg);
+            }
+
+        }, 'json');
+    }
+
+    function loadNews(pageSize, pageNum) {
+        $("#article_news").empty();
+        var params = {"type": "news", "pageSize": pageSize, "pageNum": pageNum};
+        jQuery.get('/api/v1/articles.html', params, function (data, textStatus, jqXHR) {
+            var pageVO = data.data;
+            if (data.code == 1) {
+                var str = '';
+                for (var i = 0; i < data.data.data.length; i++) {
+                    var o = data.data.data[i];
+                    str += ' <li class="no"><i class="tt">' + i + '</i><a href="/article/detail/' + o.articleId + '.html">' + o.articleName + '</a></li>';
+                }
+                str += '总共有' + pageVO.totalCount + '条记录';
+                if (pageVO.pageNum <= 1) {
+                    str += '<a href="javascript:void(0)">上一页</a>';
+                } else {
+                    str += '<a href="javascript:void(0)" onclick="loadNews(8,' + (pageVO.pageNum - 1) + ')">上一页</a>';
+                }
+                if (pageVO.pageNum >= pageVO.maxPage) {
+                    str += '<a href="javascript:void(0)">下一页</a>';
+                } else {
+                    str += '<a href="javascript:void(0)" onclick="loadNews(8,' + (pageVO.pageNum + 1) + ')">下一页</a>';
+                }
+                $("#article_news").append(str);
+                <#--  $("#article_roll_news").append(str2);-->
+            } else {
+                alert('加载新闻失败');
+            }
+        }, 'json')
+    }
+</script>
+<body>
+<!--头部-->
+<div class="ding">
+    <div class="ding_jz">
+        <p>Welcome :) ！</p>
+        <ul>
+            <li><a target="_blank" href="http://weibo.com/PanZhongQuan"><img class="tubiao" src="images/t_03.png">微博</a>
+            </li>
+            <li>
+                <a href="#" class="big-link" data-reveal-id="myModal" data-animation="fade"><img class="tubiao"
+                                                                                                 src="images/t_10.png">微信</a>
+                <div id="myModal" class="reveal-modal"><h1><img src="images/IMG_0859.jpg"></h1>
+                    <h3>扫一扫关注我们</h3>
+                    <a class="close-reveal-modal">&#215;</a></div>
+            </li>
+            <li><img class="tubiao" src="/images/t_05.png">QQ：2239329788</li>
+            <li><img class="tubiao" src="/images/t_07.png">0851-83627862</li>
+        </ul>
+    </div>
+</div>
+
+<form name="" action="/search.html">
+    <div class="toubu_bj">
+        <div class="toubu">
+            <a href="../"><img src="/images/t_17.png"></a>
+            <span>
+            <input class="suk" type="text" placeholder="请输入关键词" name="q">
+                <input type="submit" value="搜索" class="scan">
+        </span>
+        </div>
+    </div>
+</form>
+
+
+<div class="content">
+    <ul class="venus-menu" id="above_titles">
+    </ul>
+</div>
+<!--内容上部分-->
+<div class="shijian">
+    <div class="annBar">
+        <strong>最新发布的文章：</strong>
+        <div id="ann" class="ann">
+            <div class="tempWrap" style="overflow:hidden; position:relative; width:1738px">
+                <div class="annCon"
+                     style="width: 5214px; position: relative; overflow: hidden; padding: 0px; margin: 0px; left: -1923px;">
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript"></script>
+        <div class="showDate">
+            <script language="javascript" type="text/javascript" src="/js/show_date.js"></script>
+            2017年3月25日 星期六 农历丁酉年 二月廿八
+        </div>
+    </div>
+</div>
+<!--子页内容-->
+<div class="zybj">
+
+
+    <div class="zuo_nr">
+        <#if pageVO.totalCount==1>
+            <#assign article=title.data[0]>
+            <div class="xw_xq">
+            <h1>
+            ${article.articleName}
+            <span>发布时间:${article.createDate?string('yyyy-MM-dd HH:mm:ss')} 作者:${article.articleAuthor}
+        <#if article.updateDate??>
+        最近一次更新时间:${article.updateDate?string('yyyy-MM-dd HH:mm:ss')}        </span>
+            </h1>
+        </#if>
+        <em id="visitCount"></em>
+            <p>
+            ${article.articleContent!"暂无内容"}
+            </p>
+            </div>
+        <#else>
+            <!--nr-->
+
+            <ul class="zy_lb">
+            <#if (pageVO.data?size>0)>
+                <#list pageVO.data as item>
+                    <li><i></i><a href="/article/detail/${item.articleId?c}.html">${item.articleName}</a>
+                    <span>${item.createDate?string('yyyy-MM-dd')}</span></li>
+                </#list>
+            </#if>
+            </ul>
+        </#if>
+    </div>
+    <div class="you_dh">
+
+        <div class="erji_dh">
+            <div class="daohang_biaot">最新新闻通知</div>
+            <ul id="article_news">
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+<#include "bottom.html">
+</body>
+</html>
