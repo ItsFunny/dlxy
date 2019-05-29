@@ -1,3 +1,7 @@
 com/dlxy/controller/RestAPIController$1.class
 com/dlxy/interceptor/IPInterceptor$1.class
 com/dlxy/controller/AdminController$1.class
+com/dlxy/vo/FlownDownloadVO.class
+com/dlxy/utils/CommonUtils.class
+com/dlxy/vo/FlowVO.class
+com/dlxy/vo/FlowConnectionVO.class

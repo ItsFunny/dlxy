@@ -13,6 +13,8 @@ import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -23,97 +25,104 @@ import com.dlxy.common.utils.JsonUtil;
 import com.dlxy.service.IRedisService;
 import com.joker.library.utils.CommonUtils;
 
-public class UserVisitListener implements HttpSessionListener,ServletContextListener
+public class UserVisitListener implements HttpSessionListener, ServletContextListener
 {
-	
-	public static AtomicInteger onlineCount=new AtomicInteger(0);
-	
-	public static Vector<String>errorIps=new Vector<>();
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    public static final AtomicInteger onlineCount = new AtomicInteger(0);
 
-	private IRedisService redisService;
-	
-	private ApplicationContext applicationContext;
-	
-	@Override
-	public void sessionCreated(HttpSessionEvent se)
-	{
-		ServletRequestAttributes attributes=(ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-		if(null==attributes) return;
-		HttpServletRequest request = attributes.getRequest();
-		HttpSession session = se.getSession();
-		try
-		{
-			String ip = CommonUtils.getIpAddr(request);
-			String userKey=String.format(IRedisService.ONLINE_USER_PREFIX+":%s",ip);
-			session.setAttribute("ip", ip);
-			String userJson = redisService.get(userKey);
-			if(StringUtils.isEmpty(userJson))
-			{
-				UserVisitListener.onlineCount.incrementAndGet();
-				redisService.set(userKey, System.currentTimeMillis()+"",60*12);
-			}
-			String json = redisService.get(String.format(IRedisService.USER_VISIT_HISTORY, ip));
-			VisitUserHistoryDTO historyDTO =null;
-			if(!StringUtils.isEmpty(json))
-			{
-				historyDTO = JsonUtil.json2Object(json, VisitUserHistoryDTO.class);
-			}else {
-				historyDTO=new VisitUserHistoryDTO();
-			}
-			historyDTO.setIp(ip);
-			session.setAttribute("history", historyDTO);
-		} catch (Exception e)
-		{
-		}
-	}
+    public static Vector<String> errorIps = new Vector<>();
 
-	@Override
-	public void sessionDestroyed(HttpSessionEvent se)
-	{
-		try
-		{
-			HttpSession session = se.getSession();
-			String ip=(String) session.getAttribute("ip");
-			String ipKey=String.format(IRedisService.ONLINE_USER_PREFIX+":%s", ip);
-			String json = redisService.get(ipKey);
-			if(!StringUtils.isEmpty(json))
-			{
-				
-				Boolean del = redisService.del(ipKey);
-				if(del)
-				{
-					UserVisitListener.onlineCount.decrementAndGet();
-				}else {
-					errorIps.add(ip);//待处理
-					redisService.set(ipKey, System.currentTimeMillis()+"",-1);
-				}
-			}
-		} finally
-		{
-			se=null;
-		}
-	}
+    private IRedisService redisService;
 
-	@Override
-	public void contextInitialized(ServletContextEvent sce)
-	{
-		ServletContext servletContext = sce.getServletContext();
-		this.applicationContext = WebApplicationContextUtils.getWebApplicationContext(servletContext);
-		this.redisService=applicationContext.getBean(IRedisService.class);
-		Set<String> keys = redisService.getKeysByPrefix(IRedisService.ONLINE_USER_PREFIX);
-		if(!keys.isEmpty())
-		{
-			for (String string : keys)
-			{
-				redisService.del(string);
-			}
-		}
-	}
+    private ApplicationContext applicationContext;
 
-	@Override
-	public void contextDestroyed(ServletContextEvent sce)
-	{
-		
-	}
+    @Override
+    public void sessionCreated(HttpSessionEvent se)
+    {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (null == attributes) return;
+        HttpServletRequest request = attributes.getRequest();
+        HttpSession session = se.getSession();
+        try
+        {
+            String ip = CommonUtils.getIpAddr(request);
+            String userKey = String.format(IRedisService.ONLINE_USER_PREFIX + ":%s", ip);
+            session.setAttribute("ip", ip);
+            String userJson = redisService.get(userKey);
+            if (StringUtils.isEmpty(userJson))
+            {
+                UserVisitListener.onlineCount.incrementAndGet();
+                redisService.set(userKey, System.currentTimeMillis() + "", 60 * 60);
+            }
+            String json = redisService.get(String.format(IRedisService.USER_VISIT_HISTORY, ip));
+            VisitUserHistoryDTO historyDTO = null;
+            if (!StringUtils.isEmpty(json))
+            {
+                historyDTO = JsonUtil.json2Object(json, VisitUserHistoryDTO.class);
+            } else
+            {
+                historyDTO = new VisitUserHistoryDTO();
+            }
+            historyDTO.setIp(ip);
+            session.setAttribute("history", historyDTO);
+        } catch (Exception e)
+        {
+            logger.error("[sessionCreated]redis set error:{}", e.getMessage());
+        }
+    }
+
+    @Override
+    public void sessionDestroyed(HttpSessionEvent se)
+    {
+        try
+        {
+            HttpSession session = se.getSession();
+            String ip = (String) session.getAttribute("ip");
+            String ipKey = String.format(IRedisService.ONLINE_USER_PREFIX + ":%s", ip);
+            String json = redisService.get(ipKey);
+            if (!StringUtils.isEmpty(json))
+            {
+
+                Boolean del = redisService.del(ipKey);
+                if (!del)
+                {
+                    logger.error("[sessionDestroyed]delete onlinke info err: ip: {}", ip);
+                    errorIps.add(ip);//待处理
+                    redisService.set(ipKey, System.currentTimeMillis() + "", -1);
+                } else
+                {
+                    logger.info("[sessionDestroyed]current onlinecount={}", UserVisitListener.onlineCount.decrementAndGet());
+                }
+            }
+        } catch (Exception e)
+        {
+            logger.error("[sessionDestroyed]:{}", e.getMessage());
+        } finally
+        {
+
+        }
+    }
+
+    @Override
+    public void contextInitialized(ServletContextEvent sce)
+    {
+        ServletContext servletContext = sce.getServletContext();
+        this.applicationContext = WebApplicationContextUtils.getWebApplicationContext(servletContext);
+        this.redisService = applicationContext.getBean(IRedisService.class);
+        Set<String> keys = redisService.getKeysByPrefix(IRedisService.ONLINE_USER_PREFIX);
+        if (!keys.isEmpty())
+        {
+            for (String string : keys)
+            {
+                redisService.del(string);
+            }
+        }
+    }
+
+    @Override
+    public void contextDestroyed(ServletContextEvent sce)
+    {
+
+    }
 
 }

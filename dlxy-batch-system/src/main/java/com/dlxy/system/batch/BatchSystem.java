@@ -7,15 +7,14 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * Hello world!
- *
  */
 @SpringBootApplication
 @EnableScheduling
 @EnableTransactionManagement
-public class BatchSystem 
+public class BatchSystem
 {
-    public static void main( String[] args )
+    public static void main(String[] args)
     {
-    	new SpringApplicationBuilder(BatchSystem.class).run(args);
+        new SpringApplicationBuilder(BatchSystem.class).run(args);
     }
 }

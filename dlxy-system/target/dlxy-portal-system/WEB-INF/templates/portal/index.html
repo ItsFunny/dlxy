@@ -1,141 +1,163 @@
 <#include "header.html">
 <script type="text/javascript" src="/js/portal-article-0.5.js"></script>
 <script>
-	var titleIdArray=null;
-	 $(window).scroll(function(){
+    var titleIdArray = null;
+    $(window).scroll(function () {
         // 当滚动到最底部以上n像素时， 加载新内容
-        if ($(document).height() - $(this).scrollTop() - $(this).height()<1) {
-        	scrollLoadTitles();
+        if ($(document).height() - $(this).scrollTop() - $(this).height() < 1) {
+            scrollLoadTitles();
         }
     });
-    function loadPicArticles(){
-   	var params={"type":"picArticle"}
-   	jQuery.get('/api/v1/articles.html',params,function(data,textStatus,jqXHR){
-   		if(data.code==1){
-			var pageVO=data.data;
-			var str='';
-			var width=$("#container").width()+"px";
-			var height=$("#container").outerHeight()+"px";
-			for(var i=0;i<pageVO.data.length;i++){
-				var o=pageVO.data[i];
-				if(i==0){
-					str+='<li style="display: block; opacity: 1;">';
-				}else{
-					str+='<li style="display: none; opacity: 1">';
-				}
-				str+='<a href="/article/detail/'+o.articleId+'.html"><img style="height:'+height+';width:'+width+'" src="'+o.pictureUrl+'" thumb="" alt="'+o.articleName+'" text="'+o.articleName+'" /></a></li>';
-			}   		
-			$("#article_pics").append(str);
-			 var $id=function(id){return document.getElementById(id)};
-                          var oriHtml=$id('focus_box').innerHTML;
-                          function resetHTML(){//还原
-                                $id('focus_box').innerHTML=oriHtml;
-                                var css=document.getElementsByTagName('style')[0];
-                                css.parentNode.removeChild(css);
-                            }
-                    function pageInit(){
-                        var pattern=location.href.split('pattern=')[1];
-                        if(pattern) $id('focus_pattern').value=pattern;
-                        myFocus.set({id:'focus',pattern:$id('focus_pattern').value});
+
+    function loadPicArticles() {
+        var params = {"type": "picArticle"}
+        jQuery.get('/api/v1/articles.html', params, function (data, textStatus, jqXHR) {
+            if (data.code == 1) {
+                var pageVO = data.data;
+                var str = '';
+                var width = $("#container").width() + "px";
+                var height = $("#container").outerHeight() + "px";
+                for (var i = 0; i < pageVO.data.length; i++) {
+                    var o = pageVO.data[i];
+                    if (i == 0) {
+                        str += '<li style="display: block; opacity: 1;">';
+                    } else {
+                        str += '<li style="display: none; opacity: 1">';
                     }
-                    pageInit();
-                            $id('focus_pattern').onchange=function(){
-                    if(this.value==='more'){//更多风格
-                    location.href='more.html';
-                    return;
-                    }           
-                    resetHTML();
-                                myFocus.set({id:'focus',pattern:this.value,loadIMGTimeout:0});
+                    str += '<a href="/article/detail/' + o.articleId + '.html"><img style="height:' + height + ';width:' + width + '" src="' + o.pictureUrl + '" thumb="" alt="' + o.articleName + '" text="' + o.articleName + '" /></a></li>';
                 }
-   		}else{
-   			alert("加载图片新闻失败:"+data.msg);
-   		}
-   	},'json');
-   }
-	$(document).ready(function(){
-		loadTitles();	
-		loadPicArticles();
-		setTimeout("indexLoadNews(8,1)",700);
-		setTimeout("indexLoadLatestArticles()",1000);
-			setTimeout("loadLinks()",500);
-		setTimeout("loadVisitCounts()",500);
-	});
-      
+                $("#article_pics").append(str);
+                var $id = function (id) {
+                    return document.getElementById(id)
+                };
+                var oriHtml = $id('focus_box').innerHTML;
+
+                function resetHTML() {//还原
+                    $id('focus_box').innerHTML = oriHtml;
+                    var css = document.getElementsByTagName('style')[0];
+                    css.parentNode.removeChild(css);
+                }
+
+                function pageInit() {
+                    var pattern = location.href.split('pattern=')[1];
+                    if (pattern) $id('focus_pattern').value = pattern;
+                    myFocus.set({id: 'focus', pattern: $id('focus_pattern').value});
+                }
+
+                pageInit();
+                $id('focus_pattern').onchange = function () {
+                    if (this.value === 'more') {//更多风格
+                        location.href = 'more.html';
+                        return;
+                    }
+                    resetHTML();
+                    myFocus.set({id: 'focus', pattern: this.value, loadIMGTimeout: 0});
+                }
+            } else {
+                alert("加载图片新闻失败:" + data.msg);
+            }
+        }, 'json');
+    }
+
+    $(document).ready(function () {
+        loadTitles();
+        loadPicArticles();
+        setTimeout("indexLoadNews(8,1)", 700);
+        setTimeout("indexLoadLatestArticles()", 1000);
+        setTimeout("loadLinks()", 500);
+        setTimeout("loadVisitCounts()", 500);
+    });
+
 </script>
 <body>
 <!--头部-->
 <div class="ding">
     <div class="ding_jz">
-        <p>欢迎来到鼎力学院！</p>
+        <p>Welcome :) ！</p>
         <ul>
-            <li><a  target="_blank" href="http://weibo.com/PanZhongQuan"><img class="tubiao" src="images/t_03.png">微博</a></li>
+            <li><a target="_blank" href="http://weibo.com/PanZhongQuan"><img class="tubiao" src="images/t_03.png">微博</a>
+            </li>
             <li>
-                <a href="#" class="big-link" data-reveal-id="myModal" data-animation="fade"><img class="tubiao" src="/images/t_10.png">微信</a>
-                <div id="myModal" class="reveal-modal"><h1><img src="images/IMG_0859.jpg"></h1><h3>扫一扫关注我们</h3>
-                <a class="close-reveal-modal">&#215;</a></div>
+                <a href="#" class="big-link" data-reveal-id="myModal" data-animation="fade"><img class="tubiao"
+                                                                                                 src="/images/t_10.png">微信</a>
+                <div id="myModal" class="reveal-modal"><h1><img src="images/IMG_0859.jpg"></h1>
+                    <h3>扫一扫关注我们</h3>
+                    <a class="close-reveal-modal">&#215;</a></div>
             </li>
             <li><img class="tubiao" src="/images/t_05.png">QQ：2239329788</li>
             <li><img class="tubiao" src="/images/t_07.png">0851-83627862</li>
         </ul>
     </div>
 </div>
-<div class="toubu_bj">
-    <div class="toubu">
-        <a href="../"><img src="/images/t_17.png"></a> 
-        <span>
-            <input class="suk" type="text" placeholder="请输入关键词">
-            <button class="scan">搜索</button>
+<#--<div class="toubu_bj">-->
+<#--<div class="toubu">-->
+<#--<a href="../"><img src="/images/t_17.png"></a> -->
+<#--<span>-->
+<#--<input class="suk" type="text" placeholder="请输入关键词">-->
+<#--<button class="scan">搜索</button>-->
+<#--</span>-->
+<#--</div>-->
+<#--</div>-->
+
+    <form name="" action="/search.html">
+        <div class="toubu_bj">
+            <div class="toubu">
+                <a href="../"><img src="/images/t_17.png"></a>
+                <span>
+            <input class="suk" type="text" placeholder="请输入关键词" name="q">
+                <input type="submit" value="搜索" class="scan">
         </span>
-    </div>
-</div>
+            </div>
+        </div>
+    </form>
 
 <!-- 展示标题-->
-<div class="content">
-    <ul class="venus-menu" id="above_titles">
-    </ul>
-</div>
+    <div class="content">
+        <ul class="venus-menu" id="above_titles">
+        </ul>
+    </div>
 <!-- 展示一些额外的东西吧,比如说系统统计等-->
 <!--内容上部分-->
 <div class="neirong_bj">
     <div class="neirong_jz">
-    	<#if dlxyTitleDTO??>
-        <div class="pxxm">
+        <#if dlxyTitleDTO??>
+            <div class="pxxm">
             <H1>${dlxyTitleDTO.titleName}</H1>
             <ul>
             <#list dlxyTitleDTO.childs as item>
                 <li><a href="/title/detail/${item.titleAbbName}.html">${item.titleName}</a></li>
-             </#list>
+            </#list>
             </ul>
-        </div>
+            </div>
         </#if>
         <div class="zhongbu">
-          
+
             <!-- 轮播图 用于展示首页显示的文章 -->
             <div id="container" class="mbox">
                 <!--内容区域-->
                 <div id="focus_wrap">
-                  <div id="focus_box">
-                    <div id="focus">
-                      <div class="loading"><img src="/images/loading.gif"  alt="请稍候..." /></div>
-                      <!--载入画面(可删除)-->
-                      <div class="pic">  
-                        <ul id="article_pics">
-                        </ul>
-                      </div>
+                    <div id="focus_box">
+                        <div id="focus">
+                            <div class="loading"><img src="/images/loading.gif" alt="请稍候..."/></div>
+                            <!--载入画面(可删除)-->
+                            <div class="pic">
+                                <ul id="article_pics">
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="clear"></div>
                     </div>
-                    <div class="clear"></div>
-                  </div>
                 </div>
                 <div id="focus_set" style="display: none;">
-                  <select id="focus_pattern"  >
-                    <option  value="mF_expo2010">mF_expo2010</option>
-                  </select>
+                    <select id="focus_pattern">
+                        <option value="mF_expo2010">mF_expo2010</option>
+                    </select>
                 </div>
             </div>
-                <script type="text/javascript" src="/js/mF_expo2010.js"></script>
-                <script type="text/javascript">
-                       
-                    </script>
+            <script type="text/javascript" src="/js/mF_expo2010.js"></script>
+            <script type="text/javascript">
+
+            </script>
 
             <!-- 最新的文章-->
             <div class="zxzkzx">
@@ -145,57 +167,59 @@
                     <a href="#">更多>></a>
                 </div>
                 <ul class="zxzkzx_lb" id="latest_articles">
-                   
+
                 </ul>
             </div>
-             <!-- end 最新的文章-->
+            <!-- end 最新的文章-->
         </div>
         <!--新闻通知-->
         <div class="zuixin_kk">
             <h2><img src="images/t_24.png"><span>新闻通知</span></h2>
             <ul id="article_news">
-               
+
             </ul>
         </div>
         <!--end 新闻通知-->
     </div>
 </div>
 <!-- 中间过度图片,可更换 -->
-<div class="ggy_bj">
-    <div class="ggy_z">
-        <img src="images/t_33.jpg">
+    <div class="ggy_bj">
+        <div class="ggy_z">
+            <img src="images/t_33.jpg">
+        </div>
     </div>
-</div>
 <!-- end 中间过度图片,可更换 -->
 
 
 <div id="titles">
-	<div class="kaoshi">
-		<#if dlxyTitleDTO?? >
-		 <div class="biaoti"><h2>${dlxyTitleDTO.titleName}</h2><a href="/title/detail/${dlxyTitleDTO.titleAbbName}.html">查看详情 +</a></div>
-		 	<#if dlxyTitleDTO.childs??>
-			<#list dlxyTitleDTO.childs as item>
-					<ul class="kemu">
-					   <div class="kemu_bt"><h2>${item.titleName}</h2><a href="/title/detail/${item.titleAbbName}.html">更多>></a></div>
-						<#if item.articles??>
-							<#list item.articles as article>
-					   			<li><a href="/article/detail/${article.articleId?c}.html"><i></i>${article.articleName}</a>    <strong>${article.createDate?string('yyyy-MM-dd')}</strong></li>
-					   		</#list>
-						</#if>
-				   </ul>
-		    </#list>
-		</#if>>
-		 </#if>
-	</div>
-</div>
-
-
-<div class="ggy_bj">
-    <div class="ggy_z">
-        <img src="images/t_36.jpg">
+    <div class="kaoshi">
+        <#if dlxyTitleDTO?? >
+            <div class="biaoti"><h2>${dlxyTitleDTO.titleName}</h2>
+        <a href="/title/detail/${dlxyTitleDTO.titleAbbName}.html">查看详情 +</a></div>
+            <#if dlxyTitleDTO.childs??>
+                <#list dlxyTitleDTO.childs as item>
+                    <ul class="kemu">
+                    <div class="kemu_bt"><h2>${item.titleName}</h2><a href="/title/detail/${item.titleAbbName}.html">
+                        更多>></a></div>
+                    <#if item.articles??>
+                        <#list item.articles as article>
+                            <li><a href="/article/detail/${article.articleId?c}.html"><i></i>${article.articleName}</a>
+                            <strong>${article.createDate?string('yyyy-MM-dd')}</strong></li>
+                        </#list>
+                    </#if>
+                    </ul>
+                </#list>
+            </#if>>
+        </#if>
     </div>
 </div>
 
+
+    <div class="ggy_bj">
+        <div class="ggy_z">
+            <img src="images/t_36.jpg">
+        </div>
+    </div>
 
 
 <#include "bottom.html">

@@ -1,179 +1,227 @@
-
-
 <#include "wrapper_up.html">
-<script>
-	function loadVisitCounts(){
-	 jQuery.get('/api/v1/visitCount.html',function(data,textStatus,jqXHR){
-		 	if(data.code==1){
-		 		var str='';
-		 		var arr=data.data.split(',');
-		 		str+="<tr><td><strong>网站总访问量</strong>：" +arr[0]+"</td><td></td></tr>";
-		 		str+="<tr><td><strong>网站今日访问量</strong>：" +arr[1]+"</td><td></td></tr>";
-		 		str+="<tr><td><strong>网站当前在线人数</strong>：" +arr[2]+"</td><td></td></tr>";
-		 		$("#web_visitCount").append(str);
-		 	}
-	 },'json')
- }
-$(document).ready(function(){
-		loadVisitCounts();
-	});
-</script>
+    <script>
+        function loadVisitCounts() {
+            jQuery.get('/api/v1/visitCount.html', function (data, textStatus, jqXHR) {
+                if (data.code == 1) {
+                    var str = '';
+                    var arr = data.data.split(',');
+                    str += "<tr><td><strong>网站总访问量</strong>：" + arr[0] + "</td><td></td></tr>";
+                    str += "<tr><td><strong>网站今日访问量</strong>：" + arr[1] + "</td><td></td></tr>";
+                    str += "<tr><td><strong>网站当前在线人数</strong>：" + arr[2] + "</td><td></td></tr>";
+                    $("#web_visitCount").append(str);
+                }
+            }, 'json')
+        }
+
+
+        $(document).ready(function () {
+            loadVisitCounts();
+        });
+    </script>
 <section class="larry-wrapper">
     <!-- overview -->
-	<div class="row state-overview">
-		<div class="col-lg-3 col-sm-6 layui-anim layui-anim-up">
-			<section class="panel">
-				<div class="symbol userblue layui-anim layui-anim-rotate"> <i class="iconpx-users"></i>
-				</div>
-				<div class="value">
-					<a href="/admin/users.html">
-						<h1 id="count1">${totalUserCount}</h1>
-						<p>用户总量</p>
-					</a>
-					
-				</div>
-			</section>
-		</div>
-		<div class="col-lg-3 col-sm-6 layui-anim layui-anim-up">
-			<section class="panel">
-				<div class="symbol commred layui-anim layui-anim-rotate"> <i class="iconpx-user-add"></i>
-					<a href="/admin/users.html">
-					</a>
-				</div>
-				<div class="value">
-					<a href="/admin/users.html">
-						<h1 id="count1">${totalUserCount}</h1>
-						<p>添加用户</p>
-					</a>
-					
-				</div>
-			</section>
-		</div>
-		<div class="col-lg-3 col-sm-6 layui-anim layui-anim-up">
-			<section class="panel">
-				<div class="symbol articlegreen layui-anim layui-anim-rotate">
-					<i class="iconpx-file-word-o"></i>
-				</div>
-				<div class="value">
-					<a href="/admin/articles.html">
-						<h1 id="count3">${articlesTotalCount}</h1>
-						<p>文章总数</p>
-					</a>
-					
-				</div>
-			</section>
-		</div>
-	</div>
-	<!-- overview end -->
-	<div class="row">
-		<div class="col-lg-6">
-			<section class="panel">
-				<header class="panel-heading bm0">
-					<span class='span-title'>吉林农业科技学院-鼎利学院后台管理</span>
-					<span class="tools pull-right"><a href="javascript:;" class="iconpx-chevron-down"></a></span>
-				</header>
-				<div class="panel-body" >
-					<table class="table table-hover personal-task">
-                         <tbody id="web_visitCount">
-                         	<tr>
-                         		<td>
-                                <strong>开发者</strong>： 鼎利
-                                </td>
-                                <td></td>
-                         	</tr>
-                         	<tr>
-                         		<td>
+    <div class="row state-overview">
+        <div class="col-lg-3 col-sm-6 layui-anim layui-anim-up">
+            <section class="panel">
+                <div class="symbol userblue layui-anim layui-anim-rotate"><i class="iconpx-users"></i>
+                </div>
+                <div class="value">
+                    <a href="/admin/users.html">
+                        <h1 id="count1">${totalUserCount}</h1>
+                        <p>用户总量</p>
+                    </a>
+
+                </div>
+            </section>
+        </div>
+        <div class="col-lg-3 col-sm-6 layui-anim layui-anim-up">
+            <section class="panel">
+                <div class="symbol commred layui-anim layui-anim-rotate"><i class="iconpx-user-add"></i>
+                    <a href="/admin/users.html">
+                    </a>
+                </div>
+                <div class="value">
+                    <a href="/admin/users.html">
+                        <h1 id="count1">${totalUserCount}</h1>
+                        <p>添加用户</p>
+                    </a>
+
+                </div>
+            </section>
+        </div>
+        <div class="col-lg-3 col-sm-6 layui-anim layui-anim-up">
+            <section class="panel">
+                <div class="symbol articlegreen layui-anim layui-anim-rotate">
+                    <i class="iconpx-file-word-o"></i>
+                </div>
+                <div class="value">
+                    <a href="/admin/articles.html">
+                        <h1 id="count3">${articlesTotalCount}</h1>
+                        <p>文章总数</p>
+                    </a>
+
+                </div>
+            </section>
+        </div>
+    </div>
+    <!-- overview end -->
+    <div class="row">
+        <div class="col-lg-6">
+            <section class="panel">
+                <header class="panel-heading bm0">
+                    <span class='span-title'>学院后台管理</span>
+                    <span class="tools pull-right"><a href="javascript:;" class="iconpx-chevron-down"></a></span>
+                </header>
+                <div class="panel-body">
+                    <table class="table table-hover personal-task">
+                        <tbody id="web_visitCount">
+                        <tr>
+                            <td>
+                                <strong>开发者</strong>： joker
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>
                                 <strong>网站昨日访问量:</strong>： ${lastVisitCount!"0"}
+                            </td>
+                            <td></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            <!-- 网站信息统计｛SEO数据统计｝ -->
+            <section class="panel">
+                <header class="panel-heading bm0">
+                    <span class='span-title'>网站信息统计｛SEO数据统计｝</span>
+                    <span class="tools pull-right"><a href="javascript:;" class="iconpx-chevron-down"></a></span>
+                </header>
+                <div class="panel-body laery-seo-box">
+                    <div class="larry-seo-stats" id="larry-seo-stats">
+                        <#if flowVO??>
+                            <#if  flowVO.connections??>
+
+                                总的流量访问IP如下:<br>
+                                <#list flowVO.connections as conn>
+                                    <tr>
+                                    <td>
+                                    ${conn.ip} : ${conn.counts}次<br>
+                                    </td>
+                                    </tr>
+                                </#list>
+                            </#if>
+
+                            <#if flowVO.currentConnections??>
+                                最近流量访问IP如下:<br>
+                                <#list flowVO.currentConnections as conn>
+                                    <tr>
+                                    <td>
+                                    ${conn.ip}:${conn.counts}次 <br>
+                                    </td>
+                                    </tr>
+                                </#list>
+                            </#if>
+
+                            <#if flowVO.flownDownloadVO??>
+                                <#assign down=flowVO.flownDownloadVO>
+                                <tr>
+
+                                <td>
+                                当前上传速度:${down.upBps} Kb/s<br>
                                 </td>
-                                <td></td>
-                         	</tr>
-                         </tbody>
-					</table>
-				</div>
-			</section>
-      <!-- 网站信息统计｛SEO数据统计｝ -->
-      <section class="panel">
-                  <header class="panel-heading bm0">
-                       <span class='span-title'>网站信息统计｛SEO数据统计｝</span>
-                       <span class="tools pull-right"><a href="javascript:;" class="iconpx-chevron-down"></a></span>
-                  </header>
-                  <div class="panel-body laery-seo-box">
-                        <div class="larry-seo-stats" id="larry-seo-stats"></div>
-                  </div>
-      </section>
-		</div>
-		<div class="col-lg-6">
-          <!-- 系统公告 -->
-             <section class="panel">
-                 <header class="panel-heading bm0">
-                        <span class='span-title'>系统公告</span>
-                        <span class="tools pull-right"><a href="javascript:;" class="iconpx-chevron-down"></a></span>
-                  </header>
-                  <div class="panel-body">
-                        <table class="table table-hover personal-task shortcut">
-                            <tr>
-                              <td>
+                                <td>
+                            当前下载速度:${down.downBps} Kb/s<br>
+                                </td>
+                                <td>
+                            当前峰值上传速度:${down.peekUpStreamBps} Kb/s<br>
+                                </td>
+                                <td>
+                            当前峰值下载速度:${down.peekDownBps} Kb/s<br>
+                                </td>
+                                </tr>
+                            </#if>
+
+
+                        </#if>
+
+
+                    </div>
+                </div>
+            </section>
+        </div>
+        <div class="col-lg-6">
+            <!-- 系统公告 -->
+            <section class="panel">
+                <header class="panel-heading bm0">
+                    <span class='span-title'>系统公告</span>
+                    <span class="tools pull-right"><a href="javascript:;" class="iconpx-chevron-down"></a></span>
+                </header>
+                <div class="panel-body">
+                    <table class="table table-hover personal-task shortcut">
+                        <tr>
+                            <td>
                                 <div class="c1">如果点击菜单无用,请刷新重试,如果不行,:<strong><a href="">请先点击这</a></strong>-------1</div>
                                 <div class="c2">访问次数不限ip,存在1次ip多次访问的可能---------2</div>
                                 <div class="c2">服务器中文乱码问题,待解决---------2</div>
                                 <br>
-                              </td>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </section>
+            <!-- 最新文章 -->
+            <section class="panel">
+                <header class="panel-heading bm0">
+                    <span class='span-title'>文章访问量统计</span>
+                    <span class="badge" style="background-color:#FF3333;"> OK </span>
+                    <span class="tools pull-right"><a href="javascript:;" class="iconpx-chevron-down"></a></span>
+                </header>
+                <div class="panel-body">
+                    <#if articles??>
+
+                        <table class="table table-hover personal-task">
+                        <tbody>
+                        <#list articles as item>
+                            <tr>
+                            <td>
+                            <a href="/article/detail/${item.articleId?c}.html" target="_blank">${item.articleName}</a>
+                            </td>
+                            <td class="col-md-5">阅读量：${item.visitCount!"0"} &nbsp;&nbsp;&nbsp;&nbsp; </td>
                             </tr>
+                        </#list>
+                        </tbody>
                         </table>
-                  </div>
-             </section>
-              <!-- 最新文章 -->
-             <section class="panel">
-                  <header class="panel-heading bm0">
-                        <span class='span-title'>文章访问量统计</span>
-                        <span class="badge" style="background-color:#FF3333;"> OK </span>
-                        <span class="tools pull-right"><a href="javascript:;" class="iconpx-chevron-down"></a></span>
-                  </header>
-                  <div class="panel-body">
-                  	<#if articles??>
-                  	
-                       <table class="table table-hover personal-task">
-                             <tbody>
-                             <#list articles as item>
-	                              <tr>
-	                                <td>
-	                                  <a href="/article/detail/${item.articleId?c}.html" target="_blank">${item.articleName}</a>
-	                                </td>
-	                                <td class="col-md-5">阅读量：${item.visitCount!"0"} &nbsp;&nbsp;&nbsp;&nbsp; </td>
-	                              </tr>
-                              </#list>
-                             </tbody>
-                       </table>
-                  	</#if>
-                  </div>
-             </section>
-		</div>
-	</div>
-	
+                    </#if>
+                </div>
+            </section>
+        </div>
+    </div>
+
 </section>
-	<script type="text/javascript" src="/common/layui/layui.js"></script> 
+    <script type="text/javascript" src="/common/layui/layui.js"></script>
 
-	<script type="text/javascript" src="/js/larry.js"></script>
-	<script type="text/javascript" src="/js/index.js"></script>
+    <script type="text/javascript" src="/js/larry.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
 
-<script type="text/javascript">
-	layui.use(['jquery','layer','element'],function(){
-		window.jQuery = window.$ = layui.jquery;
-		window.layer = layui.layer;
-        window.element = layui.element();
+    <script type="text/javascript">
+        layui.use(['jquery', 'layer', 'element'], function () {
+            window.jQuery = window.$ = layui.jquery;
+            window.layer = layui.layer;
+            window.element = layui.element();
 
-       $('.panel .tools .iconpx-chevron-down').click(function(){
-       	   var el = $(this).parents(".panel").children(".panel-body");
-       	   if($(this).hasClass("iconpx-chevron-down")){
-       	   	   $(this).removeClass("iconpx-chevron-down").addClass("iconpx-chevron-up");
-       	   	   el.slideUp(200);
-       	   }else{
-       	   	   $(this).removeClass("iconpx-chevron-up").addClass("iconpx-chevron-down");
-       	   	   el.slideDown(200);
-       	   }
-       })
+            $('.panel .tools .iconpx-chevron-down').click(function () {
+                var el = $(this).parents(".panel").children(".panel-body");
+                if ($(this).hasClass("iconpx-chevron-down")) {
+                    $(this).removeClass("iconpx-chevron-down").addClass("iconpx-chevron-up");
+                    el.slideUp(200);
+                } else {
+                    $(this).removeClass("iconpx-chevron-up").addClass("iconpx-chevron-down");
+                    el.slideDown(200);
+                }
+            })
 
-	});
-</script>
-	
+        });
+    </script>
+
 <#include "footer.html">

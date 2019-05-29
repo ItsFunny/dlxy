@@ -12,17 +12,19 @@
 
 	<beans profile="dev">
 		<context:property-placeholder
-			location="/WEB-INF/env-local/*.properties"
+			location="classpath:application-dev.properties"
 			ignore-unresolvable="false" ignore-resource-not-found="true" />
 	</beans>
 
 	<beans profile="pro">
 		<context:property-placeholder
-			location="/WEB-INF/env-pro/*.properties" ignore-unresolvable="false"
-			ignore-resource-not-found="true" />
+			location="classpath:application-pro.properties"
+			ignore-unresolvable="false" ignore-resource-not-found="true" />
 	</beans>
-
-
-
-
+	
+	<beans profile="test">
+		<context:property-placeholder
+			location="classpath:application-test.properties"
+			ignore-unresolvable="false" ignore-resource-not-found="true" />
+	</beans>
 </beans>

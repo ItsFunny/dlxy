@@ -17,6 +17,7 @@ import com.dlxy.server.user.service.IUserRoleService;
 public class DlxyShiroRealm extends AuthorizingRealm
 {
 
+
 	// @Autowired
 	// private IUserService userService;
 	@Autowired
@@ -50,6 +51,16 @@ public class DlxyShiroRealm extends AuthorizingRealm
 	{
 		return token instanceof DlxyShiroAuthToken;
 	}
-	
+
+	public IUserRoleService getUserRoleService()
+	{
+		return userRoleService;
+	}
+
+	public void setUserRoleService(IUserRoleService userRoleService)
+	{
+		this.userRoleService = userRoleService;
+	}
+
 
 }

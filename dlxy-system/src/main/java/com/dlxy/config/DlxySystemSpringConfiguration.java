@@ -45,49 +45,48 @@ import com.google.code.kaptcha.util.Config;
 public class DlxySystemSpringConfiguration implements InitializingBean
 {
 
-	@Bean
-	public DlxyBeanPostProcessor beanPostProcessor()
-	{
-		return new DlxyBeanPostProcessor();
-	}
+    @Bean
+    public DlxyBeanPostProcessor beanPostProcessor()
+    {
+        return new DlxyBeanPostProcessor();
+    }
 
-	@Bean
-	public org.springframework.cache.CacheManager titlesCacheManager()
-	{
-		CompositeCacheManager compositeCacheManager = new CompositeCacheManager();
-		List<org.springframework.cache.CacheManager> cacheManagers = new ArrayList<>();
-		cacheManagers.add(new ConcurrentMapCacheManager("titles"));
-		cacheManagers.add(new ConcurrentMapCacheManager("single_title"));
-		cacheManagers.add(new ConcurrentMapCacheManager("links"));
-		compositeCacheManager.setCacheManagers(cacheManagers);
-		return compositeCacheManager;
-	}
+    @Bean
+    public org.springframework.cache.CacheManager titlesCacheManager()
+    {
+        CompositeCacheManager compositeCacheManager = new CompositeCacheManager();
+        List<org.springframework.cache.CacheManager> cacheManagers = new ArrayList<>();
+        cacheManagers.add(new ConcurrentMapCacheManager("titles"));
+        cacheManagers.add(new ConcurrentMapCacheManager("single_title"));
+        cacheManagers.add(new ConcurrentMapCacheManager("links"));
+        compositeCacheManager.setCacheManagers(cacheManagers);
+        return compositeCacheManager;
+    }
 
-	@Bean
-	public CacheManager cacheManager()
-	{
-		EhCacheManager ehCacheManager = new EhCacheManager();
-		ehCacheManager.setCacheManagerConfigFile("classpath:shiro/cacheManager.xml");
-		return ehCacheManager;
-	}
+    @Bean
+    public CacheManager cacheManager()
+    {
+        EhCacheManager ehCacheManager = new EhCacheManager();
+        ehCacheManager.setCacheManagerConfigFile("classpath:shiro/cacheManager.xml");
+        return ehCacheManager;
+    }
 
 
+    @Bean
+    public DlxyShiroRealm dlxyShiroRealm()
+    {
+        return new DlxyShiroRealm();
+    }
 
-	@Bean
-	public org.apache.shiro.mgt.SecurityManager securityManager()
-	{
-		DefaultWebSecurityManager defaultWebSecurityManager = new DefaultWebSecurityManager();
-		defaultWebSecurityManager.setRealm(dlxyShiroRealm());
-		defaultWebSecurityManager.setCacheManager(cacheManager());
+    @Bean
+    public org.apache.shiro.mgt.SecurityManager securityManager()
+    {
+        DefaultWebSecurityManager defaultWebSecurityManager = new DefaultWebSecurityManager();
+        defaultWebSecurityManager.setRealm(dlxyShiroRealm());
+        defaultWebSecurityManager.setCacheManager(cacheManager());
 //		defaultWebSecurityManager.setSessionManager(sessionManager());
-		return defaultWebSecurityManager;
-	}
-
-	@Bean
-	public DlxyShiroRealm dlxyShiroRealm()
-	{
-		return new DlxyShiroRealm();
-	}
+        return defaultWebSecurityManager;
+    }
 
 //	@Bean
 //	public ShiroSessionListener shiroSessionListener()
@@ -124,123 +123,123 @@ public class DlxySystemSpringConfiguration implements InitializingBean
 //		simpleCookie.setName("shiro.session");
 //		return simpleCookie;
 //	}
-	
 
-	@Bean("shiroFilter")
-	public ShiroFilterFactoryBean shiroFilterFactoryBean()
-	{
-		ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
-		shiroFilterFactoryBean.setSecurityManager(securityManager());
-		shiroFilterFactoryBean.setLoginUrl("/admin/login.html");
-		shiroFilterFactoryBean.setSuccessUrl("/admin/index.html");
-		shiroFilterFactoryBean.setUnauthorizedUrl("/public/unauth.html");
-		// Map<String, Filter> filters = shiroFilterFactoryBean.getFilters();
-		// filters.put("authc", new TFilter());
-		Map<String, String> filterChainDefinitionMap = shiroFilterFactoryBean.getFilterChainDefinitionMap();
-		filterChainDefinitionMap.put("/test/**", "anon");
-		//fix a bug by this way no good
+
+    @Bean("shiroFilter")
+    public ShiroFilterFactoryBean shiroFilterFactoryBean()
+    {
+        ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
+        shiroFilterFactoryBean.setSecurityManager(securityManager());
+        shiroFilterFactoryBean.setLoginUrl("/admin/login.html");
+        shiroFilterFactoryBean.setSuccessUrl("/admin/index.html");
+        shiroFilterFactoryBean.setUnauthorizedUrl("/public/unauth.html");
+        // Map<String, Filter> filters = shiroFilterFactoryBean.getFilters();
+        // filters.put("authc", new TFilter());
+        Map<String, String> filterChainDefinitionMap = shiroFilterFactoryBean.getFilterChainDefinitionMap();
+        filterChainDefinitionMap.put("/test/**", "anon");
+        //fix a bug by this way no good
 //		filterChainDefinitionMap.put("/admin/js/navtab.js", "anon");
-		filterChainDefinitionMap.put("/admin/doLogin.html", "anon");
-		filterChainDefinitionMap.put("/css/**", "anon");
-		filterChainDefinitionMap.put("/fonts/**", "anon");
-		filterChainDefinitionMap.put("/js/**", "anon");
-		filterChainDefinitionMap.put("/common/**", "anon");
-		filterChainDefinitionMap.put("/imgs/**", "anon");
-		filterChainDefinitionMap.put("/images/**", "anon");
-		filterChainDefinitionMap.put("/jsplug/**", "anon");
-		filterChainDefinitionMap.put("/lang/**", "anon");
-		filterChainDefinitionMap.put("/public/**", "anon");
-		filterChainDefinitionMap.put("/plugins/**", "anon");
-		filterChainDefinitionMap.put("/portal/**", "anon");
-		filterChainDefinitionMap.put("/themes", "anon");
-		filterChainDefinitionMap.put("/kindeditor-all.js", "anon");
-		filterChainDefinitionMap.put("/kindeditor-all-min.js", "anon");
-		// filterChainDefinitionMap.put("/api/**", "authc");
-		// filterChainDefinitionMap.put("/user/**","authc");
-		filterChainDefinitionMap.put("/api/v1/admin/**", "authc");
-		filterChainDefinitionMap.put("/admin/login.html", "authc");
-		filterChainDefinitionMap.put("/admin/**", "authc");
+        filterChainDefinitionMap.put("/admin/doLogin.html", "anon");
+        filterChainDefinitionMap.put("/css/**", "anon");
+        filterChainDefinitionMap.put("/fonts/**", "anon");
+        filterChainDefinitionMap.put("/js/**", "anon");
+        filterChainDefinitionMap.put("/common/**", "anon");
+        filterChainDefinitionMap.put("/imgs/**", "anon");
+        filterChainDefinitionMap.put("/images/**", "anon");
+        filterChainDefinitionMap.put("/jsplug/**", "anon");
+        filterChainDefinitionMap.put("/lang/**", "anon");
+        filterChainDefinitionMap.put("/public/**", "anon");
+        filterChainDefinitionMap.put("/plugins/**", "anon");
+        filterChainDefinitionMap.put("/portal/**", "anon");
+        filterChainDefinitionMap.put("/themes", "anon");
+        filterChainDefinitionMap.put("/kindeditor-all.js", "anon");
+        filterChainDefinitionMap.put("/kindeditor-all-min.js", "anon");
+        // filterChainDefinitionMap.put("/api/**", "authc");
+        // filterChainDefinitionMap.put("/user/**","authc");
+        filterChainDefinitionMap.put("/api/v1/admin/**", "authc");
+        filterChainDefinitionMap.put("/admin/login.html", "authc");
+        filterChainDefinitionMap.put("/admin/**", "authc");
 
-		return shiroFilterFactoryBean;
-	}
+        return shiroFilterFactoryBean;
+    }
 
-	@Bean(name = "lifeCycleBeanPostProcessor")
-	public LifecycleBeanPostProcessor lifecycleBeanPostProcessor()
-	{
-		return new LifecycleBeanPostProcessor();
-	}
+    @Bean(name = "lifeCycleBeanPostProcessor")
+    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor()
+    {
+        return new LifecycleBeanPostProcessor();
+    }
 
-	// /*
-	// * 将securityManger绑定
-	// */
-	@Bean
-	public MethodInvokingFactoryBean methodInvokingFactoryBean(SecurityManager securityManager)
-	{
-		MethodInvokingFactoryBean factoryBean = new MethodInvokingFactoryBean();
-		factoryBean.setStaticMethod("org.apache.shiro.SecurityUtils.setSecurityManager");
-		factoryBean.setArguments(securityManager);
-		return factoryBean;
-	}
+    // /*
+    // * 将securityManger绑定
+    // */
+    @Bean
+    public MethodInvokingFactoryBean methodInvokingFactoryBean(SecurityManager securityManager)
+    {
+        MethodInvokingFactoryBean factoryBean = new MethodInvokingFactoryBean();
+        factoryBean.setStaticMethod("org.apache.shiro.SecurityUtils.setSecurityManager");
+        factoryBean.setArguments(securityManager);
+        return factoryBean;
+    }
 
-	// /*
-	// * 开启注解支持
-	// */
-	@DependsOn(value =
-	{ "lifeCycleBeanPostProcessor" })
-	@Bean(name = "defaultAdvisorAutoProxyCreator")
-	public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator()
-	{
-		DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator = new DefaultAdvisorAutoProxyCreator();
-		defaultAdvisorAutoProxyCreator.setProxyTargetClass(true);
-		return defaultAdvisorAutoProxyCreator;
-	}
+    // /*
+    // * 开启注解支持
+    // */
+    @DependsOn(value =
+            {"lifeCycleBeanPostProcessor"})
+    @Bean(name = "defaultAdvisorAutoProxyCreator")
+    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator()
+    {
+        DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator = new DefaultAdvisorAutoProxyCreator();
+        defaultAdvisorAutoProxyCreator.setProxyTargetClass(true);
+        return defaultAdvisorAutoProxyCreator;
+    }
 
-	@Bean
-	public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(SecurityManager securityManager)
-	{
-		AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new AuthorizationAttributeSourceAdvisor();
-		authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
-		return authorizationAttributeSourceAdvisor;
-	}
+    @Bean
+    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(SecurityManager securityManager)
+    {
+        AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new AuthorizationAttributeSourceAdvisor();
+        authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
+        return authorizationAttributeSourceAdvisor;
+    }
 
-	@Bean
-	public Producer kaptcha()
-	{
-		Properties p = new Properties();
-		p.setProperty(Constants.KAPTCHA_BORDER, "no");
-		p.setProperty(Constants.KAPTCHA_BORDER_COLOR, "105,179,90");
-		p.setProperty(Constants.KAPTCHA_TEXTPRODUCER_FONT_COLOR, "14,78,149");
-		p.setProperty(Constants.KAPTCHA_IMAGE_WIDTH, "487");
-		p.setProperty(Constants.KAPTCHA_IMAGE_HEIGHT, "68");
-		p.setProperty(Constants.KAPTCHA_SESSION_KEY, "kcode");
-		p.setProperty(Constants.KAPTCHA_TEXTPRODUCER_CHAR_LENGTH, "4");
-		p.setProperty(Constants.KAPTCHA_TEXTPRODUCER_FONT_NAMES, "宋体,楷体,微软雅黑");
+    @Bean
+    public Producer kaptcha()
+    {
+        Properties p = new Properties();
+        p.setProperty(Constants.KAPTCHA_BORDER, "no");
+        p.setProperty(Constants.KAPTCHA_BORDER_COLOR, "105,179,90");
+        p.setProperty(Constants.KAPTCHA_TEXTPRODUCER_FONT_COLOR, "14,78,149");
+        p.setProperty(Constants.KAPTCHA_IMAGE_WIDTH, "487");
+        p.setProperty(Constants.KAPTCHA_IMAGE_HEIGHT, "68");
+        p.setProperty(Constants.KAPTCHA_SESSION_KEY, "kcode");
+        p.setProperty(Constants.KAPTCHA_TEXTPRODUCER_CHAR_LENGTH, "4");
+        p.setProperty(Constants.KAPTCHA_TEXTPRODUCER_FONT_NAMES, "宋体,楷体,微软雅黑");
 
-		DefaultKaptcha kaptcha = new DefaultKaptcha();
-		kaptcha.setConfig(new Config(p));
-		return kaptcha;
-	}
+        DefaultKaptcha kaptcha = new DefaultKaptcha();
+        kaptcha.setConfig(new Config(p));
+        return kaptcha;
+    }
 
-	@Bean
-	public IdWorkerService IdWorkerService()
-	{
-		return new IdWorkerServiceTwitter(0, 1);
-	}
+    @Bean
+    public IdWorkerService IdWorkerService()
+    {
+        return new IdWorkerServiceTwitter(0, 1);
+    }
 
-	@Override
-	public void afterPropertiesSet() throws Exception
-	{
-		// ArticleVisitCountFactory.init(this.beanFactory.getBean(IRedisService.class),
-		// this.beanFactory.getBean(IArticleService.class));
-	}
+    @Override
+    public void afterPropertiesSet() throws Exception
+    {
+        // ArticleVisitCountFactory.init(this.beanFactory.getBean(IRedisService.class),
+        // this.beanFactory.getBean(IArticleService.class));
+    }
 
-	// @Bean
-	// public MultipartResolver multipartResolver()
-	// {
-	// CommonsMultipartResolver commonsMultipartResolver = new
-	// CommonsMultipartResolver();
-	// commonsMultipartResolver.setMaxInMemorySize(1000000);
-	// return commonsMultipartResolver;
-	// }
+    // @Bean
+    // public MultipartResolver multipartResolver()
+    // {
+    // CommonsMultipartResolver commonsMultipartResolver = new
+    // CommonsMultipartResolver();
+    // commonsMultipartResolver.setMaxInMemorySize(1000000);
+    // return commonsMultipartResolver;
+    // }
 
 }
