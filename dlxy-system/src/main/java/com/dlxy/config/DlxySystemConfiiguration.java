@@ -335,12 +335,6 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer, ServletContex
 
     }
 
-    public static void main(String[] args)
-    {
-        DlxySystemConfiiguration dlxySystemConfiiguration = new DlxySystemConfiiguration();
-        URL resource = dlxySystemConfiiguration.getClass().getClassLoader().getResource("WEB-INF");
-        System.out.println(resource.getPath());
-    }
 
     @Bean
     public IPInterceptor ipInterceptor()

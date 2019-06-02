@@ -33,6 +33,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -160,34 +161,45 @@ public class AdminController
         String realname = request.getParameter("realname");
         String passwrod = request.getParameter("password");
         String vcode = request.getParameter("vcode");
-        String kcode = (String) request.getSession(true).getAttribute("kcode");
-        if (StringUtils.isEmpty(vcode) || !vcode.equals(kcode))
+        String loginType = request.getParameter("type");
+        UserDTO dbUser = null;
+        if (loginType.equals("visiter"))
         {
-            params.put("error", "验证码不正确");
-            modelAndView = new ModelAndView("login", params);
-            return modelAndView;
-        }
-        HttpSession session = request.getSession(true);
-        Object errorTimes = session.getAttribute("errorTimes");
-        if (null != errorTimes && (Integer) errorTimes > 3)
+            dbUser = UserDTO.CreateVisiterUser();
+        } else
         {
-            params.put("error", "密码错误次数达到上限,请过会再试");
-            modelAndView = new ModelAndView("login", params);
-            return modelAndView;
-        }
-        UserDTO dbUser = userService.findByUsername(realname);
-        if (null == dbUser || !dbUser.getPassword().equals(KeyUtils.md5Encrypt(passwrod)))
-        {
-            params.put("error", "用户不存在,或者密码错误,忘记密码请联系管理员");
-            if (errorTimes == null)
+            String kcode = (String) request.getSession(true).getAttribute("kcode");
+            if (StringUtils.isEmpty(vcode) || !vcode.equals(kcode))
             {
-                session.setAttribute("errorTimes", 1);
-            } else
-            {
-                session.setAttribute("errorTimes", (Integer) errorTimes + 1);
+                params.put("error", "验证码不正确");
+                modelAndView = new ModelAndView("login", params);
+                return modelAndView;
             }
-            modelAndView = new ModelAndView("login", params);
-        } else if (!dbUser.isAble())
+            HttpSession session = request.getSession(true);
+            Object errorTimes = session.getAttribute("errorTimes");
+            if (null != errorTimes && (Integer) errorTimes > 3)
+            {
+                params.put("error", "密码错误次数达到上限,请过会再试");
+                modelAndView = new ModelAndView("login", params);
+                return modelAndView;
+            }
+            dbUser = userService.findByUsername(realname);
+            if (null == dbUser || !dbUser.getPassword().equals(KeyUtils.md5Encrypt(passwrod)))
+            {
+                params.put("error", "用户不存在,或者密码错误,忘记密码请联系管理员");
+                if (errorTimes == null)
+                {
+                    session.setAttribute("errorTimes", 1);
+                } else
+                {
+                    session.setAttribute("errorTimes", (Integer) errorTimes + 1);
+                }
+                modelAndView = new ModelAndView("login", params);
+                return modelAndView;
+            }
+        }
+
+        if (!dbUser.isAble())
         {
             params.put("error", "此用户已被禁止登录");
             modelAndView = new ModelAndView("login", params);
@@ -208,7 +220,6 @@ public class AdminController
             {
                 modelAndView = new ModelAndView("redirect:/admin/index.html", params);
             }
-            dlxyUser = null;
         }
         return modelAndView;
     }
@@ -231,6 +242,7 @@ public class AdminController
         return modelAndView;
     }
 
+    @RequiresRoles(value = {"admin", "superAdmin"}, logical = Logical.OR)
     @RequestMapping("/link/addOrUpdate")
     public ModelAndView addOrUpdatelink(HttpServletRequest request, HttpServletResponse response)
     {
@@ -406,6 +418,7 @@ public class AdminController
             Collection<DlxyTitleDTO> childs = titleService.findChildsByParentId(dlxyTitleDTO.getTitleId());
             modelAndView.addObject("titles", childs);
         }
+        modelAndView.addObject("user", AdminUtil.getLoginUser());
         modelAndView.addObject("title", dlxyTitleDTO);
         return modelAndView;
     }
@@ -502,10 +515,10 @@ public class AdminController
             params.put("articleStatus", ArticleStatusEnum.DELETE.ordinal());
         } else if (type.equals("all"))
         {
-            if (!user.isAdmin())
-            {
-                isIllegal = true;
-            }
+//            if (!user.isAdmin())
+//            {
+//                isIllegal = true;
+//            }
         } else
         {
             // show ownself
@@ -581,6 +594,9 @@ public class AdminController
         }
     }
 
+    @RequiresRoles(value = {
+            "admin", "superAdmin"
+    }, logical = Logical.OR)
     @RequestMapping("/article/add")
     public ModelAndView addArticle(@RequestParam Map<String, Object> params, HttpServletRequest request,
                                    HttpServletResponse response)
@@ -593,6 +609,7 @@ public class AdminController
         return modelAndView;
     }
 
+    @RequiresRoles(value = {"admin", "superAdmin"}, logical = Logical.OR)
     @RequestMapping("/article/doAddArticle")
     public ModelAndView doAddArticle(@Valid FormArticle formArticle, BindingResult bindingResult,
                                      @RequestParam(name = "imgFile", required = false) MultipartFile imgFile, HttpServletRequest request,
@@ -719,6 +736,7 @@ public class AdminController
         return modelAndView;
     }
 
+    @RequiresRoles(value = {"admin", "superAdmin"}, logical = Logical.OR)
     @RequestMapping("/article/update/descpic")
     public ModelAndView updateDsescPic(@RequestParam("imgFile") MultipartFile imgFile, HttpServletRequest request,
                                        HttpServletResponse response)
@@ -865,8 +883,9 @@ public class AdminController
         return modelAndView;
     }
 
-    // @RequiresRoles(value =
-    // { "admin" })
+    @RequiresRoles({
+            "superAdmin"
+    })
     @RequestMapping("/user/add")
     public ModelAndView addUser(HttpServletRequest request, HttpServletResponse response)
     {
@@ -875,6 +894,9 @@ public class AdminController
         return modelAndView;
     }
 
+    @RequiresRoles({
+            "superAdmin"
+    })
     @RequestMapping("/user/doAddUser")
     public ModelAndView doAddUser(@Valid FormUser formUser, BindingResult result, HttpServletRequest request,
                                   HttpServletResponse response)
@@ -928,6 +950,9 @@ public class AdminController
         return modelAndView;
     }
 
+    @RequiresRoles({
+            "superAdmin"
+    })
     @RequestMapping("/user/userInfo/update")
     public ModelAndView updateUserInfo(@RequestParam Map<String, Object> params, HttpServletRequest request,
                                        HttpServletResponse response)
@@ -950,6 +975,9 @@ public class AdminController
         return modelAndView;
     }
 
+    @RequiresRoles({
+            "superAdmin"
+    })
     @RequestMapping("/user/userInfo/doUpdate")
     public ModelAndView doUpdateUserInfo(DlxyUser user, HttpServletRequest request, HttpServletResponse response)
     {
@@ -1027,8 +1055,7 @@ public class AdminController
         return modelAndView;
     }
 
-    @RequiresRoles(value =
-            {"admin"})
+    @RequiresRoles(value = {"admin", "superAdmin"}, logical = Logical.OR)
     @RequestMapping("/user/search")
     public ModelAndView searchUser(@RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
                                    @RequestParam(name = "pageNum", defaultValue = "1") Integer pageNum, HttpServletRequest request,

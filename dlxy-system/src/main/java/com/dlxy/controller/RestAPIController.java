@@ -256,6 +256,10 @@ public class RestAPIController
         DlxyTitleDTO titleDTO = new DlxyTitleDTO();
         formTitle.to(titleDTO);
         UserDTO userDTO = AdminUtil.getLoginUser();
+        if (!userDTO.isAdmin())
+        {
+            return ResultUtil.fail("无权限添加或者修改");
+        }
         try
         {
             DlxyTitleDTO dbTitle = titleService.findByAbbName(formTitle.getTitleAbbName());
@@ -541,10 +545,15 @@ public class RestAPIController
         {
             return ResultUtil.fail("missing argument:titleId");
         }
+        UserDTO loginUser = AdminUtil.getLoginUser();
+        if (!loginUser.isAdmin())
+        {
+            return ResultUtil.fail("无权限删除文章");
+        }
         try
         {
             titleId = Integer.parseInt(titleIdStr);
-            boolean res = articleManagementWrappedService.deleteTitleAndUpdateArticleStatus(AdminUtil.getLoginUser(),
+            boolean res = articleManagementWrappedService.deleteTitleAndUpdateArticleStatus(loginUser,
                     titleId, ArticleStatusEnum.DELETE.ordinal());
             if (res)
             {
@@ -569,6 +578,10 @@ public class RestAPIController
     public ResultDTO<String> delArticles(HttpServletRequest request, HttpServletResponse response)
     {
         UserDTO user = AdminUtil.getLoginUser();
+        if (!user.isAdmin())
+        {
+            return ResultUtil.fail("无权限删除文章");
+        }
         String ids = request.getParameter("ids");
         if (StringUtils.isEmpty(ids))
         {
@@ -926,7 +939,6 @@ public class RestAPIController
 
     }
 
-    @RequiresRoles("admin")
     @RequestMapping(value = "/admin/user/delete", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResultDTO<String> deleteUser(HttpServletRequest request, HttpServletResponse response)
     {

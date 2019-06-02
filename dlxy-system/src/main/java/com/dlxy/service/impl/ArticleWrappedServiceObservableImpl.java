@@ -360,7 +360,7 @@ public class ArticleWrappedServiceObservableImpl extends DlxyObservervable imple
         {
             childKey = tId;
         }
-        childs =  titleService.findChildsByParentId(childKey);
+        childs = titleService.findChildsByParentId(childKey);
         parentTitleDTO.setChilds(childs);
         titleDetailVO.setTitleSelf(dlxyTitleDTO);
         List<ArticleDTO> articles = new ArrayList<>();
@@ -469,10 +469,7 @@ public class ArticleWrappedServiceObservableImpl extends DlxyObservervable imple
             if (allArticles != null && allArticles.size() > 0)
             {
                 List<Long> ids = new ArrayList<>();
-                allArticles.forEach(a ->
-                {
-                    ids.add(a.getArticleId());
-                });
+                allArticles.forEach(a -> ids.add(a.getArticleId()));
                 updateArticleStatusInBatch(userDTO, ids, status);
             }
         }

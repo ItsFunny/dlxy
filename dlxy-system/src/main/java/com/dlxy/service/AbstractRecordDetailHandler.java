@@ -49,7 +49,7 @@ public abstract class AbstractRecordDetailHandler
 			this.nextHandler.handler(userRecordDTO);
 		} else
 		{
-			throw new RuntimeException("cant found  any matchable handlers");
+			throw new RuntimeException("cant find  any matchable handlers");
 		}
 	}
 
