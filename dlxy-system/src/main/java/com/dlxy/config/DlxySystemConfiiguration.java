@@ -109,10 +109,6 @@ public class DlxySystemConfiiguration implements WebMvcConfigurer, ServletContex
 
         pathMap.put(IFileStrategy.IMG_TYPE, dlxyProperty.getImgFTPStoreBasePath());
         visitPrefixMap.put(IFileStrategy.IMG_TYPE, dlxyProperty.getImgFTPVisitPrefx());
-//		String host = "120.78.240.211";
-//		Integer port = 21;
-//		String username = "joker";
-//		String password = "lvcong124536789";
         FTPFileService fileService = new FTPFileService(dlxyProperty.getFtpHost(), dlxyProperty.getFtpPort(),
                 dlxyProperty.getFtpUsername(), dlxyProperty.getFtpPassword());
         fileService.setVisitPrefixMap(visitPrefixMap);

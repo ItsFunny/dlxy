@@ -1,7 +1,385 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="1961e983-7119-4819-81e5-0e98cb82549a" name="Default Changelist" comment="" />
+    <list default="true" id="1961e983-7119-4819-81e5-0e98cb82549a" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/../.idea/artifacts/dlxy_system_war.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/artifacts/dlxy_system_war.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/artifacts/dlxy_system_war_exploded.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/artifacts/dlxy_system_war_exploded.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/libraries/Maven__ch_qos_logback_logback_classic_1_2_3.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/libraries/Maven__ch_qos_logback_logback_core_1_2_3.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/libraries/Maven__com_alibaba_fastjson_1_2_58.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/libraries/Maven__com_fasterxml_classmate_1_3_4.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/libraries/Maven__com_fasterxml_jackson_datatype_jackson_datatype_jdk8_2_9_7.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/libraries/Maven__com_fasterxml_jackson_datatype_jackson_datatype_jsr310_2_9_7.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/libraries/Maven__com_fasterxml_jackson_module_jackson_module_parameter_names_2_9_7.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/libraries/Maven__commons_collections_commons_collections_3_2_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/libraries/Maven__javax_annotation_javax_annotation_api_1_3_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/libraries/Maven__javax_servlet_javax_servlet_api_3_0_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/libraries/Maven__org_apache_commons_commons_lang3_3_4.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/libraries/Maven__org_apache_logging_log4j_log4j_api_2_10_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/libraries/Maven__org_apache_logging_log4j_log4j_to_slf4j_2_10_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/libraries/Maven__org_apache_shiro_shiro_cache_1_4_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/libraries/Maven__org_apache_shiro_shiro_ehcache_1_4_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/libraries/Maven__org_apache_shiro_shiro_lang_1_4_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/libraries/Maven__org_apache_tomcat_embed_tomcat_embed_core_8_5_34.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/libraries/Maven__org_apache_tomcat_embed_tomcat_embed_el_8_5_34.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/libraries/Maven__org_apache_tomcat_embed_tomcat_embed_websocket_8_5_34.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/libraries/Maven__org_hibernate_validator_hibernate_validator_6_0_13_Final.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/libraries/Maven__org_jboss_logging_jboss_logging_3_3_2_Final.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/libraries/Maven__org_slf4j_jul_to_slf4j_1_7_25.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/libraries/Maven__org_springframework_boot_spring_boot_2_0_6_RELEASE.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/libraries/Maven__org_springframework_boot_spring_boot_autoconfigure_2_0_6_RELEASE.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_2_0_6_RELEASE.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_json_2_0_6_RELEASE.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_logging_2_0_6_RELEASE.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_tomcat_2_0_6_RELEASE.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_web_2_0_6_RELEASE.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/libraries/Maven__org_springframework_spring_core_5_0_2_RELEASE.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/libraries/Maven__org_springframework_spring_jcl_5_0_2_RELEASE.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/libraries/Maven__org_springframework_spring_test_5_0_2_RELEASE.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/libraries/Maven__org_yaml_snakeyaml_1_23.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dlxy-common/src/main/java/com/dlxy/common/dto/UserDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../dlxy-common/src/main/java/com/dlxy/common/dto/UserDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dlxy-common/target/classes/com/dlxy/common/dto/UserDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/../dlxy-common/target/classes/com/dlxy/common/dto/UserDTO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dlxy-common/target/dlxy-common-0.0.1-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/../dlxy-common/target/dlxy-common-0.0.1-SNAPSHOT.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dlxy-common/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/../dlxy-common/target/maven-archiver/pom.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/dlxy/controller/AdminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/dlxy/controller/AdminController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/dlxy/controller/RestAPIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/dlxy/controller/RestAPIController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/dlxy/service/AbstractRecordDetailHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/dlxy/service/AbstractRecordDetailHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/dlxy/service/impl/ArticleWrappedServiceObservableImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/dlxy/service/impl/ArticleWrappedServiceObservableImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/log4j.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/log4j.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/templates/admin/about_titles.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/templates/admin/about_titles.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/templates/admin/articles.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/templates/admin/articles.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/templates/admin/left_menu.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/templates/admin/left_menu.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/templates/admin/links.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/templates/admin/links.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/templates/admin/news_titles.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/templates/admin/news_titles.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/templates/admin/title_article_detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/templates/admin/title_article_detail.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/templates/admin/users.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/templates/admin/users.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/templates/admin/wrapper_up.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/templates/admin/wrapper_up.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/templates/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/dlxy/controller/AdminController$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dlxy/controller/AdminController$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/dlxy/controller/AdminController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dlxy/controller/AdminController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/dlxy/controller/RestAPIController$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dlxy/controller/RestAPIController$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/dlxy/controller/RestAPIController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dlxy/controller/RestAPIController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/dlxy/service/AbstractRecordDetailHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dlxy/service/AbstractRecordDetailHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/dlxy/service/impl/ArticleWrappedServiceObservableImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/dlxy/service/impl/ArticleWrappedServiceObservableImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/log4j.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/log4j.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/dlxy-portal-system.war" beforeDir="false" afterPath="$PROJECT_DIR$/target/dlxy-portal-system.war" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/classes/com/dlxy/aop/IllegalFormatAOP.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/classes/com/dlxy/controller/AdminController$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/classes/com/dlxy/controller/AdminController$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/classes/com/dlxy/controller/AdminController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/classes/com/dlxy/controller/AdminController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/classes/com/dlxy/controller/RestAPIController$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/classes/com/dlxy/controller/RestAPIController$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/classes/com/dlxy/controller/RestAPIController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/classes/com/dlxy/controller/RestAPIController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/classes/com/dlxy/service/AbstractRecordDetailHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/classes/com/dlxy/service/AbstractRecordDetailHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/classes/com/dlxy/service/command/ArticleReceiver.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/classes/com/dlxy/service/command/ArticleReceiver.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/classes/com/dlxy/service/impl/ArticleWrappedServiceObservableImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/classes/com/dlxy/service/impl/ArticleWrappedServiceObservableImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/classes/log4j.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/classes/log4j.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/lib/commons-collections-3.2.2.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/lib/dlxy-article-server-common-0.0.1-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/lib/dlxy-article-server-common-0.0.1-SNAPSHOT.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/lib/dlxy-article-server-dao-0.0.1-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/lib/dlxy-article-server-dao-0.0.1-SNAPSHOT.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/lib/dlxy-article-server-service-0.0.1-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/lib/dlxy-article-server-service-0.0.1-SNAPSHOT.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/lib/dlxy-common-0.0.1-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/lib/dlxy-common-0.0.1-SNAPSHOT.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/templates/404.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/templates/404.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/templates/admin/about_titles.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/templates/admin/about_titles.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/templates/admin/articles.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/templates/admin/articles.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/templates/admin/left_menu.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/templates/admin/left_menu.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/templates/admin/links.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/templates/admin/links.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/templates/admin/news_titles.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/templates/admin/news_titles.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/templates/admin/title_article_detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/templates/admin/title_article_detail.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/templates/admin/users.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/templates/admin/users.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/templates/admin/wrapper_up.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/templates/admin/wrapper_up.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/templates/error.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/templates/error.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/templates/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/web.xml" beforeDir="false" afterPath="$PROJECT_DIR$/target/dlxy-portal-system/WEB-INF/web.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/m2e-wtp/web-resources/META-INF/MANIFEST.MF" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/m2e-wtp/web-resources/META-INF/maven/com.dlxy/dlxy-system/pom.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/m2e-wtp/web-resources/META-INF/maven/com.dlxy/dlxy-system/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-archiver/pom.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/tomcat/conf/logging.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/tomcat/conf/tomcat-users.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/tomcat/conf/web.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/tomcat/logs/access_log.2018-08-14" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/tomcat/logs/access_log.2018-08-15" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/tomcat/logs/access_log.2018-08-16" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/tomcat/logs/access_log.2019-05-20" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/tomcat/logs/access_log.2019-05-21" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/tomcat/logs/access_log.2019-05-22" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/tomcat/logs/access_log.2019-05-27" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/tomcat/logs/access_log.2019-05-28" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/tomcat/logs/access_log.2019-05-29" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/application-dev.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/application-dev.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/application-pro.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/application-pro.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/application-test.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/annotation/CheckIllegalFormat.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/aop/DlxyAOP.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/annotation/UserRecordAnnotation.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/dto/AbstractDlxyArticleComposite.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/dto/AbstractDlxyTitleComposite.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/dto/AbstractDlxyTreeComposite.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/dto/AbstractDlxyUserRecordComposite.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/dto/ArticleDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/dto/DlxyTitleDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/dto/IllegalLogDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/dto/PageDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/dto/PictureDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/dto/PictureUploadResponseDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/dto/ResultDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/dto/SuspicionDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/dto/UserDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/dto/UserRecordDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/dto/UserRoleDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/dto/VisitUserDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/dto/VisitUserHistoryDTO$HistroyDetail.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/dto/VisitUserHistoryDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/enums/ArticlePictureTypeEnum.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/enums/ArticleStatusEnum.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/enums/ArticleTypeEnum.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/enums/DlxyTitleEnum.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/enums/IllegalLevelEnum.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/enums/PictureStatusEnum.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/enums/RestAPIStatus.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/event/AmqpListener.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/event/AppEvent.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/event/AppEventLogPubliher.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/event/AppEventPublisher.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/event/AppEventRabbitMQPublisher.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/event/Events.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/exception/UnfindPageException.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/model/ArticleVisitInfo.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/model/VisitUserManager.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/service/ITitleCacheServiec.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/service/IdWorkerService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/service/IdWorkerServiceTwitter.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/utils/FTPUtil.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/utils/FileUtil.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/utils/JsonUtil.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/utils/PageResultUtil.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/utils/RSAUtils.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/utils/ResultUtil.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/vo/CreaterAndConsumer$Consumer.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/vo/CreaterAndConsumer$Producer.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/vo/CreaterAndConsumer.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/vo/PageVO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/common/vo/UserRecordUrlVO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/config/DlxyBeanPostProcessor.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/config/DlxyObservervable.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/config/DlxyProperty.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/config/DlxyPropertyPlaceholderConfigurer.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/config/DlxySystemConfiiguration.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/config/DlxySystemSpringConfiguration.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/constant/TitleArticleConstant.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/controller/AdminController$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/controller/AdminController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/controller/PortalController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/controller/PublicController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/controller/RestAPIController$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/controller/RestAPIController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/dlxy_article_server_common/App.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/dlxy_article_server_mpi/App.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/enums/DlxytExceptionEnum.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/exception/DlxySuspicionException.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/exception/DlxySystemException.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/exception/DlxySystemExceptionEnum.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/exception/DlxySystemIllegalException.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/exhandler/DlxySystemExceptionHandler.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/filter/CharsetFilter.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/interceptor/IPInterceptor$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/interceptor/IPInterceptor$JudgeResult.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/interceptor/IPInterceptor.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/listener/ShiroSessionListener.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/listener/UserVisitListener.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/model/ArticleVisitCountFactory.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/model/FormArticle.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/model/FormTitle.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/model/FormUser.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/model/VisiterUser.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/article/dao/mybatis/ArticleMybatisDao.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/article/dao/mybatis/DlxyArticleDao.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/article/dao/mybatis/DlxyTitleDao.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/article/dao/mybatis/TitleMybatisDao.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/article/dao/mybatis/count/ArticleCountDao.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/article/dao/mybatis/count/TitleMybatisCountDao.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/article/dao/mybatis/count/UserArticleDao.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/article/dao/query/ArticleCountQueryDao.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/article/dao/query/ArticleQueryDao.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/article/dao/query/TitleQueryDao.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/article/dao/query/impl/ArticleCountQueryDaoImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/article/dao/query/impl/ArticleQueryDaoImpl$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/article/dao/query/impl/ArticleQueryDaoImpl$ArticleNormalResultSetHandler.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/article/dao/query/impl/ArticleQueryDaoImpl$ArticleTypeResultSetHandler.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/article/dao/query/impl/ArticleQueryDaoImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/article/dao/query/impl/TitleQueryDaoImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/article/model/DlxyArticle.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/article/model/DlxyArticleExample$Criteria.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/article/model/DlxyArticleExample$Criterion.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/article/model/DlxyArticleExample$GeneratedCriteria.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/article/model/DlxyArticleExample.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/article/model/DlxyTitleExample$Criteria.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/article/model/DlxyTitleExample$Criterion.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/article/model/DlxyTitleExample$GeneratedCriteria.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/article/model/DlxyTitleExample.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/article/service/IArticleCountService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/article/service/IArticleService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/article/service/IBeanSelefAware.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/article/service/ITitleService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/article/service/IUserArticleService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/article/service/impl/ArticleCountServiceImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/article/service/impl/ArticleServiceImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/article/service/impl/TitleServiceImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/picture/dao/App.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/picture/dao/mybatis/DlxyArticlePictureDao.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/picture/dao/mybatis/DlxyPictureDao.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/picture/dao/mybatis/PictureMybatisDao.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/picture/dao/query/PictureQueryDao.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/picture/dao/query/impl/PictureQueryDaoImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/picture/model/DlxyArticlePicture.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/picture/model/DlxyArticlePictureExample$Criteria.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/picture/model/DlxyArticlePictureExample$Criterion.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/picture/model/DlxyArticlePictureExample$GeneratedCriteria.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/picture/model/DlxyArticlePictureExample.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/picture/model/DlxyPicture.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/picture/model/DlxyPictureExample$Criteria.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/picture/model/DlxyPictureExample$Criterion.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/picture/model/DlxyPictureExample$GeneratedCriteria.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/picture/model/DlxyPictureExample.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/picture/service/App.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/picture/service/IPictureService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/picture/service/impl/PictureServiceImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/dao/App.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/dao/mybatis/DlxyLinkDao.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/dao/mybatis/DlxyUserDao.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/dao/mybatis/DlxyVisitRecordDao.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/dao/mybatis/LinkDao.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/dao/mybatis/UserIllegalLogDao.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/dao/mybatis/UserMybatisDao.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/dao/mybatis/UserRecordMybatisDao.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/dao/mybatis/UserRoleMybatisDao.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/dao/mybatis/VisitRecordDao.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/dao/query/UserArticleQueryDao.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/dao/query/UserQueryDao.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/dao/query/UserRecordQueryDao.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/dao/query/impl/UserArticleQueryDaoImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/dao/query/impl/UserQueryDaoImpl$UserResultSetHandler.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/dao/query/impl/UserQueryDaoImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/dao/query/impl/UserRecordQueryDaoImpl$UserRecordResultSetHandler.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/dao/query/impl/UserRecordQueryDaoImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/model/DlxyLink.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/model/DlxyLinkExample$Criteria.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/model/DlxyLinkExample$Criterion.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/model/DlxyLinkExample$GeneratedCriteria.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/model/DlxyLinkExample.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/model/DlxyUser.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/model/DlxyUserExample$Criteria.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/model/DlxyUserExample$Criterion.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/model/DlxyUserExample$GeneratedCriteria.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/model/DlxyUserExample.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/model/DlxyUserIllegalLog.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/model/DlxyUserIllegalLogExample$Criteria.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/model/DlxyUserIllegalLogExample$Criterion.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/model/DlxyUserIllegalLogExample$GeneratedCriteria.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/model/DlxyUserIllegalLogExample.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/model/DlxyVisitRecord.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/model/DlxyVisitRecordExample$Criteria.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/model/DlxyVisitRecordExample$Criterion.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/model/DlxyVisitRecordExample$GeneratedCriteria.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/model/DlxyVisitRecordExample.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/service/ILinkService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/service/IUserArticleService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/service/IUserIllegalLogService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/service/IUserRecordService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/service/IUserRoleService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/service/IUserService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/service/IVisitRecordService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/service/impl/LinkServiceImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/service/impl/UserIllegalLogServiceImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/service/impl/UserRoleServiceImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/service/impl/UserServiceImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/server/user/service/impl/VisitRecordServiceImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/service/AbstractArticleVistitCountStrategy.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/service/AbstractRecordDetailHandler.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/service/ArticleRecordDetailHandler.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/service/ArticleVisitCountContext.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/service/CacheRefreshUtil.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/service/DbVisitCountStrategy.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/service/IArticleWrappedService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/service/IPictureWrappedService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/service/IRedisService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/service/ITitleWrappedService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/service/IUserWrappedService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/service/LinkRecordDetailHandler.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/service/PictureRecordDetailHandler.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/service/RedisArticleVIsitCountStrategy.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/service/TitleRecordDetailHandler.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/service/UserRecordDetailHandler.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/service/UserRecordHandlerFactory.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/service/UserRecordObserver$UserRecordRunnable.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/service/UserRecordObserver.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/service/command/AddOrUpdateArtilceCommand.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/service/command/ArticleReceiver.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/service/command/Command.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/service/command/DeleteArticleCommand.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/service/command/IReceiver.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/service/command/PictureReceiver.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/service/command/UserArticleReceiver.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/service/impl/ArticleWrappedServiceObservableImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/service/impl/PictureWrappedServiceObservableImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/service/impl/RedisServiceImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/service/impl/RedsiClusterServiceImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/service/impl/TitleWrappedServiceImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/service/impl/UserWrappedServiceImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/shiro/DlxySessionManaager.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/shiro/DlxyShiroAuthToken.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/shiro/DlxyShiroRealm.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/system/batch/BatchSystem.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/system/batch/config/BatchSystemConfiguration.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/system/batch/config/DlxyProperty.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/system/batch/constants/PictureConstant.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/system/batch/consumer/ArticleVistitCountListener.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/system/batch/consumer/FacadedAmqpListener.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/system/batch/consumer/UserIllegalLogListener.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/system/batch/consumer/UserRecordListener.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/system/batch/controller/MonitorController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/system/batch/jobs/ArticleVisitCountJob.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/system/batch/jobs/DelArticlePicJob.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/system/batch/jobs/DelInvalidArticleJob.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/system/batch/jobs/JobRunner.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/system/batch/service/AbstractDeleteFileHandler.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/system/batch/service/DefaultFileStrategyHandler.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/system/batch/service/FTPFileStrategyHandler.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/system/batch/service/IBatchPictureService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/system/batch/service/IFileDeleteHandler$DeleteHandlerObject.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/system/batch/service/IFileDeleteHandler.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/system/batch/service/IRedisService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/system/batch/service/impl/BatchPictureServiceImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/system/batch/service/impl/RedisServiceImpl.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/task/DailyUpdateCountJob.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/task/DlxyTaskRunner.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/task/DlxyThreadTask.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/utils/AdminUtil.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/utils/CommonUtils.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/vo/ArticleVO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/vo/FlowConnectionVO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/vo/FlowVO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/vo/FlownDownloadVO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/vo/PictureVO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/com/dlxy/vo/TitleDetailVO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/keys/property-private.key" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/keys/property-public.key" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/log4j.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/org/dlxy/user/server/common/App.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/shiro/cacheManager.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/spring/applicationContext.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/spring/spring-env.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/classes/spring/spring-mvc.xml" beforeDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,8 +399,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane" />
+      <pane id="Scope" />
       <pane id="PackagesPane" />
     </panes>
   </component>
@@ -56,25 +434,21 @@
       <option name="presentableId" value="Default" />
       <updated>1553916045411</updated>
       <workItem from="1553916046763" duration="5000" />
+      <workItem from="1559456326279" duration="2000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="5000" />
+    <option name="totallyTimeSpent" value="7000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
     <layout>
-      <window_info id="Designer" />
-      <window_info id="UI Designer" />
-      <window_info id="Favorites" side_tool="true" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24964234" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2532189" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Docker" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Database Changes" />
-      <window_info anchor="bottom" id="Version Control" />
-      <window_info anchor="bottom" id="Terminal" />
-      <window_info anchor="bottom" id="Event Log" side_tool="true" />
+      <window_info id="Designer" order="2" />
+      <window_info id="UI Designer" order="3" />
+      <window_info id="Favorites" order="4" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Run" order="2" />
@@ -82,13 +456,18 @@
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="right" id="Palette" />
-      <window_info anchor="right" id="Maven" />
-      <window_info anchor="right" id="Palette&#9;" />
-      <window_info anchor="right" id="Database" />
+      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Version Control" order="8" />
+      <window_info anchor="bottom" id="Database Changes" order="9" />
+      <window_info anchor="bottom" id="Terminal" order="10" />
+      <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Palette" order="3" />
+      <window_info anchor="right" id="Maven" order="4" />
+      <window_info anchor="right" id="Database" order="5" />
+      <window_info anchor="right" id="Palette&#9;" order="6" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
